@@ -1,0 +1,19 @@
+@use "./../../../../styles.scss" as styles;
+@use "./../../../../assets/fonts.scss" as f;
+@use "./../../../../assets/colors.scss" as c;
+
+section {
+    position:relative;
+    top:0;
+    left:0;
+    right:0;
+    height: calc(100% - 80px); // high of logo
+    width: 100%;
+    box-sizing: border-box;
+    background-color: c.$hero-bg-color;
+    background-image: url('./../../../../../public/img/modern-apartment.jpeg');
+    background-size:cover;
+    background-position: center;
+    background-attachment: fixed;
+    image-rendering: crisp-edges; // for better graphics in some browsers
+}

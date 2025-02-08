@@ -1,0 +1,35 @@
+@use "./../../../styles.scss" as styles;
+@use "./../../../assets/fonts.scss" as f;
+@use "./../../../assets/colors.scss" as c;
+
+.sidebar-click-element {
+    position: fixed;
+    z-index: 1;
+    right: 0;
+    top: 30%;
+    @include styles.dFlex($d: flex,
+        $fd: row,
+        $jc: center,
+        $ai: center,
+        $g: 0px);
+    height: 240px;
+    width: 45px;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+    cursor: pointer;
+
+    &:hover {
+        box-shadow: 0 0 15px rgba(255, 255, 255, 30);
+    }
+}
+
+.sidebar-click-content {
+    @include styles.dFlex($d: flex,
+        $fd: row,
+        $jc: center,
+        $ai: center,
+        $g: 0px);
+    padding: 12px 18px;
+    white-space: nowrap;
+    transform: rotate(-90deg);
+}

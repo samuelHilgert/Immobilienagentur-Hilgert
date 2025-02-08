@@ -1,0 +1,88 @@
+@use "./../assets/colors.scss" as c;
+
+@font-face {
+    font-family: 'Nunito';
+    src: url('./../../public/fonts/Nunito/Nunito-VariableFont_wght.ttf');
+}
+
+@font-face {
+    font-family: 'Fira Code';
+    src: url('./../../public/fonts/Fira_Code/FiraCode-VariableFont_wght.ttf');
+}
+
+@font-face {
+    font-family: 'Karla';
+    src: url('./../../public/fonts/Fira_Code/FiraCode-VariableFont_wght.ttf');
+}
+
+@font-face {
+    font-family: 'Cormorant_Garamond_regular';
+    src: url('./../../public/fonts/Cormorant_Garamond/CormorantGaramond-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url('./../../public/fonts/Inter/Inter-VariableFont_slnt\,wght.ttf');
+}
+
+@font-face {
+    font-family: 'Raleway';
+    src: url('./../../public/fonts/Raleway/Raleway-VariableFont_wght.ttf');
+}
+
+
+html,
+body {
+    color: c.$text-color;
+    font-family: Raleway;
+    font-size: 16px;
+    font-weight: lighter;
+    line-height: 22px;
+    letter-spacing: 0px;
+}
+
+.navbar-link {
+    // color:c.$navbar-links-text-color;
+    color:c.$primary-color;
+    font-weight: 200;
+    line-height: 22px;
+    letter-spacing: 1px;
+    font-size: 1rem;
+    list-style: none;
+    cursor: unset;
+    text-decoration: unset;
+}
+
+h1 {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 2rem;
+    font-weight: lighter;
+    line-height: 2rem;
+    letter-spacing: 0.5rem;
+    transform: scaleY(1.2);
+    text-transform: uppercase;
+}
+
+h2 {
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 28px;
+    letter-spacing: 0px;
+}
+
+.headline {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    line-height: 2.5rem;
+    letter-spacing: 0.07rem;
+    transform: scaleY(1.2);
+}
+
+.sidebar-click-text {
+    color: c.$sidebar-click-element-text-color;
+    font-weight: 300;
+    line-height: 32px;
+    letter-spacing: 1px;
+    font-size: 1.0rem;
+}

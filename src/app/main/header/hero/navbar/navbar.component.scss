@@ -1,0 +1,64 @@
+@use "./../../../../../styles.scss" as styles;
+@use "./../../../../../assets/fonts.scss" as f;
+@use "./../../../../../assets/colors.scss" as c;
+
+div {
+    position:relative;
+    top: 0;
+    right: 0;
+    left: 0;
+    width:100%;
+    box-sizing: border-box;
+    height: 50px;
+    background-color: white;
+    opacity: 1;
+    // background-color: c.$navbar-bg-color;
+    // opacity: 0.5;
+    @include styles.dFlex($d: flex,
+        $fd: row,
+        $jc: flex-start,
+        $ai: flex-start,
+        $g: 24px);
+
+    ul {
+        width: 100%;
+        height:100%;
+        box-sizing: border-box;
+        @include styles.dFlex($d: flex,
+            $fd: row,
+            $jc: space-evenly,
+            $ai: center,
+            $g: 24px);
+        margin: 0;
+        padding: 0;
+    }
+
+    li {
+        @include styles.dFlex($d: flex,
+        $fd: row,
+        $jc: flex-end,
+        $ai: flex-start,
+        $g: 0);
+        padding-top:10px;
+        height: 100%;
+        box-sizing: border-box;
+        position: relative;
+        cursor: pointer;
+        
+        &::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: transparent; 
+            transition: background-color 0.2s ease-in-out;
+        }
+    
+        &:hover::after {
+            background-color: c.$navbar-links-border-hover;
+        }
+    }
+
+}

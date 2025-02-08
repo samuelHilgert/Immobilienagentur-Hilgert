@@ -1,0 +1,27 @@
+// default settings // 
+$bg-color: white;
+$primary-color: rgb(42,53,70);
+$secondary-color: grey;
+$contrast-color: rgb(201, 162, 39);
+$text-color: rgb(74, 74, 74);
+$scrollbar-primary-color: $primary-color;
+
+// logo 
+$logo-bg-color: white;
+
+// navbar 
+$navbar-bg-color: $primary-color;
+$navbar-links-text-color: white;
+$navbar-links-hover-color: white;
+$navbar-links-border-hover: $contrast-color;
+
+// hero 
+$hero-bg-color: white;
+
+//header-info-box  
+$header-info-box-bg-color: $primary-color;
+$header-info-box-text-color: white;
+
+//sidebar-click-element
+$sidebar-click-element-bg-color:  $primary-color;
+$sidebar-click-element-text-color: white;

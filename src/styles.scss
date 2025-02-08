@@ -1,1 +1,69 @@
-/* You can add global styles to this file, and also import other style files */
+@use "./assets/fonts.scss";
+@use "./assets/colors.scss" as c;
+
+* {
+  margin: 0;
+  scroll-behavior: smooth;
+  scrollbar-width:thin;
+  scrollbar-color: c.$scrollbar-primary-color c.$scrollbar-primary-color;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 10px;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: c.$scrollbar-primary-color;
+  border-radius: 10px;
+
+}
+
+::-webkit-scrollbar-track {
+  background-color: #00000000;
+  border: 1px solid #00000000;
+}
+
+html, body {
+    background-color: c.$bg-color;
+    transition: background-color 0.3s ease-in-out; // for a smooth color change, needs also for btns, cards and header
+    overflow: auto; // no scrolling more than 100vh
+    height: 100vh; 
+}
+
+:root {
+  --primary-color: #{c.$primary-color};
+}
+
+.dark-mode {
+  --primary-color: black;
+}
+
+.filter-bg {
+  background-color: c.$header-info-box-bg-color;
+  color: c.$header-info-box-text-color;
+  opacity:0.9;
+}
+
+.standard-btn {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+@mixin dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0px) {
+    display: $d;
+    flex-direction: $fd;
+    justify-content: $jc;
+    align-items: $ai;
+    gap: $g;
+  }
+
+
+  
+
+  
