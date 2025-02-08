@@ -46,6 +46,11 @@ html, body {
   opacity:0.9;
 }
 
+.section-bg-v1 {
+  background-color: c.$section-bg-v1;
+  padding:64px 48px;
+} 
+
 .standard-btn {
   background-color: var(--primary-color);
   color: white;
