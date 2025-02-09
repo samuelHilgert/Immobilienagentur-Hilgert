@@ -1,4 +1,4 @@
-@use "./assets/fonts.scss";
+@use "./assets/fonts.scss" as f;
 @use "./assets/colors.scss" as c;
 
 * {
@@ -51,13 +51,23 @@ html, body {
   padding:64px 48px;
 } 
 
+.section-bg-v2 {
+  background-color: white;
+  padding:64px 48px;
+}
+
 .standard-btn {
-  background-color: var(--primary-color);
-  color: white;
-  padding: 10px 20px;
+  background-color: c.$standard-btn-bg;
+  color: c.$standard-btn-text;
+  padding: 12px 18px;
+  border-radius:0px;
   border: none;
   cursor: pointer;
   transition: background-color 0.3s ease-in-out;
+
+  &:hover {
+    background-color: c.$standard-btn-bg-hover;
+  }
 }
 
 @mixin dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0px) {
@@ -68,7 +78,22 @@ html, body {
     gap: $g;
   }
 
+.vertical-line {
+  height:3rem;
+  width:3px;
+  background-color: c.$vertical-line-bg;
+  opacity:0.9;
+}
 
-  
+.sidebar-click-element {
+  background-color: c.$standard-btn-bg;
+  color: c.$standard-btn-text;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
 
-  
+  &:hover {
+    background-color: c.$standard-btn-bg-hover;
+  }
+}

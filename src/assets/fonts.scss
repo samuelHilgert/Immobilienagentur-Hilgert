@@ -80,9 +80,27 @@ h2 {
 }
 
 .sidebar-click-text {
-    color: c.$sidebar-click-element-text-color;
-    font-weight: 300;
-    line-height: 32px;
-    letter-spacing: 1px;
-    font-size: 1.0rem;
+    font-weight: 400;
+    line-height: 1rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.15rem;
+    transform: scaleY(1.1);
+    text-transform: uppercase;
+}
+
+.standard-btn {
+    font-weight: 400;
+    line-height: 1rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.15rem;
+    transform: scaleY(1.1);
+    text-transform: uppercase;
+}
+
+.about-us-content {
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 1.75rem;
+    letter-spacing: 0.1rem;
+    transform: scaleY(1.1);
 }

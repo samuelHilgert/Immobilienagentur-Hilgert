@@ -1,3 +1,36 @@
-<section id="angebote">
-    <p>Aktuelle Immobilienangebote</p>
+<section class="section-bg-v2" id="angebote">
+  <p>Aktuelle Immobilienangebote</p>
+  <button (click)="loadData()">Daten laden</button>
+  <mat-progress-bar
+    *ngIf="isLoading"
+    mode="indeterminate"
+    aria-label="Daten werden geladen"
+    mode="determinate"
+    value="{{ loadStatus }}"
+  >
+  </mat-progress-bar>
+
+  <mat-card>
+    
+    <mat-card-header>
+      <div mat-card-avatar class="example-header-image"></div>
+      <mat-card-title>3-ZKB</mat-card-title>
+      <mat-card-subtitle>Viernheim</mat-card-subtitle>
+    </mat-card-header>
+
+    <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg"alt="Photo of a Shiba Inu"/>
+
+    <mat-card-content>
+      <p>
+        The Shiba Inu is the smallest of the six original and distinct spitz
+        breeds of dog from Japan. A small, agile dog that copes very well with
+        mountainous terrain, the Shiba Inu was originally bred for hunting.
+      </p>
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-button>LIKE</button>
+    </mat-card-actions>
+
+  </mat-card>
 </section>

@@ -3,7 +3,28 @@
 @use "./../../../assets/colors.scss" as c;
 
 section {
-    height:500px;
+    height:auto;
     width:100%;
     box-sizing: border-box;
+}
+
+.about-us-content {
+    @include styles.dFlex(
+        $d: flex,
+        $fd: column,
+        $jc: center,
+        $ai: center,
+        $g: 24px);
+        text-align:center;
+        padding:0px 124px;
+}
+
+.action-btn-row {
+    @include styles.dFlex(
+        $d: flex,
+        $fd: column,
+        $jc: center,
+        $ai: center,
+        $g: 0px);
+        padding-top:64px;
 }

@@ -1,3 +1,30 @@
+@use "./../../../styles.scss" as styles;
+@use "./../../../assets/fonts.scss" as f;
+@use "./../../../assets/colors.scss" as c;
+
 section {
-    height:700px;
+    height: auto;
+    width: 100%;
+    box-sizing: border-box;
+
+    @include styles.dFlex($d: flex,
+        $fd: column,
+        $jc: flex-start,
+        $ai: flex-start,
+        $g: 24px);
+}
+
+mat-progress-bar {
+    color: c.$contrast-color;
+}
+
+mat-card {
+    width: 300px;
+    border: 1px solid lightgrey;
+    border-radius: unset;
+    cursor: pointer;
+
+    img {
+        width: 300px;
+    }
 }
