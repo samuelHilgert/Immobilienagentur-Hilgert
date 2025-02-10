@@ -18,13 +18,29 @@ mat-progress-bar {
     color: c.$contrast-color;
 }
 
-mat-card {
-    width: 300px;
+.immobilie-box {
+    width: 400px;
     border: 1px solid lightgrey;
     border-radius: unset;
     cursor: pointer;
-
+    @include styles.dFlex($d: flex,
+    $fd: column,
+    $jc: center,
+    $ai: center,
+    $g: 0);
     img {
-        width: 300px;
+        width: calc(100% + 2px);
+        box-sizing: border-box;
     }
+}
+
+.immobilie-content {
+    @include styles.dFlex($d: flex,
+        $fd: column,
+        $jc: flex-start,
+        $ai: flex-start,
+        $g: 24px);
+    padding:24px 24px;
+    width: 100%;
+    box-sizing: border-box;
 }
