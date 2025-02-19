@@ -2,89 +2,110 @@
 @use "./../../../assets/fonts.scss" as f;
 @use "./../../../assets/colors.scss" as c;
 
+/* 🌍 Allgemeines Styling für das gesamte Abschnitt */
 section {
-    height: auto;
-    width: 100%;
-    box-sizing: border-box;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 20px;
 
-    @include styles.dFlex($d: flex,
-        $fd: column,
-        $jc: flex-start,
-        $ai: flex-start,
-        $g: 24px);
-}
-
-mat-progress-bar {
-    color: c.$contrast-color;
-}
-
-.immobilie-box {
-    width: 400px;
-    border: 1px solid lightgrey;
-    border-radius: unset;
-    cursor: pointer;
-    @include styles.dFlex($d: flex,
+  @include styles.dFlex(
+    $d: flex,
     $fd: column,
-    $jc: center,
+    $jc: flex-start,
     $ai: center,
-    $g: 0);
-    img {
-        width: calc(100% + 2px);
-        box-sizing: border-box;
-    }
+    $g: 24px
+  );
 }
 
-.immobilie-content {
-    @include styles.dFlex($d: flex,
-        $fd: column,
-        $jc: flex-start,
-        $ai: flex-start,
-        $g: 24px);
-    padding:24px 24px;
-    width: 100%;
-    box-sizing: border-box;
+/* 🔄 Ladebalken */
+mat-progress-bar {
+  color: c.$contrast-color;
 }
 
+/* 🏡 Immobilien-Grid für responsives Layout */
 .immobilien-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 3fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+  padding: 20px;
+}
+
+/* 📦 Einzelne Immobilien-Box */
+.immobilie-box {
+  background: white;
+  border: 1px solid lightgrey;
+  border-radius: 8px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+
+  @include styles.dFlex(
+    $d: flex,
+    $fd: column,
+    $jc: flex-start,
+    $ai: flex-start
+  );
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
   }
-  
-  .immobilie-box {
-    background: white;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s;
+
+  img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
   }
-  
-  .immobilie-box:hover {
-    transform: scale(1.03);
-  }
-  
-  .immobilie-content {
-    padding: 10px;
-  }
-  
-  .preis, .art, .objekttyp {
-    font-weight: bold;
-    color: #555;
-  }
-  
-  .details-button {
-    display: block;
-    margin-top: 10px;
-    background: #007bff;
-    color: white;
-    border: none;
-    padding: 8px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .details-button:hover {
+}
+
+/* 📄 Inhalt innerhalb der Immobilien-Box */
+.immobilie-content {
+  padding: 16px;
+  width: 100%;
+  box-sizing: border-box;
+
+  @include styles.dFlex(
+    $d: flex,
+    $fd: column,
+    $jc: flex-start,
+    $ai: flex-start,
+    $g: 8px
+  );
+}
+
+/* 💲 Preis, Art und Objekttyp */
+.preis,
+.art,
+.objekttyp {
+  font-weight: bold;
+  font-size: 14px;
+  color: #555;
+}
+
+/* 🔘 Details-Button */
+.details-button {
+  display: inline-block;
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 14px;
+  transition: background 0.3s ease-in-out;
+
+  &:hover {
     background: #0056b3;
   }
-  
+}
+
+/* ❌ Fehler-Message */
+.error-message {
+  color: red;
+  font-weight: bold;
+  margin-top: 10px;
+  text-align: center;
+}

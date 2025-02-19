@@ -11,31 +11,42 @@ import { Immobilie } from '../../models/immobilie.model';
   templateUrl: './angebote.component.html',
   styleUrl: './angebote.component.scss',
 })
-export class AngeboteComponent implements OnInit { // ✅ Implementiert OnInit
-  immobilien: Immobilie[] = []; 
+export class AngeboteComponent implements OnInit {
+  // ✅ Implementiert OnInit
+  immobilien: Immobilie[] = [];
   isLoading: boolean = false;
-
+  loadStatus: number = 0;
+  errorMessage: string | null = null;
+  
   constructor(private immobilienService: ImmobilienService) {}
 
   ngOnInit(): void {
-    this.isLoading = true; // Lade-Status aktivieren
-
-    this.immobilienService.getImmobilien().subscribe({
-      next: (data) => { // ✅ **Verwende next statt direkt data**
-        console.log('Empfangene Daten:', data);
-        
-        if (data && data.immobilien) {
-          this.immobilien = data.immobilien; // ✅ Korrekte Zuweisung
-        } else {
-          console.warn('Keine Immobilien-Daten erhalten!');
-        }
-
+    this.isLoading = true;
+    this.loadStatus = 0;
+    
+  
+    // Simulierter Fortschritt, max. 90%, damit 100% erst mit echten Daten erreicht wird
+    const interval = setInterval(() => {
+      if (this.loadStatus < 90) {
+        this.loadStatus += 10;
+      }
+    }, 500); // Update alle 500ms für flüssigere Animation
+  
+    this.immobilienService.getImmobilien().subscribe(
+      (data) => {
+        this.immobilien = data.immobilien as Immobilie[];
+        console.log('Immobilien: ', this.immobilien);
         this.isLoading = false;
+        this.loadStatus = 100; // Setze auf 100%, wenn fertig
+        clearInterval(interval);
       },
-      error: (error) => { // ✅ **Besseres Fehlerhandling**
+      (error) => {
         console.error('Fehler beim Laden der Immobilien:', error);
         this.isLoading = false;
+        this.loadStatus = 0; // Setze zurück, wenn Fehler auftritt
+        clearInterval(interval);
       }
-    });
+    );
   }
+  
 }

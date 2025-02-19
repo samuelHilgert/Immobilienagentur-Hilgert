@@ -1,20 +1,21 @@
 <section class="section-bg-v2" id="angebote">
   <h2>🏡 Aktuelle Immobilienangebote</h2>
 
-  <!-- Ladebalken für die Daten -->
-  <mat-progress-bar
-    *ngIf="isLoading"
-    mode="indeterminate"
-    aria-label="Daten werden geladen"
-  ></mat-progress-bar>
+  <!-- Ladebalken mit Fortschrittsanzeige -->
+  <div *ngIf="isLoading">
+    <mat-progress-bar mode="determinate" [value]="loadStatus"></mat-progress-bar>
+    <p>Daten werden geladen... {{ loadStatus }}%</p>
+  </div>
 
   <!-- Falls keine Immobilien vorhanden sind -->
-  <p *ngIf="immobilien.length === 0 && !isLoading">
+  <p *ngIf="immobilien.length === 0 && !isLoading" class="error-message">
     ❌ Keine Immobilien verfügbar.
   </p>
 
+  <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+
   <!-- Immobilien anzeigen -->
-  <div class="immobilien-grid">
+  <div class="immobilien-grid" *ngIf="immobilien.length > 0">
     <div class="immobilie-box" *ngFor="let immo of immobilien">
       <img
         src="https://material.angular.io/assets/img/examples/shiba2.jpg"
@@ -22,9 +23,12 @@
       />
       <div class="immobilie-content">
         <h3>{{ immo.titel }}</h3>
-        <p class="preis">💰 Preis: {{ immo.preis }} €</p>
+        <p class="preis">💰 Preis: {{ immo.preis | number }} €</p>
         <p class="art">🔄 Art: {{ immo.art }}</p>
         <p class="objekttyp">🏠 Objekttyp: {{ immo.objekt_typ }}</p>
+        <p class="status">🔄 Status: {{ immo.status }}</p>
+        <p class="plz">🔄 Plz: {{ immo.plz }}</p>
+        <p class="stadt">🔄 Stadt: {{ immo.stadt }}</p>
         <button class="details-button">Mehr Details</button>
       </div>
     </div>
