@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MATERIAL_MODULES } from '../../shared/material-imports';
 import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
+import { ImmobilienService } from '../../services/immobilien.service';
+import { Immobilie } from '../../models/immobilie.model';
 
 @Component({
   selector: 'app-angebote',
@@ -9,16 +11,31 @@ import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
   templateUrl: './angebote.component.html',
   styleUrl: './angebote.component.scss',
 })
-export class AngeboteComponent {
+export class AngeboteComponent implements OnInit { // ✅ Implementiert OnInit
+  immobilien: Immobilie[] = []; 
   isLoading: boolean = false;
-  loadStatus: number = 0;
 
-  loadData() {
-    this.isLoading = true;
-    this.loadStatus = 10;
+  constructor(private immobilienService: ImmobilienService) {}
 
-    setTimeout(() => {
-      this.isLoading = false;
-    }, 3000);
+  ngOnInit(): void {
+    this.isLoading = true; // Lade-Status aktivieren
+
+    this.immobilienService.getImmobilien().subscribe({
+      next: (data) => { // ✅ **Verwende next statt direkt data**
+        console.log('Empfangene Daten:', data);
+        
+        if (data && data.immobilien) {
+          this.immobilien = data.immobilien; // ✅ Korrekte Zuweisung
+        } else {
+          console.warn('Keine Immobilien-Daten erhalten!');
+        }
+
+        this.isLoading = false;
+      },
+      error: (error) => { // ✅ **Besseres Fehlerhandling**
+        console.error('Fehler beim Laden der Immobilien:', error);
+        this.isLoading = false;
+      }
+    });
   }
 }

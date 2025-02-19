@@ -1,24 +1,32 @@
 <section class="section-bg-v2" id="angebote">
-  <p>Aktuelle Immobilienangebote</p>
-  <button (click)="loadData()">Daten laden</button>
+  <h2>🏡 Aktuelle Immobilienangebote</h2>
+
+  <!-- Ladebalken für die Daten -->
   <mat-progress-bar
     *ngIf="isLoading"
     mode="indeterminate"
     aria-label="Daten werden geladen"
-    mode="determinate"
-    value="{{ loadStatus }}"
-  >
-  </mat-progress-bar>
+  ></mat-progress-bar>
 
-  <div class="immobilie-box">
-    <img
-      src="https://material.angular.io/assets/img/examples/shiba2.jpg"
-      alt="Immobilienangebote Hilgert Immobilien"
-    />
-    <div class="immobilie-content">
-      <p class="immobilie-ort">Viernheim</p>
-      <p class="immobilie-beschreibung">Zwei Häuser mit Ausbaupotenzial</p>
-      <p class="immobilie-id">Id: 12423</p>
+  <!-- Falls keine Immobilien vorhanden sind -->
+  <p *ngIf="immobilien.length === 0 && !isLoading">
+    ❌ Keine Immobilien verfügbar.
+  </p>
+
+  <!-- Immobilien anzeigen -->
+  <div class="immobilien-grid">
+    <div class="immobilie-box" *ngFor="let immo of immobilien">
+      <img
+        src="https://material.angular.io/assets/img/examples/shiba2.jpg"
+        alt="{{ immo.titel }}"
+      />
+      <div class="immobilie-content">
+        <h3>{{ immo.titel }}</h3>
+        <p class="preis">💰 Preis: {{ immo.preis }} €</p>
+        <p class="art">🔄 Art: {{ immo.art }}</p>
+        <p class="objekttyp">🏠 Objekttyp: {{ immo.objekt_typ }}</p>
+        <button class="details-button">Mehr Details</button>
+      </div>
     </div>
   </div>
 </section>

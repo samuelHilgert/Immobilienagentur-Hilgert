@@ -44,3 +44,47 @@ mat-progress-bar {
     width: 100%;
     box-sizing: border-box;
 }
+
+.immobilien-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .immobilie-box {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+  }
+  
+  .immobilie-box:hover {
+    transform: scale(1.03);
+  }
+  
+  .immobilie-content {
+    padding: 10px;
+  }
+  
+  .preis, .art, .objekttyp {
+    font-weight: bold;
+    color: #555;
+  }
+  
+  .details-button {
+    display: block;
+    margin-top: 10px;
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .details-button:hover {
+    background: #0056b3;
+  }
+  

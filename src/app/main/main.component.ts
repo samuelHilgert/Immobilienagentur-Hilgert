@@ -4,14 +4,16 @@ import { AboutUsComponent } from './about-us/about-us.component';
 import { LeistungenComponent } from './leistungen/leistungen.component';
 import { AwardsComponent } from './awards/awards.component';
 import { KontaktComponent } from './kontakt/kontakt.component';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-main',
   standalone:true,
-  imports: [AboutUsComponent, AngeboteComponent, LeistungenComponent, AwardsComponent, KontaktComponent],
+  imports: [AboutUsComponent, AngeboteComponent, LeistungenComponent, AwardsComponent, KontaktComponent, RouterModule],
   templateUrl: './main.component.html',
   styleUrl: './main.component.scss'
 })
+
 export class MainComponent {
 
 }
