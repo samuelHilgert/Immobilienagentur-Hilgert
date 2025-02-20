@@ -11,7 +11,7 @@ import { AuthService } from '../services/auth.service';
   imports: [CommonModule, ReactiveFormsModule], // FormsModule entfernt, da wir ReactiveFormsModule brauchen
   providers: [AuthService], // Da standalone, brauchen wir hier einen Provider für den Service
   templateUrl: './dashboard-login.component.html',
-  styleUrls: ['./dashboard-login.component.scss']
+  styleUrls: ['./dashboard-login.component.scss'],
 })
 export class DashboardLoginComponent {
   loginForm: FormGroup;
@@ -25,31 +25,36 @@ export class DashboardLoginComponent {
   ) {
     this.loginForm = this.fb.group({
       username: [''],
-      password: ['']
+      password: [''],
     });
   }
 
   onLogin(): void {
     console.log("🔍 Sende Login-Daten:", this.loginForm.value); // Debugging
-  
+    
     if (this.loginForm.valid) {
       this.http.post<any>(
         'https://immo.samuelhilgert.com/backend/auth/dashboard_login.php',
-        this.loginForm.value,
-        { headers: { 'Content-Type': 'application/json' } }
+        this.loginForm.value, // ✅ JSON-Daten senden (ohne CSRF-Token)
+        { 
+          headers: { 
+            'Content-Type': 'application/json' // 🔹 Kein CSRF-Token mehr nötig
+          }
+        }
       ).subscribe(
         response => {
-          console.log("🔍 API-Antwort:", response); // Debugging
+          console.log("🔍 API-Antwort:", response);
+    
           if (response && response.success) {
-            localStorage.setItem('admin', 'true');
-            this.router.navigate(['/dashboard/Hilgert-Immobilien']); // ✅ Automatisch zum Dashboard navigieren
+            localStorage.setItem('admin', 'true'); // 🔐 Login-Zustand speichern
+            this.router.navigateByUrl('/dashboard/Hilgert-Immobilien'); // ✅ Weiterleitung ins Dashboard
           } else {
             this.errorMessage = response.message || '⚠ Falsche Anmeldedaten!';
           }
         },
         error => {
           console.error("❌ API Fehler:", error);
-          this.errorMessage = '❌ Es gab ein Problem beim Login!';
+          this.errorMessage = `❌ Fehler: ${error.statusText} (${error.status})`;
         }
       );
     } else {
