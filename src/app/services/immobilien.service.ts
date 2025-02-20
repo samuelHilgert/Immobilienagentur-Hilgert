@@ -7,7 +7,7 @@ import { Immobilie } from '../models/immobilie.model'; // Dein Interface für di
   providedIn: 'root'
 })
 export class ImmobilienService {
-  private apiUrl = 'https://immo.samuelhilgert.com/backend/api'; // ✅ Richtiger API-Pfad
+  private apiUrl = 'https://immo.samuelhilgert.com/backend/api/immobilien_api.php';
 
   constructor(private http: HttpClient) {}
 
@@ -20,4 +20,5 @@ export class ImmobilienService {
   addImmobilie(immobilie: Immobilie): Observable<{ message: string; immobilie: Immobilie }> {
     return this.http.post<{ message: string; immobilie: Immobilie }>(`${this.apiUrl}/add_immobilie.php`, immobilie);
   }
+
 }

@@ -1,0 +1,8 @@
+
+# Verbieten aller rechtlichen Seiten 
+
+User-agent: *
+Disallow: /Datenschutz
+Disallow: /datenschutz
+Disallow: /Impressum
+Disallow: /impressum

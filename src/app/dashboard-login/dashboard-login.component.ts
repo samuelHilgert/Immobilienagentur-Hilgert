@@ -31,7 +31,7 @@ export class DashboardLoginComponent {
 
   onLogin(): void {
     if (this.loginForm.valid) {
-      this.http.post<any>('https://immo.samuelhilgert.com/dashboard_login.php', this.loginForm.value)
+      this.http.post<any>('https://immo.samuelhilgert.com/backend/auth/dashboard_login.php', this.loginForm.value)
         .subscribe(
           response => {
             if (response && response.success) { // Sicherstellen, dass response nicht undefined ist
