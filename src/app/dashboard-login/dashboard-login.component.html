@@ -1,5 +1,19 @@
 <section>
-    <div>
-        <h2>login</h2>
-    </div>
+  <div class="login-container">
+    <h2>Login</h2>
+    <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+      <div class="form-group">
+        <label for="username">Benutzername</label>
+        <input type="text" id="username" formControlName="username" placeholder="Benutzername eingeben" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Passwort</label>
+        <input type="password" id="password" formControlName="password" placeholder="Passwort eingeben" required>
+      </div>
+      <button type="submit" class="login-btn">Login</button>
+    </form>
+    <p *ngIf="errorMessage">{{ errorMessage }}</p>
+  </div>
 </section>
+
+<button *ngIf="authService.isLoggedIn()" (click)="onLogout()" class="logout-btn">Logout</button>
