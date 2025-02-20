@@ -30,25 +30,32 @@ export class DashboardLoginComponent {
   }
 
   onLogin(): void {
+    console.log("🔍 Sende Login-Daten:", this.loginForm.value); // Debugging
+  
     if (this.loginForm.valid) {
-      this.http.post<any>('https://immo.samuelhilgert.com/backend/auth/dashboard_login.php', this.loginForm.value)
-        .subscribe(
-          response => {
-            if (response && response.success) { // Sicherstellen, dass response nicht undefined ist
-              localStorage.setItem('admin', 'true'); // Speichert den Login-Zustand
-              this.router.navigate(['/dashboard']);
-            } else {
-              this.errorMessage = response.message || 'Falsche Anmeldedaten!';
-            }
-          },
-          error => {
-            this.errorMessage = 'Es gab ein Problem beim Login!';
+      this.http.post<any>(
+        'https://immo.samuelhilgert.com/backend/auth/dashboard_login.php',
+        this.loginForm.value,
+        { headers: { 'Content-Type': 'application/json' } }
+      ).subscribe(
+        response => {
+          console.log("🔍 API-Antwort:", response); // Debugging
+          if (response && response.success) {
+            localStorage.setItem('admin', 'true');
+            this.router.navigate(['/dashboard/Hilgert-Immobilien']); // ✅ Automatisch zum Dashboard navigieren
+          } else {
+            this.errorMessage = response.message || '⚠ Falsche Anmeldedaten!';
           }
-        );
+        },
+        error => {
+          console.error("❌ API Fehler:", error);
+          this.errorMessage = '❌ Es gab ein Problem beim Login!';
+        }
+      );
     } else {
-      this.errorMessage = 'Bitte alle Felder ausfüllen!';
+      this.errorMessage = '⚠ Bitte alle Felder ausfüllen!';
     }
-  }
+  }  
 
   onLogout(): void {
     this.authService.logout();

@@ -14,5 +14,9 @@ export const routes: Routes = [
     path: 'dashboard',
     component: DashboardLoginComponent, // Diese Route ist eigenständig!
   },
+  {
+    path: 'dashboard/Hilgert-Immobilien',
+    component: DashboardLoginComponent, // Diese Route ist eigenständig!
+  },
   { path: '**', redirectTo: '' } // Fallback
 ];
