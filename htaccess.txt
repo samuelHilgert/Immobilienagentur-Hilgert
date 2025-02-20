@@ -1,12 +1,13 @@
 RewriteEngine On
 
+# Falls eine Datei oder ein Verzeichnis existiert, direkt aufrufen
 RewriteCond %{REQUEST_FILENAME} -s [OR]
-
 RewriteCond %{REQUEST_FILENAME} -l [OR]
-
 RewriteCond %{REQUEST_FILENAME} -d
-
 RewriteRule ^.*$ - [NC,L]
 
+# ⚠ WICHTIG: Erlaube PHP-Requests vor der Weiterleitung an Angular
+RewriteCond %{REQUEST_URI} !^/backend/.*\.php$ [NC]
 
-RewriteRule ^(.*) /index.html [NC,L]
+# Falls keine Datei oder kein Verzeichnis existiert, leite an Angular weiter
+RewriteRule ^(.*)$ /index.html [NC,L]
