@@ -1,37 +1,32 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, catchError, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'https://immo.samuelhilgert.com/backend/auth';
-
   constructor(private http: HttpClient, private router: Router) {}
 
-  login(credentials: { username: string; password: string }): Observable<any> {
-    return this.http
-      .post<any>(`${this.apiUrl}/dashboard_login.php`, credentials)
+  isAuthenticated(): Observable<boolean> {
+    return this.http.get<{ authenticated: boolean }>('https://immo.samuelhilgert.com/backend/auth/auth_check.php')
       .pipe(
-        catchError((error) => {
-          console.error('❌ API Fehler:', error);
-          return throwError(
-            () => new Error(error.message || 'Login fehlgeschlagen')
-          );
+        map(response => {
+          if (!response.authenticated) {
+            this.router.navigate(['/dashboard-login']); // Falls nicht authentifiziert, zum Login umleiten
+          }
+          return response.authenticated;
         })
       );
   }
 
   logout(): void {
-    this.http.get<any>(`${this.apiUrl}/dashboard_logout.php`).subscribe(() => {
-      localStorage.removeItem('admin');
-      this.router.navigate(['/login']);
-    });
-  }
-
-  isLoggedIn(): boolean {
-    return localStorage.getItem('admin') === 'true';
+    localStorage.removeItem('admin'); // Optional: Falls du noch andere Daten speicherst
+    this.http.get('https://immo.samuelhilgert.com/backend/auth/dashboard_logout.php')
+      .subscribe(() => {
+        this.router.navigate(['/dashboard-login']);
+      });
   }
 }

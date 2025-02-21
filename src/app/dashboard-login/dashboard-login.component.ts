@@ -47,7 +47,7 @@ export class DashboardLoginComponent {
     
           if (response && response.success) {
             localStorage.setItem('admin', 'true'); // 🔐 Login-Zustand speichern
-            this.router.navigateByUrl('/dashboard/Hilgert-Immobilien'); // ✅ Weiterleitung ins Dashboard
+            this.router.navigateByUrl('/dashboard'); // ✅ Weiterleitung ins Dashboard
           } else {
             this.errorMessage = response.message || '⚠ Falsche Anmeldedaten!';
           }

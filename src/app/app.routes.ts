@@ -10,11 +10,11 @@ export const routes: Routes = [
     component: MainComponent,
   },
   {
-    path: 'dashboard',
+    path: 'dashboard-login',
     component: DashboardLoginComponent,
   },
   {
-    path: 'dashboard/Hilgert-Immobilien',
+    path: 'dashboard',
     component: DashboardComponent,
     canActivate: [AuthGuard] // 🔐 Schützt das Dashboard
   },

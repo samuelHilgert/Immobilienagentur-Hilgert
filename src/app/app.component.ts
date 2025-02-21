@@ -12,9 +12,18 @@ import { CommonModule } from '@angular/common';
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  constructor(private router: Router) {}
+  isLoading = true; // ⏳ Startet mit "Laden"
+  
+  constructor(private router: Router) {
+    this.router.events.subscribe(() => {
+      setTimeout(() => {
+        this.isLoading = false; // 👌 Sobald die Route fertig ist, das Laden beenden
+      }, 300);
+    });
+  }
 
   isDashboardRoute(): boolean {
     return this.router.url.startsWith('/dashboard');
   }
 }
+
