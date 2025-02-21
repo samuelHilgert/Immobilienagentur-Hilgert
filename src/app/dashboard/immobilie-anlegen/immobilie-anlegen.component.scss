@@ -1,0 +1,129 @@
+@use "./../../../styles.scss" as styles;
+@use "./../../../assets/fonts.scss" as f;
+@use "./../../../assets/colors.scss" as c;
+
+.immobilie-anlegen {
+    max-width: 800px;  // Erhöhte Breite für bessere Lesbarkeit
+    margin: 40px auto;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+  
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    // Menü-Styling
+    .immobilien-nav {
+      margin-bottom: 20px;
+  
+      .immobilien-menu {
+        display: flex;
+        justify-content: space-between;
+        padding: 0;
+        list-style: none;
+        background: #007bff;
+        border-radius: 5px;
+  
+        li {
+          flex: 1;
+          text-align: center;
+          padding: 10px 15px;
+          cursor: pointer;
+          background: #e0e0e0;
+          transition: all 0.3s ease-in-out;
+          color: white;
+          font-weight: bold;
+  
+          &:hover {
+            background: #0056b3;
+          }
+  
+          &.active {
+            background: #0056b3;
+            color: #fff;
+          }
+        }
+      }
+    }
+  
+    // Formular-Styling
+    .immobilien-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px; // Abstand zwischen den Inputs
+
+      label {
+        font-weight: bold;
+        display: block;  // Labels haben eigene Zeile
+        margin-bottom: 5px;
+      }
+  
+      input, textarea, select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+        background: white;
+      }
+
+      select {
+        appearance: none; // Entfernt Standard-Browser-Styling
+        background: #fff url('/assets/icons/arrow-down.svg') no-repeat right 10px center;
+        background-size: 15px;
+      }
+  
+      textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+  
+      // Styling für Zusatzfelder (z. B. Haus-Details)
+      .zusatzfeld {
+        background: #f1f1f1;
+        padding: 15px;
+        border-radius: 5px;
+        margin-top: 15px;
+        border-left: 5px solid #007bff;  // Blaue Markierung links
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+        
+        h3 {
+          margin-bottom: 10px;
+          color: #007bff;
+        }
+
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        
+        label {
+          flex-basis: 45%;  // Setzt die Labels auf halbe Breite
+        }
+
+        input, textarea, select {
+          flex-basis: 50%;
+        }
+      }
+  
+      .submit-button {
+        margin-top: 20px;
+        padding: 12px;
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        font-weight: bold;
+  
+        &:hover {
+          background: #218838;
+        }
+      }
+    }
+}

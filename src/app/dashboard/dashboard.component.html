@@ -3,7 +3,7 @@
     <aside class="sidebar">
       <nav>
         <ul>
-          <li><a href="#">📂 Immobilien verwalten</a></li>
+          <li><a routerLink="immobilie-anlegen">📂 Immobilien verwalten</a></li>
           <li><a href="#">🏠 Immobilie anlegen</a></li>
           <li><a href="#">🔎 Suchaufträge verwalten</a></li>         
           <li><a href="#">🔎 Suchauftrag anlegen</a></li>
@@ -21,8 +21,7 @@
   
     <!-- Inhaltsbereich -->
     <main class="content">
-      <h1>Willkommen im Dashboard</h1>
-      <p>Hier kannst du alle wichtigen Aktionen für dein Immobilien-Projekt verwalten.</p>
+      <router-outlet></router-outlet> 
     </main>
   </section>
   
