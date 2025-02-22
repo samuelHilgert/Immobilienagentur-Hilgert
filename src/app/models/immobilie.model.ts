@@ -18,8 +18,6 @@ export interface Immobilie {
   marketingType: "PURCHASE";
 }
 
-
-
 // ✅ NEUES INTERFACE für Wohnungen
 export interface WohnungDetails {
   externalId?: string;

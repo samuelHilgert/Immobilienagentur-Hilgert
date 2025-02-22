@@ -42,6 +42,15 @@
       <input type="text" [(ngModel)]="immobilie.creationDate" name="creationDate" placeholder="Erstellungsdatum" disabled>
       <input type="text" [(ngModel)]="immobilie.lastModificationDate" name="lastModificationDate" placeholder="Letzte Änderung" disabled>
   
+      <h3>Bilder & Videos hochladen</h3>
+      <input type="file" (change)="uploadMedia($event, 'image')">
+      <button (click)="uploadMedia($event, 'video')">Video hochladen</button>
+
+      <div *ngFor="let media of uploadedMedia">
+          <img *ngIf="media.type === 'image'" [src]="media.url" width="100">
+          <video *ngIf="media.type === 'video'" [src]="media.url" controls width="200"></video>
+      </div>
+
       <!-- 🔹 Zusätzliche Felder für Wohnungen -->
       <div *ngIf="selectedArt === 'wohnung'" class="zusatzfeld">
         <h3>Wohnungsdetails</h3>

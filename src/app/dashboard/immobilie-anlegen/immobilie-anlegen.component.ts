@@ -1,8 +1,16 @@
+// Interface-Deklaration ganz oben
+interface MediaItem {
+  type: 'image' | 'video';
+  file: File;
+  url: string;
+}
+
 import { Component } from '@angular/core';
 import { ImmobilienService } from '../../services/immobilien.service';
 import { Immobilie, WohnungDetails } from '../../models/immobilie.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-immobilie-anlegen',
@@ -11,13 +19,16 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './immobilie-anlegen.component.html',
   styleUrls: ['./immobilie-anlegen.component.scss']
 })
+
 export class ImmobilieAnlegenComponent {
   selectedArt: 'wohnung' | 'haus' | 'grundstueck' | '' = '';
-
   immobilie: Immobilie = this.initImmobilie();
   wohnung: WohnungDetails = this.initWohnungDetails();
+  
+  // Hier speichern wir die hochgeladenen Medien (Dateien!)
+  uploadedMedia: MediaItem[] = [];
 
-  constructor(private immobilienService: ImmobilienService) {}
+  constructor(private immobilienService: ImmobilienService, private http: HttpClient) {}
 
   // Setzt die Art der Immobilie und initialisiert die Felder neu
   setImmobilienArt(art: 'wohnung' | 'haus' | 'grundstueck') {
@@ -58,6 +69,29 @@ export class ImmobilieAnlegenComponent {
     };
   }
 
+  // 📂 Dateiupload-Funktion für Bilder & Videos
+  uploadMedia(event: any, type: 'image' | 'video') {
+    let file: File | undefined;
+  
+    // Wenn direkt ein File übergeben wird (z. B. aus dem Input-Change Event)
+    if (event instanceof File) {
+      file = event;
+    } else {
+      // Andernfalls casten wir event.target in ein HTMLInputElement
+      const inputElement = event.target as HTMLInputElement;
+      file = inputElement.files ? inputElement.files[0] : undefined;
+    }
+  
+    if (!file) return;
+  
+    // Erzeugen einer lokalen URL für die Vorschau
+    const url = URL.createObjectURL(file);
+  
+    // Dateiobjekt inkl. URL speichern
+    this.uploadedMedia.push({ type, file, url });
+  }
+  
+
   // 🏡 Immobilie + Wohnung speichern
   submitWohnung() {
     if (!this.immobilie || !this.wohnung) return;
@@ -67,16 +101,41 @@ export class ImmobilieAnlegenComponent {
       (response) => {
         alert('Immobilie erfolgreich gespeichert!');
 
-        // **Schritt 2**: Wohnungsdetails mit externer ID speichern
+        // ✅ ExternalId aus `response.immobilie` speichern
         this.wohnung.externalId = response.immobilie.externalId;
 
+        // **Schritt 2**: Wohnungsdetails mit externer ID speichern
         this.immobilienService.addWohnung(this.wohnung).subscribe(
-          () => alert('Wohnungsdetails erfolgreich gespeichert!'),
+          () => {
+            alert('Wohnungsdetails erfolgreich gespeichert!');
+
+            // **Schritt 3**: Medien hochladen
+            this.uploadedMedia.forEach(media => {
+              this.uploadFile(media.file, media.type, this.wohnung.externalId!);
+            });
+          },
           () => alert('Fehler beim Speichern der Wohnungsdetails')
         );
       },
       () => alert('Fehler beim Speichern der Immobilie')
     );
+  }
+
+  // 📂 Datei hochladen (Bilder & Videos)
+  uploadFile(file: File, type: 'image' | 'video', externalId: string) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('externalId', externalId);
+    formData.append('type', type);
+
+    this.http.post<{ message: string; url: string }>(
+      'https://immo.samuelhilgert.com/backend/api/upload_media.php',
+      formData
+    ).subscribe(response => {
+      console.log(`${type} hochgeladen:`, response.url);
+    }, error => {
+      console.error(`Fehler beim Hochladen des ${type}:`, error);
+    });
   }
 
   submitHaus() {
