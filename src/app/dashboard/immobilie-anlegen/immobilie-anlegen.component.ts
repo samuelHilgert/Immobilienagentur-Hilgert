@@ -1,148 +1,77 @@
 import { Component } from '@angular/core';
-import { NgForm } from '@angular/forms';
 import { ImmobilienService } from '../../services/immobilien.service';
-import { HausDetails, Immobilie } from '../../models/immobilie.model';
+import { HausDetails, WohnungDetails, GrundstueckDetails } from '../../models/immobilie.model';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-immobilie-anlegen',
   standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './immobilie-anlegen.component.html',
-  styleUrls: ['./immobilie-anlegen.component.scss'],
-  imports: [CommonModule, FormsModule] 
+  styleUrls: ['./immobilie-anlegen.component.scss']
 })
 export class ImmobilieAnlegenComponent {
-  selectedArt: string = ''; // Speichert die gewählte Immobilienart
-  immobilie: Immobilie = {
-    id: '',          
-    titel: '',
-    beschreibung: '',
-    preis: '',      
-    art: '',
-    objekt_typ: '',
-    status: '',
-    plz: '',
-    stadt: '',
-    erstellt_am: '',
-    aktualisiert_am: ''
-  };
+  selectedArt: 'haus' | 'wohnung' | 'grundstueck' | '' = '';
 
-  // Speichert Haus-spezifische Felder
-  hausDetails: HausDetails = {
-    immobilie_id: '',
-    title: '',
-    street: '',
-    houseNumber: '',
-    postcode: '',
-    city: '',
-    descriptionNote: '',
-    furnishingNote: '',
-    locationNote: '',
-    otherNote: '',
-    showAddress: true,
-    buildingType: 'NO_INFORMATION',
-    numberOfRooms: '0',
-    constructionYear: 0,
-    energyPerformanceCertificate: false,
-    heatingType: 'NO_INFORMATION',
-    latitude: 0,
-    longitude: 0
-  };
+  hausDetails: HausDetails = this.initHausDetails();
+  wohnungDetails: WohnungDetails = this.initWohnungDetails();
+  grundstueckDetails: GrundstueckDetails = this.initGrundstueckDetails();
 
   constructor(private immobilienService: ImmobilienService) {}
 
-  // Setzt die Immobilienart und leert das Formular
-  setImmobilienArt(art: string) {
+  setImmobilienArt(art: 'haus' | 'wohnung' | 'grundstueck') {
     this.selectedArt = art;
-    this.immobilie = { 
-      id: '',
-      titel: '', 
-      beschreibung: '', 
-      preis: '',  
-      art: art, 
-      objekt_typ: '', 
-      status: '', 
-      plz: '', 
-      stadt: '', 
-      erstellt_am: '', 
-      aktualisiert_am: ''
-    };
+  }
 
-    this.hausDetails = {
-      immobilie_id: '',
-      title: '',
-      street: '',
-      houseNumber: '',
-      postcode: '',
-      city: '',
-      descriptionNote: '',
-      furnishingNote: '',
-      locationNote: '',
-      otherNote: '',
-      showAddress: true,
-      buildingType: 'NO_INFORMATION',
-      numberOfRooms: '0',
-      constructionYear: 0,
-      energyPerformanceCertificate: false,
-      heatingType: 'NO_INFORMATION',
-      latitude: 0,
-      longitude: 0
+  initHausDetails(): HausDetails {
+    return {
+      externalId: '', title: '', street: '', houseNumber: '', postcode: '', city: '',
+      showAddress: false, contactId: '', buildingType: 'NO_INFORMATION',
+      value: 0, currency: 'EUR', livingSpace: 0, plotArea: 0, numberOfRooms: 0,
+      hasCourtage: 'NOT_APPLICABLE', marketingType: 'PURCHASE', priceIntervalType: 'ONE_TIME_CHARGE'
     };
   }
 
-  // Sendet die Daten an den Service
-  submitImmobilie() {
-    // ✅ Sicherstellen, dass Preis als String gesendet wird
-    const immobilieToSend: Immobilie = { 
-      ...this.immobilie,
-      preis: this.immobilie.preis.toString()
+  initWohnungDetails(): WohnungDetails {
+    return {
+      externalId: '', title: '', street: '', houseNumber: '', postcode: '', city: '',
+      showAddress: false, contactId: '', value: 0, currency: 'EUR',
+      livingSpace: 0, numberOfRooms: 0,
+      hasCourtage: 'NOT_APPLICABLE', marketingType: 'PURCHASE', priceIntervalType: 'ONE_TIME_CHARGE'
     };
-  
-    // ✅ 1. Immobilie speichern
-    this.immobilienService.addImmobilie(immobilieToSend).subscribe(response => {
-      if (response && response.immobilie && response.immobilie.id) {
-        const immobilieId = response.immobilie.id; // ✅ ID der neu erstellten Immobilie
-        
-        // ✅ 2. Falls die Immobilie ein Haus ist, speichere sie zusätzlich in `haus_details`
-        if (this.selectedArt === 'haus') {
-          const hausDetails: HausDetails = {
-            immobilie_id: immobilieId, // Hier setzen wir die ID
-            title: this.hausDetails.title || '',
-            street: this.hausDetails.street || '',
-            houseNumber: this.hausDetails.houseNumber || '',
-            postcode: this.hausDetails.postcode || '',
-            city: this.hausDetails.city || '',
-            descriptionNote: this.hausDetails.descriptionNote || '',
-            furnishingNote: this.hausDetails.furnishingNote || '',
-            locationNote: this.hausDetails.locationNote || '',
-            showAddress: this.hausDetails.showAddress || false,
-            buildingType: this.hausDetails.buildingType || 'NO_INFORMATION',
-            numberOfRooms: this.hausDetails.numberOfRooms || '',
-            constructionYear: this.hausDetails.constructionYear || undefined,
-            energyPerformanceCertificate: this.hausDetails.energyPerformanceCertificate || false,
-            heatingType: this.hausDetails.heatingType || 'NO_INFORMATION',
-            latitude: this.hausDetails.latitude || 0,
-            longitude: this.hausDetails.longitude || 0
-          };
-  
-          this.immobilienService.addHaus(hausDetails).subscribe(response => {
-            console.log('Haus gespeichert:', response);
-            alert('Haus erfolgreich angelegt!');
-          }, error => {
-            console.error('Fehler beim Speichern des Hauses:', error);
-            alert('Fehler beim Speichern der Haus-Details.');
-          });
-        } else {
-          alert('Immobilie erfolgreich angelegt!');
-        }
-      } else {
-        alert('Fehler: Keine ID von add_immobilie.php erhalten.');
-      }
-    }, error => {
-      console.error('Fehler beim Speichern der Immobilie:', error);
-      alert('Fehler beim Speichern der Immobilie.');
-    });
   }
-  
+
+  initGrundstueckDetails(): GrundstueckDetails {
+    return {
+      externalId: '', title: '', street: '', houseNumber: '', postcode: '', city: '',
+      showAddress: false, contactId: '', commercializationType: 'BUY',
+      value: 0, currency: 'EUR', plotArea: 0,
+      hasCourtage: 'NOT_APPLICABLE', marketingType: 'PURCHASE', priceIntervalType: 'ONE_TIME_CHARGE'
+    };
+  }
+
+  submitHaus() {
+    if (!this.hausDetails) return;
+    this.immobilienService.addHaus(this.hausDetails).subscribe(
+      () => alert('Haus erfolgreich gespeichert!'),
+      () => alert('Fehler beim Speichern des Hauses')
+    );
+  }
+
+  submitWohnung() {
+    if (!this.wohnungDetails) return;
+    this.immobilienService.addWohnung(this.wohnungDetails).subscribe(
+      () => alert('Wohnung erfolgreich gespeichert!'),
+      () => alert('Fehler beim Speichern der Wohnung')
+    );
+  }
+
+  submitGrundstueck() {
+    if (!this.grundstueckDetails) return;
+    this.immobilienService.addGrundstueck(this.grundstueckDetails).subscribe(
+      () => alert('Grundstück erfolgreich gespeichert!'),
+      () => alert('Fehler beim Speichern des Grundstücks')
+    );
+  }
 }

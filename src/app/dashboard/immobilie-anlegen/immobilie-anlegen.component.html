@@ -1,124 +1,73 @@
 <div class="immobilie-anlegen">
   <h2>Neue Immobilie anlegen</h2>
 
-  <!-- Menü für die Auswahl der Immobilienart -->
   <nav class="immobilien-nav">
     <ul class="immobilien-menu">
       <li (click)="setImmobilienArt('haus')" [class.active]="selectedArt === 'haus'">Haus</li>
       <li (click)="setImmobilienArt('wohnung')" [class.active]="selectedArt === 'wohnung'">Wohnung</li>
-      <li (click)="setImmobilienArt('grundstück')" [class.active]="selectedArt === 'grundstück'">Grundstück</li>
-      <li (click)="setImmobilienArt('ferienwohnung')" [class.active]="selectedArt === 'ferienwohnung'">Ferienwohnung</li>
-      <li (click)="setImmobilienArt('ferienhaus')" [class.active]="selectedArt === 'ferienhaus'">Ferienhaus</li>
+      <li (click)="setImmobilienArt('grundstueck')" [class.active]="selectedArt === 'grundstueck'">Grundstück</li>
     </ul>
   </nav>
 
-  <!-- Formularfelder basierend auf der ausgewählten Art -->
-  <form *ngIf="selectedArt" (ngSubmit)="submitImmobilie()" class="immobilien-form">
+  <!-- Formular für Häuser -->
+  <form *ngIf="selectedArt === 'haus'" (ngSubmit)="submitHaus()" class="immobilien-form">
+    <h3>Haus anlegen</h3>
     
-    <div class="form-group">
-      <label for="titel">Titel:</label>
-      <input id="titel" type="text" [(ngModel)]="immobilie.titel" name="titel" required>
-    </div>
+    <input type="text" [(ngModel)]="hausDetails.externalId" name="externalId" placeholder="Externe ID">
+    <input type="text" [(ngModel)]="hausDetails.title" name="title" placeholder="Titel" required>
+    <input type="text" [(ngModel)]="hausDetails.street" name="street" placeholder="Straße" required>
+    <input type="text" [(ngModel)]="hausDetails.houseNumber" name="houseNumber" placeholder="Hausnummer" required>
+    <input type="text" [(ngModel)]="hausDetails.postcode" name="postcode" placeholder="PLZ" required>
+    <input type="text" [(ngModel)]="hausDetails.city" name="city" placeholder="Stadt" required>
+    
+    <input type="checkbox" [(ngModel)]="hausDetails.showAddress" name="showAddress"> Adresse anzeigen
+    <input type="text" [(ngModel)]="hausDetails.contactId" name="contactId" placeholder="Kontakt ID">
+    
+    <select [(ngModel)]="hausDetails.buildingType" name="buildingType" required>
+      <option *ngFor="let type of ['NO_INFORMATION', 'SINGLE_FAMILY_HOUSE', 'MID_TERRACE_HOUSE', 'END_TERRACE_HOUSE', 'MULTI_FAMILY_HOUSE', 'BUNGALOW', 'FARMHOUSE', 'SEMIDETACHED_HOUSE', 'VILLA', 'CASTLE_MANOR_HOUSE', 'SPECIAL_REAL_ESTATE', 'OTHER']" [value]="type">{{ type }}</option>
+    </select>
+    
+    <input type="number" [(ngModel)]="hausDetails.value" name="value" placeholder="Preis (€)" required>
+    <input type="number" [(ngModel)]="hausDetails.livingSpace" name="livingSpace" placeholder="Wohnfläche (m²)" required>
+    <input type="number" [(ngModel)]="hausDetails.plotArea" name="plotArea" placeholder="Grundstücksfläche (m²)" required>
+    <input type="number" [(ngModel)]="hausDetails.numberOfRooms" name="numberOfRooms" placeholder="Anzahl Zimmer" required>
+    
+    <button type="submit">Haus speichern</button>
+  </form>
 
-    <div class="form-group">
-      <label for="beschreibung">Beschreibung:</label>
-      <textarea id="beschreibung" [(ngModel)]="immobilie.beschreibung" name="beschreibung"></textarea>
-    </div>
+  <!-- Formular für Wohnungen -->
+  <form *ngIf="selectedArt === 'wohnung'" (ngSubmit)="submitWohnung()" class="immobilien-form">
+    <h3>Wohnung anlegen</h3>
+    
+    <input type="text" [(ngModel)]="wohnungDetails.externalId" name="externalId" placeholder="Externe ID">
+    <input type="text" [(ngModel)]="wohnungDetails.title" name="title" placeholder="Titel" required>
+    <input type="text" [(ngModel)]="wohnungDetails.street" name="street" placeholder="Straße" required>
+    <input type="text" [(ngModel)]="wohnungDetails.houseNumber" name="houseNumber" placeholder="Hausnummer" required>
+    <input type="text" [(ngModel)]="wohnungDetails.postcode" name="postcode" placeholder="PLZ" required>
+    <input type="text" [(ngModel)]="wohnungDetails.city" name="city" placeholder="Stadt" required>
+    
+    <input type="checkbox" [(ngModel)]="wohnungDetails.showAddress" name="showAddress"> Adresse anzeigen
+    <input type="number" [(ngModel)]="wohnungDetails.value" name="value" placeholder="Preis (€)" required>
+    <input type="number" [(ngModel)]="wohnungDetails.livingSpace" name="livingSpace" placeholder="Wohnfläche (m²)" required>
+    <input type="number" [(ngModel)]="wohnungDetails.numberOfRooms" name="numberOfRooms" placeholder="Anzahl Zimmer" required>
+    
+    <button type="submit">Wohnung speichern</button>
+  </form>
 
-    <div class="form-group">
-      <label for="preis">Preis (€):</label>
-      <input id="preis" type="text" [(ngModel)]="immobilie.preis" name="preis" required>
-    </div>
-
-    <div class="form-group">
-      <label for="plz">PLZ:</label>
-      <input id="plz" type="text" [(ngModel)]="immobilie.plz" name="plz" required>
-    </div>
-
-    <div class="form-group">
-      <label for="stadt">Stadt:</label>
-      <input id="stadt" type="text" [(ngModel)]="immobilie.stadt" name="stadt" required>
-    </div>
-
-    <!-- Zusätzliche Felder für HÄUSER -->
-    <div *ngIf="selectedArt === 'haus'" class="zusatzfeld">
-      <h3>Haus-spezifische Informationen</h3>
-
-      <div class="form-group">
-        <label for="title">Exposeüberschrift:</label>
-        <input id="title" type="text" [(ngModel)]="hausDetails.title" name="title" required>
-      </div>
-
-      <div class="form-group">
-        <label for="street">Straße:</label>
-        <input id="street" type="text" [(ngModel)]="hausDetails.street" name="street" required>
-      </div>
-
-      <div class="form-group">
-        <label for="houseNumber">Hausnummer:</label>
-        <input id="houseNumber" type="text" [(ngModel)]="hausDetails.houseNumber" name="houseNumber" required>
-      </div>
-
-      <div class="form-group">
-        <label for="numberOfRooms">Anzahl der Zimmer:</label>
-        <input id="numberOfRooms" type="number" [(ngModel)]="hausDetails.numberOfRooms" name="numberOfRooms" required>
-      </div>
-
-      <div class="form-group">
-        <label for="constructionYear">Baujahr:</label>
-        <input id="constructionYear" type="number" [(ngModel)]="hausDetails.constructionYear" name="constructionYear">
-      </div>
-
-      <div class="form-group">
-        <label for="buildingType">Haustyp:</label>
-        <select id="buildingType" [(ngModel)]="hausDetails.buildingType" name="buildingType">
-          <option value="NO_INFORMATION">Keine Angabe</option>
-          <option value="SINGLE_FAMILY_HOUSE">Einfamilienhaus</option>
-          <option value="MID_TERRACE_HOUSE">Reihenmittelhaus</option>
-          <option value="END_TERRACE_HOUSE">Reiheneckhaus</option>
-          <option value="MULTI_FAMILY_HOUSE">Mehrfamilienhaus</option>
-          <option value="BUNGALOW">Bungalow</option>
-          <option value="FARMHOUSE">Bauernhaus</option>
-          <option value="SEMIDETACHED_HOUSE">Doppelhaushälfte</option>
-          <option value="VILLA">Villa</option>
-          <option value="CASTLE_MANOR_HOUSE">Burg/Schloss</option>
-          <option value="SPECIAL_REAL_ESTATE">Besondere Immobilie</option>
-          <option value="OTHER">Sonstiges</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="energyPerformanceCertificate">Energieausweis vorhanden?</label>
-        <select id="energyPerformanceCertificate" [(ngModel)]="hausDetails.energyPerformanceCertificate" name="energyPerformanceCertificate">
-          <option [ngValue]="true">Ja</option>
-          <option [ngValue]="false">Nein</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="heatingType">Heizungsart:</label>
-        <select id="heatingType" [(ngModel)]="hausDetails.heatingType" name="heatingType">
-          <option value="NO_INFORMATION">Keine Angabe</option>
-          <option value="CENTRAL_HEATING">Zentralheizung</option>
-          <option value="FLOOR_HEATING">Fußbodenheizung</option>
-          <option value="GAS_HEATING">Gas-Heizung</option>
-          <option value="OIL_HEATING">Öl-Heizung</option>
-          <option value="SOLAR_HEATING">Solar-Heizung</option>
-          <option value="HEAT_PUMP">Wärmepumpe</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="latitude">Geokoordinaten (Breitengrad):</label>
-        <input id="latitude" type="number" step="0.000001" [(ngModel)]="hausDetails.latitude" name="latitude">
-      </div>
-
-      <div class="form-group">
-        <label for="longitude">Geokoordinaten (Längengrad):</label>
-        <input id="longitude" type="number" step="0.000001" [(ngModel)]="hausDetails.longitude" name="longitude">
-      </div>
-    </div>
-
-    <button type="submit" class="submit-button">Immobilie speichern</button>
+  <!-- Formular für Grundstücke -->
+  <form *ngIf="selectedArt === 'grundstueck'" (ngSubmit)="submitGrundstueck()" class="immobilien-form">
+    <h3>Grundstück anlegen</h3>
+    
+    <input type="text" [(ngModel)]="grundstueckDetails.externalId" name="externalId" placeholder="Externe ID">
+    <input type="text" [(ngModel)]="grundstueckDetails.title" name="title" placeholder="Titel" required>
+    <input type="text" [(ngModel)]="grundstueckDetails.street" name="street" placeholder="Straße" required>
+    <input type="text" [(ngModel)]="grundstueckDetails.houseNumber" name="houseNumber" placeholder="Hausnummer" required>
+    <input type="text" [(ngModel)]="grundstueckDetails.postcode" name="postcode" placeholder="PLZ" required>
+    <input type="text" [(ngModel)]="grundstueckDetails.city" name="city" placeholder="Stadt" required>
+    
+    <input type="number" [(ngModel)]="grundstueckDetails.value" name="value" placeholder="Preis (€)" required>
+    <input type="number" [(ngModel)]="grundstueckDetails.plotArea" name="plotArea" placeholder="Grundstücksfläche (m²)" required>
+    
+    <button type="submit">Grundstück speichern</button>
   </form>
 </div>
