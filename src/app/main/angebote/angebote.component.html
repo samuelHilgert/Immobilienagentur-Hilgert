@@ -19,16 +19,16 @@
     <div class="immobilie-box" *ngFor="let immo of immobilien">
       <img
         src="https://material.angular.io/assets/img/examples/shiba2.jpg"
-        alt="{{ immo.titel }}"
+        alt="{{ immo.title }}"
       />
       <div class="immobilie-content">
-        <h3>{{ immo.titel }}</h3>
-        <p class="preis">💰 Preis: {{ immo.preis | number }} €</p>
-        <p class="art">🔄 Art: {{ immo.art }}</p>
-        <p class="objekttyp">🏠 Objekttyp: {{ immo.objekt_typ }}</p>
-        <p class="status">🔄 Status: {{ immo.status }}</p>
-        <p class="plz">🔄 Plz: {{ immo.plz }}</p>
-        <p class="stadt">🔄 Stadt: {{ immo.stadt }}</p>
+        <h3>{{ immo.locationNote }}</h3>
+        <p class="preis">💰 Preis: {{ immo.value | number }} €</p>
+        <p class="art">🔄 Art: {{ immo.marketingType }}</p>
+        <p class="objekttyp">🏠 Objekttyp: {{ immo.externalId }}</p>
+        <p class="status">🔄 Status: {{ immo.marketingType }}</p>
+        <p class="plz">🔄 Plz: {{ immo.postcode }}</p>
+        <p class="stadt">🔄 Stadt: {{ immo.city }}</p>
         <button class="details-button">Mehr Details</button>
       </div>
     </div>

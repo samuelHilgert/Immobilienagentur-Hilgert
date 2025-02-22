@@ -1,73 +1,108 @@
 <div class="immobilie-anlegen">
-  <h2>Neue Immobilie anlegen</h2>
+    <h2>Neue Immobilie anlegen</h2>
+  
+    <nav class="immobilien-nav">
+      <ul class="immobilien-menu">
+        <li (click)="setImmobilienArt('wohnung')" [class.active]="selectedArt === 'wohnung'">Wohnung</li>
+        <li (click)="setImmobilienArt('haus')" [class.active]="selectedArt === 'haus'">Haus</li>
+        <li (click)="setImmobilienArt('grundstueck')" [class.active]="selectedArt === 'grundstueck'">Grundstück</li>
+      </ul>
+    </nav>
+  
+    <!-- Gemeinsames Formular für ALLE Immobilien -->
+    <form (ngSubmit)="selectedArt === 'wohnung' ? submitWohnung() : 
+    selectedArt === 'haus' ? submitHaus() : 
+    submitGrundstueck()" class="immobilien-form">
 
-  <nav class="immobilien-nav">
-    <ul class="immobilien-menu">
-      <li (click)="setImmobilienArt('haus')" [class.active]="selectedArt === 'haus'">Haus</li>
-      <li (click)="setImmobilienArt('wohnung')" [class.active]="selectedArt === 'wohnung'">Wohnung</li>
-      <li (click)="setImmobilienArt('grundstueck')" [class.active]="selectedArt === 'grundstueck'">Grundstück</li>
-    </ul>
-  </nav>
-
-  <!-- Formular für Häuser -->
-  <form *ngIf="selectedArt === 'haus'" (ngSubmit)="submitHaus()" class="immobilien-form">
-    <h3>Haus anlegen</h3>
-    
-    <input type="text" [(ngModel)]="hausDetails.externalId" name="externalId" placeholder="Externe ID">
-    <input type="text" [(ngModel)]="hausDetails.title" name="title" placeholder="Titel" required>
-    <input type="text" [(ngModel)]="hausDetails.street" name="street" placeholder="Straße" required>
-    <input type="text" [(ngModel)]="hausDetails.houseNumber" name="houseNumber" placeholder="Hausnummer" required>
-    <input type="text" [(ngModel)]="hausDetails.postcode" name="postcode" placeholder="PLZ" required>
-    <input type="text" [(ngModel)]="hausDetails.city" name="city" placeholder="Stadt" required>
-    
-    <input type="checkbox" [(ngModel)]="hausDetails.showAddress" name="showAddress"> Adresse anzeigen
-    <input type="text" [(ngModel)]="hausDetails.contactId" name="contactId" placeholder="Kontakt ID">
-    
-    <select [(ngModel)]="hausDetails.buildingType" name="buildingType" required>
-      <option *ngFor="let type of ['NO_INFORMATION', 'SINGLE_FAMILY_HOUSE', 'MID_TERRACE_HOUSE', 'END_TERRACE_HOUSE', 'MULTI_FAMILY_HOUSE', 'BUNGALOW', 'FARMHOUSE', 'SEMIDETACHED_HOUSE', 'VILLA', 'CASTLE_MANOR_HOUSE', 'SPECIAL_REAL_ESTATE', 'OTHER']" [value]="type">{{ type }}</option>
-    </select>
-    
-    <input type="number" [(ngModel)]="hausDetails.value" name="value" placeholder="Preis (€)" required>
-    <input type="number" [(ngModel)]="hausDetails.livingSpace" name="livingSpace" placeholder="Wohnfläche (m²)" required>
-    <input type="number" [(ngModel)]="hausDetails.plotArea" name="plotArea" placeholder="Grundstücksfläche (m²)" required>
-    <input type="number" [(ngModel)]="hausDetails.numberOfRooms" name="numberOfRooms" placeholder="Anzahl Zimmer" required>
-    
-    <button type="submit">Haus speichern</button>
-  </form>
-
-  <!-- Formular für Wohnungen -->
-  <form *ngIf="selectedArt === 'wohnung'" (ngSubmit)="submitWohnung()" class="immobilien-form">
-    <h3>Wohnung anlegen</h3>
-    
-    <input type="text" [(ngModel)]="wohnungDetails.externalId" name="externalId" placeholder="Externe ID">
-    <input type="text" [(ngModel)]="wohnungDetails.title" name="title" placeholder="Titel" required>
-    <input type="text" [(ngModel)]="wohnungDetails.street" name="street" placeholder="Straße" required>
-    <input type="text" [(ngModel)]="wohnungDetails.houseNumber" name="houseNumber" placeholder="Hausnummer" required>
-    <input type="text" [(ngModel)]="wohnungDetails.postcode" name="postcode" placeholder="PLZ" required>
-    <input type="text" [(ngModel)]="wohnungDetails.city" name="city" placeholder="Stadt" required>
-    
-    <input type="checkbox" [(ngModel)]="wohnungDetails.showAddress" name="showAddress"> Adresse anzeigen
-    <input type="number" [(ngModel)]="wohnungDetails.value" name="value" placeholder="Preis (€)" required>
-    <input type="number" [(ngModel)]="wohnungDetails.livingSpace" name="livingSpace" placeholder="Wohnfläche (m²)" required>
-    <input type="number" [(ngModel)]="wohnungDetails.numberOfRooms" name="numberOfRooms" placeholder="Anzahl Zimmer" required>
-    
-    <button type="submit">Wohnung speichern</button>
-  </form>
-
-  <!-- Formular für Grundstücke -->
-  <form *ngIf="selectedArt === 'grundstueck'" (ngSubmit)="submitGrundstueck()" class="immobilien-form">
-    <h3>Grundstück anlegen</h3>
-    
-    <input type="text" [(ngModel)]="grundstueckDetails.externalId" name="externalId" placeholder="Externe ID">
-    <input type="text" [(ngModel)]="grundstueckDetails.title" name="title" placeholder="Titel" required>
-    <input type="text" [(ngModel)]="grundstueckDetails.street" name="street" placeholder="Straße" required>
-    <input type="text" [(ngModel)]="grundstueckDetails.houseNumber" name="houseNumber" placeholder="Hausnummer" required>
-    <input type="text" [(ngModel)]="grundstueckDetails.postcode" name="postcode" placeholder="PLZ" required>
-    <input type="text" [(ngModel)]="grundstueckDetails.city" name="city" placeholder="Stadt" required>
-    
-    <input type="number" [(ngModel)]="grundstueckDetails.value" name="value" placeholder="Preis (€)" required>
-    <input type="number" [(ngModel)]="grundstueckDetails.plotArea" name="plotArea" placeholder="Grundstücksfläche (m²)" required>
-    
-    <button type="submit">Grundstück speichern</button>
-  </form>
-</div>
+      <h3>Allgemeine Immobiliendaten</h3>
+  
+      <input type="text" [(ngModel)]="immobilie.externalId" name="externalId" placeholder="Externe ID">
+      <input type="text" [(ngModel)]="immobilie.title" name="title" placeholder="Titel" required>
+      <input type="text" [(ngModel)]="immobilie.street" name="street" placeholder="Straße" required>
+      <input type="text" [(ngModel)]="immobilie.houseNumber" name="houseNumber" placeholder="Hausnummer" required>
+      <input type="text" [(ngModel)]="immobilie.postcode" name="postcode" placeholder="PLZ" required>
+      <input type="text" [(ngModel)]="immobilie.city" name="city" placeholder="Stadt" required>
+  
+      <textarea [(ngModel)]="immobilie.descriptionNote" name="descriptionNote" placeholder="Beschreibung"></textarea>
+      <textarea [(ngModel)]="immobilie.locationNote" name="locationNote" placeholder="Lage"></textarea>
+      <textarea [(ngModel)]="immobilie.otherNote" name="otherNote" placeholder="Sonstige Anmerkungen"></textarea>
+  
+      <input type="number" [(ngModel)]="immobilie.value" name="value" placeholder="Kaufpreis (€)" required>
+  
+      <select [(ngModel)]="immobilie.hasCourtage" name="hasCourtage" required>
+        <option value="YES">Provision: Ja</option>
+        <option value="NO">Provision: Nein</option>
+        <option value="NOT_APPLICABLE">Provision: Nicht zutreffend</option>
+      </select>
+  
+      <input type="text" [(ngModel)]="immobilie.courtage" name="courtage" placeholder="Provision">
+      <textarea [(ngModel)]="immobilie.courtageNote" name="courtageNote" placeholder="Provisionshinweis"></textarea>
+  
+      <input type="text" [(ngModel)]="immobilie.marketingType" name="marketingType" value="PURCHASE" disabled>
+      <input type="text" [(ngModel)]="immobilie.creationDate" name="creationDate" placeholder="Erstellungsdatum" disabled>
+      <input type="text" [(ngModel)]="immobilie.lastModificationDate" name="lastModificationDate" placeholder="Letzte Änderung" disabled>
+  
+      <!-- 🔹 Zusätzliche Felder für Wohnungen -->
+      <div *ngIf="selectedArt === 'wohnung'" class="zusatzfeld">
+        <h3>Wohnungsdetails</h3>
+  
+        <input type="text" [(ngModel)]="wohnung.searchField1" name="searchField1" placeholder="Suchfeld 1">
+        <input type="text" [(ngModel)]="wohnung.searchField2" name="searchField2" placeholder="Suchfeld 2">
+        <input type="text" [(ngModel)]="wohnung.searchField3" name="searchField3" placeholder="Suchfeld 3">
+        <input type="number" [(ngModel)]="wohnung.groupNumber" name="groupNumber" placeholder="Gruppennummer">
+  
+        <textarea [(ngModel)]="wohnung.furnishingNote" name="furnishingNote" placeholder="Ausstattung"></textarea>
+  
+        <input type="checkbox" [(ngModel)]="wohnung.showAddress" name="showAddress"> Adresse anzeigen
+  
+        <select [(ngModel)]="wohnung.apartmentType" name="apartmentType">
+          <option value="APARTMENT">Etagenwohnung</option>
+          <option value="ROOF_STOREY">Dachgeschoss</option>
+          <option value="LOFT">Loft</option>
+          <option value="MAISONETTE">Maisonette</option>
+          <option value="PENTHOUSE">Penthouse</option>
+          <option value="GROUND_FLOOR">Erdgeschoss</option>
+          <option value="RAISED_GROUND_FLOOR">Hochparterre</option>
+          <option value="HALF_BASEMENT">Souterrain</option>
+          <option value="OTHER">Sonstiges</option>
+        </select>
+  
+        <input type="number" [(ngModel)]="wohnung.floor" name="floor" placeholder="Etage">
+        <input type="checkbox" [(ngModel)]="wohnung.lift" name="lift"> Aufzug vorhanden
+        <input type="checkbox" [(ngModel)]="wohnung.balcony" name="balcony"> Balkon
+        <input type="checkbox" [(ngModel)]="wohnung.builtInKitchen" name="builtInKitchen"> Einbauküche
+        <input type="checkbox" [(ngModel)]="wohnung.garden" name="garden"> Garten
+  
+        <input type="number" [(ngModel)]="wohnung.numberOfRooms" name="numberOfRooms" placeholder="Anzahl Zimmer" required>
+        <input type="number" [(ngModel)]="wohnung.livingSpace" name="livingSpace" placeholder="Wohnfläche (m²)" required>
+  
+        <input type="number" [(ngModel)]="wohnung.numberOfBedRooms" name="numberOfBedRooms" placeholder="Anzahl Schlafzimmer">
+        <input type="number" [(ngModel)]="wohnung.numberOfBathRooms" name="numberOfBathRooms" placeholder="Anzahl Badezimmer">
+        <input type="number" [(ngModel)]="wohnung.usableFloorSpace" name="usableFloorSpace" placeholder="Nutzfläche (m²)">
+  
+        <select [(ngModel)]="wohnung.condition" name="condition">
+          <option value="NO_INFORMATION">Keine Info</option>
+          <option value="FIRST_TIME_USE">Erstbezug</option>
+          <option value="REFURBISHED">Renoviert</option>
+          <option value="MODERNIZED">Modernisiert</option>
+          <option value="NEED_OF_RENOVATION">Renovierungsbedürftig</option>
+        </select>
+  
+        <input type="number" [(ngModel)]="wohnung.constructionYear" name="constructionYear" placeholder="Baujahr">
+        <input type="number" [(ngModel)]="wohnung.parkingSpacePrice" name="parkingSpacePrice" placeholder="Stellplatzpreis (€)">
+        
+        <input type="text" [(ngModel)]="wohnung.heatingType" name="heatingType" placeholder="Heizungsart">
+        <input type="text" [(ngModel)]="wohnung.firingType" name="firingType" placeholder="Brennstoffart">
+  
+        <input type="number" [(ngModel)]="wohnung.latitude" name="latitude" placeholder="Breitengrad">
+        <input type="number" [(ngModel)]="wohnung.longitude" name="longitude" placeholder="Längengrad">
+  
+        <input type="checkbox" [(ngModel)]="wohnung.energyPerformanceCertificate" name="energyPerformanceCertificate"> Energieausweis vorhanden
+  
+        <input type="number" [(ngModel)]="wohnung.serviceCharge" name="serviceCharge" placeholder="Nebenkosten (€)">
+      </div>
+  
+      <button type="submit">Immobilie speichern</button>
+    </form>
+  </div>
+  
