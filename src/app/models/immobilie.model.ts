@@ -15,7 +15,7 @@ export interface Immobilie {
   courtageNote?: string;
   creationDate?: string;
   lastModificationDate?: string;
-  marketingType: "PURCHASE";
+  marketingType: "Kauf";
 }
 
 // ✅ NEUES INTERFACE für Wohnungen
@@ -80,7 +80,7 @@ export interface WohnungDetails {
   longitude?: number;
   creationDate?: string;
   lastModificationDate?: string;
-  marketingType: "PURCHASE";
+  marketingType: "Kauf";
   priceIntervalType: "ONE_TIME_CHARGE";
   energyPerformanceCertificate?: boolean;
   serviceCharge?: number;
@@ -147,7 +147,7 @@ export interface WohnungDetails {
     longitude?: number; // min. -180.0, max. 180.0
     creationDate?: string;
     lastModificationDate?: string;
-    marketingType: "PURCHASE";
+    marketingType: "Kauf";
     priceIntervalType: "ONE_TIME_CHARGE";
     energyPerformanceCertificate?: boolean;
   }
@@ -192,7 +192,7 @@ export interface WohnungDetails {
     longitude?: number;
     creationDate?: string;
     lastModificationDate?: string;
-    marketingType: "PURCHASE";
+    marketingType: "Kauf";
     priceIntervalType: "ONE_TIME_CHARGE";
   }
   

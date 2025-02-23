@@ -1,0 +1,14 @@
+@use "./../../../styles.scss" as s;
+@use "./../../../assets/fonts.scss" as f;
+@use "./../../../assets/colors.scss" as c;
+
+section {
+  max-width: 900px;
+  margin: 0px auto;
+  margin-top:-20px;
+  padding: 25px;
+  background: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-family: Arial, sans-serif;
+}

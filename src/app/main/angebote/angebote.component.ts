@@ -1,52 +1,85 @@
 import { Component, OnInit } from '@angular/core';
 import { MATERIAL_MODULES } from '../../shared/material-imports';
-import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
+import { MatProgressSpinnerModule, ProgressSpinnerMode } from '@angular/material/progress-spinner';
 import { ImmobilienService } from '../../services/immobilien.service';
 import { Immobilie } from '../../models/immobilie.model';
+import { MediaAttachment } from '../../models/media.model';
 
 @Component({
   selector: 'app-angebote',
   standalone: true,
-  imports: [MATERIAL_MODULES],
+  imports: [MATERIAL_MODULES, MatProgressSpinnerModule],
   templateUrl: './angebote.component.html',
   styleUrl: './angebote.component.scss',
 })
 export class AngeboteComponent implements OnInit {
-  // ✅ Implementiert OnInit
   immobilien: Immobilie[] = [];
   isLoading: boolean = false;
   loadStatus: number = 0;
   errorMessage: string | null = null;
-  
+  mediaAttachments: { [key: string]: MediaAttachment[] } = {};
+
   constructor(private immobilienService: ImmobilienService) {}
 
   ngOnInit(): void {
     this.isLoading = true;
     this.loadStatus = 0;
-    
-  
-    // Simulierter Fortschritt, max. 90%, damit 100% erst mit echten Daten erreicht wird
+
     const interval = setInterval(() => {
       if (this.loadStatus < 90) {
         this.loadStatus += 10;
       }
-    }, 500); // Update alle 500ms für flüssigere Animation
-  
-    this.immobilienService.getImmobilien().subscribe(
-      (data) => {
-        this.immobilien = data.immobilien as Immobilie[];
+    }, 500);
+
+    this.immobilienService.getImmobilien().subscribe({
+      next: (data) => {
+        this.immobilien = data.immobilien;
         console.log('Immobilien: ', this.immobilien);
+        
+        this.immobilien.forEach(immobilie => {
+          if (immobilie.externalId) {
+            this.loadMedia(immobilie.externalId);
+          }
+        });
+
         this.isLoading = false;
-        this.loadStatus = 100; // Setze auf 100%, wenn fertig
+        this.loadStatus = 100;
         clearInterval(interval);
       },
-      (error) => {
+      error: (error) => {
         console.error('Fehler beim Laden der Immobilien:', error);
+        this.errorMessage = 'Fehler beim Laden der Immobilien';
         this.isLoading = false;
-        this.loadStatus = 0; // Setze zurück, wenn Fehler auftritt
+        this.loadStatus = 0;
         clearInterval(interval);
       }
-    );
+    });
   }
-  
+
+  loadMedia(externalId: string) {
+    this.immobilienService.getMediaByExternalId(externalId)
+      .subscribe({
+        next: (media) => {
+          this.mediaAttachments[externalId] = media;
+        },
+        error: (error) => {
+          console.error(`Fehler beim Laden der Medien für ${externalId}:`, error);
+          // Entfernen Sie diese Zeile
+          // this.mediaAttachments[externalId] = [];
+        }
+      });
+  }
+
+  refreshMedia(externalId: string | undefined) {
+    if (externalId) {
+      this.loadMedia(externalId);
+    }
+  }
+
+  getMediaForImmobilie(externalId: string | undefined): MediaAttachment[] {
+    if (!externalId) {
+      return [];
+    }
+    return this.mediaAttachments[externalId] || [];
+  }
 }

@@ -27,24 +27,25 @@
       <textarea [(ngModel)]="immobilie.locationNote" name="locationNote" placeholder="Lage"></textarea>
       <textarea [(ngModel)]="immobilie.otherNote" name="otherNote" placeholder="Sonstige Anmerkungen"></textarea>
   
-      <input type="number" [(ngModel)]="immobilie.value" name="value" placeholder="Kaufpreis (€)" required>
+      <input type="number" [ngModel]="immobilie.value === 0 ? null : immobilie.value" (ngModelChange)="immobilie.value = $event" name="value" placeholder="Kaufpreis (€)" required>
   
-      <select [(ngModel)]="immobilie.hasCourtage" name="hasCourtage" required>
-        <option value="YES">Provision: Ja</option>
-        <option value="NO">Provision: Nein</option>
-        <option value="NOT_APPLICABLE">Provision: Nicht zutreffend</option>
-      </select>
+      <mat-form-field>
+        <mat-select [(ngModel)]="immobilie.hasCourtage" name="hasCourtage" placeholder="Provision" required>
+          <mat-option value="YES">Provision: Ja</mat-option>
+          <mat-option value="NO">Provision: Nein</mat-option>
+        </mat-select>
+      </mat-form-field>
   
       <input type="text" [(ngModel)]="immobilie.courtage" name="courtage" placeholder="Provision">
       <textarea [(ngModel)]="immobilie.courtageNote" name="courtageNote" placeholder="Provisionshinweis"></textarea>
   
-      <input type="text" [(ngModel)]="immobilie.marketingType" name="marketingType" value="PURCHASE" disabled>
+      <input type="text" [(ngModel)]="immobilie.marketingType" name="marketingType" placeholder="Kauf" value="Kauf" disabled>
       <input type="text" [(ngModel)]="immobilie.creationDate" name="creationDate" placeholder="Erstellungsdatum" disabled>
       <input type="text" [(ngModel)]="immobilie.lastModificationDate" name="lastModificationDate" placeholder="Letzte Änderung" disabled>
   
       <h3>Bilder & Videos hochladen</h3>
       <input type="file" (change)="uploadMedia($event, 'image')">
-      <button (click)="uploadMedia($event, 'video')">Video hochladen</button>
+      <button (click)="uploadMedia($event, 'video')">Medium hochladen</button>
 
       <div *ngFor="let media of uploadedMedia">
           <img *ngIf="media.type === 'image'" [src]="media.url" width="100">
@@ -54,62 +55,84 @@
       <!-- 🔹 Zusätzliche Felder für Wohnungen -->
       <div *ngIf="selectedArt === 'wohnung'" class="zusatzfeld">
         <h3>Wohnungsdetails</h3>
-  
-        <input type="text" [(ngModel)]="wohnung.searchField1" name="searchField1" placeholder="Suchfeld 1">
-        <input type="text" [(ngModel)]="wohnung.searchField2" name="searchField2" placeholder="Suchfeld 2">
-        <input type="text" [(ngModel)]="wohnung.searchField3" name="searchField3" placeholder="Suchfeld 3">
-        <input type="number" [(ngModel)]="wohnung.groupNumber" name="groupNumber" placeholder="Gruppennummer">
-  
+        <div class="col-block">
+        <input type="text" [(ngModel)]="wohnung.searchField1" name="searchField1" placeholder="Suchfeld 1" disabled>
+        <input type="text" [(ngModel)]="wohnung.searchField2" name="searchField2" placeholder="Suchfeld 2" disabled>
+        <input type="text" [(ngModel)]="wohnung.searchField3" name="searchField3" placeholder="Suchfeld 3" disabled>
+        <input type="number" [ngModel]="wohnung.groupNumber === 0 ? null : wohnung.groupNumber" (ngModelChange)="wohnung.groupNumber = $event" name="groupNumber" placeholder="Gruppennummer" required>
+        </div>
+      
         <textarea [(ngModel)]="wohnung.furnishingNote" name="furnishingNote" placeholder="Ausstattung"></textarea>
   
-        <input type="checkbox" [(ngModel)]="wohnung.showAddress" name="showAddress"> Adresse anzeigen
+        <div class="checkbox-row"><label for="showAddress">Adresse anzeigen</label><input type="checkbox" [(ngModel)]="wohnung.showAddress" name="showAddress"></div>
   
-        <select [(ngModel)]="wohnung.apartmentType" name="apartmentType">
-          <option value="APARTMENT">Etagenwohnung</option>
-          <option value="ROOF_STOREY">Dachgeschoss</option>
-          <option value="LOFT">Loft</option>
-          <option value="MAISONETTE">Maisonette</option>
-          <option value="PENTHOUSE">Penthouse</option>
-          <option value="GROUND_FLOOR">Erdgeschoss</option>
-          <option value="RAISED_GROUND_FLOOR">Hochparterre</option>
-          <option value="HALF_BASEMENT">Souterrain</option>
-          <option value="OTHER">Sonstiges</option>
-        </select>
+      <mat-form-field>
+        <mat-select [(ngModel)]="wohnung.apartmentType" name="apartmentType" placeholder="Wohnungstyp" required>
+          <mat-option value="APARTMENT">Etagenwohnung</mat-option>
+          <mat-option value="ROOF_STOREY">Dachgeschoss</mat-option>
+          <mat-option value="LOFT">Loft</mat-option>
+          <mat-option value="MAISONETTE">Maisonette</mat-option>
+          <mat-option value="PENTHOUSE">Penthouse</mat-option>
+          <mat-option value="GROUND_FLOOR">Erdgeschoss</mat-option>
+          <mat-option value="RAISED_GROUND_FLOOR">Hochparterre</mat-option>
+          <mat-option value="HALF_BASEMENT">Souterrain</mat-option>
+          <mat-option value="OTHER">Sonstiges</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+        <input type="number" [ngModel]="wohnung.floor === 0 ? null : wohnung.floor" (ngModelChange)="wohnung.floor = $event" name="floor" placeholder="Etage" required>
+
+        <div class="col-block">
+          <div class="checkbox-row">
+            <label for="lift">Aufzug vorhanden</label>
+            <input type="checkbox" [(ngModel)]="wohnung.lift" name="lift">
+          </div>
+        <div class="checkbox-row">
+          <label for="balcony">Balkon vorhanden</label>
+          <input type="checkbox" [(ngModel)]="wohnung.balcony" name="balcony">
+        </div>
+        <div class="checkbox-row">
+          <label for="builtInKitchen">Einbauküche</label>
+          <input type="checkbox" [(ngModel)]="wohnung.builtInKitchen" name="builtInKitchen">
+        </div>
+        <div class="checkbox-row">
+          <label for="garden">Garten</label>
+          <input type="checkbox" [(ngModel)]="wohnung.garden" name="garden">
+        </div>
+
+        <input type="number" [ngModel]="wohnung.numberOfRooms === 0 ? null : wohnung.numberOfRooms" (ngModelChange)="wohnung.numberOfRooms = $event" name="numberOfRooms" placeholder="Anzahl Zimmer" required>
+        <input type="number" [ngModel]="wohnung.livingSpace === 0 ? null : wohnung.livingSpace" (ngModelChange)="wohnung.livingSpace = $event" name="livingSpace" placeholder="Wohnfläche (m²)" required>
+        <input type="number" [ngModel]="wohnung.numberOfBedRooms === 0 ? null : wohnung.numberOfBedRooms" (ngModelChange)="wohnung.numberOfBedRooms = $event" name="numberOfBedRooms" placeholder="Anzahl Schlafzimmer" required>
+        <input type="number" [ngModel]="wohnung.numberOfBathRooms === 0 ? null : wohnung.numberOfBathRooms" (ngModelChange)="wohnung.numberOfBathRooms = $event" name="numberOfBathRooms" placeholder="Anzahl Badezimmer" required>
+        <input type="number" [ngModel]="wohnung.usableFloorSpace === 0 ? null : wohnung.usableFloorSpace" (ngModelChange)="wohnung.usableFloorSpace = $event" name="usableFloorSpace" placeholder="Nutzfläche (m²)" required>
   
-        <input type="number" [(ngModel)]="wohnung.floor" name="floor" placeholder="Etage">
-        <input type="checkbox" [(ngModel)]="wohnung.lift" name="lift"> Aufzug vorhanden
-        <input type="checkbox" [(ngModel)]="wohnung.balcony" name="balcony"> Balkon
-        <input type="checkbox" [(ngModel)]="wohnung.builtInKitchen" name="builtInKitchen"> Einbauküche
-        <input type="checkbox" [(ngModel)]="wohnung.garden" name="garden"> Garten
-  
-        <input type="number" [(ngModel)]="wohnung.numberOfRooms" name="numberOfRooms" placeholder="Anzahl Zimmer" required>
-        <input type="number" [(ngModel)]="wohnung.livingSpace" name="livingSpace" placeholder="Wohnfläche (m²)" required>
-  
-        <input type="number" [(ngModel)]="wohnung.numberOfBedRooms" name="numberOfBedRooms" placeholder="Anzahl Schlafzimmer">
-        <input type="number" [(ngModel)]="wohnung.numberOfBathRooms" name="numberOfBathRooms" placeholder="Anzahl Badezimmer">
-        <input type="number" [(ngModel)]="wohnung.usableFloorSpace" name="usableFloorSpace" placeholder="Nutzfläche (m²)">
-  
-        <select [(ngModel)]="wohnung.condition" name="condition">
-          <option value="NO_INFORMATION">Keine Info</option>
-          <option value="FIRST_TIME_USE">Erstbezug</option>
-          <option value="REFURBISHED">Renoviert</option>
-          <option value="MODERNIZED">Modernisiert</option>
-          <option value="NEED_OF_RENOVATION">Renovierungsbedürftig</option>
-        </select>
+        <mat-form-field>
+          <mat-select [(ngModel)]="wohnung.condition" name="condition" placeholder="Zustand" required>
+            <mat-option value="FIRST_TIME_USE">Erstbezug</mat-option>
+            <mat-option value="REFURBISHED">Renoviert</mat-option>
+            <mat-option value="MODERNIZED">Modernisiert</mat-option>
+            <mat-option value="NEED_OF_RENOVATION">Renovierungsbedürftig</mat-option>
+          </mat-select>
+        </mat-form-field>
   
         <input type="number" [(ngModel)]="wohnung.constructionYear" name="constructionYear" placeholder="Baujahr">
-        <input type="number" [(ngModel)]="wohnung.parkingSpacePrice" name="parkingSpacePrice" placeholder="Stellplatzpreis (€)">
+        <input type="number" [ngModel]="wohnung.parkingSpacePrice === 0 ? null : wohnung.parkingSpacePrice" (ngModelChange)="wohnung.parkingSpacePrice = $event" name="parkingSpacePrice" placeholder="Stellplatzpreis (€)" required>
         
         <input type="text" [(ngModel)]="wohnung.heatingType" name="heatingType" placeholder="Heizungsart">
         <input type="text" [(ngModel)]="wohnung.firingType" name="firingType" placeholder="Brennstoffart">
   
-        <input type="number" [(ngModel)]="wohnung.latitude" name="latitude" placeholder="Breitengrad">
-        <input type="number" [(ngModel)]="wohnung.longitude" name="longitude" placeholder="Längengrad">
+        <input type="number" [ngModel]="wohnung.latitude === 0 ? null : wohnung.latitude" (ngModelChange)="wohnung.latitude = $event" name="latitude" placeholder="Breitengrad" disabled>
+        <input type="number" [ngModel]="wohnung.longitude === 0 ? null : wohnung.longitude" (ngModelChange)="wohnung.longitude = $event" name="longitude" placeholder="Längengrad" disabled>
   
-        <input type="checkbox" [(ngModel)]="wohnung.energyPerformanceCertificate" name="energyPerformanceCertificate"> Energieausweis vorhanden
-  
-        <input type="number" [(ngModel)]="wohnung.serviceCharge" name="serviceCharge" placeholder="Nebenkosten (€)">
+        <div class="checkbox-row">
+          <label for="energyPerformanceCertificate">Energieausweis vorhanden</label>
+            <input type="checkbox" [(ngModel)]="wohnung.energyPerformanceCertificate" name="energyPerformanceCertificate">
+        </div>
+
+        <input type="number" [ngModel]="wohnung.serviceCharge === 0 ? null : wohnung.serviceCharge" (ngModelChange)="wohnung.serviceCharge = $event" name="serviceCharge" placeholder="Nebenkosten (€)" required>
+        
       </div>
+    </div>
   
       <button type="submit">Immobilie speichern</button>
     </form>

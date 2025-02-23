@@ -2,35 +2,42 @@
   <h2>🏡 Aktuelle Immobilienangebote</h2>
 
   <!-- Ladebalken mit Fortschrittsanzeige -->
-  <div *ngIf="isLoading">
-    <mat-progress-bar mode="determinate" [value]="loadStatus"></mat-progress-bar>
-    <p>Daten werden geladen... {{ loadStatus }}%</p>
-  </div>
-
-  <!-- Falls keine Immobilien vorhanden sind -->
-  <p *ngIf="immobilien.length === 0 && !isLoading" class="error-message">
-    ❌ Keine Immobilien verfügbar.
-  </p>
-
-  <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
-
-  <!-- Immobilien anzeigen -->
-  <div class="immobilien-grid" *ngIf="immobilien.length > 0">
-    <div class="immobilie-box" *ngFor="let immo of immobilien">
-      <img
-        src="https://material.angular.io/assets/img/examples/shiba2.jpg"
-        alt="{{ immo.title }}"
-      />
-      <div class="immobilie-content">
-        <h3>{{ immo.locationNote }}</h3>
-        <p class="preis">💰 Preis: {{ immo.value | number }} €</p>
-        <p class="art">🔄 Art: {{ immo.marketingType }}</p>
-        <p class="objekttyp">🏠 Objekttyp: {{ immo.externalId }}</p>
-        <p class="status">🔄 Status: {{ immo.marketingType }}</p>
-        <p class="plz">🔄 Plz: {{ immo.postcode }}</p>
-        <p class="stadt">🔄 Stadt: {{ immo.city }}</p>
-        <button class="details-button">Mehr Details</button>
-      </div>
+  <div class="angebote-container">
+    <mat-progress-spinner 
+      *ngIf="isLoading" 
+      [mode]="'determinate'" 
+      [value]="loadStatus">
+    </mat-progress-spinner>
+  
+    <mat-error *ngIf="errorMessage">{{ errorMessage }}</mat-error>
+  
+    <div class="immobilien-grid" *ngIf="!isLoading">
+      <mat-card *ngFor="let immobilie of immobilien">
+        <mat-card-header>
+          <mat-card-title>{{ immobilie.title }}</mat-card-title>
+          <mat-card-subtitle>{{ immobilie.city }}</mat-card-subtitle>
+        </mat-card-header>
+  
+        <mat-card-content>
+          <div class="media-gallery" *ngIf="getMediaForImmobilie(immobilie.externalId).length > 0">
+            <div *ngFor="let media of getMediaForImmobilie(immobilie.externalId)">
+              <img *ngIf="media.type === 'image'" [src]="media.url" [alt]="immobilie.title">
+              <video *ngIf="media.type === 'video'" [src]="media.url" controls></video>
+            </div>
+          </div>
+          
+          <p>{{ immobilie.descriptionNote }}</p>
+          <p>Id: {{ immobilie.externalId }}</p>
+          <p>{{ immobilie.marketingType }}</p>
+          <p class="price">Preis: {{ immobilie.value | currency:'EUR' }}</p>
+        </mat-card-content>
+  
+        <mat-card-actions>
+          <button mat-button (click)="refreshMedia(immobilie.externalId)">
+            Medien aktualisieren
+          </button>
+        </mat-card-actions>
+      </mat-card>
     </div>
   </div>
 </section>
