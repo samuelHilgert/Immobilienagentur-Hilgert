@@ -9,7 +9,7 @@ backend/login.debug.txt
 
 # Falls du den ganzen Backend-Ordner nicht hochladen willst:
 backend/
-dashboard/
+src/app/dashboard/
 
 #
 #
