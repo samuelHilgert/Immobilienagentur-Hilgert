@@ -3,7 +3,7 @@ import { MainComponent } from './main/main.component';
 import { DashboardLoginComponent } from './dashboard-login/dashboard-login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthGuard } from './services/auth.guard';
-import { ImmobilieAnlegenComponent } from './dashboard/immobilie-anlegen/immobilie-anlegen.component';
+import { ImmobilieAnlegenComponent } from './dashboard/immobilien/immobilie-anlegen/immobilie-anlegen.component';
 import { ImmobilienComponent } from './dashboard/immobilien/immobilien.component';
 import { KundendatenbankComponent } from './dashboard/kundendatenbank/kundendatenbank.component';
 import { SuchauftraegeComponent } from './dashboard/suchauftraege/suchauftraege.component';
