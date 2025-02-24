@@ -40,20 +40,21 @@ export class ImmobilienService {
   addWohnung(wohnungDetails: WohnungDetails): Observable<any> {
     // Ensure required fields are present
     const immobilienData: Immobilie = {
-      externalId: wohnungDetails.externalId || 'WNG_' + Date.now(),
+      externalId: wohnungDetails.externalId ||  Date.now().toString().substring(8),
       title: wohnungDetails.title,
       street: wohnungDetails.street,
       houseNumber: wohnungDetails.houseNumber,
       postcode: wohnungDetails.postcode,
       city: wohnungDetails.city,
       descriptionNote: wohnungDetails.descriptionNote,
-      locationNote: wohnungDetails.locationNote,
-      otherNote: wohnungDetails.otherNote,
       value: wohnungDetails.value,
       hasCourtage: wohnungDetails.hasCourtage,
       courtage: wohnungDetails.courtage,
       courtageNote: wohnungDetails.courtageNote,
-      marketingType: 'Kauf',
+      livingSpace: wohnungDetails.livingSpace,
+      plotArea: 0,
+      numberOfRooms: wohnungDetails.numberOfRooms,
+      marketingType: 'PURCHASE',
       creationDate: new Date().toISOString(),
       lastModificationDate: new Date().toISOString()
     };
