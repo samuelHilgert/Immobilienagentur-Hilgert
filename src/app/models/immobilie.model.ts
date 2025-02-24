@@ -1,26 +1,28 @@
 // ✅ NEUES INTERFACE für Immobilie
 export interface Immobilie {
   externalId?: string;
+  marketingType: "PURCHASE";
   title: string;
   street: string;
   houseNumber: string;
   postcode: string;
   city: string;
   descriptionNote?: string;
-  locationNote?: string;
-  otherNote?: string;
   value: number; // Kaufpreis
+  livingSpace: number;
+  numberOfRooms: number;
+  plotArea: number;
   hasCourtage: "YES" | "NO" | "NOT_APPLICABLE";
   courtage?: string;
   courtageNote?: string;
   creationDate?: string;
   lastModificationDate?: string;
-  marketingType: "Kauf";
 }
 
 // ✅ NEUES INTERFACE für Wohnungen
 export interface WohnungDetails {
   externalId?: string;
+  marketingType: "PURCHASE";
   title: string;
   street: string;
   houseNumber: string;
@@ -76,11 +78,10 @@ export interface WohnungDetails {
   hasCourtage: "YES" | "NO" | "NOT_APPLICABLE";
   courtage?: string;
   courtageNote?: string;
-  latitude?: number;
-  longitude?: number;
+  latitude?: null;
+  longitude?: null;
   creationDate?: string;
   lastModificationDate?: string;
-  marketingType: "Kauf";
   priceIntervalType: "ONE_TIME_CHARGE";
   energyPerformanceCertificate?: boolean;
   serviceCharge?: number;
