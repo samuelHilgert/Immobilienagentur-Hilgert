@@ -22,6 +22,7 @@ export interface Kunde {
   telefon?: string;
   mobil?: string;
   rollen: KundeRolle[]; // Ein Kunde kann mehrere Rollen haben
+  beruf?: string;
   // Zusatzinfos für Interessenten:
   interessentenDaten?: {
     formularErhalten?: 'Ja' | 'Nein' | 'nicht notwendig';
@@ -133,7 +134,6 @@ export interface Kunde {
   nächsterTermin?: Date;
   bevorzugtesMedium?: 'Telefon/Handy' | 'E-Mail' | 'Postalisch' | 'Persönlich';
   sprechzeiten?: string;
-  beruf?: string;
   createdAt: string; // Erstellungsdatum (ISO-String)
   updatedAt?: string; // Letzte Aktualisierung (ISO-String)
 }
