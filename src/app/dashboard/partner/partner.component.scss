@@ -2,6 +2,12 @@
 @use "./../../../assets/fonts.scss" as f;
 @use "./../../../assets/colors.scss" as c;
 
+// Farben & Variablen
+$primary-color: #2c3e50;
+$secondary-color: #34495e;
+$text-color: #ecf0f1;
+$hover-color: #1abc9c;
+
 section {
   max-width: 900px;
   margin: 0px auto;
@@ -11,4 +17,23 @@ section {
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   font-family: Arial, sans-serif;
+}
+
+// Inhaltsbereich
+.content {
+  display:flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 40px;
+  background: #ecf0f1;
+  gap:20px;
+  
+  h1 {
+    color: $primary-color;
+  }
+  
+  p {
+    color: $secondary-color;
+    font-size: 18px;
+  }
 }

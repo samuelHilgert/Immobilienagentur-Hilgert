@@ -13,6 +13,10 @@ import { PartnerAnlegenComponent } from './dashboard/partner/partner-anlegen/par
 import { SocialMediaComponent } from './dashboard/social-media/social-media.component';
 import { WerbungComponent } from './dashboard/werbung/werbung.component';
 import { AblageComponent } from './dashboard/ablage/ablage.component';
+import { PartnerComponent } from './dashboard/partner/partner.component';
+import { KundeAnlegenComponent } from './dashboard/kundendatenbank/kunde-anlegen/kunde-anlegen.component';
+import { SuchauftragAnlegenComponent } from './dashboard/suchauftraege/suchauftrag-anlegen/suchauftrag-anlegen.component';
+import { BewertungAnlegenComponent } from './dashboard/bewertungen/bewertung-anlegen/bewertung-anlegen.component';
 
 export const routes: Routes = [
   {
@@ -29,12 +33,40 @@ export const routes: Routes = [
     canActivate: [AuthGuard], // 🔐 Schützt das Dashboard
     children: [
       // 👈 Nested Routes innerhalb des Dashboards!
-      { path: 'immobilien', component: ImmobilienComponent },
-      { path: 'suchauftraege', component: SuchauftraegeComponent },
-      { path: 'kundendatenbank', component: KundendatenbankComponent },
-      { path: 'bewertungen', component: BewertungenComponent },
+      {
+        path: 'immobilien',
+        component: ImmobilienComponent,
+        children: [
+          { path: 'immobilie-anlegen', component: ImmobilieAnlegenComponent },
+        ],
+      },
+      {
+        path: 'suchauftraege',
+        component: SuchauftraegeComponent,
+        children: [
+          { path: 'suchauftrag-anlegen', component: SuchauftragAnlegenComponent },
+        ],
+      },
+      {
+        path: 'kundendatenbank',
+        component: KundendatenbankComponent,
+        children: [{ path: 'kunde-anlegen', component: KundeAnlegenComponent }],
+      },
+      {
+        path: 'bewertungen',
+        component: BewertungenComponent,
+        children: [
+          { path: 'bewertung-anlegen', component: BewertungAnlegenComponent },
+        ],
+      },
       { path: 'newsletter', component: NewsletterComponent },
-      { path: 'partner', component: PartnerAnlegenComponent },
+      {
+        path: 'partner',
+        component: PartnerComponent,
+        children: [
+          { path: 'partner-anlegen', component: PartnerAnlegenComponent },
+        ],
+      },
       { path: 'social-media', component: SocialMediaComponent },
       { path: 'werbung', component: WerbungComponent },
       { path: 'ablage', component: AblageComponent },

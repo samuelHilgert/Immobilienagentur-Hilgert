@@ -3,22 +3,26 @@
     <aside class="sidebar">
       <nav>
         <ul>
-          <li><a routerLink="immobilien">📂 Immobilien</a></li>
-          <li><a routerLink="suchauftraege">🔎 Suchaufträge</a></li>         
-          <li><a routerLink="kundendatenbank">👥 Kundendatenbank</a></li>
-          <li><a routerLink="bewertungen">🚀 Bewertungen</a></li>
-          <li><a routerLink="newsletter">📰 Newsletter</a></li>
-          <li><a routerLink="partner">🤝 Partner</a></li>
-          <li><a routerLink="social-media">📱 Social Media</a></li>
-          <li><a routerLink="werbung">📢 Werbung</a></li>
-          <li><a routerLink="ablage">💾 Ablage öffnen</a></li>
-          <li><a routerLink="#">🏠 Zur Startseite</a></li>
+          <li><a routerLink="immobilien" (click)="routerActive = true">📂 Immobilien</a></li>
+          <li><a routerLink="suchauftraege" (click)="routerActive = true">🔎 Suchaufträge</a></li>         
+          <li><a routerLink="kundendatenbank" (click)="routerActive = true">👥 Kundendatenbank</a></li>
+          <li><a routerLink="bewertungen" (click)="routerActive = true">🚀 Bewertungen</a></li>
+          <li><a routerLink="newsletter" (click)="routerActive = true">📰 Newsletter</a></li>
+          <li><a routerLink="partner" (click)="routerActive = true">🤝 Partner</a></li>
+          <li><a routerLink="social-media" (click)="routerActive = true">📱 Social Media</a></li>
+          <li><a routerLink="werbung" (click)="routerActive = true">📢 Werbung</a></li>
+          <li><a routerLink="ablage" (click)="routerActive = true">💾 Ablage öffnen</a></li>
+          <li><a routerLink="#" (click)="routerActive = false">🏠 Zur Startseite</a></li>
         </ul>
       </nav>
     </aside>
   
     <!-- Inhaltsbereich -->
     <main class="content">
+      <div *ngIf="!routerActive" class="start-content">
+      <h1>Willkommen auf dem Dashboard</h1>
+      <p>Hier kannst du die Inhalte deiner Webseite verwalten und neue Inhalte hinzufügen</p>
+    </div>
       <router-outlet></router-outlet> 
     </main>
   </section>
