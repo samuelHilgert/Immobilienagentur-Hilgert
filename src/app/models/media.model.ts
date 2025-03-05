@@ -1,5 +1,7 @@
 export interface MediaAttachment {
-    externalId: string;
-    type: 'image' | 'video';
-    url: string;
-  }
+  id?: number;           // Optional, da möglicherweise nicht immer vorhanden
+  externalId: string;    // Pflichtfeld
+  type: 'image' | 'video';
+  url: string;
+  isTitleImage?: boolean; // Optional
+}

@@ -1,13 +1,15 @@
 import { Component } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { FooterComponent } from './shared/footer/footer.component';
-import { HeaderComponent } from './main/header/header.component';
+import { HeaderComponent } from './shared/header/header.component';
 import { CommonModule } from '@angular/common';
+import { HeroComponent } from './shared/hero/hero.component';
+import { SidebarClickBewertungComponent } from './shared/sidebar-click-bewertung/sidebar-click-bewertung.component';
 
 @Component({
   selector: 'app-root',
   standalone:true,
-  imports: [HeaderComponent, RouterOutlet, FooterComponent, CommonModule],
+  imports: [RouterOutlet, CommonModule, HeaderComponent, HeroComponent, FooterComponent, SidebarClickBewertungComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

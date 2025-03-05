@@ -1,4 +1,4 @@
-@use "./../../../styles.scss" as styles;
+@use "./../../../styles.scss" as s;
 @use "./../../../assets/fonts.scss" as f;
 @use "./../../../assets/colors.scss" as c;
 
@@ -7,14 +7,8 @@ section {
   width: 100%;
   box-sizing: border-box;
   padding: 20px;
-
-  @include styles.dFlex(
-    $d: flex,
-    $fd: column,
-    $jc: flex-start,
-    $ai: center,
-    $g: 24px
-  );
+  @include s.f_c_fs_c;
+  gap:24px;
 }
 .angebote-container {
   padding: 20px;

@@ -1,4 +1,4 @@
-@use "./../../../styles.scss" as styles;
+@use "./../../../styles.scss" as s;
 @use "./../../../assets/fonts.scss" as f;
 @use "./../../../assets/colors.scss" as c;
 
@@ -7,11 +7,7 @@
     z-index: 1;
     right: 0;
     top: 30%;
-    @include styles.dFlex($d: flex,
-        $fd: row,
-        $jc: center,
-        $ai: center,
-        $g: 0px);
+    @include s.f_r_c_c;
     height: 240px;
     width: 25px;
     border-top-left-radius: 0px;
@@ -24,11 +20,7 @@
 }
 
 .sidebar-click-content {
-    @include styles.dFlex($d: flex,
-        $fd: row,
-        $jc: center,
-        $ai: center,
-        $g: 0px);
+    @include s.f_r_c_c;
     padding: 12px 18px;
     white-space: nowrap;
     transform: rotate(-90deg);

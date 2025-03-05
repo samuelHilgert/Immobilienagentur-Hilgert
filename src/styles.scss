@@ -4,7 +4,7 @@
 * {
   margin: 0;
   scroll-behavior: smooth;
-  scrollbar-width:thin;
+  scrollbar-width: thin;
   scrollbar-color: c.$scrollbar-primary-color c.$scrollbar-primary-color;
 }
 
@@ -25,11 +25,12 @@
   border: 1px solid #00000000;
 }
 
-html, body {
-    background-color: c.$bg-color;
-    transition: background-color 0.3s ease-in-out; // for a smooth color change, needs also for btns, cards and header
-    overflow: auto; // no scrolling more than 100vh
-    height: 100vh; 
+html,
+body {
+  background-color: c.$bg-color;
+  transition: background-color 0.3s ease-in-out; // for a smooth color change, needs also for btns, cards and header
+  overflow: auto; // no scrolling more than 100vh
+  height: 100vh;
 }
 
 :root {
@@ -43,57 +44,160 @@ html, body {
 .filter-bg {
   background-color: c.$header-info-box-bg-color;
   color: c.$header-info-box-text-color;
-  opacity:0.9;
+  // opacity:0.9;
 }
 
 .section-bg-v1 {
   background-color: c.$section-bg-v1;
-  padding:64px 48px;
-} 
+  padding: 64px 48px;
+}
 
 .section-bg-v2 {
-  background-color: white;
-  padding:64px 48px;
+  background-color: c.$section-bg-v2;
+  padding: 64px 48px;
 }
 
 .standard-btn {
-  background-color: c.$standard-btn-bg;
-  color: c.$standard-btn-text;
+  color: c.$standard-btn-text-hover;
+  background-color: c.$standard-btn-bg-hover;
   padding: 12px 18px;
-  border-radius:0px;
-  border: none;
+  border-radius: 0px;
+  border: 1px solid c.$standard-btn-bg-border;
   cursor: pointer;
   transition: background-color 0.3s ease-in-out;
 
   &:hover {
+    background-color: c.$standard-btn-bg;
+    color: c.$standard-btn-text;
+  }
+}
+
+.standard-btn-reverse {
+  background-color: c.$standard-btn-bg;
+  color: c.$standard-btn-text;
+  padding: 12px 18px;
+  border-radius: 0px;
+  border: 1px solid c.$standard-btn-bg-border;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+
+  &:hover {
+    color: c.$standard-btn-text-hover;
     background-color: c.$standard-btn-bg-hover;
   }
 }
 
-@mixin dFlex($d: flex, $fd: row, $jc: center, $ai: center, $g: 0px) {
-    display: $d;
-    flex-direction: $fd;
-    justify-content: $jc;
-    align-items: $ai;
-    gap: $g;
+.ripple-effect {
+  position: absolute;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.4);
+  transform: scale(0);
+  animation: ripple-animation 0.6s ease-out forwards;
+  pointer-events: none;
+  z-index: 0; // Unter dem Button-Content
+}
+
+@keyframes ripple-animation {
+  to {
+    transform: scale(1);
+    opacity: 0;
   }
+}
 
 .vertical-line {
-  height:3rem;
-  width:3px;
+  height: 0; // Starte mit Höhe 0
+  width: 3px;
   background-color: c.$vertical-line-bg;
-  opacity:0.9;
+  opacity: 0.9;
+  transition: height 1s ease-out; // Animation für das Wachsen
+
+  &.animate {
+    height: 4rem; // Ziel-Höhe, wenn animiert
+  }
 }
 
 .sidebar-click-element {
-  background-color: c.$standard-btn-bg;
-  color: c.$standard-btn-text;
+  background-color:  c.$primary-color; 
+  color: white;
   padding: 5px 10px;
   border: none;
   cursor: pointer;
   transition: background-color 0.3s ease-in-out;
 
   &:hover {
-    background-color: c.$standard-btn-bg-hover;
+    background-color: c.$contrast-color;
+    color:white;
   }
+}
+
+
+
+@mixin f_r_c_c {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin f_r_fs_fs {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+@mixin f_r_fe_fs {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: flex-start;
+}
+
+@mixin f_r_se_c {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+@mixin f_r_fs_c {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+@mixin f_r_sb_c {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@mixin f_r_sb_fs {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+@mixin f_c_c_c {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin f_c_fs_fs {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+@mixin f_c_fs_c {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
 }

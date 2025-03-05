@@ -1,19 +1,22 @@
-@use "./../../../../styles.scss" as styles;
+@use "./../../../../styles.scss" as s;
 @use "./../../../../assets/fonts.scss" as f;
 @use "./../../../../assets/colors.scss" as c;
 
 div {
-    @include styles.dFlex($d: flex,
-    $fd: row,
-    $jc: center,
-    $ai: center,
-    $g: 0px);
+    @include s.f_r_c_c;
+    gap:24px;
     position:relative;
     top:0;
     right:0;
     left:0;
-    height:80px;
+    height:120px;
     box-sizing: border-box;
     background-color: c.$logo-bg-color;
     padding:12px 0;
+
+    img {
+        width:auto;
+        height:68px;
+        border-radius:0px;
+    }
 }

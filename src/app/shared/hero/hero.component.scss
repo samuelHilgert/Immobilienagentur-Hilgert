@@ -1,0 +1,15 @@
+@use "./../../../styles.scss" as styles;
+@use "./../../../assets/fonts.scss" as f;
+@use "./../../../assets/colors.scss" as c;
+
+section {
+    height: 100vh;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: c.$hero-bg-color;
+    background-image: url('./../../../../public/img/modern-apartment.jpeg');
+    background-size:cover;
+    background-position: center;
+    background-attachment: fixed;
+    image-rendering: crisp-edges; // for better graphics in some browsers
+}

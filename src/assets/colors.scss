@@ -1,32 +1,49 @@
-// default settings // 
-$bg-color: white;
-$primary-color: rgb(42, 53, 70);
-$secondary-color: grey;
-$contrast-color: rgb(201, 162, 39);
-$text-color: rgb(74, 74, 74);
-$scrollbar-primary-color: $contrast-color;
-$section-bg-v1: rgb(201, 162, 39, 0.05);
+//////// default settings //////// 
+$bg-color: #fafcff;
+$primary-color: #21568a; // oceans_blue for important elements and logo
+$contrast-color: #c8a47b; // warmer goldton als Kontrastfarbe
+$primary-text: #050a30; // general text navy_blue
+$online: #28a745;
+$offline: grey;
+$error-msg: red;
+$section-bg-v1: $bg-color;
+$section-bg-v2: #fdfeff;
 
-// vertical line
-$vertical-line-bg: $contrast-color;
+//////// header ////////
+$logo-bg-color: $bg-color;
+$h1-headline: $primary-text;
+$h2-headline: $primary-color;
+$h3-headline: $primary-color;
+$h4-headline: $primary-color;
 
-// standard button
-$standard-btn-bg: $contrast-color;
-$standard-btn-bg-hover: $primary-color;
-$standard-btn-text: white;
-
-// logo 
-$logo-bg-color: white;
-
-// navbar 
-$navbar-bg-color: $primary-color;
+//////// navbar ////////
+$navbar-bg-color: $bg-color;
 $navbar-links-text-color: white;
 $navbar-links-hover-color: white;
-$navbar-links-border-hover: $contrast-color;
+$navbar-links-border-hover: $primary-color;
 
-// hero 
-$hero-bg-color: white;
+//////// hero ////////
+$hero-bg-color: $bg-color;
 
-//header-info-box  
+//////// header-info-box ////////
 $header-info-box-bg-color: $primary-color;
 $header-info-box-text-color: white;
+
+
+
+//////////////// elements ////////////////
+
+//////// scrollbar ////////
+$scrollbar-primary-color: $primary-color;
+
+//////// vertical line ////////
+$vertical-line-bg: $primary-color;
+
+//////// standard button ////////
+$standard-btn-bg: white;
+$standard-btn-text: $primary-text;
+$standard-btn-bg-border: $primary-color;
+$standard-btn-bg-hover: $primary-color;
+$standard-btn-text-hover: white;
+
+

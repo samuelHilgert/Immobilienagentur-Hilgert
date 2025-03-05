@@ -3,9 +3,11 @@
 </div>
 
 <ng-container *ngIf="!isDashboardRoute() && !isLoading">
+  <app-hero></app-hero>
   <app-header></app-header>
   <router-outlet></router-outlet>
   <app-footer></app-footer>
+  <app-sidebar-click-bewertung></app-sidebar-click-bewertung>
 </ng-container>
 
 <router-outlet *ngIf="isDashboardRoute() && !isLoading"></router-outlet>

@@ -1,11 +1,9 @@
 import { Component } from '@angular/core';
-import { HeaderInfoBoxComponent } from './header-info-box/header-info-box.component';
-import { NavbarComponent } from './navbar/navbar.component';
 
 @Component({
   selector: 'app-hero',
   standalone:true,
-  imports: [HeaderInfoBoxComponent, NavbarComponent],
+  imports: [],
   templateUrl: './hero.component.html',
   styleUrl: './hero.component.scss'
 })

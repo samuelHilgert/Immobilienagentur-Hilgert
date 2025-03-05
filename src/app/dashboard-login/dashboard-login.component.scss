@@ -1,4 +1,4 @@
-@use "./../../styles.scss" as styles;
+@use "./../../styles.scss" as s;
 @use "./../../assets/fonts.scss" as f;
 @use "./../../assets/colors.scss" as c;
 
@@ -6,16 +6,12 @@ section {
     height: 100vh;
     width: 100%;
     box-sizing: border-box;
-    @include styles.dFlex($d: flex,
-        $fd: column,
-        $jc: center,
-        $ai: center,
-        $g: 0px);
+    @include s.f_c_c_c;
     text-align: center;
 }
 
 .login-container {
-    background: white;
+    background: c.$bg-color;
     padding: 50px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);

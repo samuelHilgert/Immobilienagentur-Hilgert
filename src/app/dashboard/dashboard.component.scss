@@ -1,13 +1,8 @@
-@use "./../../styles.scss" as styles;
+@use "./../../styles.scss" as s;
 @use "./../../assets/fonts.scss" as f;
 @use "./../../assets/colors.scss" as c;
 
 // Farben & Variablen
-$primary-color: #2c3e50;
-$secondary-color: #34495e;
-$text-color: #ecf0f1;
-$hover-color: #1abc9c;
-
 
 .start-content {
   display: flex;
@@ -30,8 +25,8 @@ $hover-color: #1abc9c;
 // Sidebar Styling
 .sidebar {
   width: 250px;
-  background: $primary-color;
-  color: $text-color;
+  background: c.$primary-color;
+  color: c.$primary-text;
   display: flex;
   flex-direction: column;
   padding: 20px;
@@ -46,7 +41,7 @@ $hover-color: #1abc9c;
       
       a {
         text-decoration: none;
-        color: $text-color;
+        color: c.$primary-text;
         font-size: 16px;
         display: block;
         padding: 10px;
@@ -54,7 +49,7 @@ $hover-color: #1abc9c;
         transition: background 0.3s ease;
 
         &:hover {
-          background: $hover-color;
+          background: 1abc9c;
           color: #fff;
         }
       }
@@ -72,11 +67,11 @@ $hover-color: #1abc9c;
   gap:20px;
   
   h1 {
-    color: $primary-color;
+    color: c.$primary-color;
   }
   
   p {
-    color: $secondary-color;
+    color: c.$primary-color;
     font-size: 18px;
   }
 }

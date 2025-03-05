@@ -1,4 +1,4 @@
-@use "./../../../../../styles.scss" as styles;
+@use "./../../../../../styles.scss" as s;
 @use "./../../../../../assets/fonts.scss" as f;
 @use "./../../../../../assets/colors.scss" as c;
 
@@ -11,12 +11,7 @@ section {
     height:calc(100% - 50px); // high of navbar
     box-sizing: border-box;
     background-color: transparent;
-    @include styles.dFlex(
-    $d: flex,
-    $fd: row,
-    $jc: flex-start,
-    $ai: center,
-    $g: 0px);
+    @include s.f_r_fs_c;
     // padding:64px 28px;
 }
 
@@ -26,12 +21,8 @@ div {
     box-sizing: border-box;
     padding:48px;
     padding-top:84px;
-    @include styles.dFlex(
-    $d: flex,
-    $fd: column,
-    $jc: flex-start,
-    $ai: flex-start,
-    $g: 24px);
+    @include s.f_r_fs_fs;
+    gap:24px;
     // border-radius:10px;
     // cursor:pointer;
     // &:hover {
