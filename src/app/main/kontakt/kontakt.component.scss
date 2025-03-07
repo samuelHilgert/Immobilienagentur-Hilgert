@@ -83,8 +83,8 @@ section {
         align-self: center;
         display: flex;
         align-items: center;
-        gap: 8px;
-        margin-top: 20px;
+        gap: 0px;
+        margin-top: 0px;
     }
 }
 
@@ -110,8 +110,8 @@ section {
         align-self: flex-start;
         display: flex;
         align-items: center;
-        gap: 8px;
-        margin-top: 20px;
+        gap: 0px;
+        margin-top: 0px;
     }
 }
 
@@ -186,7 +186,8 @@ section {
     flex-direction: column;
     width: 100%;
     height: 100%;
-    padding: 20px 0;
+    box-sizing: border-box;
+    padding: 0 0;
     overflow-y: auto;
     z-index: 20; 
 
@@ -217,7 +218,7 @@ section {
     form {
         display: flex;
         flex-direction: column;
-        gap: 16px;
+        gap: 0px;
     }
 
     .name-row,
@@ -242,7 +243,7 @@ section {
     .button-row {
         display: flex;
         gap: 16px;
-        margin-top: 16px;
+        margin-top: 0px;
 
         button {
             z-index: 10; // Ensures buttons are clickable

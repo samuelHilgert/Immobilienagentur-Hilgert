@@ -70,12 +70,6 @@ export class AngeboteComponent implements OnInit {
       });
   }
 
-  refreshMedia(externalId: string | undefined) {
-    if (externalId) {
-      this.loadMedia(externalId);
-    }
-  }
-
   getMediaForImmobilie(externalId: string | undefined): MediaAttachment[] {
     if (!externalId) {
       return [];
