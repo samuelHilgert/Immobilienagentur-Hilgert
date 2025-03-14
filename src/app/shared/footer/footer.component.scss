@@ -1,0 +1,101 @@
+@use "./../../../styles.scss" as s;
+@use "./../../../assets/fonts.scss" as f;
+@use "./../../../assets/colors.scss" as c;
+
+section {
+    @include s.f_c_fs_fs;
+    gap:12px;
+    padding:24px 48px;
+    background-color: c.$footer-bg;
+}
+
+.footer-nav {
+    @include s.f_c_fs_fs;
+    height:auto;
+    width:100%;
+    box-sizing: border-box;
+    background-color: c.$footer-nav-bg;
+
+    ul {
+        @include s.f_c_fs_fs;
+        gap:8px;
+        width: 100%;
+        height:100%;
+        box-sizing: border-box;
+        margin: 0;
+        padding:0;
+    }
+
+    li {
+        @include s.f_c_fs_fs;
+        height:auto;
+        cursor: pointer;
+
+        >a {
+            color: c.$footer-nav-text;
+
+            &:hover {
+                color: c.$footer-nav-text;
+            }
+
+            &:active {
+                color: c.$footer-nav-text;
+            }
+        }
+      }
+}
+
+
+.social-media-wrapper {
+    @include s.f_r_fs_c;
+    gap:12px;
+    height:auto;
+    width:100%;
+    box-sizing: border-box;
+
+    .instagram-box {
+
+        img {
+            height:30px;
+            width:30px;
+        }
+    }
+}
+
+
+
+.footer-logo-title-wrapper {
+    @include s.f_r_c_c;
+    gap:24px;
+    position:relative;
+    top:0;
+    right:0;
+    left:0;
+    height:120px;
+    box-sizing: border-box;
+
+    img {
+        width:auto;
+        height:68px;
+        border-radius:0px;
+        cursor:pointer;
+    }
+
+    .title-slogan-wrapper {
+        @include s.f_c_c_fs;
+        gap:4px;
+        cursor:pointer;
+    
+        .footer-title {
+            color:c.$footer-title;
+        }
+    
+        .footer-slogan {
+            color:c.$footer-slogan;
+        }
+    }
+}
+
+
+
+

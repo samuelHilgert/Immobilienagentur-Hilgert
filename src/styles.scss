@@ -130,7 +130,10 @@ body {
   }
 }
 
-
+.width-100 {
+  width:100%;
+  box-sizing: border-box;
+}
 
 @mixin f_r_c_c {
   display: flex;
@@ -200,4 +203,11 @@ body {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+}
+
+@mixin f_c_c_fs {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
 }

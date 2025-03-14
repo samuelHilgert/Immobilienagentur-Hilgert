@@ -17,11 +17,66 @@ import { PartnerComponent } from './dashboard/partner/partner.component';
 import { KundeAnlegenComponent } from './dashboard/kundendatenbank/kunde-anlegen/kunde-anlegen.component';
 import { SuchauftragAnlegenComponent } from './dashboard/suchauftraege/suchauftrag-anlegen/suchauftrag-anlegen.component';
 import { BewertungAnlegenComponent } from './dashboard/bewertungen/bewertung-anlegen/bewertung-anlegen.component';
+import { ImmobilienangeboteComponent } from './immobilienangebote/immobilienangebote.component';
+import { LeistungenComponent } from './leistungen/leistungen.component';
+import { ReferenzenComponent } from './referenzen/referenzen.component';
+import { ImmobilienbewertungComponent } from './immobilienbewertung/immobilienbewertung.component';
+import { BewertungAbgebenComponent } from './bewertung-abgeben/bewertung-abgeben.component';
+import { ImpressumComponent } from './impressum/impressum.component';
+import { SuchanfrageComponent } from './suchanfrage/suchanfrage.component';
+import { TippgeberComponent } from './tippgeber/tippgeber.component';
+import { ImmobilieVorstellenComponent } from './shared/immobilie-vorstellen/immobilie-vorstellen.component';
+import { PartnerWerdenComponent } from './shared/partner-werden/partner-werden.component';
+import { MagazinComponent } from './magazin/magazin.component';
 
 export const routes: Routes = [
   {
     path: '',
     component: MainComponent,
+  },
+  {
+    path: 'immobilienangebote',
+    component: ImmobilienangeboteComponent,
+  },
+  {
+    path: 'leistungen',
+    component: LeistungenComponent,
+  },
+  {
+    path: 'referenzen',
+    component: ReferenzenComponent,
+  },
+  {
+    path: 'immobilienbewertung',
+    component: ImmobilienbewertungComponent,
+  },
+  {
+    path: 'magazin',
+    component: MagazinComponent,
+  },
+  {
+    path: 'suchanfrage',
+    component: SuchanfrageComponent,
+  },
+  {
+    path: 'tippgeber',
+    component: TippgeberComponent,
+  },
+  {
+    path: 'bewertung-abgeben',
+    component: BewertungAbgebenComponent,
+  },
+  {
+    path: 'immobilie-vorstellen',
+    component: ImmobilieVorstellenComponent,
+  },
+  {
+    path: 'partner-werden',
+    component: PartnerWerdenComponent,
+  },
+  {
+    path: 'impressum',
+    component: ImpressumComponent,
   },
   {
     path: 'dashboard-login',
