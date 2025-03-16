@@ -4,11 +4,12 @@ import { MatProgressSpinnerModule, ProgressSpinnerMode } from '@angular/material
 import { ImmobilienService } from '../../services/immobilien.service';
 import { Immobilie } from '../../models/immobilie.model';
 import { MediaAttachment } from '../../models/media.model';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-angebote',
   standalone: true,
-  imports: [MATERIAL_MODULES, MatProgressSpinnerModule],
+  imports: [MATERIAL_MODULES, RouterLink, MatProgressSpinnerModule],
   templateUrl: './angebote.component.html',
   styleUrl: './angebote.component.scss',
 })

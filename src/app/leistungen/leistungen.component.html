@@ -1,3 +1,82 @@
-<section class="section-bg-v1">
-    <p>Unsere Leistungen</p>
-</section>
+<!-- leistungen.component.html -->
+<section class="services-section">
+
+    <div class="section-header">
+        <h2 class="section-title">Wir übernehmen für Sie</h2>
+        <p class="section-subtitle">jeden Schritt bis zum Verkauf und darüber hinaus</p>
+    </div>
+
+
+    <div class="container">
+
+      <div class="services-flow">
+
+        <!-- Erste Servicekarte -->
+        <div class="service-card">
+          <div class="service-icon">
+            <fa-icon [icon]="faComments" [size]="'2x'"></fa-icon>
+          </div>
+          <h3 class="service-title">Kostenfreie Beratung</h3>
+          <p class="service-description">
+            Wir bieten Ihnen eine kostenfreie und unverbindliche Beratung an und prüfen dabei die Rahmenbedingungen für Ihren Immobilienverkauf.
+          </p>
+          <a href="#" class="service-link">Mehr erfahren</a>
+        </div>
+        
+        <!-- Pfeil 1 -->
+        <div class="arrow-connector">
+          <fa-icon [icon]="faArrowRight" [size]="'2x'"></fa-icon>
+        </div>
+        
+        <!-- Zweite Servicekarte -->
+        <div class="service-card">
+          <div class="service-icon">
+            <fa-icon [icon]="faCalculator" [size]="'2x'"></fa-icon>
+          </div>
+          <h3 class="service-title">Kostenfreie und unverbindliche Immobilienbewertung</h3>
+          <p class="service-description">
+            Mit unserer kostenfreien und unverbindlichen Immobilienbewertung erhalten Sie eine fundierte Einschätzung des Marktwerts Ihrer Immobilie und erfahren, ob ein Verkauf für Sie sinnvoll ist. Durch die Anwendung verschiedener Bewertungsverfahren ermitteln wir einen realistischen Wert.
+          </p>
+          <a href="#" class="service-link">Mehr erfahren</a>
+        </div>
+        
+        <!-- Pfeil 2 -->
+        <div class="arrow-connector">
+          <fa-icon [icon]="faArrowRight" [size]="'2x'"></fa-icon>
+        </div>
+        
+        <!-- Dritte Servicekarte -->
+        <div class="service-card">
+          <div class="service-icon">
+            <fa-icon [icon]="faPaintBrush" [size]="'2x'"></fa-icon>
+          </div>
+          <h3 class="service-title">UI/UX Design</h3>
+          <p class="service-description">
+            Benutzerfreundliche und ansprechende Designs, die Ihre Marke perfekt repräsentieren.
+          </p>
+          <a href="#" class="service-link">Mehr erfahren</a>
+        </div>
+        
+        <!-- Pfeil 3 -->
+        <div class="arrow-connector">
+          <fa-icon [icon]="faArrowRight" [size]="'2x'"></fa-icon>
+        </div>
+        
+        <!-- Vierte Servicekarte -->
+        <div class="service-card">
+          <div class="service-icon">
+            <fa-icon [icon]="faChartLine" [size]="'2x'"></fa-icon>
+          </div>
+          <h3 class="service-title">SEO & Marketing</h3>
+          <p class="service-description">
+            Optimierung Ihrer Online-Präsenz für mehr Sichtbarkeit und höheren Umsatz.
+          </p>
+          <a href="#" class="service-link">Mehr erfahren</a>
+        </div>
+
+
+      </div>
+
+    </div>
+
+  </section>
