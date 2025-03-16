@@ -1,1 +1,53 @@
-<p>impressum works!</p>
+<section>
+  <h2>Impressum</h2>
+
+  <div class="content-contact-wrapper">
+    <div class="content-row">
+      <p><strong>Ansprechpartner</strong></p>
+      <p>Samuel Hilgert</p>
+    </div>
+
+    <div class="content-row">
+      <p><strong>Büroanschrift</strong></p>
+      <a
+        href="https://maps.google.com/?q=Eichendorffstraße+22,+68419+Viernheim"
+        target="_blank"
+        (click)="$event.stopPropagation()"
+      >
+        <mat-icon>location_on</mat-icon>
+        <span>Eichendorffstraße 22, 68519 Viernheim</span>
+      </a>
+    </div>
+
+    <div class="content-row">
+      <p><strong>Kontakt</strong></p>
+
+      <div class="content-col">
+        <a href="tel:+4962049803080">
+          <mat-icon>phone</mat-icon>
+          <span>+49 (0) 6204 980 30 80</span>
+        </a>
+        <a href="tel:+017644476237">
+          <mat-icon>phone_android</mat-icon>
+          <span>+49 (0) 176 444 76 237</span>
+        </a>
+        <a href="mailto:info@hilgert-immobilien.de">
+          <mat-icon>email</mat-icon>
+          <span>info&#64;hilgert-immobilien.de</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="content-row">
+      <p><strong>Erlaubnis</strong></p>
+      <p>Gewerbeerlaubnis gemäß § 34c GewO liegt vorm</p>
+    </div>
+  </div>
+
+  <div class="content-links-wrapper">
+        <a class="navbar-link standard-btn" routerLink="/datenschutz">Zur Datenschutzerklärung</a>
+        <a class="navbar-link standard-btn" routerLink="/agb">Zu den AGB</a>
+  </div>
+
+
+</section>

@@ -28,6 +28,8 @@ import { TippgeberComponent } from './tippgeber/tippgeber.component';
 import { ImmobilieVorstellenComponent } from './shared/immobilie-vorstellen/immobilie-vorstellen.component';
 import { PartnerWerdenComponent } from './shared/partner-werden/partner-werden.component';
 import { MagazinComponent } from './magazin/magazin.component';
+import { DatenschutzComponent } from './impressum/datenschutz/datenschutz.component';
+import { AgbComponent } from './impressum/agb/agb.component';
 
 export const routes: Routes = [
   {
@@ -77,6 +79,14 @@ export const routes: Routes = [
   {
     path: 'impressum',
     component: ImpressumComponent,
+  },
+  {
+    path: 'datenschutz',
+    component: DatenschutzComponent,
+  },
+  {
+    path: 'agb',
+    component: AgbComponent,
   },
   {
     path: 'dashboard-login',

@@ -1,0 +1,61 @@
+@use "./../../styles.scss" as s;
+@use "./../../assets/fonts.scss" as f;
+@use "./../../assets/colors.scss" as c;
+
+section {
+    @include s.f_c_fs_fs;
+    gap:48px;
+    height: auto;
+    width: 100%;
+    box-sizing: border-box;
+    padding:64px 48px;
+}
+
+.content-contact-wrapper {
+    width:50%;
+    box-sizing: border-box;
+    @include s.f_c_fs_fs;
+    gap:12px;
+
+    .content-row {
+        width:100%;
+        box-sizing: border-box;
+        @include s.f_r_fs_fs; 
+        gap:48px;
+
+        a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+            color: c.$primary-text;
+            transition: color 0.3s ease;
+
+            &:hover {
+                color: c.$primary-color;
+            }
+
+            mat-icon {
+                color: c.$primary-color;
+                font-size: 24px;
+                width: 24px;
+                height: 24px;
+            }
+        }
+
+        >p:first-child {
+            width:30%;
+            box-sizing: border-box;
+        }
+
+        .content-col {
+            @include s.f_c_fs_fs;
+            gap:4px;
+        }
+    }
+}
+
+.content-links-wrapper {
+    @include s.f_r_fs_fs;
+    gap:12px;  
+}

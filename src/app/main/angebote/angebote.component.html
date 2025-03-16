@@ -38,29 +38,136 @@
 
 
     <!-- Beispielanzeigen im Offline -->
-    <div class="angebote-container">
+    <div class="slider-container">
+
+      <div class="arrow-box">
+        <svg width="100" height="100" viewBox="0 0 100 100">
+          <!-- Erster Pfeil (links) -->
+          <path d="M40 20 L20 50 L40 80" 
+                stroke-linecap="round" 
+                stroke-linejoin="round" 
+                />
+          
+          <!-- Zweiter Pfeil (rechts) -->
+          <path d="M70 20 L50 50 L70 80" 
+                stroke-linecap="round" 
+                stroke-linejoin="round" 
+                />
+        </svg>
+      </div>
     
-      <div class="immobilien-grid">
+      <div class="angebote-container">
         <mat-card>
           <mat-card-header>
-            <mat-card-title>3 Zimmerwohnung</mat-card-title>
-            <mat-card-subtitle>Viernheim</mat-card-subtitle>
+            <img src="/uploads/immobilien/beispielbild.jpeg">
           </mat-card-header>
     
           <mat-card-content>
-            <div class="media-gallery">
-              <div>
-                <img src="/uploads/immobilien/beispielbild.jpeg">
-              </div>
+            <div class="ort">
+              <p>68519 Viernheim</p>
             </div>
-            
-            <p>geräumige 3 Zimmerwohnung in zentraler Lage</p>
-            <p>Id: 123234</p>
-            <p>Kauf</p>
-            <p class="price">490.000 €</p>
+            <mat-card-title>geräumige 3 Zimmerwohnung in zentraler Lage</mat-card-title>
+            <mat-card-subtitle></mat-card-subtitle>
+            <p class="objekt-id">Objekt-Id: 123234</p>
           </mat-card-content>
-    
+
+          <mat-card-footer>
+
+            <div class="typ-icon">
+              <svg viewBox="0 0 100 100">
+                <!-- Haus Umriss -->
+                <path d="M20,85 L20,45 L50,20 L80,45 L80,85 Z"/>
+                
+                <!-- Dach -->
+                <path d="M15,45 L50,15 L85,45"/>
+                
+                <!-- Tür -->
+                <rect x="42" y="60" width="16" height="25"/>
+              </svg>
+
+              <p class="icon-text">MFH</p>
+            </div>
+
+            <div class="wfl-icon">
+              <svg viewBox="0 0 100 100">
+                <!-- Quadratischer Rahmen für die Wohnfläche -->
+                <rect x="15" y="10" width="70" height="70"/>
+                
+                <!-- Schraffierung im Quadrat -->
+                <pattern id="diagonalHatch" patternUnits="userSpaceOnUse" width="8" height="8">
+                  <path d="M-2,2 l4,-4
+                           M0,8 l8,-8
+                           M6,10 l4,-4" />
+                </pattern>
+                
+                <rect x="15" y="10" width="70" height="70" fill="url(#diagonalHatch)"/>
+                
+                <!-- Quadratmeter-Symbol -->
+                <text x="40" y="100">m²</text>
+              </svg>
+              <p class="icon-text">490 m²</p>
+            </div>
+
+            <div class="zimmer-icon">
+              <svg viewBox="0 0 110 110">
+                <!-- Großer Raum/Wohnzimmer -->
+                <rect x="15" y="15" width="45" height="40"/>
+                
+                <!-- Kleiner Raum/Schlafzimmer rechts -->
+                <rect x="65" y="15" width="20" height="40"/>
+                
+                <!-- Kleiner Raum/Bad unten -->
+                <rect x="15" y="60" width="20" height="25"/>
+                
+                <!-- Kleiner Raum/Küche unten rechts -->
+                <rect x="40" y="60" width="45" height="25"/>
+                
+                <!-- Türöffnungen andeuten -->
+                <path d="M45,55 L45,60"/>
+                <path d="M65,40 L70,40"/>
+                <path d="M35,60 L35,55"/>
+                <path d="M55,60 L55,55"/>
+                
+                <!-- Text "Zimmer" unten -->
+                <text x="20" y="110">Zimmer</text>
+              </svg>
+              <p class="icon-text">4</p>
+            </div>
+
+            <div class="preis-icon">
+              <svg viewBox="0 0 100 100">
+                <!-- Euro-Symbol -->
+                <path d="M65,35 C60,27 52,23 44,23 C30,23 20,33 20,50 C20,67 30,77 44,77 C52,77 60,73 65,65"/>
+                
+                <!-- Horizontale Striche -->
+                <path d="M20,45 L55,45"/>
+                <path d="M20,55 L55,55"/>
+              </svg>
+
+              <p class="icon-text">490.000</p>
+            </div>
+
+          </mat-card-footer>
         </mat-card>
+
+
+      </div>
+
+      <div class="arrow-box">
+        <svg width="100" height="100" viewBox="0 0 100 100">
+          <!-- Erster Pfeil (links) -->
+          <path d="M60 20 L80 50 L60 80" 
+                stroke-linecap="round" 
+                stroke-linejoin="round" 
+                />
+          
+          <!-- Zweiter Pfeil (rechts) -->
+          <path d="M30 20 L50 50 L30 80" 
+                stroke-linecap="round" 
+                stroke-linejoin="round" 
+                />
+        </svg>
       </div>
     </div>
+
 </section>

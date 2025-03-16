@@ -4,43 +4,198 @@
 
 /* 🌍 Allgemeines Styling für das gesamte Abschnitt */
 section {
+  @include s.f_c_fs_c;
+  gap: 24px;
+  height: auto;
   width: 100%;
   box-sizing: border-box;
   padding: 20px;
-  @include s.f_c_fs_c;
-  gap:24px;
 }
-.angebote-container {
+
+.slider-container {
+  @include s.f_r_c_c;
+  gap: 4px;
+  width: 100%;
+  box-sizing: border-box;
   padding: 20px;
 
-  .immobilien-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-    margin-top: 20px;
-  }
+  .arrow-box {
+    svg {
+      cursor: pointer;
+      stroke: c.$angebote-slider-arrows;
+      stroke-width: 3;
+      fill: none;
 
-  mat-card {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-
-    mat-card-content {
-      flex-grow: 1;
+      &:hover {
+        stroke: c.$angebote-slider-arrows-hover;
+      }
     }
   }
 
-  .media-gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 10px;
-    margin: 10px 0;
+  .angebote-container {
+    @include s.f_r_c_c;
+    gap: 24px;
+    // display: grid;
+    // grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    // gap: 20px;
+    // margin-top: 20px;
 
-    img, video {
-      width: 100%;
-      height: 150px;
-      object-fit: cover;
-      border-radius: 4px;
+    mat-card {
+      @include s.f_c_fs_fs;
+      background-color: c.$angebot-card-bg;
+      height: 100%;
+      width: 500px;
+      box-sizing: border-box;
+      gap: 12px;
+      padding: 0px;
+      border-radius: 0px;
+      cursor:pointer;
+
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transform-origin: bottom center; // Der Drehpunkt für die Pin-Bewegung
+      
+      &:hover {
+        transform: translateY(8px) scale(1.02); // Nach oben bewegen und leicht vergrößern
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); // Schatten für 3D-Effekt
+      }
+
+      mat-card-header {
+        @include s.f_c_fs_c;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        box-sizing: border-box;
+
+        img {
+          padding: 0;
+          margin: 0;
+          width: calc(100% + 1px);
+          height: 350px;
+          box-sizing: border-box;
+          object-fit: cover;
+        }
+      }
+
+      mat-card-content {
+        @include s.f_c_fs_fs;
+        gap:24px;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px 18px;
+        flex-grow: 1;
+        padding: 0px 12px;
+
+        .ort {
+          @include s.f_r_fe_c;
+          width: 100%;
+          box-sizing: border-box;
+        }
+
+        mat-card-title {
+          @include s.f_r_fs_c;
+          width: 100%;
+          box-sizing: border-box;
+          font-size:1.3rem;
+          font-weight:lighter;
+        }
+
+        .objekt-id {
+          font-size:1rem;
+          font-weight:lighter;
+        }
+
+      }
+
+      mat-card-footer {
+        @include s.f_r_sb_c;
+        width:100%;
+        box-sizing: border-box;
+        gap:12px;
+        padding: 12px 4px;
+        padding-right:12px;
+        background-color: c.$card-bg-alt;
+
+        .typ-icon {
+          @include s.f_r_fs_c;
+          width:100px;
+
+          svg {
+            width: 50px; 
+            height: 50px;
+            fill: none;
+            stroke:  c.$angebot-card-icon;
+            stroke-width:2.5;
+
+            path {
+              stroke: c.$angebot-card-icon;
+              stroke-width:1.5; 
+              stroke-linecap:square;
+            }
+          }
+        }
+
+        .wfl-icon {
+          @include s.f_r_fs_c;
+          width:100px;
+          overflow-wrap: break-word;
+
+          svg {
+            width: 50px; 
+            height: 50px;
+            fill: none;
+            stroke:  c.$angebot-card-icon;
+            stroke-width:2.5;
+
+            path {
+              stroke: c.$angebot-card-icon;
+              stroke-width:1.5; 
+              stroke-linecap:square;
+            }
+          }
+        }
+
+        .zimmer-icon {
+          @include s.f_r_sb_c;
+          width:auto;
+
+          svg {
+            width: 50px; 
+            height: 50px;
+            fill: none;
+            stroke:  c.$angebot-card-icon;
+            stroke-width:2.5;
+
+            path {
+              stroke: c.$angebot-card-icon;
+              stroke-width:1.5; 
+              stroke-linecap:square;
+            }
+          }
+        }
+
+        .preis-icon {
+          @include s.f_r_fs_c;
+          width:100px;
+
+          svg {
+            width: 60px; 
+            height: 60px;
+            fill: none;
+            stroke:  c.$angebot-card-icon;
+            stroke-width:4;
+
+            path {
+              stroke: c.$angebot-card-icon;
+              stroke-width:4; 
+              stroke-linecap:square;
+            }
+          }
+        }
+
+        .icon-text {
+          font-size:14px;
+        }
+      }
     }
   }
 
