@@ -4,61 +4,87 @@
 
 // Bestehende Stile beibehalten
 section {
-  height: auto; // Geändert von 500px auf auto für flexible Höhe
-  min-height: 500px; // Mindesthöhe hinzugefügt
+  height: auto;
+  min-height: 500px;
   width: 100%;
   box-sizing: border-box;
   @include s.f_c_fs_fs;
   gap: 30px;
-  padding: 40px 20px; // Padding hinzugefügt für bessere Darstellung
-
+  padding: 40px 20px;
+  
   h2 {
     text-align: center;
   }
 }
 
-.partner-container {
-  @include s.f_r_fs_fs;
-  gap: 30px;
-  flex-wrap: wrap; // Für bessere Darstellung auf mobilen Geräten
-}
-
-.values-statement {
-  text-align: center;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-// Neue Stile für die angepassten Bewertungen
-.rating-iframe-container {
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-}
-
-.custom-reviews {
+// Slider-Container Styling (ähnlich wie in der Immobilienangebote-Section)
+.slider-container {
+  @include s.f_r_c_c;
+  gap: 4px;
   width: 100%;
-  max-width: 1200px;
-  margin: 20px auto;
+  box-sizing: border-box;
+  padding: 20px;
+
+  .arrow-box {
+    svg {
+      cursor: pointer;
+      stroke: c.$angebote-slider-arrows;
+      stroke-width: 3;
+      fill: none;
+
+      &:hover {
+        stroke: c.$angebote-slider-arrows-hover;
+      }
+    }
+  }
 }
 
+// Anpassung für den Review-Slider
+.review-slider {
+  width: 100%;
+  max-width: 1000px;
+  overflow: hidden; // Versteckt die überlaufenden Inhalte
+  padding: 10px 0;
+}
+
+// Wrapper für bessere Kontrolle über den Überfluss
+.review-wrapper {
+  width: 100%;
+  overflow: hidden; // Verhindert horizontales Scrollen
+}
+
+// Bewertungs-Container für den Slider
 .review-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  width: 100%;
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+  width: 100%; // Wichtig für korrekte Berechnungen
 }
 
+// Container für ein Bewertungspaar
+.review-pair {
+  display: flex;
+  justify-content: space-between; // Gleichmäßiger Abstand zwischen den Karten
+  width: 100%;
+  min-width: 100%;
+  flex: 0 0 100%; // Wichtig für feste Breite
+  padding: 10px 5px;
+  box-sizing: border-box;
+}
+
+// Einzelne Bewertungskarte
 .review-item {
   background-color: white;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
-  height: 100%;
+  height: auto;
+  min-height: 150px;
   display: flex;
   flex-direction: column;
-  cursor:default;
+  cursor: default;
+  width: calc(50% - 10px); // Genau die Hälfte minus Abstand
+  box-sizing: border-box;
   
   &:hover {
     transform: translateY(-3px);
@@ -66,10 +92,12 @@ section {
   }
 }
 
+// Bewertungs-Header
 .review-header {
   margin-bottom: 15px;
 }
 
+// Sterne
 .review-stars {
   margin-bottom: 10px;
 }
@@ -84,6 +112,7 @@ section {
   }
 }
 
+// Bewertungsinfo
 .reviewer-info {
   display: flex;
   justify-content: space-between;
@@ -102,21 +131,75 @@ section {
   color: #777;
 }
 
+// Bewertungstext
 .review-text {
   line-height: 1.6;
   flex-grow: 1;
   margin: 0;
 }
 
-// Responsives Design
+// Link für weitere Bewertungen
+.link-weitere-bewertungen {
+  @include s.f_r_c_c;
+  width: 100%;
+  margin-top: 10px;
+  
+  a, a:hover, a:active {
+    color: c.$link-weitere-angebote;
+    text-decoration: underline;
+    cursor: pointer;
+    
+    &:hover {
+      color: c.$link-weitere-angebote-hover;
+    }
+  }
+}
+
+// Partner-Container
+.partner-container {
+  @include s.f_r_fs_fs;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+// Werte-Statement
+.values-statement {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+// iFrame-Container
+.rating-iframe-container {
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
+// Responsive Design
 @media (max-width: 768px) {
-  .review-grid {
-    grid-template-columns: 1fr;
+  .review-pair {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  
+  .review-item {
+    width: 100%;
+    max-width: 100%;
   }
   
   .partner-container {
     flex-direction: column;
     align-items: center;
     text-align: center;
+  }
+  
+  .slider-container {
+    flex-direction: column;
+    
+    .arrow-box {
+      transform: rotate(90deg); // Pfeile drehen für vertikale Navigation
+    }
   }
 }
