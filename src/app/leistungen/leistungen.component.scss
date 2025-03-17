@@ -92,7 +92,7 @@ section {
             transition: $transition;
             flex: 1 1 250px;
             max-width: 350px;
-            cursor: pointer;
+            cursor:default;
         
             &:hover {
                 // transform: translateY(-5px);

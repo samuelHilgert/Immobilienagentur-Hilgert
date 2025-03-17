@@ -60,12 +60,17 @@ section {
       border-radius: 0px;
       cursor: pointer;
 
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      transform-origin: bottom center; // Der Drehpunkt für die Pin-Bewegung
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+
+      // transition: transform 0.3s ease, box-shadow 0.3s ease;
+      // transform-origin: bottom center; // Der Drehpunkt für die Pin-Bewegung
 
       &:hover {
-        transform: translateY(8px) scale(1.02); // Nach oben bewegen und leicht vergrößern
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); // Schatten für 3D-Effekt
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        // transform: translateY(8px) scale(1.02); // Nach oben bewegen und leicht vergrößern
+        // box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); // Schatten für 3D-Effekt
       }
 
       mat-card-header {
