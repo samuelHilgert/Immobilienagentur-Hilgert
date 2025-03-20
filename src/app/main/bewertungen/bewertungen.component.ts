@@ -1,6 +1,5 @@
 import { Component, OnInit, ElementRef, AfterViewInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 
 interface Review {
   name: string;
@@ -12,7 +11,7 @@ interface Review {
 @Component({
   selector: 'app-bewertungen',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   templateUrl: './bewertungen.component.html',
   styleUrls: ['./bewertungen.component.scss'],
 })

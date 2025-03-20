@@ -1,15 +1,7 @@
 @use "./../../styles.scss" as s;
 @use "./../../assets/fonts.scss" as f;
 @use "./../../assets/colors.scss" as c;
-// Lokale Variablen
-$primary-color: #3f51b5;
-$secondary-color: #ff4081;
-$text-color: #333;
-$light-gray: #f5f5f5;
-$white: #fff;
-$box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-$transition: all 0.3s ease;
-$arrow-color: rgba(63, 81, 181, 0.7); // Etwas deckenderen Blauton für die Pfeile
+
 
 section {
     height: auto;
@@ -17,7 +9,7 @@ section {
     width: 100%;
     box-sizing: border-box;
     padding: 80px 0;
-    background-color: $light-gray;
+    background-color: c.$bg-color;
 }
 
 .section-header {
@@ -27,7 +19,7 @@ section {
     .section-title {
         font-size: 36px;
         font-weight: 700;
-        color: $primary-color;
+        color: c.$primary-color;
         margin-bottom: 15px;
         position: relative;
 
@@ -36,7 +28,7 @@ section {
             display: block;
             width: 70px;
             height: 3px;
-            background-color: $primary-color;
+            background-color: c.$primary-color;
             margin: 15px auto 0;
         }
     }
@@ -44,68 +36,50 @@ section {
     .section-subtitle {
         font-size: 36px;
         font-weight: 700;
-        color: $text-color;
+        color: c.$primary-text;
         margin-bottom: 15px;
         margin: 0 auto;
     }
 }
 
 .container {
-    width:100%;
+    width: 100%;
     box-sizing: border-box;
     margin: 0 auto;
-    padding: 0 15px;
+    padding: 0 128px;
 
-    // Flex-Layout für die Service-Karten und Pfeile
+    // Vertikale Anordnung der Service-Karten
     .services-flow {
-        @include s.f_r_c_c;
-        gap: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
         position: relative;
         z-index: 0;
-        flex-wrap: wrap;
-
-        // Wichtig: Negative Margins für die Karten,
-        // damit sie näher zusammenrücken und Pfeile überlappen
-        .service-card {
-            margin-left: -20px;
-            margin-right: -20px;
-
-            // Erste Karte braucht keinen negativen Margin links
-            &:first-child {
-                margin-left: 15px;
-            }
-
-            // Letzte Karte braucht keinen negativen Margin rechts
-            &:last-child {
-                margin-right: 15px;
-            }
-        }
 
         .service-card {
             position: relative;
-            z-index: 5; // Höher als der Container, niedriger als die Pfeile
-            background-color: $white;
+            z-index: 5;
+            background-color: white;
             border-radius: 8px;
             padding: 30px;
             text-align: center;
-            box-shadow: $box-shadow;
-            transition: $transition;
-            flex: 1 1 250px;
-            max-width: 350px;
-            cursor:default;
-        
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-bottom: 0; // Entfernt den unteren Margin
+            cursor: default;
+            
             &:hover {
-                // transform: translateY(-5px);
-                // box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-                z-index: 15; // Beim Hover über den Pfeil gehen
+                z-index: 15;
         
                 .service-icon {
-                    background-color: $primary-color;
-                    color: $white;
+                    background-color: c.$primary-color;
+                    color: white;
                 }
         
                 .service-link {
-                    color: $secondary-color;
+                    color: c.$contrast-color;
                 }
             }
         
@@ -114,12 +88,12 @@ section {
                 height: 70px;
                 border-radius: 50%;
                 background-color: white;
-                color: $primary-color;
+                color: c.$primary-color;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 margin: 0 auto 20px;
-                transition: $transition;
+                transition: all 0.3s ease;
                 font-size: 28px;
             }
         
@@ -127,28 +101,28 @@ section {
                 font-size: 22px;
                 font-weight: 600;
                 margin-bottom: 15px;
-                color: $text-color;
+                color: c.$primary-text;
             }
         
             .service-description {
-                color: $text-color;
+                color: c.$primary-text;
                 margin-bottom: 20px;
                 font-size: 16px;
                 line-height: 1.6;
             }
         
             .service-link {
-                color: $primary-color;
+                color: c.$primary-color;
                 font-weight: 600;
                 text-decoration: none;
-                transition: $transition;
+                transition: all 0.3s ease;
                 position: relative;
                 display: inline-block;
         
                 &:after {
                     content: '→';
                     margin-left: 5px;
-                    transition: $transition;
+                    transition: all 0.3s ease;
                 }
         
                 &:hover:after {
@@ -156,25 +130,19 @@ section {
                 }
             }
         }
-
-
-
-
     }
-
-
-
 }
 
-// Pfeil-Connector mit rundem weißen Hintergrund
+// Vertikaler Pfeil-Connector mit rundem weißen Hintergrund
 .arrow-connector {
     position: relative;
     z-index: 20; // Höherer z-index als die Karten
-    color: $arrow-color;
-    margin: 0;
+    color: c.$contrast-color;
+    margin: 15px 0; // Symmetrischer Abstand oben und unten
     display: flex;
     justify-content: center;
     align-items: center;
+    transform: rotate(90deg); // Pfeil nach unten drehen
 
     fa-icon {
         position: relative;
@@ -192,32 +160,12 @@ section {
         height: 48px;
         background: white;
         border-radius: 50%;
-        box-shadow: $box-shadow;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         z-index: 1;
     }
 }
 
-
-
-// Responsive Anpassungen
-@media (max-width: 992px) {
-    section {
-        .services-flow {
-            flex-direction: column;
-
-            // Reset für die negativen Margins bei kleineren Bildschirmen
-            .service-card {
-                margin: 10px !important;
-            }
-        }
-
-        .arrow-connector {
-            margin: 10px 0;
-            transform: rotate(90deg); // Pfeile nach unten drehen
-        }
-    }
-}
-
+// Responsive Anpassungen - vereinfacht, da das Layout bereits vertikal ist
 @media (max-width: 768px) {
     section {
         padding: 60px 0;
@@ -228,19 +176,32 @@ section {
             .section-title {
                 font-size: 30px;
             }
+            
+            .section-subtitle {
+                font-size: 28px;
+            }
         }
 
-        .service-card {
+        .container .services-flow .service-card {
             padding: 25px;
         }
     }
 }
 
 @media (max-width: 480px) {
-    section {
-        .service-card {
-            flex: 1 1 100%;
-            max-width: 100%;
+    .section-header {
+        .section-subtitle {
+            font-size: 24px;
+        }
+    }
+    
+    .service-card {
+        .service-title {
+            font-size: 20px;
+        }
+        
+        .service-description {
+            font-size: 15px;
         }
     }
 }

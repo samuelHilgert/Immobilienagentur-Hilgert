@@ -1,0 +1,27 @@
+@use "./../../../styles.scss" as s;
+@use "./../../../assets/fonts.scss" as f;
+@use "./../../../assets/colors.scss" as c;
+
+// Bestehende Stile beibehalten
+section {
+    @include s.f_c_fs_c;
+    gap: 30px;
+    width: 100%;
+    box-sizing: border-box;
+    height: auto;
+    padding: 40px 20px;
+
+    h2 {
+        text-align: center;
+    }
+}
+
+.partner-container {
+    @include s.f_r_fs_fs;
+    gap:28px;
+
+    img {
+        height:70px;
+        width:auto;
+    }
+}

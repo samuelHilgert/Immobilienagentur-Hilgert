@@ -5,11 +5,12 @@ import { HeaderComponent } from './shared/header/header.component';
 import { CommonModule } from '@angular/common';
 import { HeroComponent } from './shared/hero/hero.component';
 import { SidebarClickBewertungComponent } from './shared/sidebar-click-bewertung/sidebar-click-bewertung.component';
+import { BottomFixedLineComponent } from './shared/bottom-fixed-line/bottom-fixed-line.component';
 
 @Component({
   selector: 'app-root',
   standalone:true,
-  imports: [RouterOutlet, CommonModule, HeaderComponent, HeroComponent, FooterComponent, SidebarClickBewertungComponent],
+  imports: [RouterOutlet, CommonModule, HeaderComponent, HeroComponent, FooterComponent, SidebarClickBewertungComponent, BottomFixedLineComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

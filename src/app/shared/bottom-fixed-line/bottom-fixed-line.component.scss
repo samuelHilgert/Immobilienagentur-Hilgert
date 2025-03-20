@@ -1,0 +1,23 @@
+@use "./../../..//styles.scss" as s;
+@use "./../../../assets/fonts.scss" as f;
+@use "./../../../assets/colors.scss" as c;
+
+section {
+    @include s.f_r_fe_c;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: auto;
+    box-sizing: border-box;
+    z-index: 1000;
+    background-color: transparent;
+    color:black;
+    padding:12px;
+}
+
+img {
+    height:100px;
+    width:auto;
+}
