@@ -1,257 +1,171 @@
+// kontakt.component.scss
 @use "./../../../styles.scss" as s;
 @use "./../../../assets/fonts.scss" as f;
 @use "./../../../assets/colors.scss" as c;
 
 section {
-    @include s.f_r_c_c;
-    gap: 0px;
-    height: auto;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 40px 0;
+  @include s.f_r_c_c;
+  gap: 0;
+  height: auto;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 40px 0;
 }
 
-/* Flip Cards mit 3D-Rotation */
-.cards-container {
-    position: relative;
-    width: 50%;
-    height: 700px;
-    margin: 20px;
-    perspective: 1000px;
-    /* Wichtig für 3D-Effekt */
-
-    @media (max-width: 768px) {
-        width: 90%;
-        margin: 20px auto;
-    }
+.contact-layout {
+  display: flex;
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: 40px;
+  
+  @media (max-width: 992px) {
+    flex-direction: column;
+    width: 90%;
+  }
 }
 
-.card {
-    background-color: rgba(200, 164, 123, 0.03);
-    position: absolute;
-    top: 0;
-    left: 0;
+.contact-info-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 30px;
+//   background-color: rgba(c.$contrast-color, 0.03);
+//   border: 1px solid rgba(c.$primary-color, 0.2);
+  border-radius: 4px;
+  height: fit-content;
+
+  @media (max-width: 992px) {
     width: 100%;
-    height: 100%;
+  }
+}
+
+.contact-headline {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  > h3 {
+    color: c.$primary-text;
+    margin: 0;
+  }
+
+  > h3:nth-child(2) {
+    color: c.$primary-color;
+  }
+}
+
+p {
+  color: c.$primary-text;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.contact-informations {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+
+  .main-contact {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    padding: 20px;
-    box-sizing: border-box;
-    transition: transform 0.8s, opacity 0.3s, box-shadow 0.3s;
-    transform-style: preserve-3d;
-    backface-visibility: hidden;
+    gap: 1rem;
 
-    &:not(.active) {
-        pointer-events: none;
-        /* Deaktiviert Klicks wenn nicht sichtbar */
-    }
-
-    &.active {
-        cursor: pointer;
-    }
-
-    a,
-    button,
-    input,
-    textarea,
-    mat-form-field {
-        position: relative;
-        z-index: 10;
-    }
-}
-
-.front-card {
-    background-color: rgba(c.$contrast-color, 0.03);
-    border: 1px solid rgba(c.$primary-color, 0.2);
-    transform: rotateY(0deg);
-    opacity: 1;
-    z-index: 2;
-
-    &:not(.active) {
-        opacity: 0;
-        transform: rotateY(-180deg);
-        z-index: 1;
-    }
-
-    &:hover.active {
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        transform: translateY(-2px) rotateY(0deg);
-    }
-
-    button {
-        align-self: center;
+    .contact-item {
+      a {
         display: flex;
         align-items: center;
-        gap: 0px;
-        margin-top: 0px;
-    }
-}
-
-.back-card {
-    background-color: rgba(200, 164, 123, 0.03);
-    border: 1px solid rgba(c.$primary-color, 0.2);
-    transform: rotateY(180deg);
-    opacity: 0;
-    z-index: 1;
-
-    &.active {
-        opacity: 1;
-        transform: rotateY(0deg);
-        z-index: 2;
+        gap: 1rem;
+        text-decoration: none;
+        color: c.$primary-text;
+        transition: color 0.3s ease;
+        width:fit-content;
 
         &:hover {
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            transform: translateY(-2px) rotateY(0deg);
-        }
-    }
-
-    button {
-        align-self: flex-start;
-        display: flex;
-        align-items: center;
-        gap: 0px;
-        margin-top: 0px;
-    }
-}
-
-.contact-container-front {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 24px;
-    padding: 30px 0;
-    flex: 1;
-    overflow-y: auto;
-
-    .contact-headline {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-
-        >h3 {
-            color: c.$primary-text;
-            margin: 0;
+          color: c.$primary-color;
         }
 
-        >h3:nth-child(2) {
-            color: c.$primary-color;
+        mat-icon {
+          color: c.$primary-color;
+          font-size: 24px;
+          width: 24px;
+          height: 24px;
         }
+      }
     }
-
-    p {
-        color: c.$primary-text;
-        line-height: 1.6;
-        margin: 0;
-    }
-
-    .contact-informations {
-        display: flex;
-        flex-direction: column;
-        gap: 2rem;
-        width: 100%;
-
-        .main-contact {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-
-            .contact-item {
-                a {
-                    display: flex;
-                    align-items: center;
-                    gap: 1rem;
-                    text-decoration: none;
-                    color: c.$primary-text;
-                    transition: color 0.3s ease;
-
-                    &:hover {
-                        color: c.$primary-color;
-                    }
-
-                    mat-icon {
-                        color: c.$primary-color;
-                        font-size: 24px;
-                        width: 24px;
-                        height: 24px;
-                    }
-                }
-            }
-        }
-    }
+  }
 }
 
 .contact-form-container {
-    display: flex;
-    flex-direction: column;
+  flex: 1.5;
+  
+  @media (max-width: 992px) {
     width: 100%;
+  }
+  
+  mat-card {
+    padding: 30px;
+    background-color: rgba(c.$contrast-color, 0.03);
+    border: 1px solid rgba(c.$primary-color, 0.2);
+    box-shadow: none;
     height: 100%;
     box-sizing: border-box;
-    padding: 0 0;
-    overflow-y: auto;
-    z-index: 20; 
+  }
 
-    mat-card-header {
-        margin-bottom: 20px;
+  mat-card-header {
+    margin-bottom: 20px;
 
-        mat-card-title {
-            font-weight: 200;
+    mat-card-title {
+      font-weight: 200;
 
-            h4 {
-                margin: 0;
-                color: c.$primary-color;
-            }
-        }
-
-        mat-card-subtitle {
-            font-weight: 200;
-            padding-top: 10px;
-            color: c.$primary-text;
-        }
+      h4 {
+        margin: 0;
+        color: c.$primary-color;
+      }
     }
 
-    mat-card-content {
-        flex: 1;
-        overflow-y: auto;
+    mat-card-subtitle {
+      font-weight: 200;
+      padding-top: 10px;
+      color: c.$primary-text;
+    }
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .name-row,
+  .contact-row {
+    display: flex;
+    gap: 16px;
+
+    @media (max-width: 600px) {
+      flex-direction: column;
+      gap: 0;
     }
 
-    form {
-        display: flex;
-        flex-direction: column;
-        gap: 0px;
+    mat-form-field {
+      flex: 1;
     }
+  }
 
-    .name-row,
-    .contact-row {
-        display: flex;
-        gap: 16px;
+  .full-width {
+    width: 100%;
+  }
 
-        @media (max-width: 600px) {
-            flex-direction: column;
-            gap: 0;
-        }
+  .button-row {
+    display: flex;
+    gap: 16px;
+    margin-top: 16px;
+  }
 
-        mat-form-field {
-            flex: 1;
-        }
-    }
-
-    .full-width {
-        width: 100%;
-    }
-
-    .button-row {
-        display: flex;
-        gap: 16px;
-        margin-top: 0px;
-
-        button {
-            z-index: 10; // Ensures buttons are clickable
-        }
-    }
-
-    textarea {
-        resize: vertical;
-        min-height: 120px;
-    }
+  textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
 }

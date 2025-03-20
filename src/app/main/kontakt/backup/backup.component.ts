@@ -1,4 +1,3 @@
-// kontakt.component.ts
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -17,6 +16,7 @@ import AOS from 'aos';
 export class KontaktComponent implements OnInit {
   contactForm: FormGroup;
   isSubmitting = false;
+  isBackVisible = false;
   
   // für socialMedia Icons
   private iconRegistry = inject(MatIconRegistry);
@@ -35,7 +35,6 @@ export class KontaktComponent implements OnInit {
       subject: ['', Validators.required],
       message: ['', Validators.required]
     });
-    
     this.registerSocialIcons();
   }
   
@@ -56,12 +55,44 @@ export class KontaktComponent implements OnInit {
   }
   
   /**
-   * Form zurücksetzen
+   * Zeigt die Rückseite der Flip-Karte an
    */
-  resetForm() {
-    this.contactForm.reset();
+  showBack(event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.isBackVisible = true;
+    this.refreshAOS();
   }
   
+  /**
+   * Zeigt die Vorderseite der Flip-Karte an
+   */
+  showFront(event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.isBackVisible = false;
+    this.refreshAOS();
+  }
+  
+  /**
+   * Form zurücksetzen mit Event-Stopper
+   */
+resetForm(event: Event) {
+  event.stopPropagation();
+  this.contactForm.reset();
+}
+  
+  /**
+   * AOS-Aktualisierung erzwingen, damit die Animation bei jedem Klick neu startet
+   */
+  private refreshAOS() {
+    setTimeout(() => {
+      AOS.refresh();
+    }, 10);
+  }
+
   onSubmit(): void {
     if (this.contactForm.valid) {
       this.isSubmitting = true;
@@ -83,7 +114,7 @@ export class KontaktComponent implements OnInit {
       });
     }
   }
-  
+
   private registerSocialIcons(): void {
     const icons = [
       { name: 'instagram', path: 'assets/icons/instagram.svg' },
