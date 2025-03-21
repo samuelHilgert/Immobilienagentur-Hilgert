@@ -1,31 +1,41 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, AfterViewInit, HostListener } from '@angular/core';
 import { MATERIAL_MODULES } from '../../shared/material-imports';
 import { MatProgressSpinnerModule, ProgressSpinnerMode } from '@angular/material/progress-spinner';
 import { ImmobilienService } from '../../services/immobilien.service';
 import { Immobilie } from '../../models/immobilie.model';
 import { MediaAttachment } from '../../models/media.model';
 import { RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-angebote',
   standalone: true,
-  imports: [MATERIAL_MODULES, RouterLink, MatProgressSpinnerModule],
+  imports: [MATERIAL_MODULES, RouterLink, MatProgressSpinnerModule, CommonModule],
   templateUrl: './angebote.component.html',
   styleUrl: './angebote.component.scss',
 })
-export class AngeboteComponent implements OnInit {
+export class AngeboteComponent implements OnInit, AfterViewInit {
   immobilien: Immobilie[] = [];
   isLoading: boolean = false;
   loadStatus: number = 0;
   errorMessage: string | null = null;
   mediaAttachments: { [key: string]: MediaAttachment[] } = {};
+  
+  // Für den Slider
+  currentPage: number = 0;
+  totalPages: number = 2; // Hartcodiert für Beispiel-Angebote (4 Karten / 2 pro Seite = 2 Seiten)
+  slidePosition: number = 0;
+  sliderWidth: number = 0;
 
-  constructor(private immobilienService: ImmobilienService) {}
+  constructor(
+    private immobilienService: ImmobilienService,
+    private elementRef: ElementRef
+  ) {}
 
   ngOnInit(): void {
     this.isLoading = true;
     this.loadStatus = 0;
-
+    
     const interval = setInterval(() => {
       if (this.loadStatus < 90) {
         this.loadStatus += 10;
@@ -42,7 +52,7 @@ export class AngeboteComponent implements OnInit {
             this.loadMedia(immobilie.externalId);
           }
         });
-
+        
         this.isLoading = false;
         this.loadStatus = 100;
         clearInterval(interval);
@@ -57,6 +67,51 @@ export class AngeboteComponent implements OnInit {
     });
   }
 
+  ngAfterViewInit(): void {
+    // Initialisierung nach dem Rendern des DOM
+    setTimeout(() => this.calculateSliderDimensions(), 250);
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    this.calculateSliderDimensions();
+    this.updateSlidePosition();
+  }
+
+  // Berechnet die Dimensionen des Sliders
+  calculateSliderDimensions(): void {
+    const sliderElement = this.elementRef.nativeElement.querySelector('.angebote-slider');
+    if (sliderElement) {
+      this.sliderWidth = sliderElement.offsetWidth;
+      this.updateSlidePosition();
+    }
+  }
+
+  // Aktualisiert die Position des Sliders
+  updateSlidePosition(): void {
+    this.slidePosition = -1 * this.currentPage * this.sliderWidth;
+  }
+
+  // Zur vorherigen Seite
+  prevPage(): void {
+    if (this.currentPage > 0) {
+      this.currentPage--;
+    } else {
+      this.currentPage = this.totalPages - 1; // Zum Ende springen
+    }
+    this.updateSlidePosition();
+  }
+
+  // Zur nächsten Seite
+  nextPage(): void {
+    if (this.currentPage < this.totalPages - 1) {
+      this.currentPage++;
+    } else {
+      this.currentPage = 0; // Zum Anfang zurückkehren
+    }
+    this.updateSlidePosition();
+  }
+
   loadMedia(externalId: string) {
     this.immobilienService.getMediaByExternalId(externalId)
       .subscribe({
@@ -65,8 +120,6 @@ export class AngeboteComponent implements OnInit {
         },
         error: (error) => {
           console.error(`Fehler beim Laden der Medien für ${externalId}:`, error);
-          // Entfernen Sie diese Zeile
-          // this.mediaAttachments[externalId] = [];
         }
       });
   }
