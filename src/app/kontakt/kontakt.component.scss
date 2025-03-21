@@ -2,13 +2,12 @@
 @use "./../../assets/fonts.scss" as f;
 @use "./../../assets/colors.scss" as c;
 
-
 section {
+    @include s.f_c_fs_fs;
+    gap:48px;
     height: auto;
-    min-height: 500px;
     width: 100%;
     box-sizing: border-box;
     padding: 80px 64px;
     margin-top:140px; // weil hero ausgeblendet wird
-    background-color: c.$bg-color;
 }

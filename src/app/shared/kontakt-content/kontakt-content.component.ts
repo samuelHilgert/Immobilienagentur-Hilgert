@@ -1,4 +1,4 @@
-// kontakt.component.ts
+
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -8,13 +8,13 @@ import { MatIconRegistry } from '@angular/material/icon';
 import AOS from 'aos';
 
 @Component({
-  selector: 'app-kontakt',
+  selector: 'app-kontakt-content',
   standalone: true,
   imports: [ReactiveFormsModule, MATERIAL_MODULES],
-  templateUrl: './kontakt.component.html',
-  styleUrl: './kontakt.component.scss',
+  templateUrl: './kontakt-content.component.html',
+  styleUrl: './kontakt-content.component.scss'
 })
-export class KontaktComponent implements OnInit {
+export class KontaktContentComponent implements OnInit {
   contactForm: FormGroup;
   isSubmitting = false;
   

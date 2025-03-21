@@ -25,11 +25,12 @@ import { BewertungAbgebenComponent } from './bewertung-abgeben/bewertung-abgeben
 import { ImpressumComponent } from './impressum/impressum.component';
 import { SuchanfrageComponent } from './suchanfrage/suchanfrage.component';
 import { TippgeberComponent } from './tippgeber/tippgeber.component';
-import { ImmobilieVorstellenComponent } from './shared/immobilie-vorstellen/immobilie-vorstellen.component';
-import { PartnerWerdenComponent } from './shared/partner-werden/partner-werden.component';
+import { ImmobilieVorstellenComponent } from './immobilie-vorstellen/immobilie-vorstellen.component';
+import { PartnerWerdenComponent } from './partner-werden/partner-werden.component';
 import { MagazinComponent } from './magazin/magazin.component';
 import { DatenschutzComponent } from './impressum/datenschutz/datenschutz.component';
 import { AgbComponent } from './impressum/agb/agb.component';
+import { KontaktComponent } from './kontakt/kontakt.component';
 
 export const routes: Routes = [
   {
@@ -51,6 +52,10 @@ export const routes: Routes = [
   {
     path: 'immobilienbewertung',
     component: ImmobilienbewertungComponent,
+  },
+  {
+    path: 'kontakt',
+    component: KontaktComponent,
   },
   {
     path: 'magazin',
