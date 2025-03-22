@@ -31,6 +31,7 @@ import { MagazinComponent } from './magazin/magazin.component';
 import { DatenschutzComponent } from './impressum/datenschutz/datenschutz.component';
 import { AgbComponent } from './impressum/agb/agb.component';
 import { KontaktComponent } from './kontakt/kontakt.component';
+import { BewertenComponent } from './shared/bewerten/bewerten.component';
 
 export const routes: Routes = [
   {
@@ -80,6 +81,10 @@ export const routes: Routes = [
   {
     path: 'partner-werden',
     component: PartnerWerdenComponent,
+  },
+  {
+    path: 'bewerten',
+    component: BewertenComponent,
   },
   {
     path: 'impressum',

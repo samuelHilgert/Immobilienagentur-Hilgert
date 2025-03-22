@@ -18,6 +18,12 @@ interface Review {
 export class BewertungenComponent implements OnInit, AfterViewInit {
   // Alle Bewertungen
   allReviews: Review[] = [
+   {
+      name: 'T. Backhaus',
+      date: '21.03.2025',
+      stars: 5,
+      text: 'Anfangs war ich skeptisch, weil es hieß, das die Beratung und Bewertung kostenfrei und unverbindlich seien. Das waren sie dann auch und Herr Hilgert hat sich sehr viel Mühe gegeben mich ausführlich und verständlich aufzuklären. Er ging dabei auch sehr sachlich und transparent vor. Die Vermittlung lief dabei auch reibungslos. Im Nachhinein stellte sich heraus, das die Vorgehensweise genau richtig war. Er hatte schon zu Beginn die Grundbuchangelegenheiten geklärt, da wir ohne diese später Probleme bei der Abwicklung bekommen hätten. Er wusste jederzeit, was zu tun war. Ich war sehr zufrieden mit seiner Arbeit und kann ihn jederzeit weiterempfehlen.'
+    },
     {
       name: 'V. Heinig',
       date: '17.03.2025',
@@ -36,12 +42,12 @@ export class BewertungenComponent implements OnInit, AfterViewInit {
       stars: 5,
       text: 'Nur zu empfehlen!'
     },
-    {
-      name: 'J. Sulzer',
-      date: '30.07.2022',
-      stars: 5,
-      text: 'Sehr seriös, professionell, sehr gut vorbereitet.'
-    }
+    // {
+    //   name: 'J. Sulzer',
+    //   date: '30.07.2022',
+    //   stars: 5,
+    //   text: 'Sehr seriös, professionell, sehr gut vorbereitet.'
+    // }
   ];
   
   // Bewertungen in Paaren organisieren

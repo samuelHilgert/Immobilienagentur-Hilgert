@@ -1,93 +1,155 @@
+// src/app/services/immobilien.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, switchMap, catchError, of } from 'rxjs';
+import { FirebaseService } from './firebase.service';
 import { Immobilie, WohnungDetails } from '../models/immobilie.model';
 
-// Interface für die Media-Daten
-interface MediaAttachment {
-  id: number;
-  externalId: string;
-  type: 'image' | 'video';
-  url: string;
-  createdAt: string;
-}
-
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
-
 export class ImmobilienService {
-  private baseUrl = 'https://immo.samuelhilgert.com/backend/api';
+  constructor(private firebaseService: FirebaseService) {}
 
-  constructor(private http: HttpClient) {}
-
-  getImmobilien(): Observable<{ immobilien: Immobilie[] }> {
-    return this.http.get<{ immobilien: Immobilie[] }>(`${this.baseUrl}/immobilien_api.php`);
-  }
-
-
-    // Neue Funktion zum Abrufen aller Medien einer Immobilie
-    getMediaByExternalId(externalId: string): Observable<MediaAttachment[]> {
-      return this.http.get<MediaAttachment[]>(`${this.baseUrl}/get_media.php?externalId=${externalId}`)
-        .pipe(
-          catchError(error => {
-            console.error('Error fetching media:', error);
-            return of([]);
-          })
-        );
+  // Wohnung speichern
+  async saveWohnung(immobilie: Immobilie, wohnungDetails: WohnungDetails): Promise<any> {
+    try {
+      // Immobiliendaten vorbereiten
+      const immo = { ...immobilie };
+      
+      // Stellen sicher, dass propertyType und propertyStatus existieren
+      // (diese scheinen in deinem Interface nicht definiert zu sein, werden aber verwendet)
+      (immo as any).propertyType = 'APARTMENT';
+      (immo as any).propertyStatus = 'ACTIVE';
+      (immo as any).apartmentDetails = wohnungDetails;
+      
+      // In Firebase speichern
+      return await this.firebaseService.saveProperty(immo);
+    } catch (error) {
+      console.error('Fehler beim Speichern der Wohnung:', error);
+      return { success: false, error };
     }
-
-  addWohnung(wohnungDetails: WohnungDetails): Observable<any> {
-    // Ensure required fields are present
-    const immobilienData: Immobilie = {
-      externalId: wohnungDetails.externalId ||  Date.now().toString().substring(8),
-      title: wohnungDetails.title,
-      street: wohnungDetails.street,
-      houseNumber: wohnungDetails.houseNumber,
-      postcode: wohnungDetails.postcode,
-      city: wohnungDetails.city,
-      descriptionNote: wohnungDetails.descriptionNote,
-      value: wohnungDetails.value,
-      hasCourtage: wohnungDetails.hasCourtage,
-      courtage: wohnungDetails.courtage,
-      courtageNote: wohnungDetails.courtageNote,
-      livingSpace: wohnungDetails.livingSpace,
-      plotArea: 0,
-      numberOfRooms: wohnungDetails.numberOfRooms,
-      marketingType: 'PURCHASE',
-      creationDate: new Date().toISOString(),
-      lastModificationDate: new Date().toISOString()
-    };
-
-    // First save to immobilien table
-    return this.http.post(`${this.baseUrl}/add_immobilie.php`, immobilienData)
-      .pipe(
-        switchMap(() => {
-          // Ensure wohnungDetails has the same externalId and dates
-          wohnungDetails.externalId = immobilienData.externalId;
-          wohnungDetails.creationDate = immobilienData.creationDate;
-          wohnungDetails.lastModificationDate = immobilienData.lastModificationDate;
-          
-          // Then save to wohnung_details
-          return this.http.post(`${this.baseUrl}/add_wohnung.php`, wohnungDetails);
-        }),
-        catchError(error => {
-          console.error('Error saving property:', error);
-          return of({ error: error.message || 'Error saving property' });
-        })
-      );
   }
 
-  uploadMedia(formData: FormData, externalId: string): Observable<any> {
-    // Ensure externalId is added to FormData
-    formData.append('externalId', externalId);
+  // Haus speichern
+  async saveHaus(immobilie: Immobilie, hausDetails: any): Promise<any> {
+    try {
+      const immo = { ...immobilie };
+      (immo as any).propertyType = 'HOUSE';
+      (immo as any).propertyStatus = 'ACTIVE';
+      (immo as any).houseDetails = hausDetails;
+      
+      return await this.firebaseService.saveProperty(immo);
+    } catch (error) {
+      console.error('Fehler beim Speichern des Hauses:', error);
+      return { success: false, error };
+    }
+  }
+
+  // Grundstück speichern
+  async saveGrundstueck(immobilie: Immobilie, grundstueckDetails: any): Promise<any> {
+    try {
+      const immo = { ...immobilie };
+      (immo as any).propertyType = 'LAND';
+      (immo as any).propertyStatus = 'ACTIVE';
+      (immo as any).landDetails = grundstueckDetails;
+      
+      return await this.firebaseService.saveProperty(immo);
+    } catch (error) {
+      console.error('Fehler beim Speichern des Grundstücks:', error);
+      return { success: false, error };
+    }
+  }
+
+  // Medien hochladen
+  async uploadMedia(file: File, externalId: string, type: 'image' | 'video'): Promise<any> {
+    try {
+      return await this.firebaseService.uploadMedia(file, externalId, type);
+    } catch (error) {
+      console.error('Fehler beim Hochladen des Mediums:', error);
+      return { success: false, error };
+    }
+  }
+
+  // Medien löschen
+  async deleteMedia(mediaId: string): Promise<any> {
+    try {
+      return await this.firebaseService.deleteMedia(mediaId);
+    } catch (error) {
+      console.error('Fehler beim Löschen des Mediums:', error);
+      return { success: false, error };
+    }
+  }
+
+  // Titelbild festlegen
+  async setTitleImage(mediaId: string, externalId: string): Promise<any> {
+    try {
+      return await this.firebaseService.setTitleImage(mediaId, externalId);
+    } catch (error) {
+      console.error('Fehler beim Festlegen des Titelbilds:', error);
+      return { success: false, error: 'Methode noch nicht implementiert' };
+    }
+  }
+
+  // Immobilie abrufen
+  async getProperty(externalId: string): Promise<any> {
+    try {
+      return await this.firebaseService.getProperty(externalId);
+    } catch (error) {
+      console.error('Fehler beim Abrufen der Immobilie:', error);
+      return { success: false, error };
+    }
+  }
+
+  // Alle Immobilien abrufen
+  async getProperties(filters?: any): Promise<any[]> {
+    try {
+      return await this.firebaseService.getProperties(filters);
+    } catch (error) {
+      console.error('Fehler beim Abrufen der Immobilien:', error);
+      return [];
+    }
+  }
+
+  // Alle Immobilien abrufen (alte Methode für Kompatibilität)
+  getImmobilien() {
+    // 'this' in lokaler Variable speichern
+    const self = this;
     
-    return this.http.post(`${this.baseUrl}/upload_media.php`, formData)
-      .pipe(
-        catchError(error => {
-          console.error('Error uploading media:', error);
-          return of({ error: error.message || 'Error uploading media' });
-        })
-      );
+    // Wandelt das Promise in ein Observable um für Kompatibilität
+    return {
+      subscribe(options: { next: (data: any) => void, error?: (error: any) => void }) {
+        self.getProperties()  // Verwende 'self' statt 'this'
+          .then(properties => {
+            if (options.next) options.next(properties);
+          })
+          .catch(error => {
+            if (options.error) options.error(error);
+          });
+        
+        // Dummy-Unsubscribe-Funktion zurückgeben
+        return { unsubscribe: () => {} };
+      }
+    };
+  }
+
+  // Medien für eine Immobilie abrufen (alt)
+  getMediaByExternalId(externalId: string) {
+    // 'this' in lokaler Variable speichern
+    const self = this;
+    
+    // Methode im FirebaseService erstellen oder erweitern
+    return {
+      subscribe(options: { next: (data: any) => void, error?: (error: any) => void }) {
+        self.firebaseService.getMediaForProperty(externalId)  // Verwende 'self' statt 'this'
+          .then(media => {
+            if (options.next) options.next(media);
+          })
+          .catch(error => {
+            if (options.error) options.error(error);
+          });
+        
+        // Dummy-Unsubscribe-Funktion zurückgeben
+        return { unsubscribe: () => {} };
+      }
+    };
   }
 }
