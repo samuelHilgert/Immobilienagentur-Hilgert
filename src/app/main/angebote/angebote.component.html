@@ -37,9 +37,7 @@
               <mat-card>
 
                 <mat-card-header>
-                  <img *ngIf="getMediaForImmobilie(immobilie.externalId).length > 0"
-                       [src]="getMediaForImmobilie(immobilie.externalId)[0].url"
-                       [alt]="immobilie.title">
+                  <img [src]="getMediaForImmobilie(immobilie.externalId)[0].url" [alt]="immobilie.title">
                 </mat-card-header>
 
                 <mat-card-content>
