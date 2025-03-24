@@ -4,11 +4,11 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { routes } from './app.routes';
 import { ScrollService } from './services/scroll.service';
-
-// Firebase-Importe hinzufügen
+// Firebase-Importe
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getStorage, provideStorage } from '@angular/fire/storage';
+import { getAuth, provideAuth } from '@angular/fire/auth'; // Fehlender Import
 import { environment } from '../environments/environments';
 
 export const appConfig: ApplicationConfig = {
@@ -18,9 +18,8 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     provideHttpClient(),
     ScrollService,
-    
-    // Firebase-Provider hinzufügen
     provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
     provideStorage(() => getStorage())
   ]

@@ -1,6 +1,6 @@
 import { Component, OnInit, ElementRef, AfterViewInit, HostListener } from '@angular/core';
 import { MATERIAL_MODULES } from '../../shared/material-imports';
-import { MatProgressSpinnerModule, ProgressSpinnerMode } from '@angular/material/progress-spinner';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ImmobilienService } from '../../services/immobilien.service';
 import { Immobilie } from '../../models/immobilie.model';
 import { MediaAttachment } from '../../models/media.model';
@@ -20,10 +20,10 @@ export class AngeboteComponent implements OnInit, AfterViewInit {
   loadStatus: number = 0;
   errorMessage: string | null = null;
   mediaAttachments: { [key: string]: MediaAttachment[] } = {};
-  
+
   // Für den Slider
   currentPage: number = 0;
-  totalPages: number = 2; // Hartcodiert für Beispiel-Angebote (4 Karten / 2 pro Seite = 2 Seiten)
+  totalPages: number = 0;
   slidePosition: number = 0;
   sliderWidth: number = 0;
 
@@ -33,9 +33,10 @@ export class AngeboteComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
+
     this.isLoading = true;
     this.loadStatus = 0;
-    
+
     const interval = setInterval(() => {
       if (this.loadStatus < 90) {
         this.loadStatus += 10;
@@ -44,15 +45,20 @@ export class AngeboteComponent implements OnInit, AfterViewInit {
 
     this.immobilienService.getImmobilien().subscribe({
       next: (data) => {
-        this.immobilien = data.immobilien;
-        console.log('Immobilien: ', this.immobilien);
-        
+        const alleImmobilien: Immobilie[] = data || [];
+
+        console.log('alleImmobilien: ',alleImmobilien);
+        // Nur Angebote anzeigen
+        this.immobilien = alleImmobilien.filter(immo => immo.propertyStatus === 'Angebot');
+        this.totalPages = Math.ceil(this.immobilien.length / 2); // Zwei pro Seite
+
+        // Medien laden
         this.immobilien.forEach(immobilie => {
           if (immobilie.externalId) {
             this.loadMedia(immobilie.externalId);
           }
         });
-        
+
         this.isLoading = false;
         this.loadStatus = 100;
         clearInterval(interval);
@@ -68,7 +74,6 @@ export class AngeboteComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    // Initialisierung nach dem Rendern des DOM
     setTimeout(() => this.calculateSliderDimensions(), 250);
   }
 
@@ -78,7 +83,6 @@ export class AngeboteComponent implements OnInit, AfterViewInit {
     this.updateSlidePosition();
   }
 
-  // Berechnet die Dimensionen des Sliders
   calculateSliderDimensions(): void {
     const sliderElement = this.elementRef.nativeElement.querySelector('.angebote-slider');
     if (sliderElement) {
@@ -87,27 +91,24 @@ export class AngeboteComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // Aktualisiert die Position des Sliders
   updateSlidePosition(): void {
     this.slidePosition = -1 * this.currentPage * this.sliderWidth;
   }
 
-  // Zur vorherigen Seite
   prevPage(): void {
     if (this.currentPage > 0) {
       this.currentPage--;
     } else {
-      this.currentPage = this.totalPages - 1; // Zum Ende springen
+      this.currentPage = this.totalPages - 1;
     }
     this.updateSlidePosition();
   }
 
-  // Zur nächsten Seite
   nextPage(): void {
     if (this.currentPage < this.totalPages - 1) {
       this.currentPage++;
     } else {
-      this.currentPage = 0; // Zum Anfang zurückkehren
+      this.currentPage = 0;
     }
     this.updateSlidePosition();
   }
@@ -125,9 +126,7 @@ export class AngeboteComponent implements OnInit, AfterViewInit {
   }
 
   getMediaForImmobilie(externalId: string | undefined): MediaAttachment[] {
-    if (!externalId) {
-      return [];
-    }
+    if (!externalId) return [];
     return this.mediaAttachments[externalId] || [];
   }
 }

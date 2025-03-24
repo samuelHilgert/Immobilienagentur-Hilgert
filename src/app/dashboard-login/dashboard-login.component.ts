@@ -1,6 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../services/auth.service';
@@ -8,61 +7,52 @@ import { AuthService } from '../services/auth.service';
 @Component({
   selector: 'app-dashboard-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule], // FormsModule entfernt, da wir ReactiveFormsModule brauchen
-  providers: [AuthService], // Da standalone, brauchen wir hier einen Provider für den Service
+  imports: [CommonModule, ReactiveFormsModule],
+  providers: [AuthService], 
   templateUrl: './dashboard-login.component.html',
   styleUrls: ['./dashboard-login.component.scss'],
 })
+
 export class DashboardLoginComponent {
   loginForm: FormGroup;
   errorMessage: string = '';
 
   constructor(
     private fb: FormBuilder,
-    private http: HttpClient,
     private router: Router,
     public authService: AuthService
   ) {
     this.loginForm = this.fb.group({
-      username: [''],
+      email: [''],  
       password: [''],
     });
   }
 
-  onLogin(): void {
-    console.log("🔍 Sende Login-Daten:", this.loginForm.value); // Debugging
-    
+  async onLogin(): Promise<void> {
     if (this.loginForm.valid) {
-      this.http.post<any>(
-        'https://immo.samuelhilgert.com/backend/auth/dashboard_login.php',
-        this.loginForm.value, // ✅ JSON-Daten senden (ohne CSRF-Token)
-        { 
-          headers: { 
-            'Content-Type': 'application/json' // 🔹 Kein CSRF-Token mehr nötig
-          }
-        }
-      ).subscribe(
-        response => {
-          console.log("🔍 API-Antwort:", response);
-    
-          if (response && response.success) {
-            localStorage.setItem('admin', 'true'); // 🔐 Login-Zustand speichern
-            this.router.navigateByUrl('/dashboard'); // ✅ Weiterleitung ins Dashboard
-          } else {
-            this.errorMessage = response.message || '⚠ Falsche Anmeldedaten!';
-          }
-        },
-        error => {
-          console.error("❌ API Fehler:", error);
-          this.errorMessage = `❌ Fehler: ${error.statusText} (${error.status})`;
-        }
-      );
+      const { email, password } = this.loginForm.value;
+      const result = await this.authService.login(email, password);
+      if (result.success) {
+        this.router.navigateByUrl('/dashboard');
+      } else {
+        console.log('Error object:', result.error); // Hier den Fehler ausgeben
+        this.errorMessage = this.getErrorMessage(result.error);
+      }
     } else {
-      this.errorMessage = '⚠ Bitte alle Felder ausfüllen!';
+      this.errorMessage = 'Bitte alle Felder ausfüllen!';
     }
-  }  
+  }
 
-  onLogout(): void {
-    this.authService.logout();
+  private getErrorMessage(error: any): string {
+    switch(error?.code) {
+      case 'auth/user-not-found':
+        return 'Benutzer nicht gefunden';
+      case 'auth/wrong-password':
+        return 'Falsches Passwort';
+      case 'auth/invalid-email':
+        return 'Ungültige E-Mail-Adresse';
+      default:
+        return 'Ein Fehler ist aufgetreten: ' + (error?.message || error);
+    }
   }
 }

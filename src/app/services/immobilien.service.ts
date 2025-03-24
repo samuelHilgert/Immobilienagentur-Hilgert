@@ -14,11 +14,6 @@ export class ImmobilienService {
     try {
       // Immobiliendaten vorbereiten
       const immo = { ...immobilie };
-      
-      // Stellen sicher, dass propertyType und propertyStatus existieren
-      // (diese scheinen in deinem Interface nicht definiert zu sein, werden aber verwendet)
-      (immo as any).propertyType = 'APARTMENT';
-      (immo as any).propertyStatus = 'ACTIVE';
       (immo as any).apartmentDetails = wohnungDetails;
       
       // In Firebase speichern

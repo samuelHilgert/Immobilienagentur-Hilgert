@@ -107,6 +107,7 @@ export const routes: Routes = [
     component: DashboardComponent,
     canActivate: [AuthGuard], // 🔐 Schützt das Dashboard
     children: [
+
       // 👈 Nested Routes innerhalb des Dashboards!
       {
         path: 'immobilien',

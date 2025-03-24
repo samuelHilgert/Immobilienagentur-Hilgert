@@ -1,5 +1,7 @@
 // ✅ NEUES INTERFACE für Immobilie
 export interface Immobilie {
+
+  // teilweise wiederholende aus den Details, weil diese infos für die Kurzvorstellungen wichtig sind 
   externalId?: string;
   marketingType: "PURCHASE";
   title: string;
@@ -11,12 +13,16 @@ export interface Immobilie {
   value: number; // Kaufpreis
   livingSpace: number;
   numberOfRooms: number;
-  plotArea: number;
+  plotArea: number; 
   hasCourtage: "YES" | "NO" | "NOT_APPLICABLE";
   courtage?: string;
   courtageNote?: string;
   creationDate?: string;
   lastModificationDate?: string;
+
+  // eigene Felder ergänzt, weil wichtig für mich
+  propertyType: "Wohnung" | "Haus" | "Grundstück";
+  propertyStatus: "Angebot" | "Referenz";
 }
 
 // ✅ NEUES INTERFACE für Wohnungen

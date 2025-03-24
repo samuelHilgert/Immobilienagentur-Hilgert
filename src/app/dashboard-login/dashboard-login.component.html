@@ -3,15 +3,27 @@
     <h2>Login</h2>
     <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
       <div class="form-group">
-        <label for="username">Benutzername</label>
-        <input type="text" id="username" formControlName="username" placeholder="Benutzername eingeben" required>
+        <label for="email">E-Mail</label>
+        <input type="email" id="email" formControlName="email" placeholder="E-Mail eingeben" required>
+        <div *ngIf="loginForm.get('email')?.invalid && (loginForm.get('email')?.dirty || loginForm.get('email')?.touched)" class="error-text">
+          <small *ngIf="loginForm.get('email')?.errors?.['required']">E-Mail ist erforderlich</small>
+          <small *ngIf="loginForm.get('email')?.errors?.['email']">Bitte gib eine gültige E-Mail-Adresse ein</small>
+        </div>
       </div>
+      
       <div class="form-group">
         <label for="password">Passwort</label>
         <input type="password" id="password" formControlName="password" placeholder="Passwort eingeben" required>
+        <div *ngIf="loginForm.get('password')?.invalid && (loginForm.get('password')?.dirty || loginForm.get('password')?.touched)" class="error-text">
+          <small *ngIf="loginForm.get('password')?.errors?.['required']">Passwort ist erforderlich</small>
+        </div>
       </div>
-      <button type="submit" class="login-btn">Login</button>
+      
+      <button type="submit" class="login-btn" [disabled]="loginForm.invalid">Login</button>
     </form>
-    <p *ngIf="errorMessage">{{ errorMessage }}</p>
+    
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
   </div>
 </section>
