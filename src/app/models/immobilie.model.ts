@@ -23,6 +23,19 @@ export interface Immobilie {
   // eigene Felder ergänzt, weil wichtig für mich
   propertyType: "Wohnung" | "Haus" | "Grundstück";
   propertyStatus: "Angebot" | "Referenz";
+  uploadPublicTargets: {
+    homepage: boolean;
+    immoScout: boolean;
+    facebook: boolean;
+    instagram: boolean;
+    newsletter: boolean;
+    magazin: boolean;
+  };
+  sendCustomerTargets: {
+    investoren: boolean;
+    suchende: boolean;
+    partner: boolean;
+  };
 }
 
 // ✅ NEUES INTERFACE für Wohnungen
