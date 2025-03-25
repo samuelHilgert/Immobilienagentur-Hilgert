@@ -1,5 +1,98 @@
-<section>
-    <p>bewerten works!</p>
-</section>
+<section class="bewerten-section">
+    <h2>Ich freue mich über Ihr Feedback!</h2>
+  
+    <form (ngSubmit)="submitBewertung()" #bewertungForm="ngForm" class="bewerten-form">
 
-
+        <mat-form-field appearance="fill">
+            <input
+              matInput
+              placeholder="Ihr Name"
+              name="autorName"
+              [(ngModel)]="bewertung.autorName"
+              required
+              pattern="^[A-Za-zÄÖÜäöüß]{2,}\s[A-Za-zÄÖÜäöüß]{2,}$"
+              #autorNameInput="ngModel"
+              maxlength="100"
+            />
+            <mat-error *ngIf="autorNameInput.invalid && autorNameInput.touched">
+              Bitte geben Sie Vor- und Nachnamen ein (jeweils mindestens 2 Buchstaben).
+            </mat-error>
+          </mat-form-field>          
+          
+      <mat-form-field appearance="fill">
+        <input
+          matInput
+          type="email"
+          placeholder="Ihre E-Mail (wird nicht angezeigt)"
+          name="autorEmail"
+          [(ngModel)]="bewertung.autorEmail"
+          #emailRef="ngModel"
+          required
+          email
+          pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+          maxlength="100"
+        />
+        <mat-error *ngIf="emailRef.invalid && emailRef.touched">
+          Bitte geben Sie eine gültige E-Mail-Adresse ein
+        </mat-error>
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <textarea
+        class="bewertungstextArea"
+          matInput
+          placeholder="Ihre Bewertung"
+          name="text"
+          [(ngModel)]="bewertung.text"
+          required
+          rows="4"
+          maxlength="3000"
+        ></textarea>
+        <mat-hint>{{ bewertung.text.length || 0 }} / 3000</mat-hint>
+      </mat-form-field>
+  
+      <div
+      class="sterne-bewertung"
+      (mouseleave)="hoverRating = 0"
+    >
+      <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
+        <mat-icon
+          (click)="setRating(star)"
+          (mouseenter)="hoverRating = star"
+          [class.filled]="star <= (hoverRating || bewertung.rating || 5)"
+        >
+          {{ star <= (hoverRating || bewertung.rating || 5) ? 'star' : 'star_border' }}
+        </mat-icon>
+      </ng-container>
+    </div>    
+      
+      <p>Bewertung: {{ bewertung.rating }} von 5 Sternen</p>
+      
+      <div>
+      <p>Wo dürfen wir die Bewertung hochladen?</p>
+      </div>
+  
+      <div class="quelle-checkboxes">
+        <label>
+          <input type="checkbox" [(ngModel)]="bewertung.quelle.google" name="google" />
+          Google
+        </label>
+        <label>
+          <input type="checkbox" [(ngModel)]="bewertung.quelle.homepage" name="homepage" />
+          Homepage
+        </label>
+        <label>
+          <input type="checkbox" [(ngModel)]="bewertung.quelle.immoScout" name="immoScout" />
+          ImmoScout24
+        </label>
+      </div>
+  
+      <button mat-raised-button color="primary" type="submit" [disabled]="!bewertungForm.form.valid">
+        Absenden
+      </button>
+  
+      <p *ngIf="successMessage" class="success">{{ successMessage }}</p>
+      <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+    </form>
+  </section>
+  

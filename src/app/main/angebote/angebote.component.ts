@@ -48,7 +48,7 @@ export class AngeboteComponent implements OnInit, AfterViewInit {
         const alleImmobilien: Immobilie[] = data || [];
 
         // console.log('alleImmobilien: ',alleImmobilien);
-        
+
         // Nur Angebote anzeigen
         this.immobilien = alleImmobilien.filter(immo => immo.propertyStatus === 'Angebot' && immo.uploadPublicTargets.homepage === true);
         this.totalPages = Math.ceil(this.immobilien.length / 2); // Zwei pro Seite

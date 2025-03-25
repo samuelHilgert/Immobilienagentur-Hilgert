@@ -41,8 +41,6 @@ export class ImmobilienService {
   async saveGrundstueck(immobilie: Immobilie, grundstueckDetails: any): Promise<any> {
     try {
       const immo = { ...immobilie };
-      (immo as any).propertyType = 'LAND';
-      (immo as any).propertyStatus = 'ACTIVE';
       (immo as any).landDetails = grundstueckDetails;
       
       return await this.firebaseService.saveProperty(immo);
