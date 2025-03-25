@@ -28,8 +28,6 @@ export class ImmobilienService {
   async saveHaus(immobilie: Immobilie, hausDetails: any): Promise<any> {
     try {
       const immo = { ...immobilie };
-      (immo as any).propertyType = 'HOUSE';
-      (immo as any).propertyStatus = 'ACTIVE';
       (immo as any).houseDetails = hausDetails;
       
       return await this.firebaseService.saveProperty(immo);

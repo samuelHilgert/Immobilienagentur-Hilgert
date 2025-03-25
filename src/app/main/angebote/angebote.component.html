@@ -11,9 +11,12 @@
   
     <mat-error *ngIf="errorMessage">{{ errorMessage }}</mat-error>
 
+<div *ngIf="!this.immobilien.length">
+<p>Aktuell haben wir keine Immobilien im Angebot! Bitte besuchen Sie uns zu einem späteren Zeitpunkt erneut.</p>
+</div>
 
 <!-- Dynamischer Slider -->
-<div class="slider-container">
+<div *ngIf="this.immobilien.length" class="slider-container">
   <div class="arrow-box" (click)="prevPage()">
     <!-- SVG für Pfeil links -->
     <svg width="100" height="100" viewBox="0 0 100 100">
@@ -147,7 +150,7 @@
 
 </div>
 
-  <div class="link-weitere-angebote">
+  <div *ngIf="this.immobilien.length" class="link-weitere-angebote">
     <a routerLink="immobilienangebote">Weitere Immobilienangebote anzeigen</a>
   </div>
 

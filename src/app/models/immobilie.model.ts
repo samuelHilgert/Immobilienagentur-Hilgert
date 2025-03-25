@@ -108,69 +108,89 @@ export interface WohnungDetails {
 
 
 // ✅ NEUES INTERFACE für Häuser
-//  export interface HausDetails {
-//     externalId?: string; // Max. 50 Zeichen, erlaubt: "/" und "\"
-//     title: string; // Max. 100 Zeichen
-//     street: string; // Max. 100 Zeichen
-//     houseNumber: string; // Max. 10 Zeichen
-//     postcode: string; // Max. 5 Zeichen
-//     city: string; // Max. 50 Zeichen
-//     searchField1?: string;
-//     searchField2?: string;
-//     searchField3?: string;
-//     groupNumber?: number; // Max. 10-stellig (0 - 2147483647)
-//     descriptionNote?: string; // Max. 3999 Bytes
-//     furnishingNote?: string; // Max. 3999 Bytes
-//     locationNote?: string; // Max. 3999 Bytes
-//     otherNote?: string; // Max. 3999 Bytes
-//     showAddress: boolean;
-//     contactId?: string;
-//     lodgerFlat?: "YES" | "NOT_APPLICABLE";
-//     constructionPhase?: "PROJECTED" | "UNDER_CONSTRUCTION" | "COMPLETED" | "NO_INFORMATION";
-//     buildingType: "NO_INFORMATION" | "SINGLE_FAMILY_HOUSE" | "MID_TERRACE_HOUSE" | "END_TERRACE_HOUSE" | "MULTI_FAMILY_HOUSE" | "BUNGALOW" | "FARMHOUSE" | "SEMIDETACHED_HOUSE" | "VILLA" | "CASTLE_MANOR_HOUSE" | "SPECIAL_REAL_ESTATE" | "OTHER";
-//     cellar?: "YES" | "NOT_APPLICABLE";
-//     handicappedAccessible?: "YES" | "NOT_APPLICABLE";
-//     numberOfParkingSpaces?: string;
-//     condition?: "NO_INFORMATION" | "FIRST_TIME_USE" | "FIRST_TIME_USE_AFTER_REFURBISHMENT" | "MINT_CONDITION" | "REFURBISHED" | "MODERNIZED" | "FULLY_RENOVATED" | "WELL_KEPT" | "NEED_OF_RENOVATION" | "NEGOTIABLE" | "RIPE_FOR_DEMOLITION";
-//     constructionYear?: number;
-//     constructionYearUnknown?: boolean;
-//     lastRefurbishment?: string;
-//     interiorQuality?: "NO_INFORMANTION" | "LUXURY" | "SOPHISTICATED" | "NORMAL" | "SIMPLE";
-//     freeFrom?: string;
-//     heatingType?: "NO_INFORMATION" | "SELF_CONTAINED_CENTRAL_HEATING" | "STOVE_HEATING" | "CENTRAL_HEATING" | "COMBINED_HEAT_AND_POWER_PLANT" | "ELECTRIC_HEATING" | "DISTRICT_HEATING" | "FLOOR_HEATING" | "GAS_HEATING" | "WOOD_PELLET_HEATING" | "NIGHT_STORAGE_HEATER" | "OIL_HEATING" | "SOLAR_HEATING" | "HEAT_PUMP";
-//     firingType?: "NO_INFORMANTION" | "GEOTHERMAL" | "SOLAR_HEATING" | "PELLET_HEATING" | "GAS" | "OIL" | "DISTRICT_HEATING" | "ELECTRICITY" | "COAL";
-//     buildingEnergyRatingType?: "NO_INFORMATION" | "ENERGY_REQUIRED" | "ENERGY_CONSUMPTION";
-//     thermalCharacteristic?: number;
-//     energyConsumptionContainsWarmWater?: "YES" | "NOT_APPLICABLE";
-//     numberOfFloors?: number;
-//     usableFloorSpace?: number;
-//     numberOfBedRooms?: number;
-//     numberOfBathRooms?: number;
-//     guestToilet?: "YES" | "NOT_APPLICABLE";
-//     parkingSpaceType?: "NO_INFORMATION" | "GARAGE" | "OUTSIDE" | "CARPORT" | "DUPLEX" | "CAR_PARK" | "UNDERGROUND_GARAGE";
-//     rented?: "YES" | "NOT_APPLICABLE";
-//     rentalIncome?: number;
-//     listed?: "YES" | "NOT_APPLICABLE";
-//     parkingSpacePrice?: number;
-//     summerResidencePractical?: "YES" | "NOT_APPLICABLE";
-//     tenancy?: number;
-//     leaseholdInterest?: number;
-//     value: number;
-//     currency: "EUR";
-//     livingSpace: number;
-//     plotArea: number;
-//     numberOfRooms: number;
-//     hasCourtage: "YES" | "NO" | "NOT_APPLICABLE";
-//     courtage?: string;
-//     courtageNote?: string;
-//     latitude?: number; // min. -90.0, max. 90.0
-//     longitude?: number; // min. -180.0, max. 180.0
-//     creationDate?: string;
-//     lastModificationDate?: string;
-//     marketingType: "Kauf";
-//     priceIntervalType: "ONE_TIME_CHARGE";
-//     energyPerformanceCertificate?: boolean;
-//   }
+ export interface HausDetails {
+  externalId?: string;
+  marketingType: "PURCHASE";
+  title: string;
+  street: string;
+  houseNumber: string;
+  postcode: string;
+  city: string;
+  descriptionNote?: string;
+  value: number; // Kaufpreis
+  livingSpace: number;
+  numberOfRooms: number;
+  plotArea: number; 
+  hasCourtage: "YES" | "NO" | "NOT_APPLICABLE";
+  courtage?: string;
+  courtageNote?: string;
+  creationDate?: string;
+  lastModificationDate?: string;
+
+  // spezfische Felder gleich wie Wohnungen
+  searchField1?: string;
+  searchField2?: string;
+  searchField3?: string;
+  groupNumber?: number;
+  showAddress: boolean;
+  furnishingNote?: string;
+  locationNote?: string;
+  otherNote?: string;
+  contactId?: string;
+  cellar?: "YES" | "NOT_APPLICABLE";
+  handicappedAccessible?: "YES" | "NOT_APPLICABLE";
+  numberOfParkingSpaces?: string;
+  condition?: "NO_INFORMATION" | "FIRST_TIME_USE" | "FIRST_TIME_USE_AFTER_REFURBISHMENT" | "MINT_CONDITION" | "REFURBISHED" | "MODERNIZED" | "FULLY_RENOVATED" | "WELL_KEPT" | "NEED_OF_RENOVATION" | "NEGOTIABLE" | "RIPE_FOR_DEMOLITION";
+  constructionYear?: number;
+  constructionYearUnknown?: boolean;
+  lastRefurbishment?: string;
+  interiorQuality?: "NO_INFORMATION" | "LUXURY" | "SOPHISTICATED" | "NORMAL" | "SIMPLE";
+  freeFrom?: string;
+  heatingType?: string;
+  firingType?: string;
+  buildingEnergyRatingType?: "NO_INFORMATION" | "ENERGY_REQUIRED" | "ENERGY_CONSUMPTION";
+  thermalCharacteristic?: number;
+  energyConsumptionContainsWarmWater?: "YES" | "NOT_APPLICABLE";
+  numberOfFloors?: number;
+  usableFloorSpace?: number;
+  numberOfBedRooms?: number;
+  numberOfBathRooms?: number;
+  guestToilet?: "YES" | "NOT_APPLICABLE";
+  parkingSpaceType?: string;
+  rented?: "YES" | "NOT_APPLICABLE";
+  rentalIncome?: number;
+  listed?: "YES" | "NOT_APPLICABLE";
+  parkingSpacePrice?: number;
+  summerResidencePractical?: "YES" | "NOT_APPLICABLE";
+  tenancy?: number;
+  leaseholdInterest?: number;
+  currency: "EUR";
+  latitude?: null;
+  longitude?: null;
+  priceIntervalType: "ONE_TIME_CHARGE";
+  energyPerformanceCertificate?: boolean;
+
+ // weiter für Haus spezifische Felder 
+lodgerFlat?: "YES" | "NOT_APPLICABLE"; // Mit Einliegerwohnung
+constructionPhase?: "PROJECTED" | "UNDER_CONSTRUCTION" | "COMPLETED" | "NO_INFORMATION"; // Bauphase
+buildingType: "NO_INFORMATION" | "SINGLE_FAMILY_HOUSE" | "MID_TERRACE_HOUSE" | "END_TERRACE_HOUSE" | "MULTI_FAMILY_HOUSE" | "BUNGALOW" | "FARMHOUSE" | "SEMIDETACHED_HOUSE" | "VILLA" | "CASTLE_MANOR_HOUSE" | "SPECIAL_REAL_ESTATE" | "OTHER"; // Haustyp
+
+}
+
+
+  // aussortiert bei Haus, da nur Wohnung betreffen
+  // apartmentType?: "ROOF_STOREY" | "LOFT" | "MAISONETTE" | "PENTHOUSE" | "TERRACED_FLAT" | "GROUND_FLOOR" | "APARTMENT" | "RAISED_GROUND_FLOOR" | "HALF_BASEMENT" | "OTHER" | "NO_INFORMATION";
+  // floor?: number;
+  // lift?: boolean;
+//   builtInKitchen?: boolean;
+//   balcony?: boolean;
+//   garden?: boolean;
+  // serviceCharge?: number;
+
+
+
+
+  
   
 
 // // ✅ NEUES INTERFACE für Grundstücke
