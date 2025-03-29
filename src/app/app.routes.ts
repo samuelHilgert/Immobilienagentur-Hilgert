@@ -31,7 +31,7 @@ import { MagazinComponent } from './magazin/magazin.component';
 import { DatenschutzComponent } from './impressum/datenschutz/datenschutz.component';
 import { AgbComponent } from './impressum/agb/agb.component';
 import { KontaktComponent } from './kontakt/kontakt.component';
-import { BewertenComponent } from './shared/bewerten/bewerten.component';
+import { BewertenComponent } from './shared/feedback/feedback.component';
 
 export const routes: Routes = [
   {

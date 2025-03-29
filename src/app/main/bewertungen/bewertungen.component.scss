@@ -57,7 +57,8 @@ section {
 .review-grid {
   display: flex;
   transition: transform 0.5s ease-in-out;
-  width: 100%; // Wichtig für korrekte Berechnungen
+  width: 100%;
+  flex-wrap: nowrap;
 }
 
 // Container für ein Bewertungspaar
@@ -174,32 +175,4 @@ section {
   margin: 0 auto;
   display: flex;
   justify-content: center;
-}
-
-// Responsive Design
-@media (max-width: 768px) {
-  .review-pair {
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-  }
-  
-  .review-item {
-    width: 100%;
-    max-width: 100%;
-  }
-  
-  .partner-container {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-  
-  .slider-container {
-    flex-direction: column;
-    
-    .arrow-box {
-      transform: rotate(90deg); // Pfeile drehen für vertikale Navigation
-    }
-  }
 }

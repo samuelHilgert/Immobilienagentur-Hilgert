@@ -1,22 +1,22 @@
 import { Injectable } from '@angular/core';
-import { Bewertung } from '../models/bewertung.model';
+import { Feedback } from '../models/feedback.model';
 import { FirebaseService } from './firebase.service';
-import { collection, doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root'
 })
-export class BewertungenService {
+export class FeedbackService {
   constructor(private firebase: FirebaseService) {}
 
-  async saveBewertung(bewertung: Bewertung): Promise<any> {
+  async saveBewertung(feedback: Feedback): Promise<any> {
     try {
       const bewertungId = Date.now().toString();
-      bewertung.bewertungId = bewertungId;
-      bewertung.creationDate = new Date();
+      feedback.bewertungId = bewertungId;
+      feedback.creationDate = new Date();
 
-      const ref = doc(this.firebase.db, 'bewertungen', bewertungId);
-      await setDoc(ref, bewertung);
+      const ref = doc(this.firebase.db, 'feedbacks', bewertungId);
+      await setDoc(ref, feedback);
 
       return { success: true, id: bewertungId };
     } catch (error) {

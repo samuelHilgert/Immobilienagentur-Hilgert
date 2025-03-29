@@ -9,6 +9,7 @@ import {
   getStorage, ref, uploadBytes, getDownloadURL, deleteObject 
 } from 'firebase/storage';
 import { environment } from '../../environments/environments';
+import { Feedback } from '../models/feedback.model';
 
 @Injectable({
   providedIn: 'root'
@@ -215,6 +216,23 @@ export class FirebaseService {
     } catch (error) {
       console.error('Fehler beim Abrufen der Medien:', error);
       return [];
+    }
+  }
+
+  async getAllFeedbacks(): Promise<Feedback[]> {
+    try {
+      const feedbackCollection = collection(this.db, 'feedbacks');
+      const snapshot = await getDocs(feedbackCollection);
+  
+      const feedbacks: Feedback[] = [];
+      snapshot.forEach(doc => {
+        feedbacks.push({ ...(doc.data() as Feedback), bewertungId: doc.id });
+      });
+  
+      return feedbacks;
+    } catch (error) {
+      console.error('Fehler beim Abrufen der Feedbacks:', error);
+      throw error;
     }
   }
 }

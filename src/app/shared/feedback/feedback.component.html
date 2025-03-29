@@ -1,14 +1,14 @@
 <section class="bewerten-section">
     <h2>Ich freue mich über Ihr Feedback!</h2>
   
-    <form (ngSubmit)="submitBewertung()" #bewertungForm="ngForm" class="bewerten-form">
+    <form (ngSubmit)="submitBewertung()" #feedbackForm="ngForm" class="bewerten-form">
 
         <mat-form-field appearance="fill">
             <input
               matInput
               placeholder="Ihr Name"
               name="autorName"
-              [(ngModel)]="bewertung.autorName"
+              [(ngModel)]="feedback.autorName"
               required
               pattern="^[A-Za-zÄÖÜäöüß]{2,}\s[A-Za-zÄÖÜäöüß]{2,}$"
               #autorNameInput="ngModel"
@@ -25,7 +25,7 @@
           type="email"
           placeholder="Ihre E-Mail (wird nicht angezeigt)"
           name="autorEmail"
-          [(ngModel)]="bewertung.autorEmail"
+          [(ngModel)]="feedback.autorEmail"
           #emailRef="ngModel"
           required
           email
@@ -43,12 +43,12 @@
           matInput
           placeholder="Ihre Bewertung"
           name="text"
-          [(ngModel)]="bewertung.text"
+          [(ngModel)]="feedback.text"
           required
           rows="4"
           maxlength="3000"
         ></textarea>
-        <mat-hint>{{ bewertung.text.length || 0 }} / 3000</mat-hint>
+        <mat-hint>{{ feedback.text.length || 0 }} / 3000</mat-hint>
       </mat-form-field>
   
       <div
@@ -59,14 +59,14 @@
         <mat-icon
           (click)="setRating(star)"
           (mouseenter)="hoverRating = star"
-          [class.filled]="star <= (hoverRating || bewertung.rating || 5)"
+          [class.filled]="star <= (hoverRating || feedback.rating || 5)"
         >
-          {{ star <= (hoverRating || bewertung.rating || 5) ? 'star' : 'star_border' }}
+          {{ star <= (hoverRating || feedback.rating || 5) ? 'star' : 'star_border' }}
         </mat-icon>
       </ng-container>
     </div>    
       
-      <p>Bewertung: {{ bewertung.rating }} von 5 Sternen</p>
+      <p>Bewertung: {{ feedback.rating }} von 5 Sternen</p>
       
       <div>
       <p>Wo dürfen wir die Bewertung hochladen?</p>
@@ -74,20 +74,12 @@
   
       <div class="quelle-checkboxes">
         <label>
-          <input type="checkbox" [(ngModel)]="bewertung.quelle.google" name="google" />
-          Google
-        </label>
-        <label>
-          <input type="checkbox" [(ngModel)]="bewertung.quelle.homepage" name="homepage" />
-          Homepage
-        </label>
-        <label>
-          <input type="checkbox" [(ngModel)]="bewertung.quelle.immoScout" name="immoScout" />
-          ImmoScout24
-        </label>
+          <input type="checkbox" [(ngModel)]="feedback.publicAccepted" name="publicAccepted" />
+          Hiermit bin ich einverstanden, dass Hilgert Immobilien mein Feedback nutzen darf, um damit z.B. auf der Homepage zu werben.
+        </label> 
       </div>
   
-      <button mat-raised-button color="primary" type="submit" [disabled]="!bewertungForm.form.valid">
+      <button mat-raised-button color="primary" type="submit" [disabled]="!feedbackForm.form.valid">
         Absenden
       </button>
   

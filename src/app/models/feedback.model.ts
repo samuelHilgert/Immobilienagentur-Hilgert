@@ -1,11 +1,7 @@
 // ✅ NEUES INTERFACE für Bewertungen
-export interface Bewertung {
+export interface Feedback {
   bewertungId: string;
-  quelle: {
-    google: boolean;
-    homepage: boolean;
-    immoScout: boolean;
-  };
+  publicAccepted: boolean;
   text: string;
   antwort?: string;
   rating: number;
