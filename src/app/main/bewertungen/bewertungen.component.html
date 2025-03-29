@@ -1,65 +1,78 @@
 <section class="section-bg-v2" id="bewertungen">
-  <h2 alt="Immobilienverkauf, top bewertet - Hilgert Immobilien">
-    Wir verkaufen Immobilien mit bester Kundenzufriedenheit
-  </h2>
-  <div class="rating-iframe-container">
-    <iframe height="160" width="190"
-      src=""
-      frameborder="0"
-      style="overflow:hidden;"
-      marginheight="0"
-      marginwidth="0"
-      scroll="no">
-    </iframe>
-  </div>
-  <h2 class="width-100" alt="professionell, erfahren, vertrauensvoll, persönlich - Hilgert Immobilien">
-    Das sagen unsere Kunden
-  </h2>
-  <p class="values-statement">Wir arbeiten professionell, engagiert und transparent</p>
+  <h2 alt="Immobilienverkauf, top bewertet - Hilgert Immobilien">Wir verkaufen Immobilien mit bester Kundenzufriedenheit</h2>
   
-  <!-- Only show slider if we have reviews -->
-  <div *ngIf="reviewPairs && reviewPairs.length > 0" class="slider-container">
+  <!-- iFrame kann beibehalten werden -->
+  <div class="rating-iframe-container">
+    <iframe height='160' width='190' src='//widget.immobilienscout24.de/anbieter/bewertung/b9d2cb0da1024f857e72a99a91c066ac' frameborder=0 style='overflow:hidden;' marginheight='0' marginwidth='0' scroll='no'></iframe>
+  </div>
+                                     
+  <h2 class="width-100" alt="professionell, erfahren, vertrauensvoll, persönlich - Hilgert Immobilien">Das sagen unsere Kunden</h2>
+  <p class="values-statement">Wir arbeiten professionell, engagiert und transparent</p>
+
+  <!-- Bewertungen-Slider mit Pfeilen -->
+  <div class="slider-container">
+    <!-- Linker Pfeil -->
     <div class="arrow-box" (click)="prevPage()">
       <svg width="100" height="100" viewBox="0 0 100 100">
-        <path d="M40 20 L20 50 L40 80" stroke-linecap="round" stroke-linejoin="round" />
-        <path d="M70 20 L50 50 L70 80" stroke-linecap="round" stroke-linejoin="round" />
+        <!-- Erster Pfeil (links) -->
+        <path d="M40 20 L20 50 L40 80" 
+              stroke-linecap="round" 
+              stroke-linejoin="round" 
+              />
+        
+        <!-- Zweiter Pfeil (rechts) -->
+        <path d="M70 20 L50 50 L70 80" 
+              stroke-linecap="round" 
+              stroke-linejoin="round" 
+              />
       </svg>
     </div>
+
+    <!-- Angepasste Kundenbewertungen -->
     <div class="review-slider">
       <div class="review-wrapper">
-        <div class="review-grid" [style.transform]="'translateX(' + slidePosition + '%)'">
-          <div class="review-pair" *ngFor="let pair of reviewPairs">
-            <ng-container *ngFor="let review of pair">
-              <!-- Only render if we have a real review -->
-              <div *ngIf="review && review.autorName" class="review-item">
-                <div class="review-header">
-                  <div class="review-stars">
-                    <span class="star" *ngFor="let star of [1,2,3,4,5]" [ngClass]="{'filled': star <= review.rating}">★</span>
+        <div class="review-grid" [style.transform]="'translateX(' + slidePosition + 'px)'">
+          <!-- Jetzt organisieren wir die Bewertungen in einzelnen Paaren -->
+          @for (pair of reviewPairs; track $index) {
+            <div class="review-pair">
+              @for (review of pair; track review.name) {
+                <div class="review-item">
+                  <div class="review-header">
+                    <div class="review-stars">
+                      @for (star of [1, 2, 3, 4, 5]; track star) {
+                        <span class="star" [class.filled]="star <= review.stars">★</span>
+                      }
+                    </div>
+                    <div class="reviewer-info">
+                      <span class="reviewer-name">{{ review.name }}</span>
+                      <span class="review-date">{{ review.date }}</span>
+                    </div>
                   </div>
-                  <div class="reviewer-info">
-                    <span class="reviewer-name">{{ review.autorName }}</span>
-                    <span class="review-date">{{ review.creationDate | date:'dd.MM.yyyy' }}</span>
-                  </div>
+                  <p class="review-text">{{ review.text }}</p>
                 </div>
-                <p class="review-text">{{ review.text }}</p>
-              </div>
-              <!-- Empty placeholder if no review (to maintain layout) -->
-              <div *ngIf="!review || !review.autorName" class="review-item empty-review"></div>
-            </ng-container>
-          </div>
+              }
+            </div>
+          }
         </div>
       </div>
     </div>
+
+    <!-- Rechter Pfeil -->
     <div class="arrow-box" (click)="nextPage()">
       <svg width="100" height="100" viewBox="0 0 100 100">
-        <path d="M60 20 L80 50 L60 80" stroke-linecap="round" stroke-linejoin="round" />
-        <path d="M30 20 L50 50 L30 80" stroke-linecap="round" stroke-linejoin="round" />
+        <!-- Erster Pfeil (links) -->
+        <path d="M60 20 L80 50 L60 80" 
+              stroke-linecap="round" 
+              stroke-linejoin="round" 
+              />
+        
+        <!-- Zweiter Pfeil (rechts) -->
+        <path d="M30 20 L50 50 L30 80" 
+              stroke-linecap="round" 
+              stroke-linejoin="round" 
+              />
       </svg>
     </div>
   </div>
-  
-  <!-- Show message if no reviews -->
-  <div *ngIf="!reviewPairs || reviewPairs.length === 0" class="no-reviews-message">
-    <p>Derzeit sind keine Bewertungen verfügbar.</p>
-  </div>
+
 </section>
