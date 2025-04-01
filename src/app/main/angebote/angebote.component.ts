@@ -1,4 +1,10 @@
-import { Component, OnInit, ElementRef, AfterViewInit, HostListener } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ElementRef,
+  AfterViewInit,
+  HostListener,
+} from '@angular/core';
 import { MATERIAL_MODULES } from '../../shared/material-imports';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ImmobilienService } from '../../services/immobilien.service';
@@ -10,7 +16,12 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-angebote',
   standalone: true,
-  imports: [MATERIAL_MODULES, RouterLink, MatProgressSpinnerModule, CommonModule],
+  imports: [
+    MATERIAL_MODULES,
+    RouterLink,
+    MatProgressSpinnerModule,
+    CommonModule,
+  ],
   templateUrl: './angebote.component.html',
   styleUrl: './angebote.component.scss',
 })
@@ -26,6 +37,8 @@ export class AngeboteComponent implements OnInit, AfterViewInit {
   totalPages: number = 0;
   slidePosition: number = 0;
   sliderWidth: number = 0;
+  currentIndex: number = 0;
+  cardWidth: number = 420; // Karte + margin
 
   constructor(
     private immobilienService: ImmobilienService,
@@ -33,7 +46,6 @@ export class AngeboteComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-
     this.isLoading = true;
     this.loadStatus = 0;
 
@@ -44,21 +56,40 @@ export class AngeboteComponent implements OnInit, AfterViewInit {
     }, 500);
 
     this.immobilienService.getImmobilien().subscribe({
-      next: (data) => {
+      next: async (data) => {
         const alleImmobilien: Immobilie[] = data || [];
 
-        // console.log('alleImmobilien: ',alleImmobilien);
+        this.immobilien = alleImmobilien.filter(
+          (immo) =>
+            immo.propertyStatus === 'Angebot' &&
+            immo.uploadPublicTargets.homepage === true
+        );
 
-        // Nur Angebote anzeigen
-        this.immobilien = alleImmobilien.filter(immo => immo.propertyStatus === 'Angebot' && immo.uploadPublicTargets.homepage === true);
-        this.totalPages = Math.ceil(this.immobilien.length / 2); // Zwei pro Seite
-
-        // Medien laden
-        this.immobilien.forEach(immobilie => {
-          if (immobilie.externalId) {
-            this.loadMedia(immobilie.externalId);
+        // Medien für alle Immobilien vorladen und cachen
+        const mediaPromises = this.immobilien.map((immobilie) => {
+          if (immobilie.externalId && !this.mediaAttachments[immobilie.externalId]) {
+            return new Promise<void>((resolve) => {
+              this.immobilienService.getMediaByExternalId(immobilie.externalId!).subscribe({
+                next: (media) => {
+                  this.mediaAttachments[immobilie.externalId!] = media;
+                  resolve();
+                },
+                error: () => resolve()
+              });
+            });
           }
+          return Promise.resolve();
         });
+
+        await Promise.all(mediaPromises);
+
+        if (this.immobilien.length > 1) {
+          const first = this.immobilien[0];
+          const last = this.immobilien[this.immobilien.length - 1];
+          this.immobilien = [last, ...this.immobilien, first];
+          this.currentIndex = 1;
+          this.updateSlidePosition(true);
+        }
 
         this.isLoading = false;
         this.loadStatus = 100;
@@ -70,7 +101,7 @@ export class AngeboteComponent implements OnInit, AfterViewInit {
         this.isLoading = false;
         this.loadStatus = 0;
         clearInterval(interval);
-      }
+      },
     });
   }
 
@@ -85,45 +116,47 @@ export class AngeboteComponent implements OnInit, AfterViewInit {
   }
 
   calculateSliderDimensions(): void {
-    const sliderElement = this.elementRef.nativeElement.querySelector('.angebote-slider');
+    const sliderElement =
+      this.elementRef.nativeElement.querySelector('.angebote-slider');
     if (sliderElement) {
       this.sliderWidth = sliderElement.offsetWidth;
       this.updateSlidePosition();
     }
   }
 
-  updateSlidePosition(): void {
-    this.slidePosition = -1 * this.currentPage * this.sliderWidth;
+  updateSlidePosition(noAnimation: boolean = false): void {
+    const grid = this.elementRef.nativeElement.querySelector('.angebote-grid');
+    if (grid) {
+      grid.style.transition = noAnimation
+        ? 'none'
+        : 'transform 0.5s ease-in-out';
+    }
+
+    this.slidePosition = -1 * this.currentIndex * this.cardWidth;
   }
 
   prevPage(): void {
-    if (this.currentPage > 0) {
-      this.currentPage--;
-    } else {
-      this.currentPage = this.totalPages - 1;
-    }
+    this.currentIndex--;
     this.updateSlidePosition();
+
+    if (this.currentIndex === 0) {
+      setTimeout(() => {
+        this.currentIndex = this.immobilien.length - 2;
+        this.updateSlidePosition(true);
+      }, 500);
+    }
   }
 
   nextPage(): void {
-    if (this.currentPage < this.totalPages - 1) {
-      this.currentPage++;
-    } else {
-      this.currentPage = 0;
-    }
+    this.currentIndex++;
     this.updateSlidePosition();
-  }
 
-  loadMedia(externalId: string) {
-    this.immobilienService.getMediaByExternalId(externalId)
-      .subscribe({
-        next: (media) => {
-          this.mediaAttachments[externalId] = media;
-        },
-        error: (error) => {
-          console.error(`Fehler beim Laden der Medien für ${externalId}:`, error);
-        }
-      });
+    if (this.currentIndex === this.immobilien.length - 1) {
+      setTimeout(() => {
+        this.currentIndex = 1;
+        this.updateSlidePosition(true); // instant ohne Animation
+      }, 500);
+    }
   }
 
   getMediaForImmobilie(externalId: string | undefined): MediaAttachment[] {
