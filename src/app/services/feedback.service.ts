@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Feedback } from '../models/feedback.model';
 import { FirebaseService } from './firebase.service';
-import { doc, setDoc } from 'firebase/firestore';
+import { collection, doc, getDocs, setDoc, query, where } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -24,4 +24,12 @@ export class FeedbackService {
       return { success: false, error };
     }
   }
+  
+    async getFeedback(): Promise<Feedback[]> {
+      const feedbackCollection = collection(this.firebase.db, 'feedbacks');
+      const q = query(feedbackCollection, where('publicAccepted', '==', true));
+  
+      const snapshot = await getDocs(q);
+      return snapshot.docs.map(doc => doc.data() as Feedback);
+    }
 }
