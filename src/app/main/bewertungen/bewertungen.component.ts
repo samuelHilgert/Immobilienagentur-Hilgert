@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, AfterViewInit, HostListener } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 interface Review {
@@ -13,12 +13,11 @@ interface Review {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './bewertungen.component.html',
-  styleUrls: ['./bewertungen.component.scss'],
+  styleUrls: ['./bewertungen.component.scss']
 })
-export class BewertungenComponent implements OnInit, AfterViewInit {
-  // Alle Bewertungen
+export class BewertungenComponent implements OnInit {
   allReviews: Review[] = [
-   {
+    {
       name: 'T. Backhaus',
       date: '21.03.2025',
       stars: 5,
@@ -41,105 +40,67 @@ export class BewertungenComponent implements OnInit, AfterViewInit {
       date: '22.10.2022',
       stars: 5,
       text: 'Nur zu empfehlen!'
-    },
-    // {
-    //   name: 'J. Sulzer',
-    //   date: '30.07.2022',
-    //   stars: 5,
-    //   text: 'Sehr seriös, professionell, sehr gut vorbereitet.'
-    // }
+    }
   ];
-  
-  // Bewertungen in Paaren organisieren
-  reviewPairs: Review[][] = [];
-  
-  // Konfigurationsvariablen
-  currentPage: number = 0;
-  totalPages: number = 0;
-  slidePosition: number = 0;
-  sliderWidth: number = 0;
-  
-  constructor(private elementRef: ElementRef) {}
-  
+
+
+  activeIndexes = [0, 1];
+  activeReviews: Review[] = [];
+  fading = [false, false];
+  wasJustUpdated = [false, false];
+  isHovered = [false, false];
+
+  private toggle = 0;
+  private intervalId: any;
+
+  constructor(private cdr: ChangeDetectorRef) {}
+
   ngOnInit(): void {
-    // Bewertungen in Paare organisieren
-    this.organizeReviewsInPairs();
-    
-    // Berechnung der Gesamtanzahl der Seiten basierend auf Paaren
-    this.totalPages = this.reviewPairs.length;
+    this.activeReviews = [
+      this.allReviews[this.activeIndexes[0]],
+      this.allReviews[this.activeIndexes[1]]
+    ];
+
+    this.intervalId = setInterval(() => this.updateReview(), 4000);
   }
-  
-  // Organisiert die Bewertungen in Paaren (immer 2 nebeneinander)
-  organizeReviewsInPairs(): void {
-    this.reviewPairs = [];
-    
-    for (let i = 0; i < this.allReviews.length; i += 2) {
-      const pair: Review[] = [];
-      
-      // Erstes Review des Paars
-      pair.push(this.allReviews[i]);
-      
-      // Zweites Review des Paars (falls vorhanden)
-      if (i + 1 < this.allReviews.length) {
-        pair.push(this.allReviews[i + 1]);
-      } else {
-        // Falls ungerade Anzahl, fügen wir ein leeres Review hinzu, um das Layout zu erhalten
-        pair.push({
-          name: '',
-          date: '',
-          stars: 0,
-          text: ''
-        });
-      }
-      
-      this.reviewPairs.push(pair);
+
+  updateReview(): void {
+    const i = this.toggle;
+    if (this.isHovered[i]) {
+      this.toggle = 1 - i; // versuche beim nächsten Tick die andere Seite
+      return;
     }
+  
+    this.fading[i] = true;
+    this.wasJustUpdated[i] = false;
+    this.cdr.detectChanges();
+  
+    setTimeout(() => {
+      const newIndex = (this.activeIndexes[i] + 2) % this.allReviews.length;
+      this.activeIndexes[i] = newIndex;
+  
+      this.activeReviews = [...this.activeReviews];
+      this.activeReviews[i] = this.allReviews[newIndex];
+  
+      this.fading[i] = false;
+      this.wasJustUpdated[i] = true;
+      this.cdr.detectChanges();
+  
+      setTimeout(() => {
+        this.wasJustUpdated[i] = false;
+        this.cdr.detectChanges();
+      }, 400);
+  
+      this.toggle = 1 - i;
+    }, 400);
   }
   
-  ngAfterViewInit(): void {
-    // Initialisierung nach dem Rendern des DOM
-    setTimeout(() => this.calculateSliderDimensions(), 250);
+
+  pauseRotation(index: number): void {
+    this.isHovered[index] = true;
   }
   
-  @HostListener('window:resize')
-  onResize(): void {
-    this.calculateSliderDimensions();
-    this.updateSlidePosition();
-  }
-  
-  // Berechnet die Dimensionen des Sliders
-  calculateSliderDimensions(): void {
-    const sliderElement = this.elementRef.nativeElement.querySelector('.review-slider');
-    
-    if (sliderElement) {
-      this.sliderWidth = sliderElement.offsetWidth;
-      this.updateSlidePosition();
-    }
-  }
-  
-  // Aktualisiert die Position des Sliders basierend auf der aktuellen Seite
-  updateSlidePosition(): void {
-    // Exakte Berechnung basierend auf der Containerbreite
-    this.slidePosition = -1 * this.currentPage * this.sliderWidth;
-  }
-  
-  // Zur vorherigen Seite wechseln mit Animation
-  prevPage(): void {
-    if (this.currentPage > 0) {
-      this.currentPage--;
-    } else {
-      this.currentPage = this.totalPages - 1; // Zum Ende gehen
-    }
-    this.updateSlidePosition();
-  }
-  
-  // Zur nächsten Seite wechseln mit Animation
-  nextPage(): void {
-    if (this.currentPage < this.totalPages - 1) {
-      this.currentPage++;
-    } else {
-      this.currentPage = 0; // Zum Anfang zurückkehren
-    }
-    this.updateSlidePosition();
+  resumeRotation(index: number): void {
+    this.isHovered[index] = false;
   }
 }

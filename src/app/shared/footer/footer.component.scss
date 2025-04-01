@@ -3,14 +3,15 @@
 @use "./../../../assets/colors.scss" as c;
 
 section {
-    @include s.f_c_fs_fs;
+    @include s.f_r_fs_fs;
     gap:12px;
     padding:24px 48px;
     background-color: c.$footer-bg;
 }
 
 .footer-nav {
-    @include s.f_c_fs_fs;
+    @include s.f_r_fs_fs;
+    gap:48px;
     height:auto;
     width:100%;
     box-sizing: border-box;
@@ -66,6 +67,7 @@ section {
 
 .footer-logo-title-wrapper {
     @include s.f_r_c_c;
+    width:100%;
     gap:24px;
     position:relative;
     top:0;

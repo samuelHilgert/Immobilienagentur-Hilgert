@@ -2,48 +2,35 @@
 @use "./../../../assets/fonts.scss" as f;
 @use "./../../../assets/colors.scss" as c;
 
-// Bestehende Stile beibehalten
+// Grundlegendes Styling für die Sektion
 section {
-  height: auto;
+  height: 600px;
   min-height: 500px;
   width: 100%;
   box-sizing: border-box;
-  @include s.f_c_fs_fs;
+  @include s.f_c_c_c;
   gap: 30px;
   padding: 40px 20px;
-  
+
   h2 {
     text-align: center;
   }
 }
 
-// Slider-Container Styling (ähnlich wie in der Immobilienangebote-Section)
+// Container für den Slider
 .slider-container {
   @include s.f_r_c_c;
   gap: 4px;
   width: 100%;
   box-sizing: border-box;
   padding: 20px;
-
-  .arrow-box {
-    svg {
-      cursor: pointer;
-      stroke: c.$angebote-slider-arrows;
-      stroke-width: 3;
-      fill: none;
-
-      &:hover {
-        stroke: c.$angebote-slider-arrows-hover;
-      }
-    }
-  }
 }
 
 // Anpassung für den Review-Slider
 .review-slider {
   width: 100%;
   max-width: 1000px;
-  overflow: hidden; // Versteckt die überlaufenden Inhalte
+  overflow: hidden; // Versteckt überlaufende Inhalte
   padding: 10px 0;
 }
 
@@ -56,7 +43,6 @@ section {
 // Bewertungs-Container für den Slider
 .review-grid {
   display: flex;
-  transition: transform 0.5s ease-in-out;
   width: 100%; // Wichtig für korrekte Berechnungen
 }
 
@@ -66,7 +52,6 @@ section {
   justify-content: space-between; // Gleichmäßiger Abstand zwischen den Karten
   width: 100%;
   min-width: 100%;
-  flex: 0 0 100%; // Wichtig für feste Breite
   padding: 10px 5px;
   box-sizing: border-box;
 }
@@ -79,13 +64,13 @@ section {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
   height: auto;
-  min-height: 150px;
+  min-height: 450px;
   display: flex;
   flex-direction: column;
   cursor: default;
   width: calc(50% - 10px); // Genau die Hälfte minus Abstand
   box-sizing: border-box;
-  
+
   &:hover {
     transform: translateY(-3px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -106,7 +91,7 @@ section {
   font-size: 20px;
   color: #ccc;
   margin-right: 2px;
-  
+
   &.filled {
     color: #ffc107; // Sternfarbe
   }
@@ -138,44 +123,6 @@ section {
   margin: 0;
 }
 
-// Link für weitere Bewertungen
-.link-weitere-bewertungen {
-  @include s.f_r_c_c;
-  width: 100%;
-  margin-top: 10px;
-  
-  a, a:hover, a:active {
-    color: c.$link-weitere-angebote;
-    text-decoration: underline;
-    cursor: pointer;
-    
-    &:hover {
-      color: c.$link-weitere-angebote-hover;
-    }
-  }
-}
-
-// Partner-Container
-.partner-container {
-  @include s.f_r_fs_fs;
-  gap: 30px;
-  flex-wrap: wrap;
-}
-
-// Werte-Statement
-.values-statement {
-  text-align: center;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-// iFrame-Container
-.rating-iframe-container {
-  margin: 0 auto;
-  display: flex;
-  justify-content: center;
-}
-
 // Responsive Design
 @media (max-width: 768px) {
   .review-pair {
@@ -183,23 +130,24 @@ section {
     align-items: center;
     gap: 20px;
   }
-  
+
   .review-item {
     width: 100%;
     max-width: 100%;
   }
-  
-  .partner-container {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-  
-  .slider-container {
-    flex-direction: column;
-    
-    .arrow-box {
-      transform: rotate(90deg); // Pfeile drehen für vertikale Navigation
-    }
-  }
+}
+
+// Fade-Effekt für sanfte Übergänge
+.fade {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.fade-out {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.fade-in {
+  opacity: 1;
+  transform: translateY(0);
 }
