@@ -133,12 +133,20 @@
               <path d="M20,55 L55,55" />
             </svg>
 
-            <p class="icon-text">
+            <p class="icon-text" *ngIf="immobilie.propertyStatus !== 'Referenz'">
               {{ immobilie.value | number : "1.0-0" }}
+            </p>
+
+            <p class="icon-text" *ngIf="immobilie.propertyStatus === 'Referenz'">
+              Auf Anfrage
             </p>
           </div>
         </mat-card-footer>
       </mat-card>
     </ng-container>
+  </div>
+
+  <div class="hinweis-weitere-immobilien">
+    <p>Weitere Immobilien werden noch hochgeladen...</p>
   </div>
 </section>
