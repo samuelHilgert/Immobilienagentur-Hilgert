@@ -1,9 +1,15 @@
 <section>
-  <h2>Alle Immobilien</h2>
+  <h2>Erfolgreich vermittelte Immobilien</h2>
 
+    <!-- Ladecircle -->
+    <div *ngIf="isLoading" class="spinner-wrapper">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+    
   <mat-error *ngIf="errorMessage">{{ errorMessage }}</mat-error>
 
   <div class="immobilien-grid" *ngIf="immobilien.length">
+
     <ng-container *ngFor="let immobilie of immobilien">
       <mat-card (click)="toggleCard(immobilie)">
           <div *ngIf="immobilie.propertyStatus === 'Referenz'" class="ribbon">

@@ -8,6 +8,13 @@ section {
   background-color: c.$bg-color;
 }
 
+.spinner-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
 .immobilien-grid {
   @include s.f_r_fs_fs;
   gap: 4px;

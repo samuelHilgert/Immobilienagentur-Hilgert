@@ -3,14 +3,10 @@
     Aktuelle Immobilienangebote
   </h2>
 
-  <!-- Ladebalken mit Fortschrittsanzeige -->
-
-  <mat-progress-spinner
-    *ngIf="isLoading"
-    [mode]="'determinate'"
-    [value]="loadStatus"
-  >
-  </mat-progress-spinner>
+  <!-- Ladecircle -->
+  <div *ngIf="isLoading" class="spinner-wrapper">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
 
   <mat-error *ngIf="errorMessage">{{ errorMessage }}</mat-error>
 

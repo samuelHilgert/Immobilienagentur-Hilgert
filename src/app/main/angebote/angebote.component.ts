@@ -48,24 +48,23 @@ export class AngeboteComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.isLoading = true;
     this.loadStatus = 0;
-
+  
     const interval = setInterval(() => {
       if (this.loadStatus < 90) {
         this.loadStatus += 10;
       }
     }, 500);
-
+  
     this.immobilienService.getImmobilien().subscribe({
       next: async (data) => {
         const alleImmobilien: Immobilie[] = data || [];
-
+  
         this.immobilien = alleImmobilien.filter(
           (immo) =>
             immo.propertyStatus === 'Angebot' &&
-            immo.uploadPublicTargets.homepage === true
+            immo.uploadPublicTargets?.homepage === true
         );
-
-        // Medien für alle Immobilien vorladen und cachen
+  
         const mediaPromises = this.immobilien.map((immobilie) => {
           if (immobilie.externalId && !this.mediaAttachments[immobilie.externalId]) {
             return new Promise<void>((resolve) => {
@@ -74,15 +73,15 @@ export class AngeboteComponent implements OnInit, AfterViewInit {
                   this.mediaAttachments[immobilie.externalId!] = media;
                   resolve();
                 },
-                error: () => resolve()
+                error: () => resolve(),
               });
             });
           }
           return Promise.resolve();
         });
-
+  
         await Promise.all(mediaPromises);
-
+  
         if (this.immobilien.length > 1) {
           const first = this.immobilien[0];
           const last = this.immobilien[this.immobilien.length - 1];
@@ -90,7 +89,7 @@ export class AngeboteComponent implements OnInit, AfterViewInit {
           this.currentIndex = 1;
           this.updateSlidePosition(true);
         }
-
+  
         this.isLoading = false;
         this.loadStatus = 100;
         clearInterval(interval);
@@ -103,7 +102,7 @@ export class AngeboteComponent implements OnInit, AfterViewInit {
         clearInterval(interval);
       },
     });
-  }
+  }  
 
   ngAfterViewInit(): void {
     setTimeout(() => this.calculateSliderDimensions(), 250);

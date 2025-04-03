@@ -1,6 +1,13 @@
 <section>
   <h2>Alle Immobilien</h2>
 
+
+  <!-- Ladebalken mit Fortschrittsanzeige -->
+
+  <div *ngIf="isLoading" class="spinner-wrapper">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+
   <mat-error *ngIf="errorMessage">{{ errorMessage }}</mat-error>
 
   <div class="immobilien-grid" *ngIf="immobilien.length">

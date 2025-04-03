@@ -30,24 +30,23 @@ export class ReferenzenComponent implements OnInit {
   ngOnInit(): void {
     this.isLoading = true;
     this.loadStatus = 0;
-
+  
     const interval = setInterval(() => {
       if (this.loadStatus < 90) {
         this.loadStatus += 10;
       }
     }, 500);
-
+  
     this.immobilienService.getImmobilien().subscribe({
       next: async (data) => {
         const alleImmobilien: Immobilie[] = data || [];
-
+  
         this.immobilien = alleImmobilien.filter(
           (immo) =>
             immo.propertyStatus === 'Referenz' &&
             immo.uploadPublicTargets?.homepage === true
         );
-
-        // Medien vorladen und cachen
+  
         const mediaPromises = this.immobilien.map((immobilie) => {
           if (immobilie.externalId && !this.mediaAttachments[immobilie.externalId]) {
             return new Promise<void>((resolve) => {
@@ -56,15 +55,15 @@ export class ReferenzenComponent implements OnInit {
                   this.mediaAttachments[immobilie.externalId!] = media;
                   resolve();
                 },
-                error: () => resolve()
+                error: () => resolve(),
               });
             });
           }
           return Promise.resolve();
         });
-
+  
         await Promise.all(mediaPromises);
-
+  
         this.isLoading = false;
         this.loadStatus = 100;
         clearInterval(interval);
@@ -77,7 +76,7 @@ export class ReferenzenComponent implements OnInit {
         clearInterval(interval);
       },
     });
-  }
+  }  
 
   getMediaForImmobilie(externalId: string | undefined): MediaAttachment[] {
     if (!externalId) return [];

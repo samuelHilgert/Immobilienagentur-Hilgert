@@ -19,14 +19,17 @@ export class AlleImmobilienComponent implements OnInit {
   errorMessage: string | null = null;
   expandedCards: { [key: string]: boolean } = {};
   private overlayTimeouts: { [key: string]: any } = {};
-
+  isLoading: boolean = false;
+  loadStatus: number = 0;
 
   constructor(private immobilienService: ImmobilienService) {}
 
   ngOnInit(): void {
+    this.isLoading = true;
+    this.loadStatus = 0;
+  
     this.immobilienService.getImmobilien().subscribe({
       next: async (data) => {
-        // Filtert nur Immobilien, bei denen uploadPublicTargets?.homepage === true ist
         this.immobilien = (data || [])
           .filter((immo: Immobilie) => immo.uploadPublicTargets?.homepage === true)
           .sort((a: Immobilie, b: Immobilie) => {
@@ -34,7 +37,7 @@ export class AlleImmobilienComponent implements OnInit {
             if (a.propertyStatus !== 'Angebot' && b.propertyStatus === 'Angebot') return 1;
             return 0;
           });
-      
+  
         const mediaPromises = this.immobilien.map((immobilie) => {
           if (immobilie.externalId && !this.mediaAttachments[immobilie.externalId]) {
             return new Promise<void>((resolve) => {
@@ -49,15 +52,18 @@ export class AlleImmobilienComponent implements OnInit {
           }
           return Promise.resolve();
         });
-      
+  
         await Promise.all(mediaPromises);
-      },      
+  
+        this.isLoading = false; // 👈 Spinner hier beenden!
+      },
       error: (err) => {
         console.error('Fehler beim Laden der Immobilien', err);
         this.errorMessage = 'Fehler beim Laden der Immobilien';
+        this.isLoading = false; // 👈 Auch im Fehlerfall beenden!
       },
     });
-  }
+  }  
 
   getMediaForImmobilie(externalId: string | undefined): MediaAttachment[] {
     if (!externalId) return [];

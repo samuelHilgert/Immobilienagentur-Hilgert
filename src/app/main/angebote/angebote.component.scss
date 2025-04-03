@@ -12,8 +12,11 @@ section {
   padding: 20px;
 }
 
-mat-progress-spinner {
-  margin: 20px auto;
+.spinner-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
 }
 
 mat-error {
