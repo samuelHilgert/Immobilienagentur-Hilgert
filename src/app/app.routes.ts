@@ -17,7 +17,6 @@ import { PartnerComponent } from './dashboard/partner/partner.component';
 import { KundeAnlegenComponent } from './dashboard/kundendatenbank/kunde-anlegen/kunde-anlegen.component';
 import { SuchauftragAnlegenComponent } from './dashboard/suchauftraege/suchauftrag-anlegen/suchauftrag-anlegen.component';
 import { BewertungAnlegenComponent } from './dashboard/bewertungen/bewertung-anlegen/bewertung-anlegen.component';
-import { ImmobilienangeboteComponent } from './immobilienangebote/immobilienangebote.component';
 import { LeistungenComponent } from './leistungen/leistungen.component';
 import { ReferenzenComponent } from './referenzen/referenzen.component';
 import { ImmobilienbewertungComponent } from './immobilienbewertung/immobilienbewertung.component';
@@ -32,6 +31,7 @@ import { DatenschutzComponent } from './impressum/datenschutz/datenschutz.compon
 import { AgbComponent } from './impressum/agb/agb.component';
 import { KontaktComponent } from './kontakt/kontakt.component';
 import { BewertenComponent } from './shared/feedback/feedback.component';
+import { AlleImmobilienComponent } from './alle-immobilien/alle-immobilien.component';
 
 export const routes: Routes = [
   {
@@ -39,8 +39,8 @@ export const routes: Routes = [
     component: MainComponent,
   },
   {
-    path: 'immobilienangebote',
-    component: ImmobilienangeboteComponent,
+    path: 'immobilien',
+    component: AlleImmobilienComponent,
   },
   {
     path: 'leistungen',

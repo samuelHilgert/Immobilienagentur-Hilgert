@@ -9,7 +9,7 @@ import { KontaktSectionComponent } from './kontakt-section/kontakt-section.compo
 @Component({
   selector: 'app-main',
   standalone:true,
-  imports: [AboutUsComponent, AngeboteComponent, BewertungenComponent, PartnerComponent, KontaktSectionComponent, RouterModule],
+  imports: [AboutUsComponent, AngeboteComponent, BewertungenComponent, KontaktSectionComponent, RouterModule],
   templateUrl: './main.component.html',
   styleUrl: './main.component.scss'
 })

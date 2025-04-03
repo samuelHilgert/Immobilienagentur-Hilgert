@@ -5,16 +5,16 @@
 
   <div class="immobilien-grid" *ngIf="immobilien.length">
     <ng-container *ngFor="let immobilie of immobilien">
-      <mat-card (click)="toggleCard(immobilie)">
-          <div *ngIf="immobilie.propertyStatus === 'Referenz'" class="ribbon">
+        <mat-card (click)="toggleCard(immobilie)">
+        <div *ngIf="immobilie.propertyStatus === 'Referenz'" class="ribbon">
             <span>verkauft</span>
           </div>
 
         <mat-card-header>
-                      <!-- Dieser Hinweistext erscheint über dem Bild, wenn die Immobilie angeklickt wird, aber diese bereits verkauft wurde -->
-                      <div *ngIf="immobilie.propertyStatus === 'Referenz' && immobilie.externalId && expandedCards[immobilie.externalId]" class="verkauft-overlay">
-                        <p>Diese Immobilie wurde bereits verkauft</p>
-                    </div>
+            <!-- Dieser Hinweistext erscheint über dem Bild, wenn die Immobilie angeklickt wird, aber diese bereits verkauft wurde -->
+            <div *ngIf="immobilie.propertyStatus === 'Referenz' && immobilie.externalId && expandedCards[immobilie.externalId]" class="verkauft-overlay">
+                <p>Diese Immobilie wurde bereits verkauft</p>
+            </div>
 
           <ng-container
             *ngIf="

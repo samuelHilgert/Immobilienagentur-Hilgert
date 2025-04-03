@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ImmobilienService } from '../services/immobilien.service';
 import { Immobilie } from '../models/immobilie.model';
 import { MediaAttachment } from '../models/media.model';
@@ -7,47 +7,34 @@ import { MATERIAL_MODULES } from '../shared/material-imports';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
-  selector: 'app-referenzen',
+  selector: 'app-alle-immobilien',
   standalone: true,
   imports: [CommonModule, MATERIAL_MODULES, MatProgressSpinner],
-  templateUrl: './referenzen.component.html',
-  styleUrl: './referenzen.component.scss'
+  templateUrl: './alle-immobilien.component.html',
+  styleUrl: './alle-immobilien.component.scss',
 })
-export class ReferenzenComponent implements OnInit {
+export class AlleImmobilienComponent implements OnInit {
   immobilien: Immobilie[] = [];
-  isLoading: boolean = false;
-  loadStatus: number = 0;
-  errorMessage: string | null = null;
   mediaAttachments: { [key: string]: MediaAttachment[] } = {};
+  errorMessage: string | null = null;
   expandedCards: { [key: string]: boolean } = {};
-  overlayTimeouts: { [key: string]: any } = {};
+  private overlayTimeouts: { [key: string]: any } = {};
 
-  constructor(
-    private immobilienService: ImmobilienService,
-    private elementRef: ElementRef
-  ) {}
+
+  constructor(private immobilienService: ImmobilienService) {}
 
   ngOnInit(): void {
-    this.isLoading = true;
-    this.loadStatus = 0;
-
-    const interval = setInterval(() => {
-      if (this.loadStatus < 90) {
-        this.loadStatus += 10;
-      }
-    }, 500);
-
     this.immobilienService.getImmobilien().subscribe({
       next: async (data) => {
-        const alleImmobilien: Immobilie[] = data || [];
-
-        this.immobilien = alleImmobilien.filter(
-          (immo) =>
-            immo.propertyStatus === 'Referenz' &&
-            immo.uploadPublicTargets?.homepage === true
-        );
-
-        // Medien vorladen und cachen
+        // Filtert nur Immobilien, bei denen uploadPublicTargets?.homepage === true ist
+        this.immobilien = (data || [])
+          .filter((immo: Immobilie) => immo.uploadPublicTargets?.homepage === true)
+          .sort((a: Immobilie, b: Immobilie) => {
+            if (a.propertyStatus === 'Angebot' && b.propertyStatus !== 'Angebot') return -1;
+            if (a.propertyStatus !== 'Angebot' && b.propertyStatus === 'Angebot') return 1;
+            return 0;
+          });
+      
         const mediaPromises = this.immobilien.map((immobilie) => {
           if (immobilie.externalId && !this.mediaAttachments[immobilie.externalId]) {
             return new Promise<void>((resolve) => {
@@ -56,25 +43,18 @@ export class ReferenzenComponent implements OnInit {
                   this.mediaAttachments[immobilie.externalId!] = media;
                   resolve();
                 },
-                error: () => resolve()
+                error: () => resolve(),
               });
             });
           }
           return Promise.resolve();
         });
-
+      
         await Promise.all(mediaPromises);
-
-        this.isLoading = false;
-        this.loadStatus = 100;
-        clearInterval(interval);
-      },
-      error: (error) => {
-        console.error('Fehler beim Laden der Immobilien:', error);
+      },      
+      error: (err) => {
+        console.error('Fehler beim Laden der Immobilien', err);
         this.errorMessage = 'Fehler beim Laden der Immobilien';
-        this.isLoading = false;
-        this.loadStatus = 0;
-        clearInterval(interval);
       },
     });
   }
@@ -87,20 +67,21 @@ export class ReferenzenComponent implements OnInit {
   toggleCard(immobilie: Immobilie): void {
     const id = immobilie.externalId;
     if (immobilie.propertyStatus === 'Referenz' && id) {
-      if (this.expandedCards[id]) {
-        return;
-      }
-
-      this.expandedCards[id] = true;
-
+      // Falls ein Timeout läuft, abbrechen
       if (this.overlayTimeouts[id]) {
         clearTimeout(this.overlayTimeouts[id]);
       }
-
+  
+      // Overlay anzeigen
+      this.expandedCards[id] = true;
+  
+      // Timeout setzen und merken
       this.overlayTimeouts[id] = setTimeout(() => {
         this.expandedCards[id] = false;
         delete this.overlayTimeouts[id];
       }, 2000);
     }
   }
+  
+  
 }

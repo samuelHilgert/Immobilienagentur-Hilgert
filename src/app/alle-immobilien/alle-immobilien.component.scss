@@ -2,7 +2,6 @@
 @use "./../../assets/fonts.scss" as f;
 @use "./../../assets/colors.scss" as c;
 
-/* 🌍 Allgemeines Styling für den Abschnitt */
 section {
   padding: 80px 64px;
   margin-top: 140px;
@@ -16,76 +15,25 @@ section {
   flex-wrap: wrap;
 }
 
-mat-progress-spinner {
-  margin: 20px auto;
-}
-
-mat-error {
-  text-align: center;
-  margin: 20px 0;
-}
-
-/* Slider-Container */
-.slider-container {
-  @include s.f_r_sb_c;
-  width: 100%;
-  height: auto;
-  box-sizing: border-box;
-  padding: 24px;
-  position: relative;
-  overflow: hidden;
-}
-
-/* arrow-box für beide Seiten */
-.arrow-box {
-  svg {
-    cursor: pointer;
-    stroke: c.$angebote-slider-arrows;
-    stroke-width: 3;
-    fill: none;
-
-    &:hover {
-      stroke: c.$angebote-slider-arrows-hover;
-    }
-  }
-}
-
-/* Slider-Inhalt -> Wrapper für beide Angebote zusammen */
-.angebote-slider {
-  @include s.f_r_c_c;
-  margin: 0;
-  width: 830px; 
-  padding: 0;
-  overflow: hidden;
-  position: relative;
-  box-sizing: border-box;
-}
-
-.angebote-grid {
-  @include s.f_r_fs_c;
-  width:100%;
-  box-sizing: border-box;
-  padding:0px;
-  transition: transform 0.5s ease-in-out;
-}
-
 /* Immobilienkarte */
 mat-card {
-  width: 400px;
-  height: 600px;
-  flex: 0 0 auto;
-  margin-right: 20px;
+    position: relative;
+    width: 400px;
+    height: 600px;
+    flex: 0 0 auto;
+    margin-right: 20px;
+    cursor:pointer;
+  
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.5s ease;
+  
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
 
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.5s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  }
-
-      /* Der Ribbon für die Referenzen */
-      .ribbon {
+    /* Der Ribbon für die Referenzen */
+    .ribbon {
         position: absolute;
         top: 0;
         right: 0;
@@ -111,6 +59,7 @@ mat-card {
           letter-spacing: 1px;
         }
       }
+        
 
   mat-card-header {
     @include s.f_c_fs_c;
@@ -130,22 +79,29 @@ mat-card {
     }
   }
 
-    // dieser Container mit dem Hiwneistext legt sich übers Bild wenn die Immobilie angeklickt wird, aber diese bereits verkauft wurde
-    .verkauft-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 300px; 
-      background-color: rgba(0, 0, 0, 0.6);
-      color: white;
-      @include s.f_c_c_c;
-      text-align: center;
-      font-size: 1.2rem;
-      padding: 20px;
-      box-sizing: border-box;
-      z-index: 10;
-    }    
+  // dieser Container mit dem Hiwneistext legt sich übers Bild wenn die Immobilie angeklickt wird, aber diese bereits verkauft wurde
+  .verkauft-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 300px; 
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    @include s.f_c_c_c;
+    text-align: center;
+    font-size: 1.2rem;
+    padding: 20px;
+    box-sizing: border-box;
+    z-index: 10;
+  }  
+
+  .image-placeholder {
+    @include s.f_c_c_c;
+    width: 100%;
+    height: 240px;
+    background-color: #f4f4f4;
+  }
 
   mat-card-content {
     @include s.f_c_fs_sb;
@@ -208,33 +164,6 @@ mat-card {
       .icon-text {
         font-size: 12px;
       }
-    }
-  }
-}
-
-.image-placeholder {
-  @include s.f_c_c_c;
-  width: 100%;
-  height: 300px;
-  background-color: #f4f4f4;
-}    
-
-/* Link zu weiteren Angeboten */
-.link-weitere-angebote {
-  @include s.f_r_c_c;
-  width: 100%;
-  box-sizing: border-box;
-  margin-top: 10px;
-
-  a,
-  a:hover,
-  a:active {
-    color: c.$link-weitere-angebote;
-    text-decoration: underline;
-    cursor: pointer;
-
-    &:hover {
-      color: c.$link-weitere-angebote-hover;
     }
   }
 }
