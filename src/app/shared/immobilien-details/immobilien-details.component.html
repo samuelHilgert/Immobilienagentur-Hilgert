@@ -1,0 +1,235 @@
+<div class="details-dialog">
+  <!-- Schließen Symbol -->
+  <button class="close-btn" (click)="close()">✕</button>
+
+  <div class="doc-title-row">
+    <h2><strong>Exposé</strong></h2>
+  </div>
+
+  <div class="img-box" *ngIf="media?.length">
+    <img [src]="media[0].url" [alt]="immobilie.title" />
+  </div>
+
+  <div class="title-row">
+    <h3>
+      <strong>{{ immobilie.title }}</strong>
+    </h3>
+  </div>
+
+  <div class="double-divider-line"></div>
+  <div class="double-divider-line"></div>
+
+  <div class="id-ort-row">
+    <p><strong>Objekt-Id:</strong> {{ immobilie.externalId }}</p>
+    <p><strong>Ort:</strong> {{ immobilie.postcode }} {{ immobilie.city }}</p>
+  </div>
+
+  <div class="basic-info-wrapper">
+    <div class="basic-info">
+      <p><strong>Kategorie: </strong> Kauf</p>
+      <p><strong>Objekttyp: </strong> {{ immobilie.propertyType }}</p>
+      <p *ngIf="wohnungDetails?.apartmentType as type">
+        <strong>Wohnungstyp: </strong>
+        {{ apartmentTypeLabels[type] || "Keine Angabe" }}
+      </p>
+      <p><strong>Anzahl Zimmer: </strong> {{ immobilie.numberOfRooms }}</p>
+      <p><strong>Wohnfläche: </strong> {{ immobilie.livingSpace }} m²</p>
+    </div>
+
+    <div class="basic-payments-info">
+      <p>
+        <strong>Kaufpreis: </strong>{{ immobilie.value | number : "1.0-0" }} €
+      </p>
+      <p><strong>Provision: </strong>{{ immobilie.courtage }}</p>
+      <p><strong>Provisionshinweis: </strong>{{ immobilie.courtageNote }}</p>
+    </div>
+  </div>
+
+  <div class="spacer-m"></div>
+
+  <!-- Dynamischer Bereich je nach Immobilientyp -->
+  <div class="details-dynamic">
+    <ng-container [ngSwitch]="immobilie.propertyType">
+      <!-- Wohnung -->
+      <div *ngSwitchCase="'Wohnung'">
+        <h3>Wohnungsdetails</h3>
+        <p *ngIf="wohnung?.apartmentType">
+          <strong>Typ:</strong> {{ wohnung.apartmentType }}
+        </p>
+        <p *ngIf="wohnung?.floor">
+          <strong>Etage:</strong> {{ wohnung.floor }}
+        </p>
+        <p *ngIf="wohnung?.balcony"><strong>Balkon:</strong> Ja</p>
+        <p *ngIf="wohnung?.builtInKitchen"><strong>Einbauküche:</strong> Ja</p>
+      </div>
+
+      <!-- Haus -->
+      <div *ngSwitchCase="'Haus'">
+        <h3>Weitere Angaben</h3>
+
+        <div class="basic-info">
+          <p *ngIf="haus?.buildingType as type">
+            <strong>Haustyp: </strong>
+            {{ buildingTypeLabels[type] || "Keine Angabe" }}
+          </p>
+          <p *ngIf="haus?.plotArea">
+            <strong>Grundstücksfläche:</strong> {{ haus.plotArea }} m²
+          </p>
+          <p *ngIf="haus?.usableFloorSpace">
+            <strong>Nutzfläche:</strong> {{ haus.usableFloorSpace }} m²
+          </p>
+          <p *ngIf="haus?.numberOfFloors">
+            <strong>Anzahl Etagen:</strong> {{ haus.numberOfFloors }}
+          </p>
+          <p *ngIf="haus?.numberOfBedRooms">
+            <strong>Schlafzimmer:</strong> {{ haus.numberOfBedRooms }}
+          </p>
+          <p *ngIf="haus?.numberOfBathRooms">
+            <strong>Badezimmer:</strong> {{ haus.numberOfBathRooms }}
+          </p>
+          <p *ngIf="haus?.guestToilet as type">
+            <strong>Gäste-WC: </strong>
+            {{ Yes_No_Labels[type] || "Keine Angabe" }}
+          </p>
+          <p *ngIf="haus?.cellar as type">
+            <strong>Keller: </strong>
+            {{ Yes_No_Labels[type] || "Keine Angabe" }}
+          </p>
+          <p *ngIf="haus?.condition as type">
+            <strong>Zustand: </strong>
+            {{ conditionLabels[type] || "Keine Angabe" }}
+          </p>
+          <p *ngIf="haus?.constructionPhase as type">
+            <strong>Bauphase: </strong>
+            {{ constructionPhaseLabels[type] || "Keine Angabe" }}
+          </p>
+          <p *ngIf="haus?.constructionYear">
+            <strong>Baujahr:</strong> {{ haus.constructionYear }}
+          </p>
+          <p *ngIf="haus?.interiorQuality as type">
+            <strong>Qualität der Ausstattung: </strong>
+            {{ interiorQualityLabels[type] || "Keine Angabe" }}
+          </p>
+          <p *ngIf="haus?.lastRefurbishment">
+            <strong> Letzte Modernisierung/ Sanierung:</strong>
+            {{ haus.lastRefurbishment }}
+          </p>
+          <p *ngIf="haus?.heatingType as type">
+            <strong>Heizungsart: </strong>
+            {{ heatingTypeLabels[type] || "Keine Angabe" }}
+          </p>
+          <p *ngIf="haus?.firingType as type">
+            <strong>Wesentliche Energieträger: </strong>
+            {{ firingTypeLabels[type] || "Keine Angabe" }}
+          </p>
+          <p *ngIf="haus?.parkingSpaceType as type">
+            <strong>Garage/Stellplatz: </strong>
+            {{ parkingSpaceTypeLabels[type] || "Keine Angabe" }}
+          </p>
+          <p *ngIf="haus?.numberOfParkingSpaces">
+            <strong>Anzahl Garagen/Stellplätze:</strong>
+            {{ haus.numberOfParkingSpaces }}
+          </p>
+        </div>
+
+        <div class="spacer-m"></div>
+        <div class="spacer-m"></div>
+
+        <div class="energiewert-wrapper">
+          <h4>Energiewert</h4>
+          <p *ngIf="haus?.buildingEnergyRatingType as type">
+            <strong>Energieausweis-Typ:</strong>
+            {{ buildingEnergyRatingTypeLabels[type] || 'Keine Angabe' }}
+          </p>
+          <app-energieklasse-diagramm
+          [energyValue]="haus?.thermalCharacteristic"
+          [ausweistyp]="haus?.buildingEnergyRatingType"
+        ></app-energieklasse-diagramm>
+        </div>
+      
+        <div class="spacer-m"></div>
+        <div class="spacer-m"></div>
+        
+        <div class="notes-wrapper">
+
+            <p *ngIf="haus?.descriptionNote">
+              <strong> Objektbeschreibung:</strong> <br />
+              {{ haus.descriptionNote }}
+            </p>
+
+            <p *ngIf="haus?.furnishingNote">
+              <strong> Ausstattung:</strong> <br />
+              {{ haus.furnishingNote }}
+            </p>
+
+            <p *ngIf="haus?.locationNote">
+              <strong> Lage:</strong> <br />
+              {{ haus.locationNote }}
+            </p>
+
+            <p *ngIf="haus?.otherNote">
+              <strong> Sonstiges:</strong> <br />
+              SIE HABEN INTERESSE? <br />
+              Gerne stehen wir Ihnen jederzeit zur Verfügung und helfen Ihnen,
+              wo wir nur können, um Ihnen die angebotene Immobilie so
+              transparent und umfassend wie möglich zu präsentieren. Gerne
+              können wir auch einen Besichtigungstermin vereinbaren. Rufen Sie
+              uns einfach an. Bei bestehendem Interesse können wir Ihnen gerne
+              weitere Unterlagen und Informationen zukommen lassen.<br /><br />
+              Diese Unterlagen liegen schon für Sie bereit: <br />
+              - Ein erweitertes Exposé <br />
+              - Originalgrundrisse, Baubeschreibung und Lageplan <br />
+              - Wohnflächenberechnung <br />
+              - Energieausweis <br />
+              - Überblick laufende Nebenkosten <br />
+              - Bestätigung Baulastenverzeichnis <br />
+              - Mietverträge und Nebenkostenabrechnungen <br />
+              - Mietaufstellungsübersicht <br />
+              - Kautionsübersicht <br />
+              - Grundsteuerbescheid <br />
+              - Aktueller Grundbuchauszug <br />
+              - Wohngebäudeversicherungsschein <br />
+              - Weitere Fotos, insbesondere von den Wohnungen <br /><br />
+              Unsere Zusatzangebote über unsere verlässlichen Partner:<br />
+              - Finanzierungsbeispiel<br />
+              - Kostenfreie und unverbindliche Finanzierungsberatung<br />
+              - Planung & Umsetzung von Reparatur-, Modernisierungs- und
+              Sanierungsmaßnahmen<br />
+              - Kostenfreie Beratung zu Energie- und Modernisierungsmaßnahmen
+              sowie zu staatlichen Zuschüssen
+            </p>
+     
+        </div>
+      </div>
+
+      <!-- Grundstück -->
+      <div *ngSwitchCase="'Grundstück'">
+        <h3>Grundstückdetails</h3>
+        <p *ngIf="grundstueck?.plotArea">
+          <strong>Grundstücksgröße:</strong> {{ grundstueck.plotArea }} m²
+        </p>
+        <p *ngIf="grundstueck?.siteDevelopmentType">
+          <strong>Erschließung:</strong> {{ grundstueck.siteDevelopmentType }}
+        </p>
+        <p *ngIf="grundstueck?.recommendedUseTypes">
+          <strong>Nutzung:</strong> {{ grundstueck.recommendedUseTypes }}
+        </p>
+      </div>
+
+      <!-- Fallback -->
+      <div *ngSwitchDefault>
+        <p>Keine weiteren Details verfügbar.</p>
+      </div>
+    </ng-container>
+  </div>
+
+  <div class="bottom-container">
+    <h3>Interesse geweckt?</h3>
+    <p>Hier erhalten Sie das erweiterte Exposé mit weiteren Informationen zur Immobilie. Wir bitten um Verständnis, dass wir Besichtigungstermine erst im Anschluss daran vergeben.</p>
+    <div class="spacer-m"></div>
+    <div class="spacer-m"></div>
+    <a class="standard-btn" routerLink="">Erweitertes Exposé anfordern</a>
+  </div>
+</div>
+
+

@@ -1,5 +1,210 @@
-
 <section>
-    <p>immobilienbewertung works!</p>
-</section>
+<h2>Wir ermitteln für Sie kostenfrei und unverbindlich den aktuellen Marktwert für Ihre Immobilie!</h2>
 
+<div class="bewertungsformular" [ngClass]="{ 'submitted': submitted }"> 
+    <!-- Fortschrittsbalken -->
+    <div class="progress-bar">
+      <div
+        class="progress"
+        [style.width.%]="((currentStep + 1) / steps.length) * 100"
+      ></div>
+    </div>
+  
+    <form [formGroup]="bewertungForm" (ngSubmit)="onSubmit()">
+      <div class="step-container" *ngFor="let step of steps; let i = index" [class.active]="i === currentStep">
+  
+        <!-- Step 1: Objektangaben -->
+        <div *ngIf="i === 0">
+          <h3>Angaben zum Ort der Immobilie</h3>
+          <label>Objektart</label>
+          <select formControlName="propertyType">
+            <option value="">Bitte wählen</option>
+            <option value="Wohnung">Wohnung</option>
+            <option value="Haus">Haus</option>
+            <option value="Grundstück">Grundstück</option>
+          </select>
+
+          <div class="input-row">
+            <input
+              type="text"
+              formControlName="street" 
+              name="street"
+              maxlength="100"
+              placeholder="Straße"
+            />
+            <input
+              type="text"
+              formControlName="houseNumber" 
+              name="houseNumber"
+              maxlength="10"
+              placeholder="Hausnr."
+            />
+          </div>
+          <div class="input-row-reverse">
+            <input
+              type="text"
+              formControlName="postcode" 
+              name="postcode"
+              maxlength="5"
+              placeholder="PLZ"
+              required
+            />
+            <input
+              type="text"
+              formControlName="city" 
+              name="city"
+              maxlength="50"
+              placeholder="Stadt"
+              required
+            />
+          </div>
+  
+        </div>
+
+  <!-- Step 1: Objektspezifische Details -->
+    <div *ngIf="i === 1">
+
+    <!-- Step 1.1: Angaben zur WOhnung -->
+    <ng-container *ngIf="isWohnung">
+      <h3>Weitere Angaben zur Wohnung</h3>
+
+      <label>Wohnungskategorie auswählen:</label>
+      <select formControlName="apartmentType">
+        <option value="NO_INFORMATION">Keine Angabe</option>
+        <option value="ROOF_STOREY">Dachgeschoss</option>
+        <option value="LOFT">Loft</option>
+        <option value="MAISONETTE">Maisonette</option>
+        <option value="PENTHOUSE">Penthouse</option>
+        <option value="TERRACED_FLAT">Terrassenwohnung</option>
+        <option value="GROUND_FLOOR">Erdgeschosswohnung</option>
+        <option value="APARTMENT">Etagenwohnung</option>
+        <option value="RAISED_GROUND_FLOOR">Hochparterre</option>
+        <option value="HALF_BASEMENT">Souterrain</option>
+        <option value="OTHER">Sonstiges</option>        
+      </select>
+
+      <div class="input-row-both">
+        <input
+          type="number"
+          step="any"
+          formControlName="numberOfRooms"
+          name="numberOfRooms"
+          placeholder="Anzahl Zimmer"
+          min="0"
+        />
+
+        <input
+          type="number"
+          step="any"
+          formControlName="livingSpace"
+          name="livingSpace"
+          placeholder="Wohnfläche"
+          min="0"
+        />
+      </div>
+
+      <div class="input-row-both">
+        <input
+          type="number"
+          formControlName="floor"
+          name="floor"
+          placeholder="Etage"
+          min="0"
+          max="999"
+        />
+        <input
+          type="number"
+          formControlName="numberOfFloors"
+          name="numberOfFloors"
+          placeholder="Etagen Gesamt"
+          min="0"
+          max="999"
+        />
+      </div>
+
+      <input
+      type="number"
+      step="any"
+      formControlName="usableFloorSpace"
+      name="usableFloorSpace"
+      placeholder="Nutzfläche"
+      min="0"
+    />
+
+
+    </ng-container>
+
+
+
+
+
+
+
+
+  
+    <ng-container *ngIf="isHaus">
+      <h2>Haus – Details</h2>
+      <label>Anzahl Etagen</label>
+      <input type="number" formControlName="etagen" />
+  
+      <label>Keller</label>
+      <select formControlName="keller">
+        <option value="">Bitte wählen</option>
+        <option value="ja">Ja</option>
+        <option value="nein">Nein</option>
+      </select>
+    </ng-container>
+  
+    <ng-container *ngIf="isGrundstueck">
+      <h2>Grundstück – Details</h2>
+      <label>Erschlossen?</label>
+      <select formControlName="erschlossen">
+        <option value="">Bitte wählen</option>
+        <option value="voll">Voll erschlossen</option>
+        <option value="teil">Teilweise erschlossen</option>
+        <option value="nein">Nicht erschlossen</option>
+      </select>
+    </ng-container>
+  </div>  
+
+  
+        <!-- Step 3: Foto hochladen -->
+        <div *ngIf="i === 2">
+          <h2>Foto hochladen</h2>
+          <label>Datei auswählen (optional)</label>
+          <input type="file" (change)="onFileSelected($event)" />
+          <p *ngIf="selectedFile">Ausgewählte Datei: {{ selectedFile.name }}</p>
+        </div>
+  
+        <!-- Step 4: Sonstige Hinweise -->
+        <div *ngIf="i === 3">
+          <h2>Sonstige Hinweise</h2>
+          <label>Ihre Nachricht an uns (optional)</label>
+          <textarea formControlName="hinweise" rows="4"></textarea>
+        </div>
+  
+        <!-- Step 5: Kontaktdaten -->
+        <div *ngIf="i === 4">
+          <h2>Persönliche Angaben</h2>
+          <label>Ihr Name</label>
+          <input type="text" formControlName="name" />
+  
+          <label>E-Mail</label>
+          <input type="email" formControlName="email" />
+  
+          <label>Telefonnummer (optional)</label>
+          <input type="text" formControlName="telefon" />
+        </div>
+  
+        <!-- Navigation Buttons -->
+        <div class="navigation-buttons">
+          <button type="button" (click)="prevStep()" [disabled]="currentStep === 0">Zurück</button>
+          <button type="button" (click)="nextStep()" *ngIf="currentStep < steps.length - 1">Weiter</button>
+          <button type="submit" *ngIf="currentStep === steps.length - 1">Absenden</button>
+        </div>
+      </div>
+    </form>
+  
+</div>
+  </section>
+  

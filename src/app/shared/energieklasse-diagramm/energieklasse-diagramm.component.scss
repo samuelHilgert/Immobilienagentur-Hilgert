@@ -1,0 +1,62 @@
+@use "./../../../styles.scss" as s;
+@use "./../../../assets/fonts.scss" as f;
+@use "./../../../assets/colors.scss" as c;
+
+.diagram-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    font-family: sans-serif;
+  }
+  
+  .bar {
+    display: flex;
+    height: 30px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    box-shadow: inset 0 0 1px #aaa;
+  }
+  
+  .bar div {
+    flex: 1;
+    text-align: center;
+    font-size: 12px;
+    line-height: 30px;
+    color: #fff;
+  }
+  
+  .a-plus { background-color: #1a9850; }     // A+
+  .a {      background-color: #66bd63; }     // A
+  .b {      background-color: #a6d96a; }     // B
+  .c {      background-color: #d9ef8b; color: #333; } // C
+  .d {      background-color: #fee08b; color: #333; } // D
+  .e {      background-color: #fdae61; }     // E
+  .f {      background-color: #f46d43; }     // F
+  .g {      background-color: #d73027; }     // G
+  
+  .marker {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background: black;
+    left: 0;
+    transform: translateX(-1px);
+    transition: left 0.3s ease;
+  }
+  
+  .marker-label {
+    position: absolute;
+    top: 35px;
+    left: 0;
+    transform: translateX(-50%);
+    background: #fff;
+    border: 1px solid #aaa;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  

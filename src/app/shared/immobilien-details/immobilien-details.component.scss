@@ -1,0 +1,128 @@
+@use "./../../../styles.scss" as s;
+@use "./../../../assets/fonts.scss" as f;
+@use "./../../../assets/colors.scss" as c;
+
+
+.doc-title-row {
+  padding-bottom: 24px;
+}
+
+.title-row {
+  padding-bottom: 18px;
+}
+
+.double-divider-line {
+  margin: 4px 0;
+  height: 2px;
+  width: 100%;
+  background-color: c.$primary-color;
+}
+
+.divider-line {
+  margin: 24px 0;
+  height: 2px;
+  width: 100%;
+  background-color: c.$primary-color;
+}
+
+h3 {
+  margin-top: 24px;
+  margin-bottom: 8px;
+  font-size: 1.3rem;
+  color: c.$primary-color;
+}
+
+.id-ort-row {
+  @include s.f_r_sb_fs;
+  padding-top: 18px;
+}
+
+.basic-info-wrapper {
+  @include s.f_r_sb_fs;
+  width:100%;
+  box-sizing: border-box;
+  margin-top: 24px;
+}
+
+.basic-info {
+  @include s.f_c_fs_fs;
+  gap:4px;
+}
+
+.basic-payments-info {
+  @include s.f_c_fs_fs;
+  gap:4px;
+  width:50%;
+}
+
+.spacer-m {
+  padding-bottom: 12px;
+}
+
+
+
+.details-dialog {
+  position: relative;
+  padding: 64px 32px;
+
+  h2 {
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+  }
+
+
+
+
+
+  .img-box {
+    @include s.f_c_fs_c;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 400px;
+    box-sizing: border-box;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      box-sizing: border-box;
+      object-position: center 60%;
+    }
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    color: #444;
+    cursor: pointer;
+
+    &:hover {
+      color: c.$primary-color;
+    }
+  }
+
+  .energiewert-wrapper {
+    @include s.f_c_c_c;
+    gap:24px;
+    padding:28px 0;
+    width:100%;
+    box-sizing: border-box;
+
+    app-energieklasse-diagramm {
+      width:100%;
+      box-sizing: border-box;
+    }
+  }
+
+  .notes-wrapper {
+    @include s.f_c_fs_fs;
+    gap:24px;
+  }
+
+}

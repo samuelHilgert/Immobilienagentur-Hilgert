@@ -8,9 +8,14 @@ section {
     box-sizing: border-box;
 }
 
-.about-us-content {
+.intro-text-content {
     @include s.f_c_c_c;
     gap: 24px;
     text-align: center;
     padding: 0px 124px;
+}
+
+.action-btn-row {
+    @include s.f_c_c_c;
+    padding-top: 64px;
 }

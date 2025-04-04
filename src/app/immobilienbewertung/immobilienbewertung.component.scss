@@ -2,13 +2,160 @@
 @use "./../../assets/fonts.scss" as f;
 @use "./../../assets/colors.scss" as c;
 
-
 section {
+    @include s.f_c_c_c;
+    gap:48px;
     height: auto;
-    min-height: 500px;
     width: 100%;
     box-sizing: border-box;
     padding: 80px 64px;
     margin-top:140px; // weil hero ausgeblendet wird
-    background-color: c.$bg-color;
+}
+
+h2 {
+    width:80%;
+    text-align:center;
+}
+
+.input-row {
+    @include s.f_r_fs_c;
+    gap:4px;
+    width: 100%;
+    box-sizing: border-box;
+    input:last-of-type {
+      width:30%;
+    }
+  }
+
+  .input-row-both {
+    @include s.f_r_fs_c;
+    gap:4px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .input-row-reverse {
+    @include s.f_r_fs_c;
+    gap:4px;
+    width: 100%;
+    box-sizing: border-box;
+    input:first-of-type {
+      width:30%;
+    }
+  }
+
+.bewertungsformular {
+  width:50%;
+  margin: 0 auto;
+  padding: 52px 48px;
+  background-color: c.$bg-color;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  h3 {
+margin-bottom:20px;
+  }
+
+  label {
+    display: block;
+    margin-top: 16px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    padding: 10px 12px;
+    margin-top: 6px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: c.$primary-color;
+      box-shadow: 0 0 0 2px rgba(c.$primary-color, 0.2);
+    }
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  .navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 32px;
+
+    button {
+      padding: 10px 24px;
+      font-size: 1rem;
+      background-color: c.$primary-color;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+
+      &:hover {
+        background-color: darken(c.$primary-color, 5%);
+      }
+
+      &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+
+  .disclaimer {
+    font-size: 0.9rem;
+    color: #555;
+    margin-top: 24px;
+    text-align: center;
+  }
+
+  // Fortschrittsbalken
+  .progress-bar {
+    width: 100%;
+    height: 6px;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 32px;
+
+    .progress {
+      height: 100%;
+      background-color: c.$contrast-color;
+      transition: width 0.3s ease-in-out;
+    }
+  }
+
+  // Step-Container mit sanfter Anzeige
+  .step-container {
+    display: none;
+    animation: fadeIn 0.3s ease-in-out;
+    width:100%;
+    box-sizing: border-box;
+
+    &.active {
+      display: block;
+    }
+  }
+}
+
+// Fade-in Animation für Step-Wechsel
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }

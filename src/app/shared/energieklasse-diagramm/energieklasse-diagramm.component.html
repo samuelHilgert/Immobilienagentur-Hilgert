@@ -1,0 +1,23 @@
+
+<div class="energieklasse-container">
+  
+  <!-- Untere Diagramm-Anzeige -->
+  <div class="diagram-wrapper">
+    <div class="bar">
+      <div class="a-plus">A+</div>
+      <div class="a">A</div>
+      <div class="b">B</div>
+      <div class="c">C</div>
+      <div class="d">D</div>
+      <div class="e">E</div>
+      <div class="f">F</div>
+      <div class="g">G</div>
+    </div>
+  
+    <!-- Marker zeigt den aktuellen Energiewert -->
+    <div class="marker" [ngStyle]="{ left: markerPosition + '%' }"></div>
+    <div class="marker-label" [ngStyle]="{ left: markerPosition + '%' }">
+      {{ energiewert }} kWh/(m²·a)
+    </div>
+  </div>
+  

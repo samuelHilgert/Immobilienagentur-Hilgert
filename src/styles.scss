@@ -117,7 +117,7 @@ body {
 }
 
 .sidebar-click-element {
-  background-color:  c.$primary-color; 
+  background-color: c.$primary-color;
   color: white;
   padding: 5px 10px;
   border: none;
@@ -126,13 +126,29 @@ body {
 
   &:hover {
     background-color: c.$contrast-color;
-    color:white;
+    color: white;
   }
 }
 
 .width-100 {
-  width:100%;
+  width: 100%;
   box-sizing: border-box;
+}
+
+.details-dialog .mat-mdc-dialog-surface {
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  border-radius: 0px;
+  margin: 50px auto;
+  padding: 32px;
+  min-width:70vw !important;
+  max-width:70vw !important;
+  box-sizing: border-box;
+  height:90vh;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
 @mixin f_r_c_c {
@@ -246,4 +262,3 @@ body {
   justify-content: flex-start;
   align-items: space-between;
 }
-

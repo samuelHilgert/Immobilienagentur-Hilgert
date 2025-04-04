@@ -5,6 +5,8 @@ import { MediaAttachment } from '../models/media.model';
 import { CommonModule } from '@angular/common';
 import { MATERIAL_MODULES } from '../shared/material-imports';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatDialog } from '@angular/material/dialog';
+import { ImmobilienDetailsComponent } from '../shared/immobilien-details/immobilien-details.component';
 
 @Component({
   selector: 'app-alle-immobilien',
@@ -22,7 +24,10 @@ export class AlleImmobilienComponent implements OnInit {
   isLoading: boolean = false;
   loadStatus: number = 0;
 
-  constructor(private immobilienService: ImmobilienService) {}
+  constructor(
+    private immobilienService: ImmobilienService,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
     this.isLoading = true;
@@ -72,21 +77,36 @@ export class AlleImmobilienComponent implements OnInit {
 
   toggleCard(immobilie: Immobilie): void {
     const id = immobilie.externalId;
+  
     if (immobilie.propertyStatus === 'Referenz' && id) {
-      // Falls ein Timeout läuft, abbrechen
       if (this.overlayTimeouts[id]) {
         clearTimeout(this.overlayTimeouts[id]);
       }
   
-      // Overlay anzeigen
       this.expandedCards[id] = true;
   
-      // Timeout setzen und merken
       this.overlayTimeouts[id] = setTimeout(() => {
         this.expandedCards[id] = false;
         delete this.overlayTimeouts[id];
       }, 2000);
     }
+  
+    if (immobilie.propertyStatus === 'Angebot') {
+      this.openImmobilienDetails(immobilie);
+    }
+  }  
+  
+  openImmobilienDetails(immobilie: Immobilie): void {
+    const media = this.mediaAttachments[immobilie.externalId!];
+  
+    this.dialog.open(ImmobilienDetailsComponent, {
+      panelClass: 'details-dialog',
+      data: {
+        immobilie,
+        media
+      },
+      autoFocus: false
+    });
   }
   
   

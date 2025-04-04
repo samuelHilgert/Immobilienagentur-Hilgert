@@ -5,11 +5,12 @@ import { RouterModule } from '@angular/router';
 import { BewertungenComponent } from './bewertungen/bewertungen.component';
 import { PartnerComponent } from './partner/partner.component';
 import { KontaktSectionComponent } from './kontakt-section/kontakt-section.component';
+import { IntroTextComponent } from './intro-text/intro-text.component';
 
 @Component({
   selector: 'app-main',
   standalone:true,
-  imports: [AboutUsComponent, AngeboteComponent, BewertungenComponent, KontaktSectionComponent, RouterModule],
+  imports: [IntroTextComponent, AngeboteComponent, BewertungenComponent, AboutUsComponent, KontaktSectionComponent, RouterModule],
   templateUrl: './main.component.html',
   styleUrl: './main.component.scss'
 })
