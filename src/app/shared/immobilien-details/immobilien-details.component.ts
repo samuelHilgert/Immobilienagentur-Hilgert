@@ -20,6 +20,8 @@ export class ImmobilienDetailsComponent {
   wohnungDetails: WohnungDetails | null = null;
   hausDetails: HausDetails | null = null;
   grundstueckDetails: GrundstueckDetails | null = null;
+
+  // Labels für Wohnungen
   apartmentTypeLabels: { [key: string]: string } = {
     ROOF_STOREY: 'Dachgeschoss',
     LOFT: 'Loft',
@@ -33,6 +35,9 @@ export class ImmobilienDetailsComponent {
     OTHER: 'Sonstiges',
     NO_INFORMATION: 'Keine Angabe'
   };
+
+  // Labels für Häuser
+
   buildingTypeLabels: { [key: string]: string } = {
     NO_INFORMATION: 'Keine Angabe',
     SINGLE_FAMILY_HOUSE: 'Einfamilienhaus',
@@ -51,6 +56,13 @@ export class ImmobilienDetailsComponent {
     YES: 'Ja',
     NOT_APPLICABLE: 'Nein'
   };
+  True_False_Labels: { [key: string]: string } = {
+    true: 'Ja',
+    false: 'Nein'
+  };
+  
+  
+  
   conditionLabels: { [key: string]: string } = {
     NO_INFORMATION: 'Keine Angabe',
     FIRST_TIME_USE: 'Erstbezug',
@@ -117,7 +129,8 @@ export class ImmobilienDetailsComponent {
     ENERGY_REQUIRED: 'Energiebedarfsausweis',
     ENERGY_CONSUMPTION: 'Energieverbrauchsausweis',
   };
-  
+
+
   constructor(
     @Inject(MAT_DIALOG_DATA)
     public data: { immobilie: Immobilie; media: MediaAttachment[] },

@@ -3,6 +3,15 @@
 @use "./../../../assets/colors.scss" as c;
 
 
+.dialog-content {
+  padding-right: 64px;
+}
+
+.detail-row {
+  @include s.f_r_sb_fs;
+  width:100%;
+}
+
 .doc-title-row {
   padding-bottom: 24px;
 }
@@ -34,45 +43,53 @@ h3 {
 
 .id-ort-row {
   @include s.f_r_sb_fs;
+  width: 50%;
+  box-sizing: border-box;
   padding-top: 18px;
+
+  p {
+    &:first-of-type {
+      width: 40%;
+      box-sizing: border-box;
+    }
+  }
 }
 
 .basic-info-wrapper {
   @include s.f_r_sb_fs;
-  width:100%;
+  gap: 24px;
+  width: 100%;
   box-sizing: border-box;
   margin-top: 24px;
 }
 
 .basic-info {
   @include s.f_c_fs_fs;
-  gap:4px;
+  gap: 4px;
+  width: 50%;
+  box-sizing: border-box;
 }
 
 .basic-payments-info {
   @include s.f_c_fs_fs;
-  gap:4px;
-  width:50%;
+  width: 40%;
+  box-sizing: border-box;
 }
 
 .spacer-m {
   padding-bottom: 12px;
 }
 
-
-
 .details-dialog {
   position: relative;
-  padding: 64px 32px;
+  padding: 64px 0;
+  width: 100%;
+  box-sizing: border-box;
 
   h2 {
     font-size: 1.8rem;
     margin-bottom: 8px;
   }
-
-
-
-
 
   .img-box {
     @include s.f_c_fs_c;
@@ -107,22 +124,85 @@ h3 {
     }
   }
 
-  .energiewert-wrapper {
-    @include s.f_c_c_c;
-    gap:24px;
-    padding:28px 0;
-    width:100%;
-    box-sizing: border-box;
+  .more-info-wrapper {
+    @include s.f_r_sb_fs;
+    gap: 24px;
 
-    app-energieklasse-diagramm {
-      width:100%;
+    .more-infos {
+      width: 50%;
       box-sizing: border-box;
+      @include s.f_c_fs_fs;
+      gap: 4px;
     }
+
+    .energiewert-wrapper {
+      @include s.f_c_c_fs;
+      gap: 8px;
+      width: 40%;
+      box-sizing: border-box;
+
+      app-energieklasse-diagramm {
+        width: 100%;
+        box-sizing: border-box;
+      }
+    }
+
   }
 
   .notes-wrapper {
     @include s.f_c_fs_fs;
-    gap:24px;
+    gap: 24px;
+  }
+
+  .contact-container {
+    @include s.f_c_fs_fs;
+    gap: 24px;
+    width: 100%;
+    box-sizing: border-box;
+
+    a {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      text-decoration: none;
+      color: c.$primary-text;
+      transition: color 0.3s ease;
+
+      &:hover {
+        color: c.$primary-color;
+      }
+
+      mat-icon {
+        color: c.$primary-color;
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    >p:first-child {
+      width: 30%;
+      box-sizing: border-box;
+    }
+
+    .contact-wrapper {
+      @include s.f_r_fs_fe;
+      gap: 24px;
+      width: 100%;
+      box-sizing: border-box;
+
+      img {
+        width: 200px;
+        height: auto;
+      }
+
+      .content-col {
+        @include s.f_c_fs_fs;
+        gap: 4px;
+      }
+    }
+
+
   }
 
 }
