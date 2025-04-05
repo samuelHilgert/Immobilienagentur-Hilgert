@@ -100,7 +100,7 @@
       
                 <mat-form-field appearance="outline">
                   <mat-label>Telefon (optional)</mat-label>
-                  <input matInput formControlName="phone" type="tel" />
+                  <input matInput formControlName="phone" required type="tel" />
                 </mat-form-field>
               </div>
       
@@ -124,6 +124,14 @@
                   Nachricht ist erforderlich
                 </mat-error>
               </mat-form-field>
+
+              <mat-checkbox formControlName="acceptedPrivacy">
+                Ich habe die <a class="link" (click)="openDatenschutz()">Datenschutzerklärung</a> gelesen.
+              </mat-checkbox>
+
+              <mat-error *ngIf="contactForm.get('acceptedPrivacy')?.invalid && contactForm.get('acceptedPrivacy')?.touched">
+                Bitte akzeptieren Sie die Datenschutzerklärung.
+              </mat-error>
       
               <div class="button-row">
                 <button

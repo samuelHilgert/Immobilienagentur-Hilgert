@@ -2,10 +2,18 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { MATERIAL_MODULES } from '../../shared/material-imports';
+import {
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatIconRegistry } from '@angular/material/icon';
 import AOS from 'aos';
+import { KontaktAnfrageService } from '../../services/kontakt-anfrage.service';
+import { KontaktAnfrage } from '../../models/kontakt-anfrage.model';
+import { DatenschutzComponent } from '../../impressum/datenschutz/datenschutz.component';
+import { MatDialog } from '@angular/material/dialog';
+import { MATERIAL_MODULES } from '../material-imports';
+import { SuccessMsgDialogComponent } from '../success-msg-dialog/success-msg-dialog.component';
 
 @Component({
   selector: 'app-kontakt-content',
@@ -24,7 +32,9 @@ export class KontaktContentComponent implements OnInit {
   
   constructor(
     private fb: FormBuilder,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog,
+    private kontaktAnfrageService: KontaktAnfrageService
   ) {
     this.contactForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(3)]],
@@ -33,7 +43,8 @@ export class KontaktContentComponent implements OnInit {
       phone: [''],
       company: [''],
       subject: ['', Validators.required],
-      message: ['', Validators.required]
+      message: ['', Validators.required],
+      acceptedPrivacy: [false, Validators.requiredTrue]
     });
     
     this.registerSocialIcons();
@@ -62,27 +73,44 @@ export class KontaktContentComponent implements OnInit {
     this.contactForm.reset();
   }
   
-  onSubmit(): void {
-    if (this.contactForm.valid) {
-      this.isSubmitting = true;
-      
-      // Simuliere einen API-Aufruf
-      setTimeout(() => {
-        this.isSubmitting = false;
-        this.snackBar.open('Ihre Nachricht wurde erfolgreich gesendet!', 'Schließen', {
-          duration: 5000,
-          verticalPosition: 'top'
-        });
-        this.contactForm.reset();
-      }, 1500);
-    } else {
-      // Markiere alle Felder als berührt, um Validierungsfehler anzuzeigen
-      Object.keys(this.contactForm.controls).forEach(key => {
-        const control = this.contactForm.get(key);
-        control?.markAsTouched();
-      });
+  async onSubmit(): Promise<void> {
+    if (this.contactForm.invalid) {
+      this.contactForm.markAllAsTouched();
+      return;
     }
-  }
+  
+    this.isSubmitting = true;
+  
+    const formData: KontaktAnfrage = {
+      ...this.contactForm.value,
+      customerId: '', // wird im Service generiert
+      creationDate: '' // wird im Service generiert
+    };
+  
+    try {
+      const result = await this.kontaktAnfrageService.submitKontaktAnfrage(formData);
+  
+      if (result.success) {
+        this.contactForm.reset();
+  
+        // 📬 Dialog anzeigen
+        this.dialog.open(SuccessMsgDialogComponent, {
+          panelClass: 'success-dialog',
+          width: '350px'
+        });
+      } else {
+        throw result.error;
+      }
+    } catch (error) {
+      console.error('Fehler beim Versenden:', error);
+      this.snackBar.open('Fehler beim Versenden Ihrer Nachricht. Bitte versuchen Sie es später erneut.', 'Schließen', {
+        duration: 5000,
+        verticalPosition: 'top'
+      });
+    } finally {
+      this.isSubmitting = false;
+    }
+  }  
   
   private registerSocialIcons(): void {
     const icons = [
@@ -101,4 +129,12 @@ export class KontaktContentComponent implements OnInit {
       );
     });
   }
+
+  openDatenschutz(): void {
+    this.dialog.open(DatenschutzComponent, {
+      panelClass: 'details-dialog',
+      width: '600px',
+    });
+  }
+
 }

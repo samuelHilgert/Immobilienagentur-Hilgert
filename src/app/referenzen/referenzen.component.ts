@@ -5,6 +5,7 @@ import { MediaAttachment } from '../models/media.model';
 import { CommonModule } from '@angular/common';
 import { MATERIAL_MODULES } from '../shared/material-imports';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { PaginationService } from '../services/pagination.service';
 
 @Component({
   selector: 'app-referenzen',
@@ -24,7 +25,8 @@ export class ReferenzenComponent implements OnInit {
 
   constructor(
     private immobilienService: ImmobilienService,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private paginationService: PaginationService<Immobilie>,
   ) {}
 
   ngOnInit(): void {
@@ -46,6 +48,7 @@ export class ReferenzenComponent implements OnInit {
             immo.propertyStatus === 'Referenz' &&
             immo.uploadPublicTargets?.homepage === true
         );
+        this.paginationService.setData(this.immobilien, 8);
   
         const mediaPromises = this.immobilien.map((immobilie) => {
           if (immobilie.externalId && !this.mediaAttachments[immobilie.externalId]) {
@@ -102,4 +105,35 @@ export class ReferenzenComponent implements OnInit {
       }, 2000);
     }
   }
+
+  // Proxy-Getter fürs Template
+  get paginatedImmobilien(): Immobilie[] {
+    return this.paginationService.paginatedItems;
+  }
+
+  get totalPages(): number {
+    return this.paginationService.totalPages;
+  }
+
+  get currentPage(): number {
+    return this.paginationService.currentPage;
+  }
+
+  getRangeStart(): number {
+    return this.paginationService.getRangeStart();
+  }
+
+  getRangeEnd(): number {
+    return this.paginationService.getRangeEnd();
+  }
+
+  goToNextPage(): void {
+    this.paginationService.goToNextPage();
+  }
+
+  goToPreviousPage(): void {
+    this.paginationService.goToPreviousPage();
+  }
+
+  
 }

@@ -7,6 +7,7 @@ import { MATERIAL_MODULES } from '../shared/material-imports';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatDialog } from '@angular/material/dialog';
 import { ImmobilienDetailsComponent } from '../shared/immobilien-details/immobilien-details.component';
+import { PaginationService } from '../services/pagination.service';
 
 @Component({
   selector: 'app-alle-immobilien',
@@ -26,7 +27,8 @@ export class AlleImmobilienComponent implements OnInit {
 
   constructor(
     private immobilienService: ImmobilienService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private paginationService: PaginationService<Immobilie>,
   ) {}
 
   ngOnInit(): void {
@@ -43,6 +45,8 @@ export class AlleImmobilienComponent implements OnInit {
             return 0;
           });
   
+          this.paginationService.setData(this.immobilien, 8);
+
         const mediaPromises = this.immobilien.map((immobilie) => {
           if (immobilie.externalId && !this.mediaAttachments[immobilie.externalId]) {
             return new Promise<void>((resolve) => {
@@ -109,5 +113,32 @@ export class AlleImmobilienComponent implements OnInit {
     });
   }
   
-  
+   // Proxy-Getter fürs Template
+  get paginatedImmobilien(): Immobilie[] {
+    return this.paginationService.paginatedItems;
+  }
+
+  get totalPages(): number {
+    return this.paginationService.totalPages;
+  }
+
+  get currentPage(): number {
+    return this.paginationService.currentPage;
+  }
+
+  getRangeStart(): number {
+    return this.paginationService.getRangeStart();
+  }
+
+  getRangeEnd(): number {
+    return this.paginationService.getRangeEnd();
+  }
+
+  goToNextPage(): void {
+    this.paginationService.goToNextPage();
+  }
+
+  goToPreviousPage(): void {
+    this.paginationService.goToPreviousPage();
+  }
 }

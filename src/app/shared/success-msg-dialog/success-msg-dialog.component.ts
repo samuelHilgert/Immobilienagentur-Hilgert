@@ -1,16 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MATERIAL_MODULES } from '../material-imports';
 
 @Component({
   selector: 'app-success-msg-dialog',
   standalone: true,
-  imports: [CommonModule, MATERIAL_MODULES],
+  imports: [CommonModule, MATERIAL_MODULES, MatDialogModule],
   templateUrl: './success-msg-dialog.component.html',
   styleUrl: './success-msg-dialog.component.scss'
 })
 export class SuccessMsgDialogComponent implements OnInit {
+
   constructor(public dialogRef: MatDialogRef<SuccessMsgDialogComponent>) {}
 
   ngOnInit(): void {

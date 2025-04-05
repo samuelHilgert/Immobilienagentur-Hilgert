@@ -16,7 +16,7 @@ section {
 }
 
 .immobilien-grid {
-  @include s.f_r_se_fs;
+  @include s.f_r_fs_fs;
   gap: 18px;
   padding-top:24px;
   flex-wrap: wrap;
@@ -177,4 +177,16 @@ mat-card {
 .hinweis-weitere-immobilien {
   @include s.f_r_c_c;
   margin-top:54px;
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+  gap: 1rem;
+
+  .page-range {
+    font-weight: bold;
+  }
 }
