@@ -32,6 +32,8 @@ import { AgbComponent } from './impressum/agb/agb.component';
 import { KontaktComponent } from './kontakt/kontakt.component';
 import { BewertenComponent } from './shared/feedback/feedback.component';
 import { AlleImmobilienComponent } from './alle-immobilien/alle-immobilien.component';
+import { ExposeAnfordernComponent } from './shared/expose-anfordern/expose-anfordern.component';
+import { WiderrufComponent } from './impressum/widerruf/widerruf.component';
 
 export const routes: Routes = [
   {
@@ -53,6 +55,9 @@ export const routes: Routes = [
   {
     path: 'immobilienbewertung',
     component: ImmobilienbewertungComponent,
+  },
+  { path: 'expose-anfordern', 
+    component: ExposeAnfordernComponent 
   },
   {
     path: 'kontakt',
@@ -97,6 +102,10 @@ export const routes: Routes = [
   {
     path: 'agb',
     component: AgbComponent,
+  },
+  {
+    path: 'widerruf',
+    component: WiderrufComponent,
   },
   {
     path: 'dashboard-login',

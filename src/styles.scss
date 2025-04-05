@@ -151,6 +151,23 @@ body {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
+.success-dialog .mat-mdc-dialog-surface {
+  text-align:center;
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  border-radius: 0px;
+  margin: 50px auto;
+  padding: 32px;
+  min-width:40vw !important;
+  max-width:40vw !important;
+  box-sizing: border-box;
+  height:40vh;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
 @mixin f_r_c_c {
   display: flex;
   flex-direction: row;

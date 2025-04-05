@@ -1,0 +1,50 @@
+@use "./../../../styles.scss" as s;
+@use "./../../../assets/fonts.scss" as f;
+@use "./../../../assets/colors.scss" as c;
+
+
+.success-container {
+    @include s.f_c_c_c;
+    width:100%;
+    box-sizing: border-box;
+    height:100%;
+    padding:64px;
+  
+    .icon {
+      font-size: 48px;
+      color: #2e7d32;
+      margin-bottom: 1rem;
+    }
+  
+    h2 {
+      margin-top: 0;
+      color: #2e7d32;
+    }
+  
+    p {
+      margin: 1rem 0 2rem;
+      font-size: 1rem;
+      color: #444;
+    }
+  
+    .btn-wrapper {
+      display: flex;
+      justify-content: center;
+    }
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    color: #444;
+    cursor: pointer;
+
+    &:hover {
+      color: c.$primary-color;
+    }
+  }
+  

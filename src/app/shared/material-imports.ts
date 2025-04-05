@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSelectModule } from '@angular/material/select';
+import { MatCheckbox } from '@angular/material/checkbox';
 
 export const MATERIAL_MODULES = [
   MatCardModule,
@@ -28,5 +29,6 @@ export const MATERIAL_MODULES = [
   MatProgressBarModule,
   MatDividerModule,
   ReactiveFormsModule,
-  MatSelectModule
+  MatSelectModule,
+  MatCheckbox
 ];

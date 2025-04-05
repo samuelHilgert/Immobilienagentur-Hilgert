@@ -1,11 +1,13 @@
 import { Component, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { GrundstueckDetails, HausDetails, Immobilie, WohnungDetails } from '../../models/immobilie.model';
 import { MATERIAL_MODULES } from '../material-imports';
 import { MediaAttachment } from '../../models/media.model';
 import { ImmobilienService } from '../../services/immobilien.service';
 import { EnergieklasseDiagrammComponent } from '../energieklasse-diagramm/energieklasse-diagramm.component';
+import { Router } from '@angular/router';
+import { ExposeAnfordernComponent } from '../expose-anfordern/expose-anfordern.component';
 
 @Component({
   selector: 'app-immobilien-details',
@@ -135,14 +137,15 @@ export class ImmobilienDetailsComponent {
     @Inject(MAT_DIALOG_DATA)
     public data: { immobilie: Immobilie; media: MediaAttachment[] },
     private dialogRef: MatDialogRef<ImmobilienDetailsComponent>,
-    private immobilienService: ImmobilienService // 👈 hier
+    private immobilienService: ImmobilienService,
+    // private router: Router // ← hinzugefügt
+    private dialog: MatDialog
   ) {
     this.immobilie = data.immobilie;
     this.media = data.media;
-
-    this.loadDetails(); // 👈 Details nachladen
+    this.loadDetails();
   }
-
+  
   async loadDetails(): Promise<void> {
     const id = this.immobilie.externalId;
     const type = this.immobilie.propertyType;
@@ -178,4 +181,30 @@ export class ImmobilienDetailsComponent {
     return (this.immobilie as any).landDetails ?? null;
   }
 
+  // onExposeRequest(): void {
+  //   const immobilieData = this.immobilie;
+  
+  //   this.dialogRef.close();
+  //   setTimeout(() => {
+  //     this.router.navigate(['/expose-anfordern'], {
+  //       state: { immobilie: immobilieData }
+  //     });
+  //   }, 300);
+  // }
+  
+  onExposeRequest(): void {
+    const immobilieData = this.immobilie;
+  
+    this.dialogRef.close();
+  
+    setTimeout(() => {
+      this.dialog.open(ExposeAnfordernComponent, {
+        panelClass: 'details-dialog',
+        width: '600px',
+        data: { immobilie: immobilieData },
+      });
+    }, 300); // kleiner Delay, damit sich die Dialoge nicht überlappen
+  }
+  
+  
 }

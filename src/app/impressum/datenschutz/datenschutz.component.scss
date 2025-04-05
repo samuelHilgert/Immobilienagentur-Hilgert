@@ -1,14 +1,70 @@
+
 @use "./../../../styles.scss" as s;
 @use "./../../../assets/fonts.scss" as f;
 @use "./../../../assets/colors.scss" as c;
 
-
-section {
-    height: auto;
-    min-height: 500px;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 80px 64px;
-    margin-top:140px; // weil hero ausgeblendet wird
-    background-color: c.$bg-color;
-}
+.datenschutz-container {
+    padding: 2rem;
+    max-width: 800px;
+    margin: auto;
+    font-family: 'Segoe UI', sans-serif;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    line-height: 1.6;
+  }
+  
+  .version {
+    font-size: 0.9rem;
+    color: #888;
+    margin-bottom: 1.5rem;
+  }
+  
+  .datenschutz-section {
+    margin-bottom: 1.8rem;
+  }
+  
+  .datenschutz-section h3,
+  .datenschutz-section h4 {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+  }
+  
+  .datenschutz-section p,
+  .datenschutz-section ul {
+    margin: 0.5rem 0;
+  }
+  
+  .datenschutz-section ul {
+    padding-left: 1.2rem;
+    list-style-type: disc;
+  }
+  
+  .datenschutz-footer {
+    text-align: center;
+    font-style: italic;
+    color: #666;
+  }
+  
+  .button-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+  
+  .standard-btn {
+    background-color: #0057a3;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.4rem;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.2s ease;
+  }
+  
+  .standard-btn:hover {
+    background-color: #003f7f;
+  }
+  
