@@ -12,6 +12,8 @@ import { Immobilie } from '../../models/immobilie.model';
 import { MediaAttachment } from '../../models/media.model';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { ImmobilienDetailsComponent } from '../../shared/immobilien-details/immobilien-details.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-angebote',
@@ -42,7 +44,8 @@ export class AngeboteComponent implements OnInit, AfterViewInit {
 
   constructor(
     private immobilienService: ImmobilienService,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -162,4 +165,20 @@ export class AngeboteComponent implements OnInit, AfterViewInit {
     if (!externalId) return [];
     return this.mediaAttachments[externalId] || [];
   }
+
+  openImmobilienDetails(immobilie: Immobilie): void {
+    const media = this.mediaAttachments[immobilie.externalId!];
+  
+    this.dialog.open(ImmobilienDetailsComponent, {
+      panelClass: 'details-dialog',
+      data: {
+        immobilie,
+        media
+      },
+      autoFocus: false
+    });
+  }
+  
 }
+
+

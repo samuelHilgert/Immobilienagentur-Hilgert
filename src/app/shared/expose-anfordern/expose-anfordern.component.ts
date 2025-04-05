@@ -14,6 +14,7 @@ import { DatenschutzComponent } from '../../impressum/datenschutz/datenschutz.co
 import { ExposeAnfrageService } from '../../services/expose-anfrage.service';
 import { ExposeAnfrage } from '../../models/expose-anfrage.model';
 import { SuccessMsgDialogComponent } from '../success-msg-dialog/success-msg-dialog.component';
+import { MailService } from '../../services/mail.service';
 
 @Component({
   selector: 'app-expose-anfordern',
@@ -35,6 +36,7 @@ export class ExposeAnfordernComponent {
     private dialogRef: MatDialogRef<ExposeAnfordernComponent>,
     private dialog: MatDialog,
     private exposeAnfrageService: ExposeAnfrageService,
+    private mailService: MailService
   ) {
     this.immobilie = data.immobilie;
 
@@ -85,24 +87,20 @@ export class ExposeAnfordernComponent {
     };
   
     try {
-      const result = await this.exposeAnfrageService.submitExposeAnfrage(formData);
-  
-      if (result.success) {
-        this.dialogRef.close(); // 👈 Formular-Dialog schließen
-        this.dialog.open(SuccessMsgDialogComponent, {
-          panelClass: 'success-dialog',
-          width: '350px'
-        }); // 👈 Erfolgs-Dialog öffnen
-      } else {
-        console.warn('Fehler beim Speichern:', result.error);
-      }
+      await this.exposeAnfrageService.submitExposeAnfrage(formData); // speichern
+      await this.mailService.sendExposeMail(formData).toPromise(); // senden
+      this.dialogRef.close();
+      this.dialog.open(SuccessMsgDialogComponent, {
+        panelClass: 'success-dialog',
+        width: '350px'
+      });
     } catch (err) {
-      console.error('Unerwarteter Fehler:', err);
+      console.error('Fehler beim Versenden der E-Mail:', err);
     } finally {
       this.isSubmitting = false;
     }
-  }  
-
+  }
+  
   resetForm(): void {
     this.contactForm.reset();
   }

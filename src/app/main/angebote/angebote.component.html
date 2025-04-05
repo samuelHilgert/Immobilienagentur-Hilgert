@@ -41,7 +41,7 @@
         [style.transform]="'translateX(' + slidePosition + 'px)'"
       >
         <ng-container *ngFor="let immobilie of immobilien; let i = index">
-          <mat-card>
+          <mat-card (click)="openImmobilienDetails(immobilie)">
             <mat-card-header>
               <ng-container
                 *ngIf="
