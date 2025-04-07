@@ -3,13 +3,36 @@
 @use "./../../../assets/colors.scss" as c;
 
 section {
-    height: 100vh;
-    width: 100%;
-    box-sizing: border-box;
-    background-color: c.$hero-bg-color;
-    background-image: url('./../../../../public/img/modern-apartment.jpeg');
-    background-size:cover;
+  height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: c.$hero-bg-color;
+  background-image: url('./../../../../public/img/modern-apartment.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  image-rendering: crisp-edges; // für bessere Darstellung
+
+  // ✅ Responsives Verhalten
+
+  // Tablets quer & kleiner
+  @media (max-width: 1024px) {
+    background-attachment: scroll; // verhindert Darstellungsprobleme auf iOS/Safari
+    background-position: center center;
+  }
+
+  // Smartphones
+  @media (max-width: 768px) {
+    height: auto;
+    min-height: 60vh;
     background-position: center;
-    background-attachment: fixed;
-    image-rendering: crisp-edges; // for better graphics in some browsers
+    padding: 40px 20px;
+  }
+
+  // Kleine Smartphones
+  @media (max-width: 480px) {
+    padding: 32px 16px;
+    background-size: cover;
+    background-position: center top;
+  }
 }

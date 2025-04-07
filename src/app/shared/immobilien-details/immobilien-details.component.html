@@ -158,6 +158,7 @@
               </div>
             </div>
 
+            <!-- Energieausweis Skala -->
             <div class="energiewert-wrapper" *ngIf="wohnung.thermalCharacteristic">
               <div class="detail-row"><p><strong>Energiewert:</strong></p></div>
               <div class="spacer-m"></div>
@@ -170,6 +171,8 @@
                 [ausweistyp]="wohnung?.buildingEnergyRatingType"
               ></app-energieklasse-diagramm>
             </div>
+
+
           </div>
 
           <div class="spacer-m"></div>

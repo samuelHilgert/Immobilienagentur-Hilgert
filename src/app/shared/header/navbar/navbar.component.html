@@ -1,8 +1,17 @@
-<div class="">
-  <ul>
-    <li><a class="navbar-link" routerLink="immobilien" alt="Immobilienangebote - Hilgert Immobilien">Immobilien</a></li>
-    <li><a class="navbar-link" routerLink="leistungen" alt="Immobilienverkauf - Hilgert Immobilien">Leistungen</a></li>
-    <li><a class="navbar-link" routerLink="referenzen" alt="Beste Bewertungen und Referenzen - Hilgert Immobilien">Referenzen</a></li>
-    <li><a class="navbar-link" routerLink="kontakt" alt="Immobilienberatung, Verkaufsberatung, kostenfrei - Hilgert Immobilien">Kontakt</a></li>
+<div class="navbar-container">
+  <!-- Burger Button (sichtbar nur bei kleiner Viewport-Breite) -->
+  <button class="burger-btn" (click)="menuOpen = !menuOpen">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>  
+
+  <!-- Navigation -->
+  <ul [class.open]="menuOpen">
+    <li><a class="navbar-link" routerLink="immobilien" (click)="closeMenu()">Immobilien</a></li>
+    <li><a class="navbar-link" routerLink="leistungen" (click)="closeMenu()">Leistungen</a></li>
+    <li><a class="navbar-link" routerLink="referenzen" (click)="closeMenu()">Referenzen</a></li>
+    <li><a class="navbar-link" routerLink="kontakt" (click)="closeMenu()">Kontakt</a></li>
   </ul>
+  
 </div>

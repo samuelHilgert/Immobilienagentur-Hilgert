@@ -12,6 +12,10 @@ section {
   padding: 20px;
 }
 
+h2 {
+  text-align: center;
+}
+
 .spinner-wrapper {
   display: flex;
   justify-content: center;
@@ -47,6 +51,10 @@ mat-error {
       stroke: c.$angebote-slider-arrows-hover;
     }
   }
+}
+
+.arrow-responsive {
+  display:none;
 }
 
 /* Slider-Inhalt -> Wrapper für beide Angebote zusammen */
@@ -190,5 +198,40 @@ mat-card {
     &:hover {
       color: c.$link-weitere-angebote-hover;
     }
+  }
+}
+
+@media (max-width: 1200px) {
+  .slider-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .arrow-not-responsive {
+    display:none !important;
+  }
+
+  .arrow-responsive {
+    display:flex;
+  }
+
+  .angebote-slider {
+    width: 420px; // etwas mehr als die Karte (400px) für padding
+    margin: 0 auto;
+  }
+
+  .angebote-grid {
+    gap: 0; // keine Lücken, nur eine Karte pro Slide
+  }
+
+  mat-card {
+    width: 400px;
+    margin-right: 25px;
+  }
+
+  .arrow-box {
+    display: flex;
+    justify-content: center;
   }
 }

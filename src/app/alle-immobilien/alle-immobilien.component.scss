@@ -18,8 +18,9 @@ section {
 .immobilien-grid {
   @include s.f_r_fs_fs;
   gap: 18px;
-  padding-top:24px;
+  padding-top: 24px;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 /* Immobilienkarte */
@@ -28,6 +29,10 @@ mat-card {
     width: 600px;
     height: 700px;
     flex: 0 0 auto;
+    max-width: 600px;
+    height: auto;
+    margin-top: 40px;
+    flex: 1 1 auto;
     cursor:pointer;
     margin-top:40px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -188,5 +193,79 @@ mat-card {
 
   .page-range {
     font-weight: bold;
+  }
+}
+
+// > 1440px = große Desktops
+// 1200–1439px = Standard-Desktops
+// 992–1199px = Tablets quer
+// 768–991px = Tablets hoch / kleine Laptops
+// 576–767px = große Smartphones
+// < 576px = kleine Smartphones
+
+// Breakpoints
+
+@media (max-width: 1439px) {
+  mat-card {
+    max-width: 500px;
+  }
+}
+
+@media (max-width: 1199px) {
+  mat-card {
+    max-width: 450px;
+  }
+}
+
+@media (max-width: 991px) {
+  .immobilien-grid {
+    justify-content: center;
+  }
+
+  mat-card {
+    max-width: 100%;
+    margin-inline: auto;
+  }
+}
+
+@media (max-width: 767px) {
+  section {
+    padding: 0px 16px;
+  }
+
+  mat-card {
+    max-width: 100%;
+    height: auto;
+  }
+
+  mat-card-header {
+    height: 300px;
+  }
+
+  mat-card-content mat-card-title {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 575px) {
+  section {
+    padding: 0px 4px;
+  }
+
+  mat-card {
+    padding: 0 12px;
+  }
+
+  mat-card-header {
+    height: 240px;
+  }
+
+  mat-card-footer svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .icon-text {
+    font-size: 11px;
   }
 }

@@ -2,56 +2,101 @@
 @use "./../../../../assets/fonts.scss" as f;
 @use "./../../../../assets/colors.scss" as c;
 
-div {
-    position:relative;
-    top: 0;
-    right: 0;
-    left: 0;
-    width:100%;
-    box-sizing: border-box;
-    height: 50px;
-    background-color: c.$navbar-bg-color;
-    opacity: 1;
-    // background-color: c.$navbar-bg-color;
-    // opacity: 0.5;
-    @include s.f_r_fs_fs;
-    gap:24px;
 
-    ul {
-        width: 100%;
-        height:100%;
-        box-sizing: border-box;
-        @include s.f_r_se_c;
-        gap:24px;
-        margin: 0;
-        padding: 0;
+.navbar-container {
+  position: relative;
+  width: 100%;
+  height: auto;
+  background-color: c.$navbar-bg-color;
+  padding: 24px 24px;
+  box-sizing: border-box;
+  @include s.f_r_se_c;
+
+  ul {
+    @include s.f_r_se_c;
+    gap: 64px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    transition: all 0.3s ease-in-out;
+
+
+    @media (max-width: 1046px) {
+        gap: 48px;
     }
 
     li {
-        @include s.f_r_fe_fs;
-        padding-top: 10px;
-        height: 100%;
-        box-sizing: border-box;
-        position: relative;
-        cursor: pointer;
-        
-        &::after {
-          content: "";
-          position: absolute;
-          top: 0;
-          left: 50%; // Starte in der Mitte
-          width: 0; // Anfangsbreite 0
-          height: 2.5px;
-          background-color: c.$navbar-links-border-hover; // Farbe ist immer gesetzt
-          transition: width 0.3s ease-in-out, left 0.3s ease-in-out;
-          transform: translateX(-50%); // Zentriere das Element
-        }
-        
-        &:hover::after {
-          width: 100%; // Volle Breite beim Hovern
-          left: 50%; // Bleibt zentriert während des Wachsens
-        }
+      position: relative;
+      padding-top: 10px;
+      cursor: pointer;
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 0;
+        height: 2.5px;
+        background-color: c.$navbar-links-border-hover;
+        transition: width 0.3s ease-in-out, left 0.3s ease-in-out;
+        transform: translateX(-50%);
       }
 
-}
+      &:hover::after {
+        width: 100%;
+      }
+    }
+  }
 
+  .burger-btn {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 12px;
+
+    span {
+      width: 24px;
+      height: 2px;
+      background-color: #333;
+      display: block;
+    }
+  }
+
+  // 🔽 Responsive: ab < 992px aktiv
+  @media (max-width: 991px) {
+    flex-direction: column;
+    align-items: center;
+    padding: 12px;
+
+    .burger-btn {
+      display: flex;
+    }
+
+    ul {
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      display: none;
+      width: 100%;
+      padding-top: 12px;
+
+      &.open {
+        display: flex;
+      }
+
+      li {
+        width: 100%;
+        text-align: center;
+        padding: 8px 0;
+
+        &::after {
+          display: none;
+        }
+      }
+    }
+  }
+}

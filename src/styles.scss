@@ -50,11 +50,19 @@ body {
 .section-bg-v1 {
   background-color: c.$section-bg-v1;
   padding: 64px 48px;
+
+  @media (max-width: 768px) {
+    padding: 64px 12px;
+  }
 }
 
 .section-bg-v2 {
   background-color: c.$section-bg-v2;
   padding: 64px 48px;
+
+  @media (max-width: 768px) {
+    padding: 64px 12px;
+  }
 }
 
 .standard-btn {
@@ -149,6 +157,16 @@ body {
   height:90vh;
   background: #fff;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  @media (max-width: 1024px) {
+    min-width:85vw !important;
+    max-width:85vw !important;
+  }
+  @media (max-width: 575px) {
+    min-width:95vw !important;
+    max-width:95vw !important;
+    height:90vh !important;
+    margin:20px auto;
+  }
 }
 
 .success-dialog .mat-mdc-dialog-surface {
@@ -215,6 +233,13 @@ body {
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
+}
+
+@mixin f_r_c_fs {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 @mixin f_r_sb_c {

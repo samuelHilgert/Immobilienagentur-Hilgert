@@ -201,8 +201,181 @@ h3 {
         gap: 4px;
       }
     }
+  }
+}
 
+///////////// Responsive 
 
+// Standard Desktop bis 1439px
+@media (max-width: 1439px) {
+.details-dialog {
+  padding:24px 64px !important;
   }
 
+  .dialog-content {
+    width:100% !important;
+    padding:0;
+  }
+
+  .basic-info-wrapper {
+    flex-direction: column !important;
+    width:100% !important;
+  }
+
+  .basic-info {
+    width:100% !important;
+  }
+
+  .basic-payments-info {
+    width:100% !important;
+    gap:4px;
+  }
+
+  .more-info-wrapper {
+    flex-direction: column !important;
+    width:100% !important;
+    gap: 16px;
+  }
+
+  .more-infos {
+    width:100% !important;
+  }
+
+  .energiewert-wrapper {
+    width:100% !important;
+  }
+
+  .energieklasse-container {
+    width:100% !important;
+  }
+
+  app-energieklasse-diagramm {
+    width:100% !important;
+  }
+
+  .disclaimer-diagramm {
+    width:100% !important;
+  }
+
+  .notes-wrapper {
+    width:100% !important;
+  }
+
+.bottom-container {
+  width:100% !important;
+}
+
+
+  .details-dialog {
+    padding: 48px 0;
+
+    .img-box {
+      height: 340px;
+    }
+
+    .contact-container .contact-wrapper {
+      img {
+        width: 180px;
+      }
+    }
+  }
+
+  .dialog-content {
+    padding-right: 32px;
+  }
+}
+
+// Tablets quer & kleiner: bis 1024px
+@media (max-width: 1024px) {
+  .basic-info-wrapper,
+  .more-info-wrapper {
+    gap: 24px;
+    width:60%;
+
+    .basic-info,
+    .basic-payments-info,
+    .more-infos,
+    .energiewert-wrapper {
+      width: 100%;
+    }
+  }
+
+  .dialog-content {
+    padding-right: 16px;
+  }
+
+  .img-box {
+    height: 280px;
+  }
+}
+
+// Tablets hoch / große Smartphones bis 768px
+@media (max-width: 768px) {
+
+  .details-dialog {
+    padding:24px 32px !important;
+
+    .img-box {
+      height: 220px;
+    }
+
+    .title-row h3,
+    .doc-title-row h2 {
+      font-size: 1.3rem;
+    }
+
+    .contact-container .contact-wrapper {
+      @include s.f_c_fs_fs;
+
+      img {
+        width: 160px;
+      }
+
+      .content-col {
+        @include s.f_c_fs_fs;
+      }
+    }
+  }
+}
+
+// Smartphones < 576px
+@media (max-width: 575px) {
+  .details-dialog {
+    padding: 24px 0 !important;
+
+    .img-box {
+      height: 180px;
+    }
+
+    .detail-row {
+      flex-direction: column;
+      align-items: flex-start;
+
+      p {
+        width: 100% !important;
+      }
+    }
+
+    .contact-container a {
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .close-btn {
+      font-size: 1.2rem;
+      top: 12px;
+      right: 12px;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+    }
+  }
+}
+
+@media (max-width: 440px) {
+h3 {
+  font-size:1rem !important;
+  padding:0 12px;
+}
 }

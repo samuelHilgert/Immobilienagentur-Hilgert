@@ -11,8 +11,22 @@ section {
 .intro-text-content {
     @include s.f_c_c_c;
     gap: 24px;
+    width: 100%;
+    box-sizing: border-box;
     text-align: center;
     padding: 0px 124px;
+      
+    @media (max-width: 768px) {
+        padding: 64px 68px;
+      }
+
+      @media (max-width: 587px) {
+        padding: 64px 48px;
+      }
+
+      @media (max-width: 440px) {
+        padding: 64px 12px;
+      }
 }
 
 .action-btn-row {

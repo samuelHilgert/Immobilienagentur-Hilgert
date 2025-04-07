@@ -9,5 +9,11 @@ import { RouterLink } from '@angular/router';
   styleUrl: './navbar.component.scss'
 })
 export class NavbarComponent {
+  menuOpen = false;
+
+  closeMenu(): void {
+    this.menuOpen = false;
+  }
+  
 
 }

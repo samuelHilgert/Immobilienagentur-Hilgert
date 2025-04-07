@@ -239,3 +239,80 @@ mat-card {
     font-weight: bold;
   }
 }
+
+@media (max-width: 1963px) {
+  .immobilien-grid {
+    @include s.f_r_c_fs;
+  }
+
+  h2 {
+    text-align: center;
+  }
+}
+
+
+// > 1440px = große Desktops
+@media (max-width: 1439px) {
+  mat-card {
+    max-width: 500px;
+  }
+}
+
+@media (max-width: 1199px) {
+  mat-card {
+    max-width: 450px;
+  }
+}
+
+@media (max-width: 991px) {
+  .immobilien-grid {
+    justify-content: center;
+  }
+
+  mat-card {
+    max-width: 100%;
+    margin-inline: auto;
+  }
+}
+
+@media (max-width: 767px) {
+  section {
+    padding: 0px 16px;
+  }
+
+  mat-card {
+    max-width: 100%;
+    height: auto;
+  }
+
+  mat-card-header {
+    height: 300px;
+  }
+
+  mat-card-content mat-card-title {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 575px) {
+  section {
+    padding: 0px 4px;
+  }
+
+  mat-card {
+    padding: 0 12px;
+  }
+
+  mat-card-header {
+    height: 240px;
+  }
+
+  mat-card-footer svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .icon-text {
+    font-size: 11px;
+  }
+}

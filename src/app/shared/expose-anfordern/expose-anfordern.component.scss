@@ -5,9 +5,9 @@
 .dialog-content {
     @include s.f_c_fs_fs;
     gap: 24px;
-    padding-right: 64px;
     width:100%;
     box-sizing: border-box;
+
 }
 
 .Intro {
@@ -33,7 +33,9 @@ form {
     display: flex;
     gap: 16px;
 
-    @media (max-width: 600px) {
+
+// Tablets hoch / große Smartphones bis 768px
+    @media (max-width: 768px) {
         flex-direction: column;
         gap: 0;
     }
