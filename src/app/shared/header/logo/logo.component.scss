@@ -17,7 +17,7 @@
 
     img {
       width: auto;
-      height: clamp(4rem, 4vw, 5rem);
+      height: clamp(7rem, 4vw, 8rem);
       border-radius: 0;
       cursor: pointer;
   
@@ -29,8 +29,8 @@
   }
   
   .title-slogan-wrapper {
-    @include s.f_c_c_fs;
-    gap: 4px;
+    @include s.f_c_c_c;
+    gap: 12px;
     cursor: pointer;
     text-align: center;
   

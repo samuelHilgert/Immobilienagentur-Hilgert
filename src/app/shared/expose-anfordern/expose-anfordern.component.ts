@@ -8,18 +8,18 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { HttpClient, HttpClientModule } from '@angular/common/http'; 
 import { WiderrufComponent } from '../../impressum/widerruf/widerruf.component';
 import { AgbComponent } from '../../impressum/agb/agb.component';
 import { DatenschutzComponent } from '../../impressum/datenschutz/datenschutz.component';
 import { ExposeAnfrageService } from '../../services/expose-anfrage.service';
 import { ExposeAnfrage } from '../../models/expose-anfrage.model';
 import { SuccessMsgDialogComponent } from '../success-msg-dialog/success-msg-dialog.component';
-import { MailService } from '../../services/mail.service';
 
 @Component({
   selector: 'app-expose-anfordern',
   standalone: true,
-  imports: [CommonModule, MATERIAL_MODULES],
+  imports: [CommonModule, MATERIAL_MODULES, HttpClientModule], // ✅ HttpClientModule importieren
   templateUrl: './expose-anfordern.component.html',
   styleUrl: './expose-anfordern.component.scss',
 })
@@ -36,7 +36,7 @@ export class ExposeAnfordernComponent {
     private dialogRef: MatDialogRef<ExposeAnfordernComponent>,
     private dialog: MatDialog,
     private exposeAnfrageService: ExposeAnfrageService,
-    private mailService: MailService
+    private http: HttpClient // ✅ für PHP-Mailversand
   ) {
     this.immobilie = data.immobilie;
 
@@ -51,7 +51,6 @@ export class ExposeAnfordernComponent {
       acceptedWithdrawal: [false, Validators.requiredTrue],
       acceptedPrivacy: [false, Validators.requiredTrue],
     });
-    
   }
 
   get firstNameControl() {
@@ -72,23 +71,31 @@ export class ExposeAnfordernComponent {
 
   async onSubmit(): Promise<void> {
     this.formSubmitted = true;
-  
+
     if (this.contactForm.invalid) {
       this.contactForm.markAllAsTouched();
       return;
     }
-  
+
     this.isSubmitting = true;
-  
+
     const formData: ExposeAnfrage = {
       ...this.contactForm.value,
       immobilienId: this.immobilie.externalId,
       immobilienTyp: this.immobilie.propertyType
     };
-  
+
     try {
-      await this.exposeAnfrageService.submitExposeAnfrage(formData); // speichern
-      await this.mailService.sendExposeMail(formData).toPromise(); // senden
+      // 🔥 1. In Firebase DB speichern (wenn gewünscht)
+      await this.exposeAnfrageService.submitExposeAnfrage(formData);
+
+      // ✉️ 2. Mail per PHP-Skript senden
+      await this.http.post(
+        'https://immo.samuelhilgert.com/sendExposeAnfrageMail.php',
+        formData
+      ).toPromise();
+
+      // ✅ Erfolg
       this.dialogRef.close();
       this.dialog.open(SuccessMsgDialogComponent, {
         panelClass: 'success-dialog',
@@ -100,7 +107,7 @@ export class ExposeAnfordernComponent {
       this.isSubmitting = false;
     }
   }
-  
+
   resetForm(): void {
     this.contactForm.reset();
   }
@@ -137,5 +144,4 @@ export class ExposeAnfordernComponent {
   close(): void {
     this.dialogRef.close();
   }
-  
 }

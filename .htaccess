@@ -6,8 +6,8 @@ RewriteCond %{REQUEST_FILENAME} -l [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^.*$ - [NC,L]
 
-# ⚠ WICHTIG: Erlaube PHP-Requests vor der Weiterleitung an Angular
-RewriteCond %{REQUEST_URI} !^/backend/.*\.php$ [NC]
+# ✅ Erlaube .php-Dateien im Root-Verzeichnis
+RewriteCond %{REQUEST_URI} !^/.*\.php$ [NC]
 
-# Falls keine Datei oder kein Verzeichnis existiert, leite an Angular weiter
+# Falls keine Datei oder Verzeichnis existiert, leite an Angular weiter
 RewriteRule ^(.*)$ /index.html [NC,L]

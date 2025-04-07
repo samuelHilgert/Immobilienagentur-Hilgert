@@ -101,7 +101,7 @@ margin-bottom:20px;
       transition: background-color 0.2s ease;
 
       &:hover {
-        background-color: darken(c.$primary-color, 5%);
+        background-color: c.$primary-color;
       }
 
       &:disabled {

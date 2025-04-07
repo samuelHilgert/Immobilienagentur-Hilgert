@@ -18,28 +18,28 @@ export class ExposeAnfrageService {
 
   async submitExposeAnfrage(anfrage: ExposeAnfrage): Promise<{ success: boolean; id?: string; error?: any }> {
     try {
+      // Optional: in Firestore speichern (wie gehabt)
       const exposeRef = collection(this.db, 'expose-anfragen');
       const newDocRef = doc(exposeRef);
       const customerId = newDocRef.id;
-
+  
       const payload: ExposeAnfrage = {
         ...anfrage,
         customerId,
-        creationDate: new Date().toISOString()
+        creationDate: new Date().toISOString(),
       };
-
+  
       await setDoc(newDocRef, payload);
-
-      // 🔥 Mailversand
-      await this.http.post(
-        'https://us-central1-hilgert-immobilien.cloudfunctions.net/sendExposeMail',
-        payload
-      ).toPromise();
-
+  
+      // ✉️ Email über PHP senden
+      const phpEndpoint = 'https://immo.samuelhilgert.com/sendExposeAnfrageMail.php';
+      await this.http.post(phpEndpoint, payload).toPromise();
+  
       return { success: true, id: customerId };
     } catch (error) {
       console.error('Fehler beim Speichern oder Senden der Mail:', error);
       return { success: false, error };
     }
   }
+  
 }
