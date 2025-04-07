@@ -35,6 +35,7 @@
   .e {      background-color: #fdae61; }     // E
   .f {      background-color: #f46d43; }     // F
   .g {      background-color: #d73027; }     // G
+  .h { background-color: #a50026; } // optional: tiefrot oder andere Farbe
   
   .marker {
     position: absolute;
@@ -42,10 +43,9 @@
     height: 100%;
     width: 4px;
     background: black;
-    left: 0;
-    transform: translateX(-1px);
+    transform: translateX(-50%);
     transition: left 0.3s ease;
-  }
+  }  
   
   .marker-label {
     position: absolute;
@@ -60,3 +60,11 @@
     white-space: nowrap;
   }
   
+  .disclaimer-diagramm {
+    margin-top:40px;
+  }
+
+  .disclaimer-text {
+    font-size:0.75rem;
+    color:grey;
+  }
