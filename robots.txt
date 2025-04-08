@@ -1,8 +1,28 @@
-
-# Verbieten aller rechtlichen Seiten 
-
 User-agent: *
-Disallow: /Datenschutz
-Disallow: /datenschutz
-Disallow: /Impressum
+Disallow: /referenzen
+Disallow: /magazin
+Disallow: /suchanfrage
+Disallow: /tippgeber
+Disallow: /bewertung-abgeben
+Disallow: /partner-werden
+Disallow: /bewerten
 Disallow: /impressum
+Disallow: /datenschutz
+Disallow: /agb
+Disallow: /widerruf
+Disallow: /dashboard-login
+Disallow: /dashboard
+Disallow: /dashboard/immobilien
+Disallow: /dashboard/immobilien/immobilie-anlegen
+Disallow: /dashboard/suchauftraege
+Disallow: /dashboard/suchauftraege/suchauftrag-anlegen
+Disallow: /dashboard/kundendatenbank
+Disallow: /dashboard/kundendatenbank/kunde-anlegen
+Disallow: /dashboard/bewertungen
+Disallow: /dashboard/bewertungen/bewertung-anlegen
+Disallow: /dashboard/newsletter
+Disallow: /dashboard/partner
+Disallow: /dashboard/partner/partner-anlegen
+Disallow: /dashboard/social-media
+Disallow: /dashboard/werbung
+Disallow: /dashboard/ablage
