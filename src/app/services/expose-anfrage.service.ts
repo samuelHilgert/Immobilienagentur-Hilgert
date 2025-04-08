@@ -28,7 +28,7 @@ export class ExposeAnfrageService {
 
       await setDoc(newDocRef, payload);
 
-      const phpEndpoint = 'https://immo.samuelhilgert.com/sendExposeAnfrageMail.php';
+      const phpEndpoint = 'https://hilgert-immobilien.de/sendExposeAnfrageMail.php';
       await this.http.post(phpEndpoint, payload).toPromise();
 
       return { success: true, id: customerId };

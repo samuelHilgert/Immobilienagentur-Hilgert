@@ -28,7 +28,7 @@ export class KontaktAnfrageService {
 
       await setDoc(newDocRef, payload);
 
-      const phpEndpoint = 'https://immo.samuelhilgert.com/sendKontaktAnfrageMail.php';
+      const phpEndpoint = 'https://hilgert-immobilien.de/sendKontaktAnfrageMail.php';
       await this.http.post(phpEndpoint, payload).toPromise();
 
       return { success: true, id: customerId };

@@ -1,13 +1,13 @@
 <?php
 switch ($_SERVER['REQUEST_METHOD']) {
     case ("OPTIONS"):
-        header("Access-Control-Allow-Origin: https://immo.samuelhilgert.com");
+        header("Access-Control-Allow-Origin: https://hilgert-immobilien.de");
         header("Access-Control-Allow-Methods: POST");
         header("Access-Control-Allow-Headers: content-type");
         exit;
 
     case ("POST"):
-        header("Access-Control-Allow-Origin: https://immo.samuelhilgert.com");
+        header("Access-Control-Allow-Origin: https://hilgert-immobilien.de");
 
         $json = file_get_contents('php://input');
         $params = json_decode($json);
