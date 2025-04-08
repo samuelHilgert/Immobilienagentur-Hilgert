@@ -19,12 +19,11 @@ interface Review {
 })
 export class BewertungenComponent implements OnInit {
   allReviews: Review[] = [];
-  activeIndexes = [0, 1];
-  activeReviews: Review[] = [];
+  activeReviews: Review[] = [null!, null!]; // zwei Slots
   fading = [false, false];
-  wasJustUpdated = [false, false];
   isHovered = [false, false];
-
+  private currentIndexes = [0, 1]; // aktueller Index pro Slot
+  private nextIndexes = [2, 3]; // vorbereiteter Index pro Slot
   private toggle = 0;
   private intervalId: any;
 
@@ -35,7 +34,7 @@ export class BewertungenComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     const feedbacks = await this.feedbackService.getFeedback();
-  
+
     this.allReviews = feedbacks.map(f => ({
       name: (() => {
         const parts = (f.autorName || 'Anonym').trim().split(' ');
@@ -47,47 +46,39 @@ export class BewertungenComponent implements OnInit {
       stars: f.rating,
       text: f.text
     }));
-    
+
     if (this.allReviews.length < 2) return;
-  
-    this.activeReviews = [
-      this.allReviews[this.activeIndexes[0]],
-      this.allReviews[this.activeIndexes[1]]
-    ];
-  
-    this.cdr.detectChanges(); // 👈 sofort rendern
-  
-    // erst jetzt den Intervall starten
+
+    this.activeReviews[0] = this.allReviews[this.currentIndexes[0]];
+    this.activeReviews[1] = this.allReviews[this.currentIndexes[1]];
+
+    this.cdr.detectChanges();
+
     this.intervalId = setInterval(() => this.updateReview(), 4000);
   }
-  
 
   updateReview(): void {
     const i = this.toggle;
+
     if (this.isHovered[i]) {
       this.toggle = 1 - i;
       return;
     }
 
     this.fading[i] = true;
-    this.wasJustUpdated[i] = false;
     this.cdr.detectChanges();
 
     setTimeout(() => {
-      const newIndex = (this.activeIndexes[i] + 2) % this.allReviews.length;
-      this.activeIndexes[i] = newIndex;
+      const next = this.nextIndexes[i] % this.allReviews.length;
 
-      this.activeReviews = [...this.activeReviews];
-      this.activeReviews[i] = this.allReviews[newIndex];
+      this.activeReviews[i] = this.allReviews[next];
+      this.currentIndexes[i] = next;
+
+      // vorbereiten für nächsten Durchlauf
+      this.nextIndexes[i] = (this.currentIndexes[i] + 2) % this.allReviews.length;
 
       this.fading[i] = false;
-      this.wasJustUpdated[i] = true;
       this.cdr.detectChanges();
-
-      setTimeout(() => {
-        this.wasJustUpdated[i] = false;
-        this.cdr.detectChanges();
-      }, 400);
 
       this.toggle = 1 - i;
     }, 400);

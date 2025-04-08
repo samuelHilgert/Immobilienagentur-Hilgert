@@ -5,22 +5,23 @@
   >
     Das sagen unsere Kunden
   </h2>
+
   <div class="slider-container">
     <div class="review-slider">
       <div class="review-wrapper">
         <div class="review-grid">
           <div class="review-pair">
             <div
-              class="review-item"
-              [ngClass]="{
-                fade: true,
-                'fade-out': fading[0],
-                'fade-in': !fading[0]
-              }"
-              (mouseenter)="pauseRotation(0)"
-              (mouseleave)="resumeRotation(0)"
-              *ngIf="activeReviews[0]"
-            >
+            class="review-item"
+            [ngClass]="{
+              fade: true,
+              'fade-out': fading[0],
+              'fade-in': !fading[0],
+              hidden: !activeReviews[0]
+            }"
+            (mouseenter)="pauseRotation(0)"
+            (mouseleave)="resumeRotation(0)"
+          >
               <div class="review-header">
                 <div class="review-stars">
                   <span
@@ -39,16 +40,16 @@
             </div>
 
             <div
-              class="review-item"
-              [ngClass]="{
-                fade: true,
-                'fade-out': fading[1],
-                'fade-in': !fading[1]
-              }"
-              (mouseenter)="pauseRotation(1)"
-              (mouseleave)="resumeRotation(1)"
-              *ngIf="activeReviews[1]"
-            >
+            class="review-item"
+            [ngClass]="{
+              fade: true,
+              'fade-out': fading[1],
+              'fade-in': !fading[1],
+              hidden: !activeReviews[1]
+            }"
+            (mouseenter)="pauseRotation(1)"
+            (mouseleave)="resumeRotation(1)"
+          >
               <div class="review-header">
                 <div class="review-stars">
                   <span

@@ -35,30 +35,31 @@ section {
 .review-slider {
   width: 100%;
   max-width: 1000px;
-  overflow: hidden; // Versteckt überlaufende Inhalte
+  overflow: hidden;
   padding: 10px 0;
 }
 
 // Wrapper für bessere Kontrolle über den Überfluss
 .review-wrapper {
   width: 100%;
-  overflow: hidden; // Verhindert horizontales Scrollen
+  overflow: hidden;
 }
 
 // Bewertungs-Container für den Slider
 .review-grid {
   display: flex;
-  width: 100%; // Wichtig für korrekte Berechnungen
+  width: 100%;
 }
 
 // Container für ein Bewertungspaar
 .review-pair {
   display: flex;
-  justify-content: space-between; // Gleichmäßiger Abstand zwischen den Karten
+  justify-content: space-between;
   width: 100%;
   min-width: 100%;
   padding: 10px 5px;
   box-sizing: border-box;
+  position: relative;
 }
 
 // Einzelne Bewertungskarte
@@ -67,18 +68,24 @@ section {
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
   height: auto;
   min-height: 450px;
   display: flex;
   flex-direction: column;
   cursor: default;
-  width: calc(50% - 10px); // Genau die Hälfte minus Abstand
+  width: calc(50% - 10px);
   box-sizing: border-box;
+  opacity: 1;
+  transition: opacity 0.4s ease, transform 0.4s ease;
 
   &:hover {
     transform: translateY(-3px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  &.hidden {
+    opacity: 0;
+    pointer-events: none;
   }
 }
 
@@ -98,7 +105,7 @@ section {
   margin-right: 2px;
 
   &.filled {
-    color: #ffc107; // Sternfarbe
+    color: #ffc107;
   }
 }
 
@@ -142,7 +149,7 @@ section {
   }
 }
 
-// Fade-Effekt für sanfte Übergänge
+// Fade-Effekte
 .fade {
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
