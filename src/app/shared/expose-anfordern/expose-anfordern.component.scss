@@ -28,6 +28,40 @@ form {
     box-sizing: border-box;
 }
 
+.form-row {
+    @include s.f_r_fs_fs;
+    gap:16px;
+    width:100%;
+    box-sizing: border-box;
+
+    mat-form-field:first-of-type {
+        width:60%;
+        box-sizing: border-box;
+    }
+
+    mat-form-field:last-of-type {
+        width:40%;
+        box-sizing: border-box;
+    }
+}
+
+.form-row-reverse {
+    @include s.f_r_fs_fs;
+    gap:16px;
+    width:100%;
+    box-sizing: border-box;
+
+    mat-form-field:first-of-type {
+        width:40%;
+        box-sizing: border-box;
+    }
+
+    mat-form-field:last-of-type {
+        width:60%;
+        box-sizing: border-box;
+    }
+}
+
 .name-row,
 .contact-row {
     display: flex;

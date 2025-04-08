@@ -12,33 +12,27 @@ switch ($_SERVER['REQUEST_METHOD']) {
         $json = file_get_contents('php://input');
         $params = json_decode($json);
 
-        $email = $params->email ?? '';
         $firstName = $params->firstName ?? '';
         $lastName = $params->lastName ?? '';
         $name = trim($firstName . ' ' . $lastName);
-        $messageText = $params->message ?? '';
+        $email = $params->email ?? '';
+        $phone = $params->phone ?? '-';
         $company = $params->company ?? '-';
-        $phone = $params->phone ?? '';
-        $street = $params->street ?? '';
-        $houseNumber = $params->houseNumber ?? '';
-        $zip = $params->zip ?? '';
-        $city = $params->city ?? '';
-        $immobilienId = $params->immobilienId ?? '';
-        $immobilienTyp = $params->immobilienTyp ?? '';
+        $subjectText = $params->subject ?? '';
+        $messageText = $params->message ?? '';
 
         $recipient = 'info@hilgert-immobilien.de';
-        $subject = "Neue Exposé-Anfrage von <$email>";
+        $subject = "Neue Kontaktanfrage: $subjectText";
 
         $message = "
             <strong>Name:</strong> $name<br>
             <strong>Email:</strong> $email<br>
             <strong>Telefon:</strong> $phone<br><br>
+
             <strong>Firma:</strong> $company<br><br>
-            <strong>Adresse:</strong><br>
-            $street $houseNumber<br>
-            $zip $city<br><br>
-            <strong>Immobilie:</strong><br>
-            $immobilienTyp (ID: $immobilienId)<br><br>
+
+            <strong>Betreff:</strong> $subjectText<br><br>
+
             <strong>Nachricht:</strong><br>
             $messageText
         ";

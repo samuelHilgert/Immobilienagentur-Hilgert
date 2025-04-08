@@ -35,14 +35,17 @@ export class ExposeAnfordernComponent {
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<ExposeAnfordernComponent>,
     private dialog: MatDialog,
-    private exposeAnfrageService: ExposeAnfrageService,
-    private http: HttpClient // ✅ für PHP-Mailversand
+    private exposeAnfrageService: ExposeAnfrageService
   ) {
     this.immobilie = data.immobilie;
 
     this.contactForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(3)]],
       lastName: ['', [Validators.required, Validators.minLength(3)]],
+      street: ['', [Validators.required]],
+      houseNumber: ['', [Validators.required]],
+      zip: ['', [Validators.required]],
+      city: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       phone: ['', [Validators.required]],
       company: [''],
@@ -86,23 +89,15 @@ export class ExposeAnfordernComponent {
     };
 
     try {
-      // 🔥 1. In Firebase DB speichern (wenn gewünscht)
       await this.exposeAnfrageService.submitExposeAnfrage(formData);
 
-      // ✉️ 2. Mail per PHP-Skript senden
-      await this.http.post(
-        'https://immo.samuelhilgert.com/sendExposeAnfrageMail.php',
-        formData
-      ).toPromise();
-
-      // ✅ Erfolg
       this.dialogRef.close();
       this.dialog.open(SuccessMsgDialogComponent, {
         panelClass: 'success-dialog',
         width: '350px'
       });
     } catch (err) {
-      console.error('Fehler beim Versenden der E-Mail:', err);
+      console.error('Fehler beim Senden der Anfrage:', err);
     } finally {
       this.isSubmitting = false;
     }

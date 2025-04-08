@@ -1,13 +1,12 @@
 RewriteEngine On
 
-# Falls eine Datei oder ein Verzeichnis existiert, direkt aufrufen
 RewriteCond %{REQUEST_FILENAME} -s [OR]
+
 RewriteCond %{REQUEST_FILENAME} -l [OR]
+
 RewriteCond %{REQUEST_FILENAME} -d
+
 RewriteRule ^.*$ - [NC,L]
 
-# ✅ Erlaube .php-Dateien im Root-Verzeichnis
-RewriteCond %{REQUEST_URI} !^/.*\.php$ [NC]
 
-# Falls keine Datei oder Verzeichnis existiert, leite an Angular weiter
-RewriteRule ^(.*)$ /index.html [NC,L]
+RewriteRule ^(.*) /index.html [NC,L]

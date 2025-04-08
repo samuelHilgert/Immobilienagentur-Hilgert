@@ -1,10 +1,8 @@
-// src/app/services/kontakt-anfrage.service.ts
-
 import { Injectable } from '@angular/core';
-import { KontaktAnfrage } from '../models/kontakt-anfrage.model';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, doc, setDoc } from 'firebase/firestore';
 import { environment } from '../../environments/environments';
+import { KontaktAnfrage } from '../models/kontakt-anfrage.model';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
@@ -16,41 +14,26 @@ export class KontaktAnfrageService {
 
   constructor(private http: HttpClient) {}
 
-  async submitKontaktAnfrage(
-    anfrage: KontaktAnfrage
-  ): Promise<{ success: boolean; id?: string; mailSent?: boolean; error?: any }> {
+  async submitKontaktAnfrage(anfrage: KontaktAnfrage): Promise<{ success: boolean; id?: string; error?: any }> {
     try {
-      // 1. Firestore: Dokument anlegen
-      const kontaktRef = collection(this.db, 'kontakt-anfragen');
-      const newDocRef = doc(kontaktRef);
+      const ref = collection(this.db, 'kontakt-anfragen');
+      const newDocRef = doc(ref);
       const customerId = newDocRef.id;
 
       const payload: KontaktAnfrage = {
         ...anfrage,
         customerId,
-        creationDate: new Date().toISOString()
+        creationDate: new Date().toISOString(),
       };
 
       await setDoc(newDocRef, payload);
-      let mailSent = true;
 
-      // 2. Mailversand (optional abfangen)
-      try {
-        await this.http
-          .post(
-            'https://us-central1-hilgert-immobilien.cloudfunctions.net/sendKontaktMail',
-            payload
-          )
-          .toPromise();
-      } catch (mailErr) {
-        console.error('📧 Fehler beim Mailversand:', mailErr);
-        mailSent = false;
-      }
+      const phpEndpoint = 'https://immo.samuelhilgert.com/sendKontaktAnfrageMail.php';
+      await this.http.post(phpEndpoint, payload).toPromise();
 
-      // 3. Rückgabe
-      return { success: true, id: customerId, mailSent };
+      return { success: true, id: customerId };
     } catch (error) {
-      console.error('❌ Fehler beim Speichern der Anfrage:', error);
+      console.error('Fehler beim Speichern oder Versenden:', error);
       return { success: false, error };
     }
   }

@@ -44,6 +44,30 @@
       </mat-form-field>
     </div>
 
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="street-field">
+        <mat-label>Straße</mat-label>
+        <input matInput formControlName="street" required/>
+      </mat-form-field>
+    
+      <mat-form-field appearance="outline" class="house-number-field">
+        <mat-label>Hausnummer</mat-label>
+        <input matInput formControlName="houseNumber" required/>
+      </mat-form-field>
+    </div>
+ 
+  <div class="form-row-reverse">
+      <mat-form-field appearance="outline">
+        <mat-label>PLZ</mat-label>
+        <input matInput formControlName="zip" required/>
+      </mat-form-field>
+    
+      <mat-form-field appearance="outline">
+        <mat-label>Ort</mat-label>
+        <input matInput formControlName="city" required />
+      </mat-form-field>
+    </div>    
+
     <div class="contact-row">
       <mat-form-field appearance="outline">
         <mat-label>E-Mail</mat-label>
