@@ -34,9 +34,9 @@ switch ($_SERVER['REQUEST_METHOD']) {
 
             <strong>Gewählte Prämien:</strong> $bonus<br><br>
 
-            <strong>Veröffentlichung erlaubt:</strong> $publicAccepted<br>
-            <strong>Teilnahmebedingungen akzeptiert:</strong> $paymentAccepted<br>
-            <strong>Werbenutzung akzeptiert:</strong> $advertiseAccepted<br>
+            <strong>Veröffentlichung der Bewertung zugestimmt:</strong> $publicAccepted<br>
+            <strong>Teilnahmebedingungen (für Bewertungen mit einem Dankeschön) akzeptiert:</strong> $paymentAccepted<br>
+            <strong>Werbenutzung (für Bewertungen mit einem Dankeschön) akzeptiert:</strong> $advertiseAccepted<br>
         ";
 
         $headers   = [];
