@@ -29,4 +29,13 @@ export class FeedbackService {
       return { success: false, error };
     }
   }
+
+  async getFeedback(): Promise<Feedback[]> {
+    const feedbackCollection = collection(this.firebase.db, 'feedbacks');
+    const q = query(feedbackCollection, where('publicAccepted', '==', true));
+  
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => doc.data() as Feedback);
+  }
+  
 }
