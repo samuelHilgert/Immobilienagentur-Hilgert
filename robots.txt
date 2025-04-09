@@ -3,13 +3,15 @@ Disallow: /referenzen
 Disallow: /magazin
 Disallow: /suchanfrage
 Disallow: /tippgeber
-Disallow: /bewertung-abgeben
 Disallow: /partner-werden
 Disallow: /bewerten
 Disallow: /impressum
 Disallow: /datenschutz
 Disallow: /agb
 Disallow: /widerruf
+Disallow: /feedback
+Disallow: /bewerten
+Disallow: /feedback-for-cash
 Disallow: /dashboard-login
 Disallow: /dashboard
 Disallow: /dashboard/immobilien
