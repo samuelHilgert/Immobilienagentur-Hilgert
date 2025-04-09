@@ -15,15 +15,22 @@ section {
     background-color: c.$bg-color;
 }
 
+.feedback-wrapper {
+    @include s.f_r_fs_fs;
+    gap:36px;
+    width:100%;
+    box-sizing: border-box;
+}
+
 form {
     @include s.f_c_fs_fs;
     gap:12px;
-    padding:24px;
-    width:100%;
+    padding:24px 0px;
+    width:40%;
     box-sizing: border-box;
 
     mat-form-field  {
-        width:50%;
+        width:100%;
         box-sizing: border-box;
 
         &:nth-child(3){
@@ -59,5 +66,141 @@ form {
       &.filled {
         color: #fbc02d; // goldgelb
       }
+    }
+  }
+
+  .content-left {
+    margin:22px;
+    @include s.f_c_fs_fs;
+    gap:12px;
+    width: 40%;
+    box-sizing: border-box;
+  }
+
+  // Feedback Review
+
+
+  
+  // Einzelne Bewertungskarte
+  .review-item {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    height: auto;
+    min-height: 450px;
+    display: flex;
+    flex-direction: column;
+    cursor: default;
+    width: 100%;
+    box-sizing: border-box;
+    opacity: 1;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+  
+    &.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+  
+    &.preview {
+      min-height: auto; // Für Vorschau optional
+    }
+  }
+  
+  // Bewertungs-Header
+  .review-header {
+    margin-bottom: 15px;
+  }
+  
+  // Sterne
+  .review-stars {
+    margin-bottom: 10px;
+  }
+  
+  .star {
+    font-size: 20px;
+    color: #ccc;
+    margin-right: 2px;
+  
+    &.filled {
+      color: #ffc107;
+    }
+  }
+  
+  // Bewertungsinfo
+  .reviewer-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+  }
+  
+  .reviewer-name {
+    font-weight: 500;
+    color: #333;
+  }
+  
+  .review-date {
+    font-size: 14px;
+    color: #777;
+  }
+  
+  // Bewertungstext
+  .review-text {
+    line-height: 1.6;
+    flex-grow: 1;
+    margin: 0;
+  }
+  
+  // Responsive Design
+  @media (max-width: 768px) {
+    .review-pair {
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+  
+    .review-item {
+      width: 100%;
+      max-width: 100%;
+    }
+  
+    .feedback-review {
+      width: 100% !important;
+    }
+  }
+  
+  // Fade-Effekte
+  .fade {
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  
+  .fade-out {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  
+  .fade-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  // Vorschau-Bereich im Formular
+  .feedback-review {
+    width: 40%;
+    padding: 20px 0;
+    box-sizing: border-box;
+  
+    .review-item.preview {
+      @extend .review-item;
+      min-height: auto;
+      width: 100%;
+      opacity: 1;
     }
   }

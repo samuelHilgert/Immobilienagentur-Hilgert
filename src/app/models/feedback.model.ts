@@ -11,5 +11,8 @@ export interface Feedback {
   autorEmail: string;
   Customer?: Boolean;
   customerId?: string;
+  bonus?: string[];
+  feedbackPaymentConditionAccepted: boolean;
+feedbackAdvertiseAccepted: boolean;
   creationDate: Date | Timestamp;
 }

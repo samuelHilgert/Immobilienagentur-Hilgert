@@ -10,22 +10,22 @@ export class ScrollService {
   
   constructor(private ngZone: NgZone) {
     this.ngZone.runOutsideAngular(() => {
-      // Auf alle Scroll-Events im Dokument hören (Capture-Phase)
-      document.addEventListener('scroll', (event) => {
-        // Nur ausführen, wenn es sich um ein Container-Element handelt
-        if (event.target && event.target !== document) {
-          const scrollingElement = event.target as Element;
-          
+      let lastScrollTop = 0;
+    
+      window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const visible = scrollTop < lastScrollTop || scrollTop < 100;
+    
+        if (visible !== this.isHeaderVisible.value) {
           this.ngZone.run(() => {
-            // Header verstecken, wenn das Element mehr als 50px gescrollt wurde
-            const currentState = scrollingElement.scrollTop <= 100;
-            if (currentState !== this.isHeaderVisible.value) {
-              this.isHeaderVisible.next(currentState);
-            }
+            this.isHeaderVisible.next(visible);
           });
         }
-      }, true); // true ist wichtig für die Capture-Phase
+    
+        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+      }, { passive: true });
     });
+    
   }
 
   get headerVisibility(): Observable<boolean> {

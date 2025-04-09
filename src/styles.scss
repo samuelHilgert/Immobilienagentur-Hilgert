@@ -8,29 +8,19 @@
   scrollbar-color: c.$scrollbar-primary-color c.$scrollbar-primary-color;
 }
 
-::-webkit-scrollbar {
-  width: 4px;
-  height: 10px;
-  border-radius: 10px;
+html {
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-::-webkit-scrollbar-thumb {
-  background-color: c.$scrollbar-primary-color;
-  border-radius: 10px;
-
-}
-
-::-webkit-scrollbar-track {
-  background-color: #00000000;
-  border: 1px solid #00000000;
-}
-
-html,
 body {
+  min-height: 100vh;
   background-color: c.$bg-color;
-  transition: background-color 0.3s ease-in-out; // for a smooth color change, needs also for btns, cards and header
-  overflow: auto; // no scrolling more than 100vh
-  height: 100vh;
+  transition: background-color 0.3s ease-in-out;
+  -webkit-overflow-scrolling: touch;
+  will-change: scroll-position;
+  overflow-x: hidden; // optional, gegen horizontales Scrollen
 }
 
 :root {
@@ -41,10 +31,25 @@ body {
   --primary-color: black;
 }
 
+::-webkit-scrollbar {
+  width: 4px;
+  height: 10px;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: c.$scrollbar-primary-color;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #00000000;
+  border: 1px solid #00000000;
+}
+
 .filter-bg {
   background-color: c.$header-info-box-bg-color;
   color: c.$header-info-box-text-color;
-  // opacity:0.9;
 }
 
 .section-bg-v1 {
@@ -102,7 +107,7 @@ body {
   transform: scale(0);
   animation: ripple-animation 0.6s ease-out forwards;
   pointer-events: none;
-  z-index: 0; // Unter dem Button-Content
+  z-index: 0;
 }
 
 @keyframes ripple-animation {
@@ -113,14 +118,14 @@ body {
 }
 
 .vertical-line {
-  height: 0; // Starte mit Höhe 0
+  height: 0;
   width: 3px;
   background-color: c.$vertical-line-bg;
   opacity: 0.9;
-  transition: height 1s ease-out; // Animation für das Wachsen
+  transition: height 1s ease-out;
 
   &.animate {
-    height: 4rem; // Ziel-Höhe, wenn animiert
+    height: 4rem;
   }
 }
 

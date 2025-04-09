@@ -1,0 +1,91 @@
+<section class="bewerten-section">
+  <h2>Wir freuen uns über Ihr Feedback!</h2>
+
+  <div class="bonus-info">
+    <h4>Bewerten & belohnt werden – bis zu <strong>100 €</strong> möglich!</h4>
+    <p>
+      Sie waren mit unserer Zusammenarbeit zufrieden? Dann freuen wir uns sehr
+      über Ihre ehrliche Bewertung.
+    </p>
+
+    <ul class="bonus-list">
+      <li>
+        💶 <strong>+5 €</strong> für eine Bewertung auf
+        <strong>ImmobilienScout24</strong>
+      </li>
+      <li>
+        💶 <strong>+10 €</strong> für eine Bewertung auf <strong>Google</strong>
+      </li>
+      <li>
+        📸 <strong>+15 €</strong> für ein
+        <strong>Portrait-Foto</strong> ergänzend zur Bewertung
+      </li>
+      <li>
+        🎤 <strong>+20 €</strong> für eine
+        <strong>gesprochene Audio-Bewertung</strong> in sehr guter Tonqualität
+      </li>
+      <li>
+        🎥 <strong>+50 €</strong> für ein <strong>Video-Interview</strong> inkl.
+        der Nutzung der Audiospur
+      </li>
+    </ul>
+
+    <p class="disclaimer">
+      Wichtig: Dein Feedback soll ehrlich und freiwillig sein – ganz unabhängig
+      davon, wie viele Sterne du vergibst. Wir schätzen Offenheit und freuen uns
+      über jede Rückmeldung!
+    </p>
+
+    <h3>
+      Als kleines Dankeschön können Sie hier Ihre Prämie sichern – je nach
+      Format sogar bis zu 200 €!
+    </h3>
+
+    <mat-form-field appearance="fill" class="praemie-select">
+      <mat-label>Prämien-Auswahl</mat-label>
+      <mat-select
+        [(ngModel)]="bonus"
+        name="bonus"
+        multiple
+      >
+        <mat-option value="immoScout">ImmoScout</mat-option>
+        <mat-option value="google">Google</mat-option>
+        <mat-option value="foto">Portrait-Foto</mat-option>
+        <mat-option value="audio">Audio-Bewertung</mat-option>
+        <mat-option value="telefon">Referenzgespräch</mat-option>
+        <mat-option value="video">Video-Interview</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Neue Checkbox: Teilnahmebedingungen -->
+    <mat-checkbox
+      [(ngModel)]="feedbackPaymentConditionAccepted"
+      name="feedbackPaymentConditionAccepted"
+      required
+    >
+      Ich habe die
+      <a 
+      (click)="openPaymentConditions()"
+      class="link"
+        >Teilnahmebedingungen</a
+      >
+      gelesen und akzeptiere sie.
+    </mat-checkbox>
+
+    <!-- Neue Checkbox: Werbenutzung -->
+    <mat-checkbox
+      [(ngModel)]="feedbackAdvertiseAccepted"
+      name="feedbackAdvertiseAccepted"
+    >
+      Ich bin einverstanden, dass meine Bewertung zu Werbezwecken, die in den <a (click)="openPaymentConditions()" class="link"
+      >Teilnahmebedingungen</a
+    > beschrieben sind verwendet
+      werden darf.
+    </mat-checkbox>
+  </div>
+  <app-bewerten
+    [bonus]="bonus"
+    [feedbackPaymentConditionAccepted]="feedbackPaymentConditionAccepted"
+    [feedbackAdvertiseAccepted]="feedbackAdvertiseAccepted"
+  ></app-bewerten>
+</section>

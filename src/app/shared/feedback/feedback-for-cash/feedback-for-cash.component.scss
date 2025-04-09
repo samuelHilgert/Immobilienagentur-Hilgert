@@ -1,0 +1,52 @@
+@use "./../../../../styles.scss" as s;
+@use "./../../../../assets/fonts.scss" as f;
+@use "./../../../../assets/colors.scss" as c;
+
+
+section {
+    @include s.f_c_fs_fs;
+    gap:24px;
+    height: auto;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 80px 64px;
+    margin-top:140px; 
+    background-color: c.$bg-color;
+}
+
+.bonus-info {
+    @include s.f_c_fs_fs;
+    gap:24px;
+    border-radius: 12px;
+    font-size: 16px;
+    margin-bottom:-128px;
+    height:auto;
+  
+    h3 {
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+  
+    .bonus-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 16px 0;
+      
+      li {
+        margin-bottom: 8px;
+        line-height: 1.5;
+      }
+    }
+  
+    .disclaimer {
+      font-size: 14px;
+      color: #555;
+      margin-top: 16px;
+    }
+  }
+  
+  .link {
+    color: #0057a3;
+    cursor: pointer;
+    text-decoration: underline;
+  }

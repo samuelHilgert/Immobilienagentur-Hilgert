@@ -1,24 +1,31 @@
 <section class="bewerten-section">
-    <h2>Ich freue mich über Ihr Feedback!</h2>
-  
-    <form (ngSubmit)="submitBewertung()" #feedbackForm="ngForm" class="bewerten-form">
+  <h2>Jetzt Feedback abgeben!</h2>
 
-        <mat-form-field appearance="fill">
-            <input
-              matInput
-              placeholder="Ihr Name"
-              name="autorName"
-              [(ngModel)]="feedback.autorName"
-              required
-              pattern="^[A-Za-zÄÖÜäöüß]{2,}\s[A-Za-zÄÖÜäöüß]{2,}$"
-              #autorNameInput="ngModel"
-              maxlength="100"
-            />
-            <mat-error *ngIf="autorNameInput.invalid && autorNameInput.touched">
-              Bitte geben Sie Vor- und Nachnamen ein (jeweils mindestens 2 Buchstaben).
-            </mat-error>
-          </mat-form-field>          
-          
+  <div class="feedback-wrapper">
+    <form
+      (ngSubmit)="submitBewertung()"
+      #feedbackForm="ngForm"
+      class="bewerten-form"
+    >
+      <input type="hidden" name="praemie" [ngModel]="feedback.bonus" />
+
+      <mat-form-field appearance="fill">
+        <input
+          matInput
+          placeholder="Ihr Name"
+          name="autorName"
+          [(ngModel)]="feedback.autorName"
+          required
+          pattern="^[A-Za-zÄÖÜäöüß]{2,}\s[A-Za-zÄÖÜäöüß]{2,}$"
+          #autorNameInput="ngModel"
+          maxlength="100"
+        />
+        <mat-error *ngIf="autorNameInput.invalid && autorNameInput.touched">
+          Bitte geben Sie Vor- und Nachnamen ein (jeweils mindestens 2
+          Buchstaben).
+        </mat-error>
+      </mat-form-field>
+
       <mat-form-field appearance="fill">
         <input
           matInput
@@ -36,10 +43,10 @@
           Bitte geben Sie eine gültige E-Mail-Adresse ein
         </mat-error>
       </mat-form-field>
-  
+
       <mat-form-field appearance="fill">
         <textarea
-        class="bewertungstextArea"
+          class="bewertungstextArea"
           matInput
           placeholder="Ihre Bewertung"
           name="text"
@@ -50,41 +57,91 @@
         ></textarea>
         <mat-hint>{{ feedback.text.length || 0 }} / 3000</mat-hint>
       </mat-form-field>
-  
-      <div
-      class="sterne-bewertung"
-      (mouseleave)="hoverRating = 0"
-    >
-      <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
-        <mat-icon
-          (click)="setRating(star)"
-          (mouseenter)="hoverRating = star"
-          [class.filled]="star <= (hoverRating || feedback.rating || 5)"
-        >
-          {{ star <= (hoverRating || feedback.rating || 5) ? 'star' : 'star_border' }}
-        </mat-icon>
-      </ng-container>
-    </div>    
-      
-      <p>Bewertung: {{ feedback.rating }} von 5 Sternen</p>
-      
-      <div>
-      <p>Wo dürfen wir die Bewertung hochladen?</p>
+
+      <div class="sterne-bewertung" (mouseleave)="hoverRating = 0">
+        <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
+          <mat-icon
+            (click)="setRating(star)"
+            (mouseenter)="hoverRating = star"
+            [class.filled]="star <= (hoverRating || feedback.rating || 5)"
+          >
+            {{
+              star <= (hoverRating || feedback.rating || 5)
+                ? "star"
+                : "star_border"
+            }}
+          </mat-icon>
+        </ng-container>
       </div>
-  
+
+      <p>Bewertung: {{ feedback.rating }} von 5 Sternen</p>
+
+      <div>
+        <p>Wo dürfen wir die Bewertung hochladen?</p>
+      </div>
+
       <div class="quelle-checkboxes">
         <label>
-          <input type="checkbox" [(ngModel)]="feedback.publicAccepted" name="publicAccepted" />
-          Hiermit bin ich einverstanden, dass Hilgert Immobilien mein Feedback nutzen darf, um damit z.B. auf der Homepage zu werben.
-        </label> 
+          <input
+            type="checkbox"
+            [(ngModel)]="feedback.publicAccepted"
+            name="publicAccepted"
+            required
+          />
+          Ich bin einverstanden, dass meine Bewertung zu Werbezwecken z.B. auf
+          der Homepage verwendet werden darf.
+        </label>
       </div>
-  
-      <button mat-raised-button color="primary" type="submit" [disabled]="!feedbackForm.form.valid">
+
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        [disabled]="!feedbackForm.form.valid"
+      >
         Absenden
       </button>
-  
+
       <p *ngIf="successMessage" class="success">{{ successMessage }}</p>
       <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
     </form>
-  </section>
-  
+
+    <div class="content-left">
+      <h3>Ihre Vorschau</h3>
+
+      <div
+        class="review-item preview"
+        *ngIf="feedback.text || feedback.autorName || feedback.rating"
+      >
+        <div class="review-header">
+          <div class="review-stars">
+            <span
+              class="star"
+              *ngFor="let star of [1, 2, 3, 4, 5]"
+              [class.filled]="star <= (feedback.rating || 0)"
+            >
+              ★
+            </span>
+          </div>
+
+          <div class="reviewer-info">
+            <span class="reviewer-name">
+              {{
+                feedback.autorName
+                  ? feedback.autorName.split(" ")[0].charAt(0).toUpperCase() +
+                    ". " +
+                    feedback.autorName.split(" ")[1]
+                  : "A. Mustermann"
+              }}
+            </span>
+            <span class="review-date">{{ "Heute" }}</span>
+          </div>
+        </div>
+
+        <p class="review-text">
+          {{ feedback.text || "Ihre Bewertung erscheint hier …" }}
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

@@ -34,6 +34,7 @@ import { BewertenComponent } from './shared/feedback/feedback.component';
 import { AlleImmobilienComponent } from './alle-immobilien/alle-immobilien.component';
 import { ExposeAnfordernComponent } from './shared/expose-anfordern/expose-anfordern.component';
 import { WiderrufComponent } from './impressum/widerruf/widerruf.component';
+import { FeedbackForCashComponent } from './shared/feedback/feedback-for-cash/feedback-for-cash.component';
 
 export const routes: Routes = [
   {
@@ -90,6 +91,10 @@ export const routes: Routes = [
   {
     path: 'bewerten',
     component: BewertenComponent,
+  },
+  {
+    path: 'feedback',
+    component: FeedbackForCashComponent,
   },
   {
     path: 'impressum',

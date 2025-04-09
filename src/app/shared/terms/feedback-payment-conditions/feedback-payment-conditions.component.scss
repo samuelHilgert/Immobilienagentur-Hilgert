@@ -1,0 +1,64 @@
+
+@use "./../../../../styles.scss" as s;
+@use "./../../../../assets/fonts.scss" as f;
+@use "./../../../../assets/colors.scss" as c;
+
+.agb-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: "Helvetica Neue", sans-serif;
+    line-height: 1.6;
+    background-color: #fafafa;
+    border-radius: 12px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
+  }
+  
+  .version {
+    font-size: 0.9rem;
+    color: #888;
+    margin-bottom: 1rem;
+  }
+  
+  .agb-section {
+    margin-bottom: 2rem;
+  }
+  
+  .widerruf-section h2 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+  }
+  
+  .widerruf-section p {
+    margin-bottom: 1rem;
+  }
+  
+  .widerruf-footer {
+    text-align: center;
+    font-style: italic;
+    color: #666;
+    margin-top: 2rem;
+  }
+  
+  .button-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+  
+  .standard-btn {
+    background-color: #0057a3;
+    color: white;
+    padding: 0.6rem 1.4rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  
+  .standard-btn:hover {
+    background-color: #004080;
+  }
+  

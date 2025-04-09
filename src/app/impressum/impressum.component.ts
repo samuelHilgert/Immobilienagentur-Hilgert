@@ -19,6 +19,7 @@ export class ImpressumComponent {
   constructor(
     private dialog: MatDialog,
   ) {}
+  
   openWiderruf(): void {
     this.dialog.open(WiderrufComponent, {
       panelClass: 'details-dialog',
