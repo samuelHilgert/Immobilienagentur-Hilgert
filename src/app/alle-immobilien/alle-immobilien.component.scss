@@ -249,15 +249,25 @@ mat-card {
 
 @media (max-width: 575px) {
   section {
-    padding: 0px 4px;
+    padding: 0 8px;
   }
 
   mat-card {
-    padding: 0 12px;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    box-sizing: border-box;
   }
 
   mat-card-header {
-    height: 240px;
+    height: auto;
+
+    img {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+    }
   }
 
   mat-card-footer svg {
@@ -269,3 +279,27 @@ mat-card {
     font-size: 11px;
   }
 }
+
+
+// @media (max-width: 575px) {
+//   section {
+//     padding: 0px 4px;
+//   }
+
+//   mat-card {
+//     padding: 0 12px;
+//   }
+
+//   mat-card-header {
+//     height: 240px;
+//   }
+
+//   mat-card-footer svg {
+//     width: 32px;
+//     height: 32px;
+//   }
+
+//   .icon-text {
+//     font-size: 11px;
+//   }
+// }

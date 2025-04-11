@@ -146,7 +146,7 @@
               </div>
               <div class="detail-row">
                 <p><strong>Hausgeld:</strong></p>
-                <p>{{ wohnungDetails?.serviceCharge != null && wohnungDetails?.serviceCharge !== 0 ? wohnungDetails?.serviceCharge : 'Keine Angabe' }}</p>
+                <p>{{ wohnungDetails?.serviceCharge != null && wohnungDetails?.serviceCharge !== 0 ? wohnungDetails?.serviceCharge : 'Keine Angabe' }} €</p>
               </div>
               <div class="detail-row" *ngIf="wohnungDetails?.rented as type">
                 <p><strong>Vermietet:</strong></p>
@@ -179,16 +179,16 @@
           <div class="spacer-m"></div>
 
           <div class="notes-wrapper">
-            <div class="detail-row">
+            <div class="detail-row" *ngIf="wohnung.descriptionNote">
               <p><strong>Objektbeschreibung:</strong> <br/>{{ wohnung?.descriptionNote || 'keine Angabe' }}</p>
             </div>
-            <div class="detail-row">
+            <div class="detail-row" *ngIf="wohnung.furnishingNote">
               <p><strong>Ausstattung:</strong> <br/>{{ wohnung?.furnishingNote || 'keine Angabe' }}</p>
             </div>
-            <div class="detail-row">
+            <div class="detail-row" *ngIf="wohnung.locationNote">
               <p><strong>Lage:</strong> <br/>{{ wohnung?.locationNote || 'keine Angabe' }}</p>
             </div>
-            <div class="detail-row">
+            <div class="detail-row" *ngIf="wohnung.otherNote">
               <p><strong>Sonstiges:</strong> <br/>{{ wohnung?.otherNote || 'keine Angabe' }}</p>
             </div>
           </div>
@@ -256,7 +256,13 @@
       </div>
       <div class="detail-row" *ngIf="haus?.firingType as type">
         <p><strong>Wesentliche Energieträger:</strong></p>
-        <p>{{ firingTypeLabels[type] || 'Keine Angabe' }}</p>
+        <p>
+          {{
+            haus?.heatingType === 'DISTRICT_HEATING'
+              ? 'Fernwärme'
+              : (firingTypeLabels[type] || 'Keine Angabe')
+          }}
+        </p>
       </div>
       <div class="detail-row" *ngIf="haus?.parkingSpaceType as type">
         <p><strong>Garage/Stellplatz:</strong></p>

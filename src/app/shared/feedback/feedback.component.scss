@@ -16,10 +16,19 @@ section {
 }
 
 .feedback-wrapper {
-    @include s.f_r_fs_fs;
-    gap:36px;
-    width:100%;
-    box-sizing: border-box;
+  @include s.f_r_fs_fs;
+  gap: 36px;
+  width: 100%;
+  box-sizing: border-box;
+  flex-wrap: wrap; 
+}
+
+.content-left {
+  margin:22px;
+  @include s.f_c_fs_fs;
+  gap:12px;
+  width: 40%;
+  box-sizing: border-box;
 }
 
 form {
@@ -69,13 +78,7 @@ form {
     }
   }
 
-  .content-left {
-    margin:22px;
-    @include s.f_c_fs_fs;
-    gap:12px;
-    width: 40%;
-    box-sizing: border-box;
-  }
+
 
   // Feedback Review
 
@@ -96,6 +99,12 @@ form {
     box-sizing: border-box;
     opacity: 1;
     transition: opacity 0.4s ease, transform 0.4s ease;
+
+    @media (max-width: 768px) {
+      .review-item {
+        min-height: auto;
+      }
+    }
 
     &:hover {
       transform: translateY(-3px);
@@ -202,5 +211,22 @@ form {
       min-height: auto;
       width: 100%;
       opacity: 1;
+    }
+  }
+
+  @media (max-width: 768px) {
+    form,
+    .content-left {
+      padding: 0;
+      width:100% !important;
+      box-sizing: border-box;
+      margin:0px;
+      @include s.f_c_fs_fs;
+      gap:4px;
+    }    
+
+    .feedback-wrapper {
+      flex-direction: column;
+      gap: 48px;
     }
   }
