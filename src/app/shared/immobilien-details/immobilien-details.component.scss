@@ -12,6 +12,12 @@
   width:100%;
 }
 
+.note-textarea {
+  @include s.f_c_fs_fs;
+  gap:12px;
+  width:100%;
+}
+
 .doc-title-row {
   padding-bottom: 24px;
 }

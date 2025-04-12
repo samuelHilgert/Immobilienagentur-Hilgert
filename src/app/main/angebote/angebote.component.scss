@@ -235,3 +235,44 @@ mat-card {
     justify-content: center;
   }
 }
+
+@media (max-width: 575px) {
+  .slider-container {
+    padding: 0px;
+  }
+
+  mat-card {
+    padding-right:38px !important;
+ 
+  }
+
+  mat-card-footer {
+    padding-right:24px !important;
+  }
+
+  // .angebote-slider {
+  //   width: 100%;
+  //   overflow-x: auto;
+  //   -webkit-overflow-scrolling: touch; // für smooth scroll auf iOS
+  // }
+
+  // .angebote-grid {
+  //   flex-wrap: nowrap;
+  //   width: max-content; // damit alle Karten horizontal scrollbar bleiben
+  // }
+
+  // mat-card {
+  //   width: 90vw;
+  //   height: auto;
+  //   margin-right: 12px;
+  //   flex-shrink: 0;
+  // }
+
+  // mat-card-header {
+  //   height: auto;
+
+  //   img {
+  //     height: auto;
+  //   }
+  // }
+}

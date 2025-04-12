@@ -282,6 +282,20 @@ body {
   align-items: flex-start;
 }
 
+@mixin f_c_c_sb {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: space-between;
+}
+
+@mixin f_c_sb_c {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
 @mixin f_c_fs_c {
   display: flex;
   flex-direction: column;

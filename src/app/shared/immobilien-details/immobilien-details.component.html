@@ -178,7 +178,7 @@
           <div class="spacer-m"></div>
           <div class="spacer-m"></div>
 
-          <div class="notes-wrapper">
+          <!-- <div class="notes-wrapper">
             <div class="detail-row" *ngIf="wohnung.descriptionNote">
               <p><strong>Objektbeschreibung:</strong> <br/>{{ wohnung?.descriptionNote || 'keine Angabe' }}</p>
             </div>
@@ -191,7 +191,29 @@
             <div class="detail-row" *ngIf="wohnung.otherNote">
               <p><strong>Sonstiges:</strong> <br/>{{ wohnung?.otherNote || 'keine Angabe' }}</p>
             </div>
+          </div> -->
+
+          <div class="notes-wrapper">
+            <div class="note-textarea" *ngIf="wohnung.descriptionNote">
+              <p><strong>Objektbeschreibung:</strong></p>
+              <div [innerHTML]="wohnung.descriptionNote | nl2br"></div>
+            </div>
+            <div class="note-textarea" *ngIf="wohnung.furnishingNote">
+              <p><strong>Ausstattung:</strong></p>
+              <div [innerHTML]="wohnung.furnishingNote | nl2br"></div>
+            </div>
+            <div class="note-textarea" *ngIf="wohnung.locationNote">
+              <p><strong>Lage:</strong></p>
+              <div [innerHTML]="wohnung.locationNote | nl2br"></div>
+            </div>
+            <div class="note-textarea" *ngIf="wohnung.otherNote">
+              <p><strong>Sonstiges:</strong></p>
+              <div [innerHTML]="wohnung.otherNote | nl2br"></div>
+            </div>
           </div>
+          
+          
+
         </div>
         
 <!-- Haus -->
@@ -293,7 +315,7 @@
   <div class="spacer-m"></div>
   <div class="spacer-m"></div>
 
-  <div class="notes-wrapper">
+  <!-- <div class="notes-wrapper">
     <div class="detail-row">
       <p><strong>Objektbeschreibung:</strong> <br />{{ haus?.descriptionNote || 'keine Angabe' }}</p>
     </div>
@@ -306,7 +328,29 @@
     <div class="detail-row">
       <p><strong>Sonstiges:</strong> <br />{{ haus?.otherNote || 'keine Angabe' }}</p>
     </div>
+  </div> -->
+
+  <div class="notes-wrapper">
+    <div class="note-textarea" *ngIf="haus.descriptionNote">
+      <p><strong>Objektbeschreibung:</strong></p>
+      <div [innerHTML]="haus.descriptionNote | nl2br"></div>
+    </div>
+    <div class="note-textarea" *ngIf="haus.furnishingNote">
+      <p><strong>Ausstattung:</strong></p>
+      <div [innerHTML]="haus.furnishingNote | nl2br"></div>
+    </div>
+    <div class="note-textarea" *ngIf="haus.locationNote">
+      <p><strong>Lage:</strong></p>
+      <div [innerHTML]="haus.locationNote | nl2br"></div>
+    </div>
+    <div class="note-textarea" *ngIf="haus.otherNote">
+      <p><strong>Sonstiges:</strong></p>
+      <div [innerHTML]="haus.otherNote | nl2br"></div>
+    </div>
   </div>
+  
+  
+
 </div>
 
         <!-- Grundstück -->

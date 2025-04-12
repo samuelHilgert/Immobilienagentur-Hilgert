@@ -8,11 +8,12 @@ import { ImmobilienService } from '../../services/immobilien.service';
 import { EnergieklasseDiagrammComponent } from '../energieklasse-diagramm/energieklasse-diagramm.component';
 import { Router } from '@angular/router';
 import { ExposeAnfordernComponent } from '../expose-anfordern/expose-anfordern.component';
+import { Nl2brPipe } from '../pipes/nl2br.pipe';
 
 @Component({
   selector: 'app-immobilien-details',
   standalone: true,
-  imports: [CommonModule, MATERIAL_MODULES, EnergieklasseDiagrammComponent],
+  imports: [CommonModule, MATERIAL_MODULES, EnergieklasseDiagrammComponent, Nl2brPipe],
   templateUrl: './immobilien-details.component.html',
   styleUrl: './immobilien-details.component.scss',
 })
