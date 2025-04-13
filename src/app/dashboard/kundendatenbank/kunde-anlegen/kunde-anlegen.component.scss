@@ -4,11 +4,76 @@
 
 section {
   max-width: 900px;
-  margin: 0px auto;
-  margin-top:-20px;
+  margin: 0 auto;
+  margin-top: -20px;
   padding: 25px;
   background: #f9f9f9;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  font-family: Arial, sans-serif;
+
+  h2 {
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    text-align: center;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+
+    label {
+      display: flex;
+      flex-direction: column;
+      font-weight: bold;
+      color: grey;
+
+      input,
+      select {
+        margin-top: 0.4rem;
+        padding: 0.6rem 0.8rem;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        transition: border-color 0.2s ease;
+
+        &:focus {
+          outline: none;
+          border-color: c.$primary-color;
+          box-shadow: 0 0 0 2px rgba(c.$primary-color, 0.2);
+        }
+      }
+
+      select[multiple] {
+        height: 120px;
+      }
+    }
+
+    button[type="submit"] {
+      align-self: flex-start;
+      padding: 0.7rem 1.5rem;
+      font-size: 1rem;
+      font-weight: bold;
+      color: #fff;
+      background-color: c.$primary-color;;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: darken(c.$primary-color, 8%);
+      }
+
+      &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+    }
+
+    .error {
+      color: red;
+      font-size: 0.9rem;
+    }
+  }
 }

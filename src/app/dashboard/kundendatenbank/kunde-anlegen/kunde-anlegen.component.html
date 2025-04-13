@@ -1,3 +1,81 @@
 <section>
     <h2>Neuen Kunden anlegen</h2>
-</section>
+    <form [formGroup]="customerForm" (ngSubmit)="onSubmit()">
+        <label>
+            Kunden-ID:
+            <input type="text" formControlName="customerId" readonly />
+          </label>            
+          
+      <label>
+        Anrede:
+        <input type="text" formControlName="salutation" />
+      </label>
+  
+      <label>
+        Vorname:
+        <input type="text" formControlName="firstName" />
+      </label>
+  
+      <label>
+        Nachname:
+        <input type="text" formControlName="lastName" />
+      </label>
+  
+      <label>
+        Straße:
+        <input type="text" formControlName="street" />
+      </label>
+  
+      <label>
+        Hausnummer:
+        <input type="number" formControlName="houseNumber" />
+      </label>
+  
+      <label>
+        PLZ:
+        <input type="text" formControlName="postalCode" />
+      </label>
+  
+      <label>
+        Stadt:
+        <input type="text" formControlName="city" />
+      </label>
+  
+      <label>
+        E-Mail:
+        <input type="email" formControlName="email" />
+      </label>
+  
+      <label>
+        Telefon:
+        <input type="text" formControlName="phone" />
+      </label>
+  
+      <label>
+        Mobil:
+        <input type="text" formControlName="mobile" />
+      </label>
+
+      <label>
+        Geburtstag:
+        <input type="text" formControlName="birthday" />
+      </label>
+  
+      <label>
+        Beruf:
+        <input type="text" formControlName="profession" />
+      </label>
+  
+      <label>
+        Rolle(n):
+        <select formControlName="roles" multiple>
+          <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+        </select>
+      </label>
+
+
+  
+      <button type="submit" [disabled]="customerForm.invalid">Speichern</button>
+    </form>
+  </section>
+  

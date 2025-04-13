@@ -38,6 +38,7 @@ import { FeedbackForCashComponent } from './shared/feedback/feedback-for-cash/fe
 import { GrundstueckDetailsFormComponent } from './dashboard/immobilien/immobilien-datenbank/grundstueck-details-form/grundstueck-details-form.component';
 import { HausDetailsFormComponent } from './dashboard/immobilien/immobilien-datenbank/haus-details-form/haus-details-form.component';
 import { WohnungDetailsFormComponent } from './dashboard/immobilien/immobilien-datenbank/wohnung-details-form/wohnung-details-form.component';
+import { KundeDetailsComponent } from './dashboard/kundendatenbank/kunde-details/kunde-details.component';
 
 export const routes: Routes = [
   {
@@ -158,7 +159,13 @@ export const routes: Routes = [
       {
         path: 'kundendatenbank',
         component: KundendatenbankComponent,
-        children: [{ path: 'kunde-anlegen', component: KundeAnlegenComponent }],
+        children: [
+          { path: 'kunde-anlegen', component: KundeAnlegenComponent },
+      ],
+      },
+      {
+        path: 'kunde-details/:id',
+        component: KundeDetailsComponent
       },
       {
         path: 'bewertungen',
