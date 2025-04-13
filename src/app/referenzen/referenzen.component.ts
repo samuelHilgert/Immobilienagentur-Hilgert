@@ -12,7 +12,7 @@ import { PaginationService } from '../services/pagination.service';
   standalone: true,
   imports: [CommonModule, MATERIAL_MODULES, MatProgressSpinner],
   templateUrl: './referenzen.component.html',
-  styleUrl: './referenzen.component.scss'
+  styleUrl: './referenzen.component.scss',
 })
 export class ReferenzenComponent implements OnInit {
   immobilien: Immobilie[] = [];
@@ -26,47 +26,60 @@ export class ReferenzenComponent implements OnInit {
   constructor(
     private immobilienService: ImmobilienService,
     private elementRef: ElementRef,
-    private paginationService: PaginationService<Immobilie>,
+    private paginationService: PaginationService<Immobilie>
   ) {}
 
   ngOnInit(): void {
     this.isLoading = true;
     this.loadStatus = 0;
-  
+
     const interval = setInterval(() => {
       if (this.loadStatus < 90) {
         this.loadStatus += 10;
       }
     }, 500);
-  
+
     this.immobilienService.getImmobilien().subscribe({
       next: async (data) => {
         const alleImmobilien: Immobilie[] = data || [];
-  
+
         this.immobilien = alleImmobilien.filter(
           (immo) =>
             immo.propertyStatus === 'Referenz' &&
             immo.uploadPublicTargets?.homepage === true
         );
+
+        // 🔽 Sortieren nach externalId (absteigend)
+        this.immobilien.sort((a, b) => {
+          const idA = parseInt(a.externalId || '0', 10);
+          const idB = parseInt(b.externalId || '0', 10);
+          return idB - idA;
+        });
+
         this.paginationService.setData(this.immobilien, 8);
-  
+
         const mediaPromises = this.immobilien.map((immobilie) => {
-          if (immobilie.externalId && !this.mediaAttachments[immobilie.externalId]) {
+          if (
+            immobilie.externalId &&
+            !this.mediaAttachments[immobilie.externalId]
+          ) {
             return new Promise<void>((resolve) => {
-              this.immobilienService.getMediaByExternalId(immobilie.externalId!).subscribe({
-                next: (media) => {
-                  this.mediaAttachments[immobilie.externalId!] = media;
-                  resolve();
-                },
-                error: () => resolve(),
-              });
+              this.immobilienService
+                .getMediaByExternalId(immobilie.externalId!)
+                .subscribe({
+                  next: (media) => {
+                    this.mediaAttachments[immobilie.externalId!] = media;
+                    resolve();
+                  },
+                  error: () => resolve(),
+                });
             });
           }
           return Promise.resolve();
         });
-  
+
         await Promise.all(mediaPromises);
-  
+
         this.isLoading = false;
         this.loadStatus = 100;
         clearInterval(interval);
@@ -79,7 +92,7 @@ export class ReferenzenComponent implements OnInit {
         clearInterval(interval);
       },
     });
-  }  
+  }
 
   getMediaForImmobilie(externalId: string | undefined): MediaAttachment[] {
     if (!externalId) return [];
@@ -134,6 +147,4 @@ export class ReferenzenComponent implements OnInit {
   goToPreviousPage(): void {
     this.paginationService.goToPreviousPage();
   }
-
-  
 }

@@ -35,6 +35,9 @@ import { AlleImmobilienComponent } from './alle-immobilien/alle-immobilien.compo
 import { ExposeAnfordernComponent } from './shared/expose-anfordern/expose-anfordern.component';
 import { WiderrufComponent } from './impressum/widerruf/widerruf.component';
 import { FeedbackForCashComponent } from './shared/feedback/feedback-for-cash/feedback-for-cash.component';
+import { GrundstueckDetailsFormComponent } from './dashboard/immobilien/immobilien-datenbank/grundstueck-details-form/grundstueck-details-form.component';
+import { HausDetailsFormComponent } from './dashboard/immobilien/immobilien-datenbank/haus-details-form/haus-details-form.component';
+import { WohnungDetailsFormComponent } from './dashboard/immobilien/immobilien-datenbank/wohnung-details-form/wohnung-details-form.component';
 
 export const routes: Routes = [
   {
@@ -127,9 +130,24 @@ export const routes: Routes = [
         path: 'immobilien',
         component: ImmobilienComponent,
         children: [
-          { path: 'immobilie-anlegen', component: ImmobilieAnlegenComponent },
-        ],
-      },
+          {
+            path: 'immobilie-anlegen',
+            component: ImmobilieAnlegenComponent
+          },
+          {
+            path: 'wohnung-details-form/:externalId',
+            component: WohnungDetailsFormComponent,
+          },
+          {
+            path: 'haus-details-form/:externalId',
+            component: HausDetailsFormComponent,
+          },
+          {
+            path: 'grundstueck-details-form/:externalId',
+            component: GrundstueckDetailsFormComponent,
+          },      
+        ]
+      },      
       {
         path: 'suchauftraege',
         component: SuchauftraegeComponent,

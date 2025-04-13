@@ -3,206 +3,131 @@
 @use "./../../assets/colors.scss" as c;
 
 
-section {
-    height: auto;
-    min-height: 500px;
+section.services-section {
     width: 100%;
-    box-sizing: border-box;
-    padding: 80px 0;
-    margin-top:140px; // weil hero ausgeblendet wird
     background-color: c.$bg-color;
-}
-
-.section-header {
-    text-align: center;
-    margin-bottom: 60px;
-
-    .section-title {
-        font-size: 36px;
-        font-weight: 700;
-        color: c.$primary-color;
-        margin-bottom: 15px;
-        position: relative;
-
-        &:after {
-            content: '';
-            display: block;
-            width: 70px;
-            height: 3px;
-            background-color: c.$primary-color;
-            margin: 15px auto 0;
-        }
-    }
-
-    .section-subtitle {
-        font-size: 36px;
-        font-weight: 700;
+    padding: 100px 0;
+    margin-top: 120px;
+  
+    .section-header {
+      text-align: center;
+      margin-bottom: 60px;
+  
+      h2 {
         color: c.$primary-text;
-        margin-bottom: 15px;
-        margin: 0 auto;
+        position: relative;
+  
+        &:after {
+          content: '';
+          display: block;
+          width: 80px;
+          height: 2px;
+          background-color: c.$primary-color;
+          margin: 20px auto 0;
+          border-radius: 2px;
+        }
+      }
     }
-}
-
-.container {
-    width: 100%;
-    box-sizing: border-box;
-    margin: 0 auto;
-    padding: 0 128px;
-
-    // Vertikale Anordnung der Service-Karten
-    .services-flow {
+  
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+  
+      .services-flow {
         display: flex;
         flex-direction: column;
         align-items: center;
-        width: 100%;
-        position: relative;
-        z-index: 0;
-
+        gap: 40px;
+  
         .service-card {
-            position: relative;
-            z-index: 5;
-            background-color: white;
-            border-radius: 8px;
-            padding: 30px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            width: 100%;
-            margin-bottom: 0; // Entfernt den unteren Margin
-            cursor: default;
-            
-            &:hover {
-                z-index: 15;
-        
-                .service-icon {
-                    background-color: c.$primary-color;
-                    color: white;
-                }
-        
-                .service-link {
-                    color: c.$contrast-color;
-                }
-            }
-        
-            .service-icon {
-                width: 70px;
-                height: 70px;
-                border-radius: 50%;
-                background-color: white;
-                color: c.$primary-color;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                margin: 0 auto 20px;
-                transition: all 0.3s ease;
-                font-size: 28px;
-            }
-        
-            .service-title {
-                font-size: 22px;
-                font-weight: 600;
-                margin-bottom: 15px;
-                color: c.$primary-text;
-            }
-        
-            .service-description {
-                color: c.$primary-text;
-                margin-bottom: 20px;
-                font-size: 16px;
-                line-height: 1.6;
-            }
-        
-            .service-link {
-                color: c.$primary-color;
-                font-weight: 600;
-                text-decoration: none;
-                transition: all 0.3s ease;
-                position: relative;
-                display: inline-block;
-        
-                &:after {
-                    content: '→';
-                    margin-left: 5px;
-                    transition: all 0.3s ease;
-                }
-        
-                &:hover:after {
-                    margin-left: 10px;
-                }
-            }
-        }
-    }
-}
-
-// Vertikaler Pfeil-Connector mit rundem weißen Hintergrund
-.arrow-connector {
-    position: relative;
-    z-index: 20; // Höherer z-index als die Karten
-    color: c.$contrast-color;
-    margin: 15px 0; // Symmetrischer Abstand oben und unten
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transform: rotate(90deg); // Pfeil nach unten drehen
-
-    fa-icon {
-        position: relative;
-        z-index: 2;
-        font-size: 24px;
-        // Heller Schatten für bessere Lesbarkeit
-        filter: drop-shadow(0 0 3px white) drop-shadow(0 0 5px white);
-    }
-
-    // Runder weißer Hintergrund für den Pfeil
-    &:before {
-        content: '';
-        position: absolute;
-        width: 48px;
-        height: 48px;
-        background: white;
-        border-radius: 50%;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        z-index: 1;
-    }
-}
-
-// Responsive Anpassungen - vereinfacht, da das Layout bereits vertikal ist
-@media (max-width: 768px) {
-    section {
-        padding: 60px 0;
-
-        .section-header {
-            margin-bottom: 40px;
-
-            .section-title {
-                font-size: 30px;
-            }
-            
-            .section-subtitle {
-                font-size: 28px;
-            }
-        }
-
-        .container .services-flow .service-card {
-            padding: 25px;
-        }
-    }
-}
-
-@media (max-width: 480px) {
-    .section-header {
-        .section-subtitle {
+          background: white;
+          border-radius: 16px;
+          padding: 40px 30px;
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+          max-width: 900px;
+          width: 100%;
+          text-align: center;
+          position: relative;
+          transition: all 0.3s ease;
+  
+          &:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.1);
+          }
+  
+          .service-icon {
+            width: 80px;
+            height: 80px;
+            background: c.$primary-color;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin: 0 auto 25px;
+            font-size: 32px;
+          }
+  
+          .service-title {
             font-size: 24px;
+            font-weight: 600;
+            color: c.$primary-text;
+            margin-bottom: 15px;
+          }
+  
+          .service-description {
+            font-size: 17px;
+            line-height: 1.7;
+            color: c.$primary-text;
+          }
         }
+  
+        .arrow-connector {
+          position: relative;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          transform: rotate(90deg);
+          margin: -10px 0 0 0;
+  
+          fa-icon {
+            color: c.$primary-color;
+            font-size: 26px;
+            z-index: 2;
+            filter: drop-shadow(0 0 3px rgba(255,255,255,0.8));
+          }
+  
+          &:before {
+            content: '';
+            position: absolute;
+            width: 46px;
+            height: 46px;
+            background: white;
+            border-radius: 50%;
+            z-index: 1;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          }
+        }
+      }
     }
-    
-    .service-card {
+  
+    @media (max-width: 768px) {
+      .section-header h2 {
+        font-size: 30px;
+      }
+  
+      .container .services-flow .service-card {
+        padding: 30px 20px;
+  
         .service-title {
-            font-size: 20px;
+          font-size: 20px;
         }
-        
+  
         .service-description {
-            font-size: 15px;
+          font-size: 15px;
         }
+      }
     }
-}
+  }
+  

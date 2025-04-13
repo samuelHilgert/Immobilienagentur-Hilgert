@@ -9,29 +9,48 @@ $text-color: #ecf0f1;
 $hover-color: #1abc9c;
 
 section {
-  max-width: 900px;
+  @include s.f_c_fs_fs;
+  gap: 24px;
+  width: 100%;
+  box-sizing: border-box;
   margin: 0px auto;
-  margin-top:-20px;
-  padding: 25px;
-  background: #f9f9f9;
+  margin-top: -20px;
+  padding: 25px 0px;
+}
+
+.section-immobilie-anlegen {
+  @include s.f_c_fs_fs;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 24px 12px;
+  background-color: white;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  font-family: Arial, sans-serif;
+}
+
+.section-immobilien-datenbank {
+  @include s.f_c_fs_fs;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 // Inhaltsbereich
 .content {
-  display:flex;
+  display: flex;
   flex-direction: column;
   flex: 1;
   padding: 40px;
   background: #ecf0f1;
-  gap:20px;
-  
+  gap: 20px;
+
   h1 {
     color: $primary-color;
   }
-  
+
   p {
     color: $secondary-color;
     font-size: 18px;

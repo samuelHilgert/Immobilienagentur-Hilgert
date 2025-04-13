@@ -40,9 +40,14 @@ export class AlleImmobilienComponent implements OnInit {
         this.immobilien = (data || [])
           .filter((immo: Immobilie) => immo.uploadPublicTargets?.homepage === true)
           .sort((a: Immobilie, b: Immobilie) => {
+            // Zuerst nach propertyStatus
             if (a.propertyStatus === 'Angebot' && b.propertyStatus !== 'Angebot') return -1;
             if (a.propertyStatus !== 'Angebot' && b.propertyStatus === 'Angebot') return 1;
-            return 0;
+          
+            // Danach nach externalId (numerisch absteigend)
+            const idA = parseInt(a.externalId || '0', 10);
+            const idB = parseInt(b.externalId || '0', 10);
+            return idB - idA;
           });
   
           this.paginationService.setData(this.immobilien, 8);

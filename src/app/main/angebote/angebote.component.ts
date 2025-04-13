@@ -67,7 +67,14 @@ export class AngeboteComponent implements OnInit, AfterViewInit {
             immo.propertyStatus === 'Angebot' &&
             immo.uploadPublicTargets?.homepage === true
         );
-  
+        
+        // 🔽 Sortierung nach externalId (absteigend)
+        this.immobilien.sort((a, b) => {
+          const idA = parseInt(a.externalId || '0', 10);
+          const idB = parseInt(b.externalId || '0', 10);
+          return idB - idA;
+        });
+        
         const mediaPromises = this.immobilien.map((immobilie) => {
           if (immobilie.externalId && !this.mediaAttachments[immobilie.externalId]) {
             return new Promise<void>((resolve) => {
