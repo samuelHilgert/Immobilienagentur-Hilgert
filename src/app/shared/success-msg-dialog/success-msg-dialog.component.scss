@@ -2,49 +2,82 @@
 @use "./../../../assets/fonts.scss" as f;
 @use "./../../../assets/colors.scss" as c;
 
-
 .success-container {
-    @include s.f_c_c_c;
-    width:100%;
-    box-sizing: border-box;
-    height:100%;
-    padding:64px;
-  
-    .icon {
-      font-size: 48px;
-      color: #2e7d32;
-      margin-bottom: 1rem;
-    }
-  
-    h2 {
-      margin-top: 0;
-      color: #2e7d32;
-    }
-  
-    p {
-      margin: 1rem 0 2rem;
-      font-size: 1rem;
-      color: #444;
-    }
-  
-    .btn-wrapper {
-      display: flex;
-      justify-content: center;
+  @include s.f_c_c_c;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 64px;
+
+  @media (max-width: 768px) {
+    padding: 32px 16px;
+  }
+
+  .icon {
+    font-size: 48px;
+    color: #2e7d32;
+    margin-bottom: 1rem;
+
+    @media (max-width: 480px) {
+      font-size: 36px;
     }
   }
 
-  .close-btn {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    background: transparent;
-    border: none;
-    font-size: 1.5rem;
+  h2 {
+    margin-top: 0;
+    color: #2e7d32;
+    font-size: 2rem;
+    text-align: center;
+
+    @media (max-width: 480px) {
+      font-size: 1.5rem;
+    }
+  }
+
+  p {
+    margin: 1rem 0 2rem;
+    font-size: 1.1rem;
     color: #444;
-    cursor: pointer;
+    text-align: center;
 
-    &:hover {
-      color: c.$primary-color;
+    @media (max-width: 480px) {
+      font-size: 1rem;
     }
   }
-  
+
+  .btn-wrapper {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    button {
+      min-width: 140px;
+
+      @media (max-width: 480px) {
+        width: 100%;
+      }
+    }
+  }
+}
+
+.close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: #444;
+  cursor: pointer;
+
+  &:hover {
+    color: c.$primary-color;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.25rem;
+    top: 12px;
+    right: 12px;
+  }
+}

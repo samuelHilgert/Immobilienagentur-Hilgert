@@ -2,20 +2,31 @@
 import { Injectable } from '@angular/core';
 import { FirebaseService } from './firebase.service';
 import { Immobilie, WohnungDetails } from '../models/immobilie.model';
+import { firstValueFrom } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { MediaAttachment } from '../models/media.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ImmobilienService {
-  constructor(private firebaseService: FirebaseService) {}
+  private baseUrl = '/api/immobilien';
+
+  constructor(
+    private firebaseService: FirebaseService,
+    private http: HttpClient
+  ) {}
 
   // Wohnung speichern
-  async saveWohnung(immobilie: Immobilie, wohnungDetails: WohnungDetails): Promise<any> {
+  async saveWohnung(
+    immobilie: Immobilie,
+    wohnungDetails: WohnungDetails
+  ): Promise<any> {
     try {
       // Immobiliendaten vorbereiten
       const immo = { ...immobilie };
       (immo as any).apartmentDetails = wohnungDetails;
-      
+
       // In Firebase speichern
       return await this.firebaseService.saveProperty(immo);
     } catch (error) {
@@ -29,7 +40,7 @@ export class ImmobilienService {
     try {
       const immo = { ...immobilie };
       (immo as any).houseDetails = hausDetails;
-      
+
       return await this.firebaseService.saveProperty(immo);
     } catch (error) {
       console.error('Fehler beim Speichern des Hauses:', error);
@@ -38,11 +49,14 @@ export class ImmobilienService {
   }
 
   // Grundstück speichern
-  async saveGrundstueck(immobilie: Immobilie, grundstueckDetails: any): Promise<any> {
+  async saveGrundstueck(
+    immobilie: Immobilie,
+    grundstueckDetails: any
+  ): Promise<any> {
     try {
       const immo = { ...immobilie };
       (immo as any).landDetails = grundstueckDetails;
-      
+
       return await this.firebaseService.saveProperty(immo);
     } catch (error) {
       console.error('Fehler beim Speichern des Grundstücks:', error);
@@ -51,7 +65,11 @@ export class ImmobilienService {
   }
 
   // Medien hochladen
-  async uploadMedia(file: File, externalId: string, type: 'image' | 'video'): Promise<any> {
+  async uploadMedia(
+    file: File,
+    externalId: string,
+    type: 'image' | 'video'
+  ): Promise<any> {
     try {
       return await this.firebaseService.uploadMedia(file, externalId, type);
     } catch (error) {
@@ -104,21 +122,25 @@ export class ImmobilienService {
   getImmobilien() {
     // 'this' in lokaler Variable speichern
     const self = this;
-    
+
     // Wandelt das Promise in ein Observable um für Kompatibilität
     return {
-      subscribe(options: { next: (data: any) => void, error?: (error: any) => void }) {
-        self.getProperties()  // Verwende 'self' statt 'this'
-          .then(properties => {
+      subscribe(options: {
+        next: (data: any) => void;
+        error?: (error: any) => void;
+      }) {
+        self
+          .getProperties() // Verwende 'self' statt 'this'
+          .then((properties) => {
             if (options.next) options.next(properties);
           })
-          .catch(error => {
+          .catch((error) => {
             if (options.error) options.error(error);
           });
-        
+
         // Dummy-Unsubscribe-Funktion zurückgeben
         return { unsubscribe: () => {} };
-      }
+      },
     };
   }
 
@@ -126,21 +148,49 @@ export class ImmobilienService {
   getMediaByExternalId(externalId: string) {
     // 'this' in lokaler Variable speichern
     const self = this;
-    
+
     // Methode im FirebaseService erstellen oder erweitern
     return {
-      subscribe(options: { next: (data: any) => void, error?: (error: any) => void }) {
-        self.firebaseService.getMediaForProperty(externalId)  // Verwende 'self' statt 'this'
-          .then(media => {
+      subscribe(options: {
+        next: (data: any) => void;
+        error?: (error: any) => void;
+      }) {
+        self.firebaseService
+          .getMediaForProperty(externalId) // Verwende 'self' statt 'this'
+          .then((media) => {
             if (options.next) options.next(media);
           })
-          .catch(error => {
+          .catch((error) => {
             if (options.error) options.error(error);
           });
-        
+
         // Dummy-Unsubscribe-Funktion zurückgeben
         return { unsubscribe: () => {} };
-      }
+      },
     };
   }
+
+  // Exposé-Formular ruft Immobilie per ID aus Firebase ab
+  async getImmobilieById(id: string): Promise<Immobilie> {
+    try {
+      const result = await this.getProperty(id); // ✅ nutzt interne Firebase-Methode
+      if (!result || result.success === false) {
+        throw new Error(`Immobilie mit ID ${id} nicht gefunden.`);
+      }
+      return result as Immobilie;
+    } catch (error) {
+      console.error('Fehler beim Laden der Immobilie mit ID:', id, error);
+      throw error;
+    }
+  }
+
+  // Neue öffentliche Methode, um Medien zu laden
+async getMediaForImmobilie(id: string): Promise<MediaAttachment[]> {
+  try {
+    return await this.firebaseService.getMediaForProperty(id);
+  } catch (error) {
+    console.error('Fehler beim Laden der Medien:', error);
+    return [];
+  }
+}
 }

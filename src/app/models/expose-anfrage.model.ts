@@ -1,7 +1,13 @@
 export interface ExposeAnfrage {
     customerId: string;
+    indexId: number; 
+    salutation: string;
     firstName: string;
     lastName: string;
+    street: string;
+    houseNumber: string | number;
+    zip: string;
+    city: string;
     email: string;
     phone: string;
     company?: string;

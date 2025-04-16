@@ -32,4 +32,8 @@ export class KundendatenbankComponent implements OnInit {
   goToDetails(id: string) {
     this.router.navigate([`/dashboard/kunde-details`, id]);
   }
+
+  addCustomer() {
+    this.router.navigate(['/dashboard/kunde-anlegen']);
+  }
 }

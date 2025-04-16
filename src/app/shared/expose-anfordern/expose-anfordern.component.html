@@ -1,151 +1,188 @@
-<div class="dialog-content">
+<section>
+  <ng-template #loadingOrError>
+    <div *ngIf="immobilie === null" class="error-msg">
+      <p>Die Immobilie konnte nicht geladen werden.</p>
+    </div>
+    <div *ngIf="immobilie === undefined">
+      <p>Lade Daten...</p>
+    </div>
+  </ng-template>
 
-    <!-- Schließen Symbol -->
-    <button class="close-btn" (click)="close()">✕</button>
-    
-  <h2>Exposé anfordern</h2>
+  <div *ngIf="immobilie; else loadingOrError" class="content-frame">
+    <h2>Exposé anfordern</h2>
 
-  <div class="Intro">
-    <p>Wir freuen uns über Ihr Interesse und stellen Ihnen gerne weitere Informationen zur folgenden Immobilie bereit:</p>
-  </div>
-
-  <div class="object-infos">
-    <p><strong>Titel:</strong> {{ immobilie.title }}</p>
-    <p><strong>Objekt-ID:</strong> {{ immobilie.externalId }}</p>
-    <p><strong>Typ:</strong> {{ immobilie.propertyType }}</p>
-    <p><strong>Wohnfläche:</strong> {{ immobilie.livingSpace }} m²</p>
-    <p><strong>Kaufpreis:</strong> {{ immobilie.value | number : '1.0-0' }} €</p>
-  </div>
-
-  <!-- Dein Formular oder weitere Logik hier -->
-
-  <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
-    <div class="name-row">
-      <mat-form-field appearance="outline">
-        <mat-label>Vorname</mat-label>
-        <input matInput formControlName="firstName" required />
-        <mat-error *ngIf="firstNameControl?.errors?.['required']">
-          Vorname ist erforderlich
-        </mat-error>
-        <mat-error *ngIf="firstNameControl?.errors?.['minlength']">
-          Vorname muss mindestens 3 Zeichen lang sein
-        </mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Nachname</mat-label>
-        <input matInput formControlName="lastName" required />
-        <mat-error *ngIf="lastNameControl?.errors?.['required']">
-          Nachname ist erforderlich
-        </mat-error>
-        <mat-error *ngIf="lastNameControl?.errors?.['minlength']">
-          Nachname muss mindestens 3 Zeichen lang sein
-        </mat-error>
-      </mat-form-field>
+    <div class="Intro">
+      <p>
+        Wir freuen uns über Ihr Interesse und stellen Ihnen gerne weitere
+        Informationen zur folgenden Immobilie bereit:
+      </p>
     </div>
 
-    <div class="form-row">
-      <mat-form-field appearance="outline" class="street-field">
-        <mat-label>Straße</mat-label>
-        <input matInput formControlName="street" required/>
-      </mat-form-field>
-    
-      <mat-form-field appearance="outline" class="house-number-field">
-        <mat-label>Hausnummer</mat-label>
-        <input matInput formControlName="houseNumber" required/>
-      </mat-form-field>
+    <div class="object-data-wrapper">
+
+    <div class="object-infos">
+      <div class="title-div"><p>{{ immobilie.title }}</p></div>
+      <p><strong>Objekt-ID:</strong> {{ immobilie.externalId }}</p>
+      <p><strong>Typ:</strong> {{ immobilie.propertyType }}</p>
+      <p><strong>Wohnfläche:</strong> {{ immobilie.livingSpace }} m²</p>
+      <p>
+        <strong>Kaufpreis:</strong> {{ immobilie.value | number : "1.0-0" }} €
+      </p>
     </div>
- 
-  <div class="form-row-reverse">
-      <mat-form-field appearance="outline">
-        <mat-label>PLZ</mat-label>
-        <input matInput formControlName="zip" required/>
-      </mat-form-field>
-    
-      <mat-form-field appearance="outline">
-        <mat-label>Ort</mat-label>
-        <input matInput formControlName="city" required />
-      </mat-form-field>
+
+    <div class="img-box">
+      <img *ngIf="media?.length" [src]="media[0].url" [alt]="immobilie.title" />
+      <img *ngIf="!media?.length" src="/assets/platzhalter.jpg" alt="Kein Bild verfügbar" />
     </div>    
 
-    <div class="contact-row">
-      <mat-form-field appearance="outline">
-        <mat-label>E-Mail</mat-label>
-        <input matInput formControlName="email" required type="email" />
-        <mat-error *ngIf="emailControl?.errors?.['required']">
-          E-Mail ist erforderlich
+  </div>
+    <!-- Dein Formular oder weitere Logik hier -->
+
+    <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+      <div class="name-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Anrede</mat-label>
+          <mat-select formControlName="salutation" required>
+            <mat-option value="Frau">Frau</mat-option>
+            <mat-option value="Herr">Herr</mat-option>
+            <mat-option value="Divers">Divers</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-error *ngIf="contactForm.get('nameForm')?.hasError('required')">
+          Bitte wählen Sie eine Anrede aus
         </mat-error>
-        <mat-error *ngIf="emailControl?.errors?.['email']">
-          Bitte geben Sie eine gültige E-Mail-Adresse ein
+      </div>
+
+      <div class="name-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Vorname</mat-label>
+          <input matInput formControlName="firstName" required />
+          <mat-error *ngIf="firstNameControl?.errors?.['required']">
+            Vorname ist erforderlich
+          </mat-error>
+          <mat-error *ngIf="firstNameControl?.errors?.['minlength']">
+            Vorname muss mindestens 3 Zeichen lang sein
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Nachname</mat-label>
+          <input matInput formControlName="lastName" required />
+          <mat-error *ngIf="lastNameControl?.errors?.['required']">
+            Nachname ist erforderlich
+          </mat-error>
+          <mat-error *ngIf="lastNameControl?.errors?.['minlength']">
+            Nachname muss mindestens 3 Zeichen lang sein
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="street-field">
+          <mat-label>Straße</mat-label>
+          <input matInput formControlName="street" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="house-number-field">
+          <mat-label>Hausnummer</mat-label>
+          <input matInput formControlName="houseNumber" required />
+        </mat-form-field>
+      </div>
+
+      <div class="form-row-reverse">
+        <mat-form-field appearance="outline">
+          <mat-label>PLZ</mat-label>
+          <input matInput formControlName="zip" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Ort</mat-label>
+          <input matInput formControlName="city" required />
+        </mat-form-field>
+      </div>
+
+      <div class="contact-row">
+        <mat-form-field appearance="outline">
+          <mat-label>E-Mail</mat-label>
+          <input matInput formControlName="email" required type="email" />
+          <mat-error *ngIf="emailControl?.errors?.['required']">
+            E-Mail ist erforderlich
+          </mat-error>
+          <mat-error *ngIf="emailControl?.errors?.['email']">
+            Bitte geben Sie eine gültige E-Mail-Adresse ein
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Telefon/ Handy</mat-label>
+          <input matInput formControlName="phone" type="tel" required />
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Firma (optional)</mat-label>
+        <input matInput formControlName="company" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label
+          >Beschreiben Sie hier wer Sie sind, warum Sie kaufen wollen, wie viele
+          Personen kaufen wollen und schildern Sie Ihre Kaufkraft</mat-label
+        >
+        <textarea matInput formControlName="message" rows="6"></textarea>
+        <mat-error *ngIf="messageControl?.errors?.['required']">
+          Nachricht ist erforderlich
         </mat-error>
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Telefon/ Handy</mat-label>
-        <input matInput formControlName="phone" type="tel" required />
-      </mat-form-field>
-    </div>
+      <div class="checkbox-group">
+        <mat-checkbox formControlName="acceptedTerms">
+          Ich habe die <a (click)="openAGB()" class="link">AGB</a> gelesen und
+          akzeptiere sie.
+        </mat-checkbox>
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Firma (optional)</mat-label>
-      <input matInput formControlName="company" />
-    </mat-form-field>
+        <mat-checkbox formControlName="acceptedWithdrawal">
+          Ich habe die
+          <a (click)="openWiderruf()" class="link">Widerrufsbelehrung</a> zur
+          Kenntnis genommen.
+        </mat-checkbox>
 
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label
-        >Beschreiben Sie hier wer Sie sind, warum Sie kaufen wollen, wie viele
-        Personen kaufen wollen und schildern Sie Ihre Kaufkraft</mat-label
-      >
-      <textarea matInput formControlName="message" rows="6"></textarea>
-      <mat-error *ngIf="messageControl?.errors?.['required']">
-        Nachricht ist erforderlich
-      </mat-error>
-    </mat-form-field>
+        <mat-checkbox formControlName="acceptedPrivacy">
+          Ich habe die
+          <a (click)="openDatenschutz()" class="link">Datenschutzerklärung</a>
+          gelesen.
+        </mat-checkbox>
 
-  <div class="checkbox-group">
-    <mat-checkbox formControlName="acceptedTerms">
-      Ich habe die <a (click)="openAGB()" class="link">AGB</a> gelesen und akzeptiere sie.
-    </mat-checkbox>
-    
-    <mat-checkbox formControlName="acceptedWithdrawal">
-      Ich habe die <a (click)="openWiderruf()" class="link">Widerrufsbelehrung</a> zur Kenntnis genommen.
-    </mat-checkbox>
-    
-    <mat-checkbox formControlName="acceptedPrivacy">
-      Ich habe die <a (click)="openDatenschutz()" class="link">Datenschutzerklärung</a> gelesen.
-    </mat-checkbox>
-    
-  
-    <mat-error *ngIf="!checkboxGroupValid && formSubmitted">
-      Bitte bestätigen Sie alle rechtlichen Hinweise.
-    </mat-error>
+        <mat-error *ngIf="!checkboxGroupValid && formSubmitted">
+          Bitte bestätigen Sie alle rechtlichen Hinweise.
+        </mat-error>
+      </div>
+
+      <div *ngIf="successMessage" class="success-msg">
+        <mat-icon>check_circle</mat-icon>
+        <span>{{ successMessage }}</span>
+      </div>
+
+      <div class="button-row">
+        <button
+          class="standard-btn"
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="isSubmitting"
+        >
+          <span *ngIf="!isSubmitting">Absenden</span>
+          <span *ngIf="isSubmitting">wird zugestellt...</span>
+        </button>
+        <button
+          mat-button
+          type="button"
+          (click)="resetForm()"
+          [disabled]="isSubmitting"
+        >
+          Zurücksetzen
+        </button>
+      </div>
+    </form>
   </div>
-
-  <div *ngIf="successMessage" class="success-msg">
-    <mat-icon>check_circle</mat-icon>
-    <span>{{ successMessage }}</span>
-  </div>  
-
-  <div class="button-row">
-    <button
-      class="standard-btn"
-      mat-raised-button
-      color="primary"
-      type="submit"
-      [disabled]="isSubmitting"
-    >
-      <span *ngIf="!isSubmitting">Absenden</span>
-      <span *ngIf="isSubmitting">wird zugestellt...</span>
-    </button>
-    <button
-      mat-button
-      type="button"
-      (click)="resetForm()"
-      [disabled]="isSubmitting"
-    >
-      Zurücksetzen
-    </button>
-  </div>
-
-</form>
-</div>
+</section>

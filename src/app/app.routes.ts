@@ -159,9 +159,10 @@ export const routes: Routes = [
       {
         path: 'kundendatenbank',
         component: KundendatenbankComponent,
-        children: [
-          { path: 'kunde-anlegen', component: KundeAnlegenComponent },
-      ],
+      },
+      {
+        path: 'kunde-anlegen',
+        component: KundeAnlegenComponent
       },
       {
         path: 'kunde-details/:id',

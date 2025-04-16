@@ -64,8 +64,6 @@ export class ImmobilienDetailsComponent {
     false: 'Nein'
   };
   
-  
-  
   conditionLabels: { [key: string]: string } = {
     NO_INFORMATION: 'Keine Angabe',
     FIRST_TIME_USE: 'Erstbezug',
@@ -133,14 +131,13 @@ export class ImmobilienDetailsComponent {
     ENERGY_CONSUMPTION: 'Energieverbrauchsausweis',
   };
 
-
   constructor(
     @Inject(MAT_DIALOG_DATA)
     public data: { immobilie: Immobilie; media: MediaAttachment[] },
     private dialogRef: MatDialogRef<ImmobilienDetailsComponent>,
     private immobilienService: ImmobilienService,
-    // private router: Router // ← hinzugefügt
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router, 
   ) {
     this.immobilie = data.immobilie;
     this.media = data.media;
@@ -182,30 +179,32 @@ export class ImmobilienDetailsComponent {
     return (this.immobilie as any).landDetails ?? null;
   }
 
+  // Lösung ohne URL 
   // onExposeRequest(): void {
   //   const immobilieData = this.immobilie;
   
   //   this.dialogRef.close();
+  
   //   setTimeout(() => {
-  //     this.router.navigate(['/expose-anfordern'], {
-  //       state: { immobilie: immobilieData }
+  //     this.dialog.open(ExposeAnfordernComponent, {
+  //       panelClass: 'details-dialog',
+  //       width: '600px',
+  //       data: { immobilie: immobilieData },
   //     });
-  //   }, 300);
+  //   }, 300); // kleiner Delay, damit sich die Dialoge nicht überlappen
   // }
   
+  // Lösung mit URL 
   onExposeRequest(): void {
-    const immobilieData = this.immobilie;
+    const id = this.immobilie.externalId;
   
     this.dialogRef.close();
   
     setTimeout(() => {
-      this.dialog.open(ExposeAnfordernComponent, {
-        panelClass: 'details-dialog',
-        width: '600px',
-        data: { immobilie: immobilieData },
+      this.router.navigate(['/expose-anfordern'], {
+        queryParams: { id }
       });
-    }, 300); // kleiner Delay, damit sich die Dialoge nicht überlappen
+    }, 300);
   }
-  
   
 }

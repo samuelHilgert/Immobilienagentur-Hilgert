@@ -90,4 +90,15 @@ export class CustomerService {
       return { success: false, error };
     }
   }
+
+  async getCustomersCount(): Promise<number> {
+    try {
+      const customerRef = collection(this.db, 'customers');
+      const snapshot = await getDocs(customerRef);
+      return snapshot.size;
+    } catch (error) {
+      console.error('Fehler beim Zählen der Kunden:', error);
+      return 0;
+    }
+  }
 }

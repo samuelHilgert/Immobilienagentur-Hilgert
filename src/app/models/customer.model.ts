@@ -14,6 +14,7 @@ export enum CustomerRole {
 
 export interface Customer {
   customerId: string;
+  indexId: number;
   salutation: string;
   firstName: string;
   lastName: string;

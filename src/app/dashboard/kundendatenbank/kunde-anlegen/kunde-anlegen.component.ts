@@ -50,6 +50,7 @@ export class KundeAnlegenComponent {
     const id = this.generatedId;
     return {
       customerId: id,
+      indexId: 0, 
       salutation: '',
       firstName: '',
       lastName: '',
@@ -70,16 +71,21 @@ export class KundeAnlegenComponent {
 
   async onSubmit() {
     if (this.customerForm.valid) {
-      const formValue = this.customerForm.getRawValue(); // enthält auch disabled fields
+      const formValue = this.customerForm.getRawValue();
+  
+      // 🧠 Anzahl vorhandener Kunden zählen
+      const count = await this.customerService.getCustomersCount();
+  
       const customer: Customer = {
         ...formValue,
         customerId: this.generatedId,
+        indexId: count + 1, // 🆕 Laufende Nummer setzen
         creationDate: new Date().toISOString(),
-        lastModificationDate: new Date().toISOString() 
+        lastModificationDate: new Date().toISOString()
       };
-
+  
       const result = await this.customerService.saveCustomer(customer);
-
+  
       if (result.success) {
         alert('Kunde erfolgreich gespeichert!');
         this.router.navigate(['/dashboard/kundendatenbank']);
@@ -89,4 +95,5 @@ export class KundeAnlegenComponent {
       }
     }
   }
+  
 }
