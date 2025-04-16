@@ -26,6 +26,11 @@ switch ($_SERVER['REQUEST_METHOD']) {
         $immobilienId = $params->immobilienId ?? '';
         $immobilienTyp = $params->immobilienTyp ?? '';
 
+        // Neue Felder
+        $acceptedTerms = $params->acceptedTerms ? 'Ja' : 'Nein';
+        $acceptedWithdrawal = $params->acceptedWithdrawal ? 'Ja' : 'Nein';
+        $acceptedPrivacy = $params->acceptedPrivacy ? 'Ja' : 'Nein';
+
         $recipient = 'info@hilgert-immobilien.de';
         $subject = "Neue Exposé-Anfrage von <$email>";
 
@@ -39,6 +44,10 @@ switch ($_SERVER['REQUEST_METHOD']) {
             $zip $city<br><br>
             <strong>Immobilie:</strong><br>
             $immobilienTyp (ID: $immobilienId)<br><br>
+            <strong>Einverständniserklärungen:</strong><br>
+            Ich akzeptiere die allgemeinen Geschäftsbedingungen: $acceptedTerms<br>
+            Ich akzeptiere die Widerrufsbelehrung: $acceptedWithdrawal<br>
+            Ich akzeptiere die Datenschutzerklärung: $acceptedPrivacy<br><br>
             <strong>Nachricht:</strong><br>
             $messageText
         ";

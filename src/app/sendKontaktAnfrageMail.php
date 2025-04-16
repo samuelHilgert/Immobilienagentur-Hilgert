@@ -12,26 +12,33 @@ switch ($_SERVER['REQUEST_METHOD']) {
         $json = file_get_contents('php://input');
         $params = json_decode($json);
 
+        $salutation = $params->salutation ?? '-';
         $firstName = $params->firstName ?? '';
         $lastName = $params->lastName ?? '';
         $name = trim($firstName . ' ' . $lastName);
         $email = $params->email ?? '';
         $phone = $params->phone ?? '-';
+        $mobile = $params->mobile ?? '-';
         $company = $params->company ?? '-';
         $subjectText = $params->subject ?? '';
         $messageText = $params->message ?? '';
+        $acceptedPrivacy = isset($params->acceptedPrivacy) && $params->acceptedPrivacy ? 'Ja' : 'Nein';
 
         $recipient = 'info@hilgert-immobilien.de';
         $subject = "Neue Kontaktanfrage: $subjectText";
 
         $message = "
+            <strong>Anrede:</strong> $salutation<br>
             <strong>Name:</strong> $name<br>
             <strong>Email:</strong> $email<br>
-            <strong>Telefon:</strong> $phone<br><br>
+            <strong>Telefon:</strong> $phone<br>
+            <strong>Mobil:</strong> $mobile<br><br>
 
             <strong>Firma:</strong> $company<br><br>
 
             <strong>Betreff:</strong> $subjectText<br><br>
+
+            <strong>Datenschutzerklärung akzeptiert:</strong> $acceptedPrivacy<br><br>
 
             <strong>Nachricht:</strong><br>
             $messageText

@@ -101,10 +101,10 @@ export class CustomerService {
         .filter((id) => !isNaN(id) && id >= 0)
         .reduce((max, id) => (id > max ? id : max), 0);
   
-      return maxIndex + 10;
+      return maxIndex + 2;
     } catch (error) {
       console.error('Fehler beim Ermitteln der höchsten indexId für Kunden:', error);
-      return 10;
+      return 2;
     }
   }  
 

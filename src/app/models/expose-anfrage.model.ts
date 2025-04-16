@@ -5,7 +5,7 @@ export interface ExposeAnfrage {
     firstName: string;
     lastName: string;
     street: string;
-    houseNumber: string | number;
+    houseNumber: string;
     zip: string;
     city: string;
     email: string;

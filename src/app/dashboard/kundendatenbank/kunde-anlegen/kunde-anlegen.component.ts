@@ -56,7 +56,7 @@ export class KundeAnlegenComponent implements OnInit {
       firstName: '',
       lastName: '',
       street: '',
-      houseNumber: 0,
+      houseNumber: '',
       postalCode: '',
       city: '',
       email: '',

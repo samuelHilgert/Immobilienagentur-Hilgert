@@ -1,15 +1,15 @@
 
 export enum CustomerRole {
-  PROSPECT = 'Interessent',
-  OWNER = 'Eigentümer',
-  BUYER = 'Käufer',
-  SELLER = 'Verkäufer',
-  TENANT = 'Mieter',
-  COMPANY = 'Firma',
-  INSTITUTIONAL_INVESTOR = 'Großanleger',
-  RETAIL_INVESTOR = 'Kleinanleger',
-  REFERRER = 'Tippgeber',
-  OTHER = 'Sonstige',
+  Interessent = 'Interessent',
+  Eigentümer = 'Eigentümer',
+  Käufer = 'Käufer',
+  Verkäufer = 'Verkäufer',
+  Mieter = 'Mieter',
+  Firma = 'Firma',
+  Großanleger = 'Großanleger',
+  Kleinanleger = 'Kleinanleger',
+  Tippgeber = 'Tippgeber',
+  Sonstige = 'Sonstige',
 }
 
 export interface Customer {
@@ -19,7 +19,7 @@ export interface Customer {
   firstName: string;
   lastName: string;
   street: string;
-  houseNumber: number;
+  houseNumber: string;
   postalCode: string;
   city: string;
   email: string;
@@ -30,6 +30,7 @@ export interface Customer {
   birthday: string;
   creationDate: string;
   lastModificationDate: string;
+  angefragteImmobilienIds?: string[]; 
 };
 
 

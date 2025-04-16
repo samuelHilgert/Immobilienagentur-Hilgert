@@ -191,6 +191,20 @@ body {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
+.term-text-link {
+  color: c.$primary-color;
+  cursor: pointer;
+  text-decoration: underline;
+
+  &::after {
+    color: c.$primary-color;
+  }
+
+  &:hover {
+    color: c.$contrast-color;
+  }
+}
+
 @mixin f_r_c_c {
   display: flex;
   flex-direction: row;

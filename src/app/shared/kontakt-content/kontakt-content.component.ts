@@ -1,6 +1,6 @@
 
 import { Component, OnInit, inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   MatDialogRef,
@@ -37,10 +37,12 @@ export class KontaktContentComponent implements OnInit {
     private kontaktAnfrageService: KontaktAnfrageService
   ) {
     this.contactForm = this.fb.group({
+      salutation: new FormControl(null, Validators.required),
       firstName: ['', [Validators.required, Validators.minLength(3)]],
       lastName: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
       phone: [''],
+      mobile: [''],
       company: [''],
       subject: ['', Validators.required],
       message: ['', Validators.required],
@@ -83,8 +85,9 @@ export class KontaktContentComponent implements OnInit {
   
     const formData: KontaktAnfrage = {
       ...this.contactForm.value,
-      customerId: '', // wird im Service generiert
-      creationDate: '' // wird im Service generiert
+      customerId: '',
+      indexId: 0,   
+      creationDate: ''
     };
   
     try {

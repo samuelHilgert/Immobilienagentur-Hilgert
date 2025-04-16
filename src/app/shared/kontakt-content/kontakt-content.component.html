@@ -68,7 +68,27 @@
       
           <mat-card-content>
             <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Firma (optional)</mat-label>
+                <input matInput formControlName="company" />
+              </mat-form-field>
+              
               <div class="name-row">
+                <mat-form-field appearance="outline">
+                  <mat-label>Anrede</mat-label>
+                  <mat-select formControlName="salutation" required>
+                    <mat-option value="Frau">Frau</mat-option>
+                    <mat-option value="Herr">Herr</mat-option>
+                    <mat-option value="Divers">Divers</mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <mat-error *ngIf="contactForm.get('nameForm')?.hasError('required')">
+                  Bitte wählen Sie eine Anrede aus
+                </mat-error>
+              </div>
+
+              <div class="contact-row">
                 <mat-form-field appearance="outline">
                   <mat-label>Vorname</mat-label>
                   <input matInput formControlName="firstName" required />
@@ -90,29 +110,32 @@
                     Nachname muss mindestens 3 Zeichen lang sein
                   </mat-error>
                 </mat-form-field>
+
               </div>
-      
-              <div class="contact-row">
-                <mat-form-field appearance="outline">
-                  <mat-label>E-Mail</mat-label>
-                  <input matInput formControlName="email" required type="email" />
-                  <mat-error *ngIf="emailControl?.errors?.['required']">
-                    E-Mail ist erforderlich
-                  </mat-error>
-                  <mat-error *ngIf="emailControl?.errors?.['email']">
-                    Bitte geben Sie eine gültige E-Mail-Adresse ein
-                  </mat-error>
-                </mat-form-field>
-      
-                <mat-form-field appearance="outline">
-                  <mat-label>Telefon (optional)</mat-label>
-                  <input matInput formControlName="phone" required type="tel" />
-                </mat-form-field>
+
+                <div class="contact-row">
+
+              <mat-form-field appearance="outline">
+                <mat-label>Telefon (optional)</mat-label>
+                <input matInput formControlName="phone"/>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Mobil (optional)</mat-label>
+                <input matInput formControlName="mobile"/>
+              </mat-form-field>
+
               </div>
-      
-              <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Firma (optional)</mat-label>
-                <input matInput formControlName="company" />
+
+              <mat-form-field appearance="outline">
+                <mat-label>E-Mail</mat-label>
+                <input matInput formControlName="email" required type="email" />
+                <mat-error *ngIf="emailControl?.errors?.['required']">
+                  E-Mail ist erforderlich
+                </mat-error>
+                <mat-error *ngIf="emailControl?.errors?.['email']">
+                  Bitte geben Sie eine gültige E-Mail-Adresse ein
+                </mat-error>
               </mat-form-field>
       
               <mat-form-field appearance="outline" class="full-width">
@@ -131,9 +154,13 @@
                 </mat-error>
               </mat-form-field>
 
+              <div class="accept-terms-div">
+
               <mat-checkbox formControlName="acceptedPrivacy">
-                Ich habe die <a class="link" (click)="openDatenschutz()">Datenschutzerklärung</a> gelesen.
+                Ich habe die <a class="term-text-link" (click)="openDatenschutz()">Datenschutzerklärung</a> gelesen.
               </mat-checkbox>
+
+            </div>
 
               <mat-error *ngIf="contactForm.get('acceptedPrivacy')?.invalid && contactForm.get('acceptedPrivacy')?.touched">
                 Bitte akzeptieren Sie die Datenschutzerklärung.

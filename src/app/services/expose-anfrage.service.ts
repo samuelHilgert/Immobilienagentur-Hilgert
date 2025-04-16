@@ -69,17 +69,18 @@ export class ExposeAnfrageService {
       firstName: anfrage.firstName,
       lastName: anfrage.lastName,
       street: anfrage['street'] || '',
-      houseNumber: Number(anfrage['houseNumber'] || 0),
+      houseNumber: String(anfrage.houseNumber || ''),
       postalCode: anfrage['zip'] || '',
       city: anfrage['city'] || '',
       email: anfrage.email,
       phone: anfrage.phone,
       mobile: '',
-      roles: [CustomerRole.PROSPECT],
+      roles: [CustomerRole.Interessent],
       profession: '',
       birthday: '',
       creationDate: new Date().toISOString(),
       lastModificationDate: new Date().toISOString(),
+      angefragteImmobilienIds: [anfrage.immobilienId],
     };
 
     await this.customerService.saveCustomer(newCustomer);
@@ -133,10 +134,10 @@ export class ExposeAnfrageService {
         .filter((id) => !isNaN(id) && id >= 0)
         .reduce((max, id) => (id > max ? id : max), 0);
 
-      return maxIndex + 10;
+      return maxIndex + 2;
     } catch (error) {
       console.error('Fehler beim Berechnen der nächsten Index-ID:', error);
-      return 10;
+      return 2;
     }
   }
 }

@@ -206,10 +206,10 @@ async getNextIndexId(): Promise<number> {
       .filter(id => !isNaN(id) && id >= 0)         // nur gültige, positive Zahlen
       .reduce((max, id) => (id > max ? id : max), 0); // Maximum finden
 
-    return maxIndex + 10; // ➕ 10 Puffer
+    return maxIndex + 2;
   } catch (error) {
     console.error('Fehler beim Ermitteln der höchsten indexId:', error);
-    return 10; // Fallback bei leerer Liste = erster Wert ist 10
+    return 2; // Fallback bei leerer Liste = erster Wert ist 2
   }
 }
 
