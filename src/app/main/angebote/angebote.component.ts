@@ -51,47 +51,50 @@ export class AngeboteComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.isLoading = true;
     this.loadStatus = 0;
-  
+
     const interval = setInterval(() => {
       if (this.loadStatus < 90) {
         this.loadStatus += 10;
       }
     }, 500);
-  
+
     this.immobilienService.getImmobilien().subscribe({
       next: async (data) => {
         const alleImmobilien: Immobilie[] = data || [];
-  
+
         this.immobilien = alleImmobilien.filter(
           (immo) =>
             immo.propertyStatus === 'Angebot' &&
             immo.uploadPublicTargets?.homepage === true
         );
-        
-        // 🔽 Sortierung nach externalId (absteigend)
+
+        // 🔽 Sortierung nach indexId (absteigend)
         this.immobilien.sort((a, b) => {
-          const idA = parseInt(a.externalId || '0', 10);
-          const idB = parseInt(b.externalId || '0', 10);
-          return idB - idA;
+          return (b.indexId || 0) - (a.indexId || 0);
         });
-        
+
         const mediaPromises = this.immobilien.map((immobilie) => {
-          if (immobilie.externalId && !this.mediaAttachments[immobilie.externalId]) {
+          if (
+            immobilie.externalId &&
+            !this.mediaAttachments[immobilie.externalId]
+          ) {
             return new Promise<void>((resolve) => {
-              this.immobilienService.getMediaByExternalId(immobilie.externalId!).subscribe({
-                next: (media) => {
-                  this.mediaAttachments[immobilie.externalId!] = media;
-                  resolve();
-                },
-                error: () => resolve(),
-              });
+              this.immobilienService
+                .getMediaByExternalId(immobilie.externalId!)
+                .subscribe({
+                  next: (media) => {
+                    this.mediaAttachments[immobilie.externalId!] = media;
+                    resolve();
+                  },
+                  error: () => resolve(),
+                });
             });
           }
           return Promise.resolve();
         });
-  
+
         await Promise.all(mediaPromises);
-  
+
         if (this.immobilien.length > 1) {
           const first = this.immobilien[0];
           const last = this.immobilien[this.immobilien.length - 1];
@@ -99,7 +102,7 @@ export class AngeboteComponent implements OnInit, AfterViewInit {
           this.currentIndex = 1;
           this.updateSlidePosition(true);
         }
-  
+
         this.isLoading = false;
         this.loadStatus = 100;
         clearInterval(interval);
@@ -112,7 +115,7 @@ export class AngeboteComponent implements OnInit, AfterViewInit {
         clearInterval(interval);
       },
     });
-  }  
+  }
 
   ngAfterViewInit(): void {
     setTimeout(() => this.calculateSliderDimensions(), 250);
@@ -175,17 +178,14 @@ export class AngeboteComponent implements OnInit, AfterViewInit {
 
   openImmobilienDetails(immobilie: Immobilie): void {
     const media = this.mediaAttachments[immobilie.externalId!];
-  
+
     this.dialog.open(ImmobilienDetailsComponent, {
       panelClass: 'details-dialog',
       data: {
         immobilie,
-        media
+        media,
       },
-      autoFocus: false
+      autoFocus: false,
     });
   }
-  
 }
-
-

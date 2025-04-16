@@ -10,6 +10,7 @@ import {
 } from 'firebase/storage';
 import { environment } from '../../environments/environments';
 import { Feedback } from '../models/feedback.model';
+import { listAll } from 'firebase/storage';
 
 @Injectable({
   providedIn: 'root'
@@ -235,4 +236,25 @@ export class FirebaseService {
       throw error;
     }
   }
+
+  // Immobilie löschen
+async deleteProperty(externalId: string): Promise<void> {
+  const refDoc = doc(this.db, 'properties', externalId);
+  await deleteDoc(refDoc);
+}
+
+// Firebase Storage-Ordner löschen (rekursiv)
+async deleteStorageFolder(path: string): Promise<void> {
+  try {
+    const listRef = ref(this.storage, path);
+    const res = await listAll(listRef);
+    
+    const deletePromises = res.items.map(itemRef => deleteObject(itemRef));
+    await Promise.all(deletePromises);
+  } catch (error) {
+    console.warn('Fehler beim Löschen des Storage-Ordners:', error);
+    // Kein throw, da es z. B. bei leeren Ordnern auch fehlschlagen kann
+  }
+}
+
 }

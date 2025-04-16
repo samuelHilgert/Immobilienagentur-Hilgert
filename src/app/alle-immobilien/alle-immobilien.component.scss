@@ -43,33 +43,41 @@ mat-card {
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
 
-    /* Der Ribbon für die Referenzen */
     .ribbon {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 150px;
+      height: 150px;
+      overflow: hidden;
+      pointer-events: none;
+    
+      span {
         position: absolute;
-        top: 0;
-        right: 0;
-        width: 150px;
-        height: 150px;
-        overflow: hidden;
-        pointer-events: none;
-      
-        span {
-          position: absolute;
-          top: 130px;
-          right: -82px;
-          width: 300px;
-          background-color: c.$referenzen-ribbon-bg;
-          color: c.$referenzen-ribbon-text;
-          text-align: center;
-          font-size: 0.85rem;
-          font-weight: bold;
-          transform: rotate(45deg);
-          transform-origin: top right;
-          padding: 8px 0;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-          letter-spacing: 1px;
-        }
+        top: 130px;
+        right: -82px;
+        width: 300px;
+        text-align: center;
+        font-size: 0.85rem;
+        font-weight: bold;
+        transform: rotate(45deg);
+        transform-origin: top right;
+        padding: 8px 0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        letter-spacing: 1px;
       }
+    
+      &.sold span {
+        background-color: c.$referenzen-ribbon-bg;
+        color: c.$referenzen-ribbon-text;
+      }
+    
+      &.reserved span {
+        background-color: c.$contrast-color;
+        color: white;
+      }
+    }
+    
         
 
   mat-card-header {
@@ -90,13 +98,13 @@ mat-card {
     }
   }
 
-  // dieser Container mit dem Hiwneistext legt sich übers Bild wenn die Immobilie angeklickt wird, aber diese bereits verkauft wurde
-  .verkauft-overlay {
+  // dieser Container mit dem Hiwneistext legt sich übers Bild wenn die Immobilie angeklickt wird, aber diese bereits verkauft oder reserviert ist
+  .verkaufs-status-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 396px;
+    height: 400px;
     background-color: rgba(0, 0, 0, 0.6);
     color: white;
     @include s.f_c_c_c;

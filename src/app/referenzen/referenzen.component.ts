@@ -49,11 +49,9 @@ export class ReferenzenComponent implements OnInit {
             immo.uploadPublicTargets?.homepage === true
         );
 
-        // 🔽 Sortieren nach externalId (absteigend)
+        // sortiert Immobilien nach laufender Nummer indexId
         this.immobilien.sort((a, b) => {
-          const idA = parseInt(a.externalId || '0', 10);
-          const idB = parseInt(b.externalId || '0', 10);
-          return idB - idA;
+          return (b.indexId || 0) - (a.indexId || 0);
         });
 
         this.paginationService.setData(this.immobilien, 8);

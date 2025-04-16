@@ -38,17 +38,15 @@ export class AlleImmobilienComponent implements OnInit {
     this.immobilienService.getImmobilien().subscribe({
       next: async (data) => {
         this.immobilien = (data || [])
-          .filter((immo: Immobilie) => immo.uploadPublicTargets?.homepage === true)
-          .sort((a: Immobilie, b: Immobilie) => {
-            // Zuerst nach propertyStatus
-            if (a.propertyStatus === 'Angebot' && b.propertyStatus !== 'Angebot') return -1;
-            if (a.propertyStatus !== 'Angebot' && b.propertyStatus === 'Angebot') return 1;
-          
-            // Danach nach externalId (numerisch absteigend)
-            const idA = parseInt(a.externalId || '0', 10);
-            const idB = parseInt(b.externalId || '0', 10);
-            return idB - idA;
-          });
+        .filter((immo: Immobilie) => immo.uploadPublicTargets?.homepage === true)
+        .sort((a: Immobilie, b: Immobilie) => {
+          // Zuerst nach propertyStatus
+          if (a.propertyStatus === 'Angebot' && b.propertyStatus !== 'Angebot') return -1;
+          if (a.propertyStatus !== 'Angebot' && b.propertyStatus === 'Angebot') return 1;
+      
+          // Danach nach indexId (numerisch absteigend)
+          return (b.indexId || 0) - (a.indexId || 0);
+        });
   
           this.paginationService.setData(this.immobilien, 8);
 
@@ -87,7 +85,7 @@ export class AlleImmobilienComponent implements OnInit {
   toggleCard(immobilie: Immobilie): void {
     const id = immobilie.externalId;
   
-    if (immobilie.propertyStatus === 'Referenz' && id) {
+    if ((immobilie.propertyStatus === 'Referenz' || immobilie.propertyStatus === 'Reserviert') && id) {
       if (this.overlayTimeouts[id]) {
         clearTimeout(this.overlayTimeouts[id]);
       }
@@ -103,7 +101,8 @@ export class AlleImmobilienComponent implements OnInit {
     if (immobilie.propertyStatus === 'Angebot') {
       this.openImmobilienDetails(immobilie);
     }
-  }  
+  }
+  
   
   openImmobilienDetails(immobilie: Immobilie): void {
     const media = this.mediaAttachments[immobilie.externalId!];

@@ -23,6 +23,7 @@ export class ImmobilienService {
     wohnungDetails: WohnungDetails
   ): Promise<any> {
     try {
+
       // Immobiliendaten vorbereiten
       const immo = { ...immobilie };
       (immo as any).apartmentDetails = wohnungDetails;
@@ -38,6 +39,7 @@ export class ImmobilienService {
   // Haus speichern
   async saveHaus(immobilie: Immobilie, hausDetails: any): Promise<any> {
     try {
+
       const immo = { ...immobilie };
       (immo as any).houseDetails = hausDetails;
 
@@ -54,6 +56,7 @@ export class ImmobilienService {
     grundstueckDetails: any
   ): Promise<any> {
     try {
+
       const immo = { ...immobilie };
       (immo as any).landDetails = grundstueckDetails;
 
@@ -193,4 +196,69 @@ async getMediaForImmobilie(id: string): Promise<MediaAttachment[]> {
     return [];
   }
 }
+
+async getNextIndexId(): Promise<number> {
+  try {
+    const all = await this.firebaseService.getProperties();
+
+    const maxIndex = all
+      .map(immo => Number(immo.indexId))           // in Zahl konvertieren
+      .filter(id => !isNaN(id) && id >= 0)         // nur gültige, positive Zahlen
+      .reduce((max, id) => (id > max ? id : max), 0); // Maximum finden
+
+    return maxIndex + 10; // ➕ 10 Puffer
+  } catch (error) {
+    console.error('Fehler beim Ermitteln der höchsten indexId:', error);
+    return 10; // Fallback bei leerer Liste = erster Wert ist 10
+  }
+}
+
+// 🔢 Zufällige 5-stellige ID erzeugen
+private generateRandomId(): string {
+  return Math.floor(10000 + Math.random() * 90000).toString();
+}
+
+// ✅ Generiert ID & prüft auf Eindeutigkeit
+async generateUniqueExternalId(): Promise<string> {
+  let uniqueId = '';
+  let exists = true;
+
+  while (exists) {
+    const potentialId = this.generateRandomId();
+    const result = await this.getProperty(potentialId);
+
+    if (!result || result.success === false) {
+      uniqueId = potentialId;
+      exists = false;
+    }
+  }
+
+  return uniqueId;
+}
+
+// Immobilie aus Datenbank vollständig löschen können
+async deleteImmobilie(externalId: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    // 🔸 1. Alle zugehörigen Medien laden
+    const mediaList = await this.firebaseService.getMediaForProperty(externalId);
+
+    // 🔸 2. Alle Medien löschen
+    for (const media of mediaList) {
+      await this.firebaseService.deleteMedia(media.id);
+    }
+
+    // 🔸 3. Immobilie selbst löschen
+    await this.firebaseService.deleteProperty(externalId);
+
+    // 🔸 4. Optional: Storage-Ordner löschen (nur falls gewünscht)
+    await this.firebaseService.deleteStorageFolder(`property-media/${externalId}`);
+
+    return { success: true };
+  } catch (error) {
+    console.error('Fehler beim Löschen der Immobilie:', error);
+    return { success: false, error: 'Fehler beim Löschen' };
+  }
+}
+
+
 }

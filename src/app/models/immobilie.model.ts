@@ -2,6 +2,7 @@
 export interface Immobilie {
   // teilweise wiederholende aus den Details, weil diese infos für die Kurzvorstellungen wichtig sind
   externalId?: string;
+  indexId:number;
   marketingType: 'PURCHASE';
   title: string;
   street: string;
@@ -21,7 +22,7 @@ export interface Immobilie {
 
   // eigene Felder ergänzt, weil wichtig für mich
   propertyType: 'Wohnung' | 'Haus' | 'Grundstück';
-  propertyStatus: 'Angebot' | 'Referenz';
+  propertyStatus: 'Angebot' | 'Referenz' | 'Reserviert' | 'Bearbeitung';
   uploadPublicTargets: {
     homepage: boolean;
     immoScout: boolean;
