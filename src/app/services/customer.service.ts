@@ -91,22 +91,22 @@ export class CustomerService {
     }
   }
 
-  async getCustomersCount(): Promise<number> {
+  async getNextCustomerIndexId(): Promise<number> {
     try {
       const customerRef = collection(this.db, 'customers');
       const snapshot = await getDocs(customerRef);
   
       const maxIndex = snapshot.docs
-        .map(doc => Number(doc.data()['indexId'])) // Korrekt: eckige Klammern
-        .filter(id => !isNaN(id) && id >= 0)
-        .reduce((max, id) => id > max ? id : max, 0);
+        .map((doc) => Number(doc.data()['indexId']))
+        .filter((id) => !isNaN(id) && id >= 0)
+        .reduce((max, id) => (id > max ? id : max), 0);
   
-      return maxIndex + 1;
+      return maxIndex + 10;
     } catch (error) {
-      console.error('Fehler beim Zählen der Kunden:', error);
-      return 1;
+      console.error('Fehler beim Ermitteln der höchsten indexId für Kunden:', error);
+      return 10;
     }
-  }
+  }  
 
   private generateRandomId(): string {
     return Math.floor(10000 + Math.random() * 90000).toString();

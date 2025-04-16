@@ -16,7 +16,7 @@ import { MatTableModule } from '@angular/material/table';
 export class KundendatenbankComponent implements OnInit {
   customers: Customer[] = [];
   displayedColumns: string[] = [
-    'customerId', 'firstName', 'lastName', 'email', 'phone', 'city', 'roles', 'creationDate'
+    'indexId', 'customerId', 'firstName', 'lastName', 'email', 'phone', 'city', 'roles', 'creationDate'
   ];
 
   isLoading = true;
@@ -25,9 +25,11 @@ export class KundendatenbankComponent implements OnInit {
   constructor(private customerService: CustomerService, private router: Router) {}
 
   async ngOnInit() {
-    this.customers = await this.customerService.getAllCustomers();
+    const allCustomers = await this.customerService.getAllCustomers();
+  
+    this.customers = allCustomers.sort((a, b) => (b.indexId || 0) - (a.indexId || 0));
     this.isLoading = false;
-  }
+  }  
 
   goToDetails(id: string) {
     this.router.navigate([`/dashboard/kunde-details`, id]);

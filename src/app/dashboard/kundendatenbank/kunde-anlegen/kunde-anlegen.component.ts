@@ -74,7 +74,7 @@ export class KundeAnlegenComponent implements OnInit {
     if (this.customerForm.valid) {
       const formValue = this.customerForm.getRawValue();
 
-      const indexId = await this.customerService.getCustomersCount();
+      const indexId = await this.customerService.getNextCustomerIndexId();
 
       const customer: Customer = {
         ...formValue,

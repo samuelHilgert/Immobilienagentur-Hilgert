@@ -59,7 +59,7 @@ export class ExposeAnfrageService {
   }
 
   private async createCustomerFromExpose(anfrage: ExposeAnfrage) {
-    const customersCount = await this.customerService.getCustomersCount();
+    const customersCount = await this.customerService.getNextCustomerIndexId();
     const newCustomerId = anfrage.customerId;
 
     const newCustomer: Customer = {
