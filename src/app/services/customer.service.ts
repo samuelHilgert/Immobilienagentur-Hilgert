@@ -95,10 +95,43 @@ export class CustomerService {
     try {
       const customerRef = collection(this.db, 'customers');
       const snapshot = await getDocs(customerRef);
-      return snapshot.size;
+  
+      const maxIndex = snapshot.docs
+        .map(doc => Number(doc.data()['indexId'])) // Korrekt: eckige Klammern
+        .filter(id => !isNaN(id) && id >= 0)
+        .reduce((max, id) => id > max ? id : max, 0);
+  
+      return maxIndex + 1;
     } catch (error) {
       console.error('Fehler beim Zählen der Kunden:', error);
-      return 0;
+      return 1;
     }
   }
+
+  private generateRandomId(): string {
+    return Math.floor(10000 + Math.random() * 90000).toString();
+  }
+  
+  async generateUniqueCustomerId(): Promise<string> {
+    let uniqueId = '';
+    let exists = true;
+  
+    const customerRef = collection(this.db, 'customers');
+  
+    while (exists) {
+      const potentialId = this.generateRandomId();
+      const snapshot = await getDocs(customerRef);
+  
+      exists = snapshot.docs.some(
+        (doc) => doc.data()['customerId'] === potentialId
+      );
+  
+      if (!exists) {
+        uniqueId = potentialId;
+      }
+    }
+  
+    return uniqueId;
+  }
+  
 }

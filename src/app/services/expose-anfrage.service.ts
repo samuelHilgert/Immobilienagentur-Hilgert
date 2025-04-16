@@ -31,14 +31,13 @@ export class ExposeAnfrageService {
     try {
       const exposeRef = collection(this.db, 'expose-anfragen');
       const newDocRef = doc(exposeRef);
-      const customerId = newDocRef.id;
-
-      const count = await this.getExposeAnfragenCount();
-
+      const customerId = await this.generateUniqueCustomerId();
+      const indexId = await this.getNextExposeIndexId();
+      
       const payload: ExposeAnfrage = {
         ...anfrage,
         customerId,
-        indexId: count + 1,
+        indexId,
         creationDate: new Date().toISOString(),
       };
 
@@ -86,14 +85,58 @@ export class ExposeAnfrageService {
     await this.customerService.saveCustomer(newCustomer);
   }
 
-  async getExposeAnfragenCount(): Promise<number> {
+  // 🔢 Zufällige 5-stellige ID erzeugen
+  private generateRandomId(): string {
+    return Math.floor(10000 + Math.random() * 90000).toString();
+  }
+
+  // 🔐 Eindeutige ID erzeugen
+  async generateUniqueCustomerId(): Promise<string> {
+    let uniqueId = '';
+    let exists = true;
+  
+    while (exists) {
+      const potentialId = this.generateRandomId();
+  
+      // 🔍 Check in expose-anfragen
+      const exposeRef = collection(this.db, 'expose-anfragen');
+      const exposeSnapshot = await getDocs(exposeRef);
+      const exposeExists = exposeSnapshot.docs.some(
+        (doc) => doc.data()['customerId'] === potentialId
+      );
+  
+      // 🔍 Check in customers
+      const customersRef = collection(this.db, 'customers');
+      const customerSnapshot = await getDocs(customersRef);
+      const customerExists = customerSnapshot.docs.some(
+        (doc) => doc.id === potentialId
+      );
+  
+      exists = exposeExists || customerExists;
+  
+      if (!exists) {
+        uniqueId = potentialId;
+      }
+    }
+  
+    return uniqueId;
+  }  
+
+  // 🧮 Nächste freie indexId ermitteln (immer +10)
+  async getNextExposeIndexId(): Promise<number> {
     try {
       const exposeRef = collection(this.db, 'expose-anfragen');
       const snapshot = await getDocs(exposeRef);
-      return snapshot.size; // Anzahl der Dokumente
+
+      const maxIndex = snapshot.docs
+        .map((doc) => Number(doc.data()['indexId']))
+        .filter((id) => !isNaN(id) && id >= 0)
+        .reduce((max, id) => (id > max ? id : max), 0);
+
+      return maxIndex + 10;
     } catch (error) {
-      console.error('Fehler beim Zählen der Anfragen:', error);
-      return 0;
+      console.error('Fehler beim Berechnen der nächsten Index-ID:', error);
+      return 10;
     }
   }
 }

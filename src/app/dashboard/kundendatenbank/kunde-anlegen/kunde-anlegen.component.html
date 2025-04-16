@@ -1,10 +1,10 @@
 <section>
     <h2>Neuen Kunden anlegen</h2>
-    <form [formGroup]="customerForm" (ngSubmit)="onSubmit()">
-        <label>
-            Kunden-ID:
-            <input type="text" formControlName="customerId" readonly />
-          </label>            
+    <form *ngIf="customerForm" [formGroup]="customerForm" (ngSubmit)="onSubmit()">
+      <label>
+        Kunden-ID:
+        <input type="text" formControlName="customerId" readonly />
+      </label>              
           
       <label>
         Anrede:

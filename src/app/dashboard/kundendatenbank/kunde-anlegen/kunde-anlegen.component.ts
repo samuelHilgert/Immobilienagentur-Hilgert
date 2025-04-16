@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterLink, RouterModule } from '@angular/router';
 import { Customer, CustomerRole } from '../../../models/customer.model';
@@ -12,16 +12,21 @@ import { MATERIAL_MODULES } from '../../../shared/material-imports';
   templateUrl: './kunde-anlegen.component.html',
   styleUrl: './kunde-anlegen.component.scss'
 })
-export class KundeAnlegenComponent {
-  customerForm: FormGroup;
-  roles = Object.values(CustomerRole); // Für Auswahl im Template
-  generatedId: string = this.generateCustomerId(); // Zwischenspeichern für getRawValue
+
+export class KundeAnlegenComponent implements OnInit {
+  customerForm!: FormGroup;
+  roles = Object.values(CustomerRole);
+  generatedId: string = ''; 
 
   constructor(
     private fb: FormBuilder,
     private customerService: CustomerService,
     private router: Router
-  ) {
+  ) {}
+
+  async ngOnInit(): Promise<void> {
+    this.generatedId = await this.customerService.generateUniqueCustomerId(); // 💡 Hier async
+
     const customer = this.initCustomer();
 
     this.customerForm = this.fb.group({
@@ -39,18 +44,14 @@ export class KundeAnlegenComponent {
       roles: [customer.roles],
       profession: [customer.profession],
       birthday: [customer.birthday],
-    });    
-  }
-
-  private generateCustomerId(): string {
-    return Date.now().toString().slice(-5);
+    });
   }
 
   private initCustomer(): Customer {
     const id = this.generatedId;
     return {
       customerId: id,
-      indexId: 0, 
+      indexId: 0,
       salutation: '',
       firstName: '',
       lastName: '',
@@ -63,7 +64,7 @@ export class KundeAnlegenComponent {
       mobile: '',
       roles: [],
       profession: '',
-      birthday:  '',
+      birthday: '',
       creationDate: '',
       lastModificationDate: '',
     };
@@ -72,20 +73,19 @@ export class KundeAnlegenComponent {
   async onSubmit() {
     if (this.customerForm.valid) {
       const formValue = this.customerForm.getRawValue();
-  
-      // 🧠 Anzahl vorhandener Kunden zählen
-      const count = await this.customerService.getCustomersCount();
-  
+
+      const indexId = await this.customerService.getCustomersCount();
+
       const customer: Customer = {
         ...formValue,
         customerId: this.generatedId,
-        indexId: count + 1, // 🆕 Laufende Nummer setzen
+        indexId,
         creationDate: new Date().toISOString(),
-        lastModificationDate: new Date().toISOString()
+        lastModificationDate: new Date().toISOString(),
       };
-  
+
       const result = await this.customerService.saveCustomer(customer);
-  
+
       if (result.success) {
         alert('Kunde erfolgreich gespeichert!');
         this.router.navigate(['/dashboard/kundendatenbank']);
@@ -95,5 +95,4 @@ export class KundeAnlegenComponent {
       }
     }
   }
-  
 }
