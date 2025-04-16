@@ -91,6 +91,22 @@ p {
   }
 }
 
+.e-card-wrapper {
+ @include s.f_c_fs_fs;
+ gap:12px;
+ margin:0;
+ padding:0;
+
+ .e-card {
+  height:200px;
+  width:auto;
+  margin-left:-8px;
+  padding:0;
+}
+}
+
+
+
 .contact-form-container {
   flex: 1.5;
   

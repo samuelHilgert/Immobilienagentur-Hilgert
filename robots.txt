@@ -16,10 +16,15 @@ Disallow: /dashboard-login
 Disallow: /dashboard
 Disallow: /dashboard/immobilien
 Disallow: /dashboard/immobilien/immobilie-anlegen
+Disallow: /dashboard/immobilien/immobilien-datenbank
+Disallow: /dashboard/immobilien/immobilien-datenbank/haus-details-form
+Disallow: /dashboard/immobilien/immobilien-datenbank/wohnung-details-form
+Disallow: /dashboard/immobilien/immobilien-datenbank/grundstueck-details-form
 Disallow: /dashboard/suchauftraege
 Disallow: /dashboard/suchauftraege/suchauftrag-anlegen
 Disallow: /dashboard/kundendatenbank
 Disallow: /dashboard/kundendatenbank/kunde-anlegen
+Disallow: /dashboard/kundendatenbank/kunde-details
 Disallow: /dashboard/bewertungen
 Disallow: /dashboard/bewertungen/bewertung-anlegen
 Disallow: /dashboard/newsletter
