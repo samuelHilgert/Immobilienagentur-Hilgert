@@ -20,6 +20,7 @@ Disallow: /dashboard/immobilien/immobilien-datenbank
 Disallow: /dashboard/immobilien/immobilien-datenbank/haus-details-form
 Disallow: /dashboard/immobilien/immobilien-datenbank/wohnung-details-form
 Disallow: /dashboard/immobilien/immobilien-datenbank/grundstueck-details-form
+Disallow: /dashboard/immobilien/immobilien-datenbank/expose-anfragen-datenbank
 Disallow: /dashboard/suchauftraege
 Disallow: /dashboard/suchauftraege/suchauftrag-anlegen
 Disallow: /dashboard/kundendatenbank

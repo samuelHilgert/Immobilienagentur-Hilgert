@@ -39,6 +39,7 @@ import { GrundstueckDetailsFormComponent } from './dashboard/immobilien/immobili
 import { HausDetailsFormComponent } from './dashboard/immobilien/immobilien-datenbank/haus-details-form/haus-details-form.component';
 import { WohnungDetailsFormComponent } from './dashboard/immobilien/immobilien-datenbank/wohnung-details-form/wohnung-details-form.component';
 import { KundeDetailsComponent } from './dashboard/kundendatenbank/kunde-details/kunde-details.component';
+import { ExposeAnfragenDatenbankComponent } from './dashboard/immobilien/immobilien-datenbank/expose-anfragen-datenbank/expose-anfragen-datenbank.component';
 
 export const routes: Routes = [
   {
@@ -148,7 +149,11 @@ export const routes: Routes = [
             component: GrundstueckDetailsFormComponent,
           },      
         ]
-      },      
+      },   
+      {
+        path: 'expose-anfragen-datenbank/:externalId',
+        component: ExposeAnfragenDatenbankComponent,
+      },        
       {
         path: 'suchauftraege',
         component: SuchauftraegeComponent,

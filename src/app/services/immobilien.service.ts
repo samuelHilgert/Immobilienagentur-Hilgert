@@ -5,6 +5,8 @@ import { Immobilie, WohnungDetails } from '../models/immobilie.model';
 import { firstValueFrom } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { MediaAttachment } from '../models/media.model';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { doc, updateDoc } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root',
@@ -257,6 +259,30 @@ async deleteImmobilie(externalId: string): Promise<{ success: boolean; error?: s
   } catch (error) {
     console.error('Fehler beim Löschen der Immobilie:', error);
     return { success: false, error: 'Fehler beim Löschen' };
+  }
+}
+
+  // Upload für Expose Pdfs im Dashboard
+// Upload für Exposé-PDFs im Dashboard + Speichern in Firestore
+async uploadExposePdf(file: File, externalId: string): Promise<{ success: boolean; url?: string }> {
+  try {
+    const timestamp = new Date().getTime();
+    const filename = `${externalId}_expose_${timestamp}.pdf`;
+
+    const storageRef = ref(this.firebaseService.storage, `expose-pdf/${externalId}/${filename}`);
+    const snapshot = await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(snapshot.ref);
+
+    // 🔹 PDF-Link in Immobilie speichern
+    const propertyRef = doc(this.firebaseService.db, 'properties', externalId);
+    await updateDoc(propertyRef, {
+      exposePdfUrl: downloadURL,
+    });
+
+    return { success: true, url: downloadURL };
+  } catch (error) {
+    console.error('Fehler beim Hochladen des Exposé-PDF:', error);
+    return { success: false };
   }
 }
 
