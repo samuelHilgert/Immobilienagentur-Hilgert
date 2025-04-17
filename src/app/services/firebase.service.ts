@@ -270,14 +270,13 @@ export class FirebaseService {
     try {
       const listRef = ref(this.storage, path);
       const res = await listAll(listRef);
-
+  
       const deletePromises = res.items.map((itemRef) => deleteObject(itemRef));
       await Promise.all(deletePromises);
     } catch (error) {
       console.warn('Fehler beim Löschen des Storage-Ordners:', error);
-      // Kein throw, da es z. B. bei leeren Ordnern auch fehlschlagen kann
     }
-  }
+  }  
 
   // Upload für Expose Pdfs im Dashboard
   async uploadExposePdf(

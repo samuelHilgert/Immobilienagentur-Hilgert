@@ -25,7 +25,6 @@ export class ImmobilienService {
     wohnungDetails: WohnungDetails
   ): Promise<any> {
     try {
-
       // Immobiliendaten vorbereiten
       const immo = { ...immobilie };
       (immo as any).apartmentDetails = wohnungDetails;
@@ -41,7 +40,6 @@ export class ImmobilienService {
   // Haus speichern
   async saveHaus(immobilie: Immobilie, hausDetails: any): Promise<any> {
     try {
-
       const immo = { ...immobilie };
       (immo as any).houseDetails = hausDetails;
 
@@ -58,7 +56,6 @@ export class ImmobilienService {
     grundstueckDetails: any
   ): Promise<any> {
     try {
-
       const immo = { ...immobilie };
       (immo as any).landDetails = grundstueckDetails;
 
@@ -190,101 +187,119 @@ export class ImmobilienService {
   }
 
   // Neue öffentliche Methode, um Medien zu laden
-async getMediaForImmobilie(id: string): Promise<MediaAttachment[]> {
-  try {
-    return await this.firebaseService.getMediaForProperty(id);
-  } catch (error) {
-    console.error('Fehler beim Laden der Medien:', error);
-    return [];
-  }
-}
-
-async getNextIndexId(): Promise<number> {
-  try {
-    const all = await this.firebaseService.getProperties();
-
-    const maxIndex = all
-      .map(immo => Number(immo.indexId))           // in Zahl konvertieren
-      .filter(id => !isNaN(id) && id >= 0)         // nur gültige, positive Zahlen
-      .reduce((max, id) => (id > max ? id : max), 0); // Maximum finden
-
-    return maxIndex + 2;
-  } catch (error) {
-    console.error('Fehler beim Ermitteln der höchsten indexId:', error);
-    return 2; // Fallback bei leerer Liste = erster Wert ist 2
-  }
-}
-
-// 🔢 Zufällige 5-stellige ID erzeugen
-private generateRandomId(): string {
-  return Math.floor(10000 + Math.random() * 90000).toString();
-}
-
-// ✅ Generiert ID & prüft auf Eindeutigkeit
-async generateUniqueExternalId(): Promise<string> {
-  let uniqueId = '';
-  let exists = true;
-
-  while (exists) {
-    const potentialId = this.generateRandomId();
-    const result = await this.getProperty(potentialId);
-
-    if (!result || result.success === false) {
-      uniqueId = potentialId;
-      exists = false;
+  async getMediaForImmobilie(id: string): Promise<MediaAttachment[]> {
+    try {
+      return await this.firebaseService.getMediaForProperty(id);
+    } catch (error) {
+      console.error('Fehler beim Laden der Medien:', error);
+      return [];
     }
   }
 
-  return uniqueId;
-}
+  async getNextIndexId(): Promise<number> {
+    try {
+      const all = await this.firebaseService.getProperties();
 
-// Immobilie aus Datenbank vollständig löschen können
-async deleteImmobilie(externalId: string): Promise<{ success: boolean; error?: string }> {
-  try {
-    // 🔸 1. Alle zugehörigen Medien laden
-    const mediaList = await this.firebaseService.getMediaForProperty(externalId);
+      const maxIndex = all
+        .map((immo) => Number(immo.indexId)) // in Zahl konvertieren
+        .filter((id) => !isNaN(id) && id >= 0) // nur gültige, positive Zahlen
+        .reduce((max, id) => (id > max ? id : max), 0); // Maximum finden
 
-    // 🔸 2. Alle Medien löschen
-    for (const media of mediaList) {
-      await this.firebaseService.deleteMedia(media.id);
+      return maxIndex + 2;
+    } catch (error) {
+      console.error('Fehler beim Ermitteln der höchsten indexId:', error);
+      return 2; // Fallback bei leerer Liste = erster Wert ist 2
+    }
+  }
+
+  // 🔢 Zufällige 5-stellige ID erzeugen
+  private generateRandomId(): string {
+    return Math.floor(10000 + Math.random() * 90000).toString();
+  }
+
+  // ✅ Generiert ID & prüft auf Eindeutigkeit
+  async generateUniqueExternalId(): Promise<string> {
+    let uniqueId = '';
+    let exists = true;
+
+    while (exists) {
+      const potentialId = this.generateRandomId();
+      const result = await this.getProperty(potentialId);
+
+      if (!result || result.success === false) {
+        uniqueId = potentialId;
+        exists = false;
+      }
     }
 
-    // 🔸 3. Immobilie selbst löschen
-    await this.firebaseService.deleteProperty(externalId);
-
-    // 🔸 4. Optional: Storage-Ordner löschen (nur falls gewünscht)
-    await this.firebaseService.deleteStorageFolder(`property-media/${externalId}`);
-
-    return { success: true };
-  } catch (error) {
-    console.error('Fehler beim Löschen der Immobilie:', error);
-    return { success: false, error: 'Fehler beim Löschen' };
+    return uniqueId;
   }
-}
+
+  // Immobilie aus Datenbank vollständig löschen können
+  async deleteImmobilie(
+    externalId: string
+  ): Promise<{ success: boolean; error?: string }> {
+    try {
+      // 🔸 1. Alle zugehörigen Medien laden
+      const mediaList = await this.firebaseService.getMediaForProperty(
+        externalId
+      );
+
+      // 🔸 2. Alle Medien löschen
+      for (const media of mediaList) {
+        await this.firebaseService.deleteMedia(media.id);
+      }
+
+      // 🔸 3. Immobilie selbst löschen
+      await this.firebaseService.deleteProperty(externalId);
+
+      // 🔸 4. Optional: Storage-Ordner löschen (nur falls gewünscht)
+      await this.firebaseService.deleteStorageFolder(
+        `property-media/${externalId}`
+      );
+
+      return { success: true };
+    } catch (error) {
+      console.error('Fehler beim Löschen der Immobilie:', error);
+      return { success: false, error: 'Fehler beim Löschen' };
+    }
+  }
 
   // Upload für Expose Pdfs im Dashboard
-// Upload für Exposé-PDFs im Dashboard + Speichern in Firestore
-async uploadExposePdf(file: File, externalId: string): Promise<{ success: boolean; url?: string }> {
-  try {
-    const timestamp = new Date().getTime();
-    const filename = `${externalId}_expose_${timestamp}.pdf`;
+  // Upload für Exposé-PDFs im Dashboard + Speichern in Firestore
+  async uploadExposePdf(
+    file: File,
+    externalId: string
+  ): Promise<{ success: boolean; url?: string }> {
+    try {
+      const timestamp = new Date().getTime();
+      const filename = `${externalId}_expose_${timestamp}.pdf`;
 
-    const storageRef = ref(this.firebaseService.storage, `expose-pdf/${externalId}/${filename}`);
-    const snapshot = await uploadBytes(storageRef, file);
-    const downloadURL = await getDownloadURL(snapshot.ref);
+      const storageRef = ref(
+        this.firebaseService.storage,
+        `expose-pdf/${externalId}/${filename}`
+      );
+      const snapshot = await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(snapshot.ref);
 
-    // 🔹 PDF-Link in Immobilie speichern
-    const propertyRef = doc(this.firebaseService.db, 'properties', externalId);
-    await updateDoc(propertyRef, {
-      exposePdfUrl: downloadURL,
-    });
+      // 🔹 PDF-Link in Immobilie speichern
+      const propertyRef = doc(
+        this.firebaseService.db,
+        'properties',
+        externalId
+      );
+      await updateDoc(propertyRef, {
+        exposePdfUrl: downloadURL,
+      });
 
-    return { success: true, url: downloadURL };
-  } catch (error) {
-    console.error('Fehler beim Hochladen des Exposé-PDF:', error);
-    return { success: false };
+      return { success: true, url: downloadURL };
+    } catch (error) {
+      console.error('Fehler beim Hochladen des Exposé-PDF:', error);
+      return { success: false };
+    }
   }
-}
 
-
+  deleteStorageFolder(path: string): Promise<void> {
+    return this.firebaseService.deleteStorageFolder(path);
+  }
 }
