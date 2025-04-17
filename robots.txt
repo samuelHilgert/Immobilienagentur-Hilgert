@@ -14,6 +14,7 @@ Disallow: /bewerten
 Disallow: /feedback-for-cash
 Disallow: /dashboard-login
 Disallow: /dashboard
+Disallow: /dashboard/umsatz
 Disallow: /dashboard/immobilien
 Disallow: /dashboard/immobilien/immobilie-anlegen
 Disallow: /dashboard/immobilien/immobilien-datenbank

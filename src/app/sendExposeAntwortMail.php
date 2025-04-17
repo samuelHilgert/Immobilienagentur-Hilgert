@@ -26,8 +26,7 @@ $lastName = $data['lastName'] ?? '';
 $numberOfRooms = $data['numberOfRooms'] ?? '';
 $propertyType = $data['immobilienTyp'] ?? '';
 $city = $data['city'] ?? '';
-$value = number_format((float)($data['value'] ?? 0), 0, ',', '.');
-$preis = $value . ' €';
+$value = $data['value'] ?? '';
 $pdfUrl = $data['exposePdfUrl'] ?? null;
 
 // 📄 Nachrichtentext
@@ -41,7 +40,7 @@ $htmlMessage = "
 
 <p>vielen Dank für Ihre Anfrage und das damit verbundene Interesse an folgender Immobilie:</p>
 
-<p><strong>{$propertyType} mit {$numberOfRooms} Zimmern zum Kauf in {$city} für {$preis}</strong></p>
+<p><strong>{$propertyType} mit {$numberOfRooms} Zimmern zum Kauf in {$city} für {$value} €</strong></p>
 
 <p>
   Anbei erhalten Sie wie gewünscht, das erweiterte Exposé zur Immobilie:<br>

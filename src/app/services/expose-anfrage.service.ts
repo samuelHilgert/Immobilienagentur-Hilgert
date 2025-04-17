@@ -37,7 +37,7 @@ export class ExposeAnfrageService {
       const newDocRef = doc(exposeRef);
       const customerId = await this.generateUniqueCustomerId();
       const indexId = await this.getNextExposeIndexId();
-
+  
       const payload: ExposeAnfrage = {
         ...anfrage,
         customerId,
@@ -45,17 +45,12 @@ export class ExposeAnfrageService {
         creationDate: new Date().toISOString(),
       };
   
-      // 🔹 1. Anfrage in Firestore speichern
       await setDoc(newDocRef, payload);
-  
-      // 🔹 2. Kunde aus Anfrage-Daten erstellen
       await this.createCustomerFromExpose(payload);
   
-      // 🔹 3. Interne Benachrichtigungs-E-Mail an dich (bestehende PHP-Datei)
       const internalMailEndpoint = 'https://hilgert-immobilien.de/sendExposeAnfrageMail.php';
       await this.http.post(internalMailEndpoint, payload).toPromise();
   
-      // 🔹 4. Immobiliendaten ergänzen für Antwort-Mail
       const immobilie = await this.immobilienService.getProperty(anfrage.immobilienId);
   
       const mapMarketingType = (code: string) => {
@@ -65,22 +60,34 @@ export class ExposeAnfrageService {
           case 'LEASEHOLD': return 'Erbpacht';
           default: return 'Kauf';
         }
-      };      
-
+      };
+  
       const mailPayload = {
-        ...payload,
+        email: anfrage.email,
+        externalId: anfrage.immobilienId,
+        lastName: anfrage.lastName,
+        salutation: anfrage.salutation,
         numberOfRooms: immobilie?.numberOfRooms || '',
         city: immobilie?.city || '',
+        value: immobilie?.value || 0,
         marketingType: mapMarketingType(immobilie?.marketingType || ''),
         immobilienTyp: immobilie?.propertyType || '',
         exposePdfUrl: immobilie?.exposePdfUrl || '',
       };
   
-      // 🔹 5. Automatische Antwort an Kunden senden
-      const autoReplyEndpoint = 'https://hilgert-immobilien.de/sendExposeAntwortMail.php';
-      await this.http.post(autoReplyEndpoint, mailPayload).toPromise();
+      // ⏱️ Verzögerte Antwortmail (10 Sek.)
+      setTimeout(async () => {
+        try {
+          const autoReplyEndpoint = 'https://hilgert-immobilien.de/sendExposeAntwortMail.php';
+          await this.http.post(autoReplyEndpoint, mailPayload).toPromise();
+          // console.log('✅ Antwortmail gesendet (verzögert)');
+        } catch (e) {
+          // console.error('❌ Fehler beim Senden der Antwortmail (verzögert)', e);
+        }
+      }, 10000);
   
       return { success: true, id: customerId };
+  
     } catch (error) {
       console.error('Fehler beim Speichern oder Versenden:', error);
       return { success: false, error };

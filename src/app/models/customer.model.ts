@@ -2,6 +2,7 @@
 export enum CustomerRole {
   Interessent = 'Interessent',
   Eigentümer = 'Eigentümer',
+  Vertretende = 'Vertretende',
   Käufer = 'Käufer',
   Verkäufer = 'Verkäufer',
   Mieter = 'Mieter',
@@ -28,6 +29,7 @@ export interface Customer {
   roles: CustomerRole[]; // A customer can have multiple roles
   profession: string;
   birthday: string;
+  
   creationDate: string;
   lastModificationDate: string;
   angefragteImmobilienIds?: string[]; 

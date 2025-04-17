@@ -40,6 +40,8 @@ import { HausDetailsFormComponent } from './dashboard/immobilien/immobilien-date
 import { WohnungDetailsFormComponent } from './dashboard/immobilien/immobilien-datenbank/wohnung-details-form/wohnung-details-form.component';
 import { KundeDetailsComponent } from './dashboard/kundendatenbank/kunde-details/kunde-details.component';
 import { ExposeAnfragenDatenbankComponent } from './dashboard/immobilien/immobilien-datenbank/expose-anfragen-datenbank/expose-anfragen-datenbank.component';
+import { UmsatzComponent } from './dashboard/umsatz/umsatz.component';
+import { SupportTicketsComponent } from './dashboard/support-tickets/support-tickets.component';
 
 export const routes: Routes = [
   {
@@ -164,6 +166,14 @@ export const routes: Routes = [
       {
         path: 'kundendatenbank',
         component: KundendatenbankComponent,
+      },
+      {
+        path: 'umsatz',
+        component: UmsatzComponent,
+      },
+      {
+        path: 'support-tickets',
+        component: SupportTicketsComponent,
       },
       {
         path: 'kunde-anlegen',

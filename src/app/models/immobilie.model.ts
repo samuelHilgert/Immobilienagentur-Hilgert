@@ -21,6 +21,8 @@ export interface Immobilie {
   lastModificationDate?: string;
 
   // eigene Felder ergänzt, weil wichtig für mich
+  ownerIds: string[]; 
+  representingPersonIds: string[]; 
   exposePdfUrl?: string; // expose pdf zum automatischen Versenden
   propertyType: 'Wohnung' | 'Haus' | 'Grundstück';
   propertyStatus: 'Angebot' | 'Referenz' | 'Reserviert' | 'Bearbeitung';
