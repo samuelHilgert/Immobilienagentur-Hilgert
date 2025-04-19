@@ -2,11 +2,13 @@ import { Component, Inject } from '@angular/core';
 import { Immobilie } from '../../models/immobilie.model';
 import { CommonModule } from '@angular/common';
 import { MATERIAL_MODULES } from '../material-imports';
+import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import {
-  MAT_DIALOG_DATA,
-  MatDialog,
-} from '@angular/material/dialog';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { WiderrufComponent } from '../../impressum/widerruf/widerruf.component';
 import { AgbComponent } from '../../impressum/agb/agb.component';
@@ -38,7 +40,7 @@ export class ExposeAnfordernComponent {
     private dialog: MatDialog,
     private route: ActivatedRoute,
     private exposeAnfrageService: ExposeAnfrageService,
-    private immobilienService: ImmobilienService,
+    private immobilienService: ImmobilienService
   ) {
     this.contactForm = this.fb.group({
       salutation: new FormControl(null, Validators.required),
@@ -56,17 +58,15 @@ export class ExposeAnfordernComponent {
       acceptedWithdrawal: [false, Validators.requiredTrue],
       acceptedPrivacy: [false, Validators.requiredTrue],
     });
-  
+
     this.route.queryParams.subscribe((params) => {
       const id = params['id'];
       console.log('Query-Parameter-ID:', id);
       if (id) {
         this.loadImmobilie(id);
-        this.loadMedia(id); 
+        this.loadMedia(id);
       }
     });
-    
-  
   }
 
   get firstNameControl() {
@@ -84,7 +84,6 @@ export class ExposeAnfordernComponent {
   get messageControl() {
     return this.contactForm.get('message');
   }
-
 
   async loadImmobilie(id: string) {
     try {
@@ -113,11 +112,15 @@ export class ExposeAnfordernComponent {
 
     try {
       await this.exposeAnfrageService.submitExposeAnfrage(formData);
-      
+
       this.dialog.open(SuccessMsgDialogComponent, {
         panelClass: 'success-dialog',
         width: '350px',
       });
+
+      // 👉 Formular zurücksetzen
+      this.resetForm();
+      this.formSubmitted = false; // Reset für Validierungsanzeigen
     } catch (err) {
       console.error('Fehler beim Senden der Anfrage:', err);
     } finally {
@@ -126,8 +129,27 @@ export class ExposeAnfordernComponent {
   }
 
   resetForm(): void {
-    this.contactForm.reset();
+    this.contactForm.reset({
+      salutation: null,
+      firstName: '',
+      lastName: '',
+      street: '',
+      houseNumber: '',
+      zip: '',
+      city: '',
+      email: '',
+      phone: '',
+      company: '',
+      message: '',
+      acceptedTerms: false,
+      acceptedWithdrawal: false,
+      acceptedPrivacy: false,
+    });
+  
+    this.contactForm.markAsPristine();
+    this.contactForm.markAsUntouched();
   }
+  
 
   get checkboxGroupValid(): boolean {
     return (

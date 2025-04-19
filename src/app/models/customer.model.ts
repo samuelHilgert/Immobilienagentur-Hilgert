@@ -26,7 +26,7 @@ export interface Customer {
   email: string;
   phone: string;
   mobile: string;
-  roles: CustomerRole[]; // A customer can have multiple roles
+  roles: CustomerRole[];
   profession: string;
   birthday: string;
   

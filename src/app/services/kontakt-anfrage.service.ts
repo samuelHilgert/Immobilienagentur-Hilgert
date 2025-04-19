@@ -65,7 +65,7 @@ export class KontaktAnfrageService {
       email: anfrage.email,
       phone: anfrage.phone || '',
       mobile: anfrage.mobile || '',
-      roles: [CustomerRole.Interessent],
+      roles: [CustomerRole.Sonstige],
       profession: '',
       birthday: '',
       creationDate: new Date().toISOString(),

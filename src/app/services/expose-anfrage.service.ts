@@ -8,6 +8,7 @@ import {
   getDocs,
   query,
   where,
+  addDoc,
 } from 'firebase/firestore';
 import { environment } from '../../environments/environments';
 import { ExposeAnfrage } from '../models/expose-anfrage.model';
@@ -34,11 +35,12 @@ export class ExposeAnfrageService {
   ): Promise<{ success: boolean; id?: string; error?: any }> {
     try {
       const exposeRef = collection(this.db, 'expose-anfragen');
-      const newDocRef = doc(exposeRef);
-      
+  
+      // 👉 Erst IDs generieren
       const customerId = await this.generateUniqueCustomerId();
       const indexId = await this.getNextExposeIndexId();
   
+      // 👉 Dann Payload bauen
       const payload: ExposeAnfrage = {
         ...anfrage,
         customerId,
@@ -46,9 +48,14 @@ export class ExposeAnfrageService {
         creationDate: new Date().toISOString(),
       };
   
-      await setDoc(newDocRef, payload);
+      // ✅ Dann speichern (create-only)
+      const newDoc = await addDoc(exposeRef, payload);
+      const newDocId = newDoc.id;
+  
+      // Kunden anlegen
       await this.createCustomerFromExpose(payload);
   
+      // Mail senden
       const internalMailEndpoint = 'https://hilgert-immobilien.de/sendExposeAnfrageMail.php';
       await this.http.post(internalMailEndpoint, payload).toPromise();
   
@@ -76,14 +83,13 @@ export class ExposeAnfrageService {
         exposePdfUrl: immobilie?.exposePdfUrl || '',
       };
   
-      // ⏱️ Verzögerte Antwortmail (10 Sek.)
+      // Antwortmail nach 10 Sekunden
       setTimeout(async () => {
         try {
           const autoReplyEndpoint = 'https://hilgert-immobilien.de/sendExposeAntwortMail.php';
           await this.http.post(autoReplyEndpoint, mailPayload).toPromise();
-          // console.log('✅ Antwortmail gesendet (verzögert)');
         } catch (e) {
-          // console.error('❌ Fehler beim Senden der Antwortmail (verzögert)', e);
+          console.error('Fehler beim Senden der Antwortmail', e);
         }
       }, 10000);
   
