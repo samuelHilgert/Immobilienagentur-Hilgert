@@ -8,6 +8,8 @@ import { SidebarClickBewertungComponent } from './shared/sidebar-click-bewertung
 import { BottomFixedLineComponent } from './shared/bottom-fixed-line/bottom-fixed-line.component';
 import { filter } from 'rxjs/operators';
 import { ScrollService } from './services/scroll.service';
+import { AuthService } from './services/auth.service';
+import { getAuth, signInAnonymously } from 'firebase/auth';
 
 @Component({
   selector: 'app-root',
@@ -21,9 +23,16 @@ export class AppComponent implements OnInit {
   routesIsActive = true;
 
   constructor(private router: Router,
-    private scrollService: ScrollService) {}
+    private scrollService: ScrollService,
+    private authService: AuthService) {
+    }
 
   ngOnInit() {
+    const auth = getAuth();
+    signInAnonymously(auth)
+      .then((cred) => console.log('✅ Anonym eingeloggt:', cred.user.uid))
+      .catch((err) => console.error('❌ Anonyme Anmeldung fehlgeschlagen:', err));
+      
     this.checkCurrentRoute(this.router.url);
   
     this.router.events.pipe(

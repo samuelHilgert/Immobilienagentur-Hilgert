@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Immobilie } from '../../models/immobilie.model';
 import { CommonModule } from '@angular/common';
 import { MATERIAL_MODULES } from '../material-imports';
@@ -19,6 +19,7 @@ import { SuccessMsgDialogComponent } from '../success-msg-dialog/success-msg-dia
 import { ActivatedRoute } from '@angular/router';
 import { ImmobilienService } from '../../services/immobilien.service';
 import { MediaAttachment } from '../../models/media.model';
+import { getAuth, signInAnonymously } from 'firebase/auth';
 
 @Component({
   selector: 'app-expose-anfordern',
@@ -27,7 +28,7 @@ import { MediaAttachment } from '../../models/media.model';
   templateUrl: './expose-anfordern.component.html',
   styleUrl: './expose-anfordern.component.scss',
 })
-export class ExposeAnfordernComponent {
+export class ExposeAnfordernComponent implements OnInit{
   immobilie: Immobilie | null | undefined;
   contactForm: FormGroup;
   isSubmitting = false;
@@ -69,6 +70,11 @@ export class ExposeAnfordernComponent {
     });
   }
 
+  ngOnInit(): void {
+    const user = getAuth().currentUser;
+    console.log('👤 Aktueller User:', user?.uid, 'anonym:', user?.isAnonymous);
+  }
+
   get firstNameControl() {
     return this.contactForm.get('firstName');
   }
@@ -96,37 +102,43 @@ export class ExposeAnfordernComponent {
 
   async onSubmit(): Promise<void> {
     this.formSubmitted = true;
-
+  
     if (this.contactForm.invalid || !this.immobilie) {
       this.contactForm.markAllAsTouched();
       return;
     }
-
+  
     this.isSubmitting = true;
-
-    const formData: ExposeAnfrage = {
-      ...this.contactForm.value,
-      immobilienId: this.immobilie.externalId,
-      immobilienTyp: this.immobilie.propertyType,
-    };
-
+  
     try {
+      // 🧠 STELLE SICHER: User ist eingeloggt (auch anonym)
+      const auth = getAuth();
+      if (!auth.currentUser) {
+        const cred = await signInAnonymously(auth);
+        console.log('✅ Anonym eingeloggt vor Anfrage:', cred.user.uid);
+      }
+  
+      const formData: ExposeAnfrage = {
+        ...this.contactForm.value,
+        immobilienId: this.immobilie.externalId,
+        immobilienTyp: this.immobilie.propertyType,
+      };
+  
       await this.exposeAnfrageService.submitExposeAnfrage(formData);
-
+  
       this.dialog.open(SuccessMsgDialogComponent, {
         panelClass: 'success-dialog',
         width: '350px',
       });
-
-      // 👉 Formular zurücksetzen
+  
       this.resetForm();
-      this.formSubmitted = false; // Reset für Validierungsanzeigen
+      this.formSubmitted = false;
     } catch (err) {
       console.error('Fehler beim Senden der Anfrage:', err);
     } finally {
       this.isSubmitting = false;
     }
-  }
+  }  
 
   resetForm(): void {
     this.contactForm.reset({

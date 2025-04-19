@@ -1,4 +1,3 @@
-// src/app/services/auth.service.ts
 import { Injectable } from '@angular/core';
 import {
   Auth,
@@ -9,8 +8,9 @@ import {
   authState,
   User
 } from '@angular/fire/auth';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { signInAnonymously } from 'firebase/auth';
+import { Observable, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 interface AuthResponse {
   success: boolean;
@@ -25,11 +25,29 @@ export class AuthService {
   user$: Observable<User | null>;
   authState$: Observable<User | null>;
   isLoggedIn$: Observable<boolean>;
+  isAdmin$: Observable<boolean>;
+
+  // 👉 Hier deine Admin-UID eintragen (einmal zentral)
+  private readonly ADMIN_UID = 'Y6GYrqJzGnRcmBDcGoYNliK1O9x1';
 
   constructor(private auth: Auth) {
     this.user$ = user(this.auth);
     this.authState$ = authState(this.auth);
     this.isLoggedIn$ = this.authState$.pipe(map(user => !!user));
+
+    // 👮‍♂️ Admin-Prüfung: Vergleiche die UID
+    this.isAdmin$ = this.user$.pipe(
+      map(user => !!user && user.uid === this.ADMIN_UID)
+    );
+
+    // 🔐 Automatisch anonym einloggen, wenn niemand angemeldet ist
+    this.authState$.subscribe(currentUser => {
+      if (!currentUser) {
+        signInAnonymously(this.auth)
+          .then(() => console.log('✅ Anonym angemeldet'))
+          .catch(err => console.error('❌ Anonyme Anmeldung fehlgeschlagen:', err));
+      }
+    });
   }
 
   async login(email: string, password: string): Promise<AuthResponse> {
@@ -57,12 +75,6 @@ export class AuthService {
   }
 
   isAdmin(): Observable<boolean> {
-    return this.user$.pipe(
-      map(user => {
-        // Optional: Hier kannst du zusätzliche Rollen-Logik implementieren
-        // z.B. mit Custom Claims oder durch Abfragen eines Firestore-Dokuments
-        return !!user; // Aktuell bedeutet eingeloggt = Admin
-      })
-    );
+    return this.isAdmin$;
   }
 }

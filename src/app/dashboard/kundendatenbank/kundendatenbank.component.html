@@ -8,12 +8,6 @@
   
     <!-- Kunden-Tabelle -->
     <table mat-table [dataSource]="customers" class="mat-elevation-z8" *ngIf="!isLoading">
-
-            <!-- Laufende Nr. -->
-            <ng-container matColumnDef="indexId">
-              <th mat-header-cell *matHeaderCellDef>Lfd.Nr.</th>
-              <td mat-cell *matCellDef="let customer">{{ customer.indexId }}</td>
-            </ng-container>
               
       <!-- Kundennummer -->
       <ng-container matColumnDef="customerId">

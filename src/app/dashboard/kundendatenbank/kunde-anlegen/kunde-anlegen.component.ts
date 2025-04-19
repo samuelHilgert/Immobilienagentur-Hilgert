@@ -51,7 +51,6 @@ export class KundeAnlegenComponent implements OnInit {
     const id = this.generatedId;
     return {
       customerId: id,
-      indexId: 0,
       salutation: '',
       firstName: '',
       lastName: '',

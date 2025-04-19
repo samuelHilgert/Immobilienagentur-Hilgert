@@ -21,15 +21,21 @@ export class CustomerService {
   // Neuen Kunden speichern oder bestehenden aktualisieren
   async saveCustomer(customer: Customer): Promise<{ success: boolean; id?: string; error?: any }> {
     try {
-      const customerRef = doc(this.db, 'customers', customer.customerId);
+      const customerRef = doc(this.db, 'customers', customer.customerId); // 🔑 docId wird hier erzwungen
       await setDoc(customerRef, customer, { merge: true });
-
+  
       return { success: true, id: customer.customerId };
     } catch (error) {
       console.error('Fehler beim Speichern des Kunden:', error);
       return { success: false, error };
     }
   }
+  
+  // Falls du Kunden explizit mit einer neuen ID erzeugen willst
+  async createEmptyCustomerId(): Promise<string> {
+    const newDocRef = doc(collection(this.db, 'customers'));
+    return newDocRef.id; // Liefert eine neue ID zurück, wird aber noch NICHT gespeichert
+  }  
 
   // Einzelnen Kunden abrufen
   async getCustomer(customerId: string): Promise<Customer | null> {
