@@ -35,6 +35,7 @@ export class ExposeAnfrageService {
     try {
       const exposeRef = collection(this.db, 'expose-anfragen');
       const newDocRef = doc(exposeRef);
+      
       const customerId = await this.generateUniqueCustomerId();
       const indexId = await this.getNextExposeIndexId();
   

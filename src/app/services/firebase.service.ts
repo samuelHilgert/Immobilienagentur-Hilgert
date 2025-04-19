@@ -20,6 +20,7 @@ import {
   uploadBytes,
   getDownloadURL,
   deleteObject,
+  getMetadata
 } from 'firebase/storage';
 import { environment } from '../../environments/environments';
 import { Feedback } from '../models/feedback.model';
@@ -295,4 +296,25 @@ export class FirebaseService {
       throw error;
     }
   }
+
+  // Prpüfen ob das PDF Expose noch im Ordner liegt
+  async checkPdfExistsWithFirebase(fileUrl: string): Promise<boolean> {
+    try {
+      const storage = getStorage();
+  
+      const decodedUrl = decodeURIComponent(fileUrl);
+      const path = decodedUrl.split('/o/')[1]?.split('?')[0];
+      const fileRef = ref(storage, path);
+  
+      await getMetadata(fileRef);
+      return true;
+    } catch (error: any) { // ✅ oder (error as any)
+      if (error.code === 'storage/object-not-found') {
+        return false;
+      }
+      console.error('Fehler beim PDF-Check:', error);
+      return false;
+    }
+  }
+  
 }

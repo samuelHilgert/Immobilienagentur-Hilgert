@@ -23,7 +23,7 @@ export interface Immobilie {
   // eigene Felder ergänzt, weil wichtig für mich
   ownerIds: string[]; 
   representingPersonIds: string[]; 
-  exposePdfUrl?: string; // expose pdf zum automatischen Versenden
+  exposePdfUrl?: string | null;
   propertyType: 'Wohnung' | 'Haus' | 'Grundstück';
   propertyStatus: 'Angebot' | 'Referenz' | 'Reserviert' | 'Bearbeitung';
   uploadPublicTargets: {

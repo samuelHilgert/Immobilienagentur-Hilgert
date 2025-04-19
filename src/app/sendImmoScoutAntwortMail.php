@@ -1,18 +1,52 @@
 <?php
-// Header für JSON und CORS
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json");
+$allowedOrigins = [
+  'https://hilgert-immobilien.de',
+  'https://www.hilgert-immobilien.de',
+  'http://localhost:4200' // nur für Entwicklung, ggf. später entfernen
+];
 
-// Input-Daten einlesen
-$data = json_decode(file_get_contents("php://input"), true);
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
-if (!$data || !isset($data['email']) || !isset($data['lastName']) || !isset($data['salutation'])) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Ungültige Daten']);
-    exit;
+if (in_array($origin, $allowedOrigins)) {
+  header("Access-Control-Allow-Origin: $origin");
+  header("Access-Control-Allow-Credentials: true");
+} else {
+  http_response_code(403);
+  echo json_encode(['success' => false, 'message' => 'Origin nicht erlaubt']);
+  exit;
 }
 
-// Daten vorbereiten
+// Preflight-Handling
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+  header("Access-Control-Allow-Methods: POST, OPTIONS");
+  header("Access-Control-Allow-Headers: Content-Type");
+  exit;
+}
+
+header("Content-Type: application/json");
+
+// Nur POST zulassen
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+  http_response_code(405);
+  echo json_encode(['success' => false, 'message' => 'Nur POST erlaubt']);
+  exit;
+}
+
+// JSON-Daten einlesen
+$data = json_decode(file_get_contents("php://input"), true);
+
+if (
+  !$data ||
+  !isset($data['email']) ||
+  !isset($data['lastName']) ||
+  !isset($data['salutation'])
+) {
+  http_response_code(400);
+  echo json_encode(['success' => false, 'message' => 'Ungültige Daten']);
+  exit;
+}
+
+// 🔎 Daten vorbereiten
 $email = $data['email'];
 $salutation = strtolower($data['salutation']) === 'herr' ? 'Sehr geehrter Herr' : 'Sehr geehrte Frau';
 $lastName = $data['lastName'] ?? '';
@@ -20,13 +54,12 @@ $city = $data['city'] ?? '';
 $externalId = $data['immobilienId'] ?? '';
 $numberOfRooms = $data['numberOfRooms'] ?? '';
 $propertyType = $data['immobilienTyp'] ?? '';
-$marketingType = $data['marketingType'] ?? ''; // z.B. "Kauf" oder "Miete"
+$marketingType = $data['marketingType'] ?? '';
 
-// Absender & Betreff
 $from = "info@hilgert-immobilien.de";
 $subject = "Exposé Anfrage für Objekt: $externalId";
 
-// Nachricht
+// 📨 HTML-Mail-Text
 $message = "
 <html>
 <head>
@@ -83,9 +116,8 @@ $headers .= "Content-type: text/html; charset=UTF-8\r\n";
 $headers .= "From: Hilgert Immobilien <{$from}>\r\n";
 $headers .= "Reply-To: {$from}\r\n";
 
-// Versand
+// Mail versenden
 $success = mail($email, $subject, $message, $headers);
 
-// Antwort zurückgeben
 echo json_encode(['success' => $success]);
 ?>

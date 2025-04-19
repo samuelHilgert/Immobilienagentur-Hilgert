@@ -1,14 +1,23 @@
 <?php
+$allowedOrigins = [
+    'https://hilgert-immobilien.de',
+    'https://www.hilgert-immobilien.de',
+    'http://localhost:4200'
+];
+
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+
+if (in_array($origin, $allowedOrigins)) {
+    header("Access-Control-Allow-Origin: $origin");
+}
+
 switch ($_SERVER['REQUEST_METHOD']) {
     case ("OPTIONS"):
-        header("Access-Control-Allow-Origin: https://hilgert-immobilien.de");
         header("Access-Control-Allow-Methods: POST");
-        header("Access-Control-Allow-Headers: content-type");
+        header("Access-Control-Allow-Headers: Content-Type");
         exit;
 
     case ("POST"):
-        header("Access-Control-Allow-Origin: https://hilgert-immobilien.de");
-
         $json = file_get_contents('php://input');
         $params = json_decode($json);
 
@@ -26,7 +35,6 @@ switch ($_SERVER['REQUEST_METHOD']) {
         $immobilienId = $params->immobilienId ?? '';
         $immobilienTyp = $params->immobilienTyp ?? '';
 
-        // Neue Felder
         $acceptedTerms = $params->acceptedTerms ? 'Ja' : 'Nein';
         $acceptedWithdrawal = $params->acceptedWithdrawal ? 'Ja' : 'Nein';
         $acceptedPrivacy = $params->acceptedPrivacy ? 'Ja' : 'Nein';

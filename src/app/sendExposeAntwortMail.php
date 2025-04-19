@@ -1,5 +1,29 @@
 <?php
-header("Access-Control-Allow-Origin: *");
+// ✅ Nur bekannte Domains erlauben
+$allowedOrigins = [
+  'https://hilgert-immobilien.de',
+  'https://www.hilgert-immobilien.de',
+  'http://localhost:4200'
+];
+
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+
+if (in_array($origin, $allowedOrigins)) {
+  header("Access-Control-Allow-Origin: $origin");
+  header("Access-Control-Allow-Credentials: true");
+} else {
+  http_response_code(403);
+  echo json_encode(['success' => false, 'message' => 'Origin nicht erlaubt']);
+  exit;
+}
+
+// 👉 Preflight-Request abfangen
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+  header("Access-Control-Allow-Methods: POST, OPTIONS");
+  header("Access-Control-Allow-Headers: Content-Type");
+  exit;
+}
+
 header("Content-Type: application/json");
 
 // JSON einlesen
