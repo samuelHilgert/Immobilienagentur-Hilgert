@@ -1,18 +1,17 @@
-// ✅ NEUES INTERFACE für Bewertungen
-import { Timestamp } from 'firebase/firestore';
+// ✅ NEUES INTERFACE für Feedbacks
 
 export interface Feedback {
   bewertungId: string;
+  feedbackCustomerId: string;
   publicAccepted: boolean;
   text: string;
   antwort?: string;
   rating: number;
   autorName: string;
   autorEmail: string;
-  Customer?: Boolean;
-  customerId?: string;
   bonus?: string[];
   feedbackPaymentConditionAccepted: boolean;
-feedbackAdvertiseAccepted: boolean;
-  creationDate: Date | Timestamp;
+  feedbackAdvertiseAccepted: boolean;
+  creationDate?: string;
+  lastModificationDate: string;
 }

@@ -1,0 +1,9 @@
+{
+    "/api": {
+      "target": "https://hilgert-immobilien.de",
+      "secure": false,
+      "changeOrigin": true,
+      "logLevel": "debug"
+    }
+  }
+  

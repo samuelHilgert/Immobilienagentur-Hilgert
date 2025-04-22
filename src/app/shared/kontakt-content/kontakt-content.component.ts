@@ -42,12 +42,11 @@ export class KontaktContentComponent implements OnInit {
       lastName: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
       phone: [''],
-      mobile: [''],
       company: [''],
       subject: ['', Validators.required],
       message: ['', Validators.required],
       acceptedPrivacy: [false, Validators.requiredTrue]
-    });
+    });    
     
     this.registerSocialIcons();
   }
@@ -84,11 +83,17 @@ export class KontaktContentComponent implements OnInit {
     this.isSubmitting = true;
   
     const formData: KontaktAnfrage = {
-      ...this.contactForm.value,
-      customerId: '',
-      indexId: 0,   
-      creationDate: ''
-    };
+      contactCustomerId: '', // wird im Service ersetzt
+      salutation: this.contactForm.value.salutation,
+      company: this.contactForm.value.company || '',
+      firstName: this.contactForm.value.firstName,
+      lastName: this.contactForm.value.lastName,
+      email: this.contactForm.value.email,
+      phone: this.contactForm.value.phone || '',
+      subject: this.contactForm.value.subject,
+      message: this.contactForm.value.message,
+      acceptedPrivacy: this.contactForm.value.acceptedPrivacy,
+    };    
   
     try {
       const result = await this.kontaktAnfrageService.submitKontaktAnfrage(formData);

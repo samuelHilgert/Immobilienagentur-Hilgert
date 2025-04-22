@@ -1,15 +1,18 @@
 export interface KontaktAnfrage {
-  customerId: string;
-  indexId: number;
+  contactCustomerId: string;
+
   salutation: string;
+  company?: string;
+
   firstName: string;
   lastName: string;
-  company?: string;
+
   email: string;
   phone: string;
-  mobile: string;
+
   subject: string;
   message: string;
+
   acceptedPrivacy: boolean;
   creationDate?: string;
 }

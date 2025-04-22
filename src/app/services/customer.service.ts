@@ -8,28 +8,32 @@ import {
 import { initializeApp } from 'firebase/app';
 import { environment } from '../../environments/environments';
 import { Customer } from '../models/customer.model';
+import { prospectiveBuyer } from '../models/prospectiveBuyer.model';
 
+type FullCustomer = Customer & { buyerData?: prospectiveBuyer };
 @Injectable({
   providedIn: 'root'
 })
+
+
 export class CustomerService {
+
   private app = initializeApp(environment.firebase);
   private db = getFirestore(this.app);
 
   constructor() {}
 
   // Neuen Kunden speichern oder bestehenden aktualisieren
-  async saveCustomer(customer: Customer): Promise<{ success: boolean; id?: string; error?: any }> {
-    try {
-      const customerRef = doc(this.db, 'customers', customer.customerId); // 🔑 docId wird hier erzwungen
-      await setDoc(customerRef, customer, { merge: true });
-  
-      return { success: true, id: customer.customerId };
-    } catch (error) {
-      console.error('Fehler beim Speichern des Kunden:', error);
-      return { success: false, error };
-    }
+async saveCustomer(customer: FullCustomer): Promise<{ success: boolean; id?: string; error?: any }> {
+  try {
+    const customerRef = doc(this.db, 'customers', customer.customerId);
+    await setDoc(customerRef, JSON.parse(JSON.stringify(customer)), { merge: true }); // 🔐 entfernt undefined/null
+    return { success: true, id: customer.customerId };
+  } catch (error) {
+    console.error('Fehler beim Speichern des Kunden:', error);
+    return { success: false, error };
   }
+}
   
   // Falls du Kunden explizit mit einer neuen ID erzeugen willst
   async createEmptyCustomerId(): Promise<string> {
@@ -38,22 +42,24 @@ export class CustomerService {
   }  
 
   // Einzelnen Kunden abrufen
-  async getCustomer(customerId: string): Promise<Customer | null> {
-    try {
-      const customerRef = doc(this.db, 'customers', customerId);
-      const docSnap = await getDoc(customerRef);
-
-      if (docSnap.exists()) {
-        return docSnap.data() as Customer;
-      } else {
-        console.warn('Kunde nicht gefunden');
-        return null;
-      }
-    } catch (error) {
-      console.error('Fehler beim Abrufen des Kunden:', error);
-      return null;
-    }
+  async getCustomer(id: string): Promise<Customer | null> {
+const ref = doc(this.db, 'customers', id);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) return null;
+  
+    const data = snap.data();
+  
+    // Optional: Logging
+    console.log('📦 Geladener Kunde:', data);
+  
+    // Falls buyerData fehlt, initialisiere es als leeres Objekt
+    if (!data['buyerData']) {
+      data['buyerData'] = {};
+    }    
+  
+    return data as Customer;
   }
+  
 
   // Alle Kunden abrufen
   async getAllCustomers(): Promise<Customer[]> {
@@ -61,17 +67,28 @@ export class CustomerService {
       const customersRef = collection(this.db, 'customers');
       const snapshot = await getDocs(customersRef);
       const customers: Customer[] = [];
-
+  
       snapshot.forEach(doc => {
-        customers.push({ ...(doc.data() as Customer), customerId: doc.id });
+        const data = doc.data();
+  
+        // 🛡️ Sicherstellen, dass buyerData und angefragteImmobilienIds vorhanden sind
+        if (!data['buyerData']) {
+          data['buyerData'] = {};
+        }
+  
+        if (!Array.isArray(data['buyerData'].angefragteImmobilienIds)) {
+          data['buyerData'].angefragteImmobilienIds = [];
+        }
+  
+        customers.push({ ...(data as Customer), customerId: doc.id });
       });
-
+  
       return customers;
     } catch (error) {
       console.error('Fehler beim Abrufen der Kunden:', error);
       return [];
     }
-  }
+  }  
 
   // Kunde aktualisieren
   async updateCustomer(customerId: string, data: Partial<Customer>): Promise<{ success: boolean; error?: any }> {

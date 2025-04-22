@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterLink, RouterModule } from '@angular/router';
-import { Customer, CustomerRole } from '../../../models/customer.model';
+import { CreationSource, Customer, CustomerRole } from '../../../models/customer.model';
 import { CustomerService } from '../../../services/customer.service';
 import { MATERIAL_MODULES } from '../../../shared/material-imports';
 
@@ -36,7 +36,7 @@ export class KundeAnlegenComponent implements OnInit {
       lastName: [customer.lastName],
       street: [customer.street],
       houseNumber: [customer.houseNumber],
-      postalCode: [customer.postalCode],
+      postalCode: [customer.zip],
       city: [customer.city],
       email: [customer.email, Validators.email],
       phone: [customer.phone],
@@ -44,6 +44,7 @@ export class KundeAnlegenComponent implements OnInit {
       roles: [customer.roles],
       profession: [customer.profession],
       birthday: [customer.birthday],
+      source: [customer.source],
     });
   }
 
@@ -56,7 +57,7 @@ export class KundeAnlegenComponent implements OnInit {
       lastName: '',
       street: '',
       houseNumber: '',
-      postalCode: '',
+      zip: '',
       city: '',
       email: '',
       phone: '',
@@ -64,6 +65,7 @@ export class KundeAnlegenComponent implements OnInit {
       roles: [],
       profession: '',
       birthday: '',
+      source: CreationSource.Manuell,
       creationDate: '',
       lastModificationDate: '',
     };

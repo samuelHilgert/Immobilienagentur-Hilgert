@@ -1,30 +1,31 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Immobilie } from '../../models/immobilie.model';
 import { CommonModule } from '@angular/common';
 import { MATERIAL_MODULES } from '../material-imports';
-import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import {
   FormBuilder,
   FormControl,
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { WiderrufComponent } from '../../impressum/widerruf/widerruf.component';
 import { AgbComponent } from '../../impressum/agb/agb.component';
 import { DatenschutzComponent } from '../../impressum/datenschutz/datenschutz.component';
 import { ExposeAnfrageService } from '../../services/expose-anfrage.service';
-import { ExposeAnfrage } from '../../models/expose-anfrage.model';
 import { SuccessMsgDialogComponent } from '../success-msg-dialog/success-msg-dialog.component';
 import { ActivatedRoute } from '@angular/router';
 import { ImmobilienService } from '../../services/immobilien.service';
 import { MediaAttachment } from '../../models/media.model';
 import { getAuth, signInAnonymously } from 'firebase/auth';
+import { collection, doc } from 'firebase/firestore';
+import { MatDialog } from '@angular/material/dialog';
+import { ExposeAnfrageDto } from '../../models/expose-anfrage.model';
 
 @Component({
   selector: 'app-expose-anfordern',
   standalone: true,
-  imports: [CommonModule, MATERIAL_MODULES, HttpClientModule], // ✅ HttpClientModule importieren
+  imports: [CommonModule, MATERIAL_MODULES, HttpClientModule],
   templateUrl: './expose-anfordern.component.html',
   styleUrl: './expose-anfordern.component.scss',
 })
@@ -111,26 +112,42 @@ export class ExposeAnfordernComponent implements OnInit{
     this.isSubmitting = true;
   
     try {
-      // 🧠 STELLE SICHER: User ist eingeloggt (auch anonym)
       const auth = getAuth();
       if (!auth.currentUser) {
         const cred = await signInAnonymously(auth);
         console.log('✅ Anonym eingeloggt vor Anfrage:', cred.user.uid);
       }
   
-      const formData: ExposeAnfrage = {
-        ...this.contactForm.value,
-        immobilienId: this.immobilie.externalId,
-        immobilienTyp: this.immobilie.propertyType,
+      // 🔑 Eindeutige ID für Kunde + Anfrage
+      const sharedRef = doc(collection(this.exposeAnfrageService.firestore, 'customers'));
+      const sharedId = sharedRef.id;
+  
+      const dto: ExposeAnfrageDto = {
+        requestCustomerId: sharedId,
+        requestPropertyId: this.immobilie?.externalId ?? '',
+        salutation: this.contactForm.value.salutation,
+        company: this.contactForm.value.company || '',
+        firstName: this.contactForm.value.firstName,
+        lastName: this.contactForm.value.lastName,
+        street: this.contactForm.value.street,
+        houseNumber: this.contactForm.value.houseNumber,
+        zip: this.contactForm.value.zip,
+        city: this.contactForm.value.city,
+        email: this.contactForm.value.email,
+        phone: this.contactForm.value.phone,
+        message: this.contactForm.value.message,
+        acceptedTerms: this.contactForm.value.acceptedTerms,
+        acceptedWithdrawal: this.contactForm.value.acceptedWithdrawal,
+        acceptedPrivacy: this.contactForm.value.acceptedPrivacy,
       };
   
-      await this.exposeAnfrageService.submitExposeAnfrage(formData);
+      await this.exposeAnfrageService.submitExposeAnfrage(dto);
   
       this.dialog.open(SuccessMsgDialogComponent, {
         panelClass: 'success-dialog',
         width: '350px',
       });
-  
+
       this.resetForm();
       this.formSubmitted = false;
     } catch (err) {
@@ -139,37 +156,6 @@ export class ExposeAnfordernComponent implements OnInit{
       this.isSubmitting = false;
     }
   }  
-
-  resetForm(): void {
-    this.contactForm.reset({
-      salutation: null,
-      firstName: '',
-      lastName: '',
-      street: '',
-      houseNumber: '',
-      zip: '',
-      city: '',
-      email: '',
-      phone: '',
-      company: '',
-      message: '',
-      acceptedTerms: false,
-      acceptedWithdrawal: false,
-      acceptedPrivacy: false,
-    });
-  
-    this.contactForm.markAsPristine();
-    this.contactForm.markAsUntouched();
-  }
-  
-
-  get checkboxGroupValid(): boolean {
-    return (
-      this.contactForm.get('acceptedTerms')?.value &&
-      this.contactForm.get('acceptedWithdrawal')?.value &&
-      this.contactForm.get('acceptedPrivacy')?.value
-    );
-  }
 
   openWiderruf(): void {
     this.dialog.open(WiderrufComponent, {
@@ -202,7 +188,35 @@ export class ExposeAnfordernComponent implements OnInit{
     }
   }
 
-  // close(): void {
-  //   this.dialogRef.close();
-  // }
+  resetForm(): void {
+    this.contactForm.reset({
+      salutation: null,
+      firstName: '',
+      lastName: '',
+      street: '',
+      houseNumber: '',
+      zip: '',
+      city: '',
+      email: '',
+      phone: '',
+      company: '',
+      message: '',
+      acceptedTerms: false,
+      acceptedWithdrawal: false,
+      acceptedPrivacy: false,
+    });
+
+    this.contactForm.markAsPristine();
+    this.contactForm.markAsUntouched();
+  }
+
+  get checkboxGroupValid(): boolean {
+    return (
+      this.contactForm.get('acceptedTerms')?.value &&
+      this.contactForm.get('acceptedWithdrawal')?.value &&
+      this.contactForm.get('acceptedPrivacy')?.value
+    );
+  }
+  
+
 }

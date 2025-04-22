@@ -1,12 +1,11 @@
 import { Component, Input, SimpleChanges } from '@angular/core';
 import { MATERIAL_MODULES } from '../material-imports';
-import { Feedback } from '../../models/feedback.model';
 import { FeedbackService } from '../../services/feedback.service';
 import { NgIf } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { FeedbackForCashComponent } from './feedback-for-cash/feedback-for-cash.component';
+import { FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
 import { SuccessMsgDialogComponent } from '../success-msg-dialog/success-msg-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+
 @Component({
   selector: 'app-bewerten',
   standalone: true,
@@ -19,38 +18,41 @@ export class BewertenComponent {
   @Input() feedbackPaymentConditionAccepted: boolean = false;
   @Input() feedbackAdvertiseAccepted: boolean = false;
 
-  feedback: Feedback = {
-    bewertungId: '',
-    publicAccepted: false,
-    text: '',
-    rating: 5,
-    autorName: '',
-    autorEmail: '',
-    bonus: [],
-    feedbackPaymentConditionAccepted: false,
-    feedbackAdvertiseAccepted: false,
-    creationDate: new Date(),
-  };
+  feedbackForm: FormGroup;
   hoverRating = 0;
-
   successMessage = '';
   errorMessage = '';
 
   constructor(
-    private FeedbackService: FeedbackService,
+    private feedbackService: FeedbackService,
+    private fb: FormBuilder,
     private dialog: MatDialog
-  ) {}
+  ) {
+    this.feedbackForm = this.fb.group({
+      publicAccepted: [false, Validators.requiredTrue],
+      text: ['', [Validators.required]],
+      rating: [5, Validators.required],
+      autorName: ['', [Validators.required, Validators.minLength(3)]],
+      autorEmail: ['', [Validators.required, Validators.email]],
+      bonus: [[]],
+      feedbackPaymentConditionAccepted: [false, Validators.requiredTrue],
+      feedbackAdvertiseAccepted: [false, Validators.requiredTrue],
+    });
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['bonus']) {
-      this.feedback.bonus = this.bonus;
+      this.feedbackForm.patchValue({ bonus: this.bonus });
     }
     if (changes['feedbackPaymentConditionAccepted']) {
-      this.feedback.feedbackPaymentConditionAccepted =
-        this.feedbackPaymentConditionAccepted;
+      this.feedbackForm.patchValue({
+        feedbackPaymentConditionAccepted: this.feedbackPaymentConditionAccepted,
+      });
     }
     if (changes['feedbackAdvertiseAccepted']) {
-      this.feedback.feedbackAdvertiseAccepted = this.feedbackAdvertiseAccepted;
+      this.feedbackForm.patchValue({
+        feedbackAdvertiseAccepted: this.feedbackAdvertiseAccepted,
+      });
     }
   }
 
@@ -58,31 +60,34 @@ export class BewertenComponent {
     this.successMessage = '';
     this.errorMessage = '';
 
+    if (this.feedbackForm.invalid) {
+      this.errorMessage = 'Bitte füllen Sie alle Pflichtfelder korrekt aus.';
+      return;
+    }
+
     try {
-      const result = await this.FeedbackService.saveBewertung(this.feedback);
+      const feedback = this.feedbackForm.value;
+
+      const result = await this.feedbackService.saveBewertung(feedback);
       if (result.success) {
         this.successMessage = 'Vielen Dank für Ihre Bewertung!';
 
-        // ✅ Öffne Success-Dialog
         this.dialog.open(SuccessMsgDialogComponent, {
           width: '400px',
           autoFocus: false,
           disableClose: true,
         });
 
-        // Optional: Feedback zurücksetzen
-        this.feedback = {
-          bewertungId: '',
+        this.feedbackForm.reset({
+          publicAccepted: false,
           text: '',
           rating: 5,
           autorName: '',
           autorEmail: '',
           bonus: [],
-          publicAccepted: false,
           feedbackPaymentConditionAccepted: false,
           feedbackAdvertiseAccepted: false,
-          creationDate: new Date(),
-        };
+        });
       } else {
         this.errorMessage = 'Fehler beim Speichern.';
       }
@@ -93,6 +98,6 @@ export class BewertenComponent {
   }
 
   setRating(star: number) {
-    this.feedback.rating = star;
+    this.feedbackForm.patchValue({ rating: star });
   }
 }

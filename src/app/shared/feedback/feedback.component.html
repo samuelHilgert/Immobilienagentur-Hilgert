@@ -3,26 +3,19 @@
 
   <div class="feedback-wrapper">
     <form
+      [formGroup]="feedbackForm"
       (ngSubmit)="submitBewertung()"
-      #feedbackForm="ngForm"
       class="bewerten-form"
     >
-      <input type="hidden" name="praemie" [ngModel]="feedback.bonus" />
-
       <mat-form-field appearance="fill">
         <input
           matInput
           placeholder="Ihr Name"
-          name="autorName"
-          [(ngModel)]="feedback.autorName"
-          required
-          pattern="^[A-Za-zÄÖÜäöüß]{2,}\s[A-Za-zÄÖÜäöüß]{2,}$"
-          #autorNameInput="ngModel"
+          formControlName="autorName"
           maxlength="100"
         />
-        <mat-error *ngIf="autorNameInput.invalid && autorNameInput.touched">
-          Bitte geben Sie Vor- und Nachnamen ein (jeweils mindestens 2
-          Buchstaben).
+        <mat-error *ngIf="feedbackForm.get('autorName')?.invalid && feedbackForm.get('autorName')?.touched">
+          Bitte geben Sie Vor- und Nachnamen ein
         </mat-error>
       </mat-form-field>
 
@@ -31,15 +24,10 @@
           matInput
           type="email"
           placeholder="Ihre E-Mail (wird nicht angezeigt)"
-          name="autorEmail"
-          [(ngModel)]="feedback.autorEmail"
-          #emailRef="ngModel"
-          required
-          email
-          pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+          formControlName="autorEmail"
           maxlength="100"
         />
-        <mat-error *ngIf="emailRef.invalid && emailRef.touched">
+        <mat-error *ngIf="feedbackForm.get('autorEmail')?.invalid && feedbackForm.get('autorEmail')?.touched">
           Bitte geben Sie eine gültige E-Mail-Adresse ein
         </mat-error>
       </mat-form-field>
@@ -49,55 +37,57 @@
           class="bewertungstextArea"
           matInput
           placeholder="Ihre Bewertung"
-          name="text"
-          [(ngModel)]="feedback.text"
-          required
+          formControlName="text"
           rows="4"
           maxlength="3000"
         ></textarea>
-        <mat-hint>{{ feedback.text.length || 0 }} / 3000</mat-hint>
+        <mat-hint>{{ feedbackForm.get('text')?.value?.length || 0 }} / 3000</mat-hint>
       </mat-form-field>
 
+      <!-- Sterne-Bewertung -->
       <div class="sterne-bewertung" (mouseleave)="hoverRating = 0">
         <ng-container *ngFor="let star of [1, 2, 3, 4, 5]">
           <mat-icon
             (click)="setRating(star)"
             (mouseenter)="hoverRating = star"
-            [class.filled]="star <= (hoverRating || feedback.rating || 5)"
+            [class.filled]="star <= (hoverRating || feedbackForm.get('rating')?.value || 5)"
           >
-            {{
-              star <= (hoverRating || feedback.rating || 5)
-                ? "star"
-                : "star_border"
-            }}
+            {{ star <= (hoverRating || feedbackForm.get('rating')?.value || 5) ? "star" : "star_border" }}
           </mat-icon>
         </ng-container>
       </div>
 
-      <p>Bewertung: {{ feedback.rating }} von 5 Sternen</p>
+      <p>Bewertung: {{ feedbackForm.get('rating')?.value }} von 5 Sternen</p>
 
       <div>
         <p>Wo dürfen wir die Bewertung hochladen?</p>
       </div>
 
+      <!-- Zustimmung -->
       <div class="quelle-checkboxes">
         <label>
-          <input
-            type="checkbox"
-            [(ngModel)]="feedback.publicAccepted"
-            name="publicAccepted"
-            required
-          />
+          <input type="checkbox" formControlName="publicAccepted" />
           Ich bin einverstanden, dass meine Bewertung zu Werbezwecken z.B. auf
           der Homepage verwendet werden darf.
         </label>
       </div>
 
+      <label>
+        <input type="checkbox" formControlName="feedbackPaymentConditionAccepted" />
+        Ich akzeptiere die Bedingungen zur Prämie.
+      </label>
+
+      <label>
+        <input type="checkbox" formControlName="feedbackAdvertiseAccepted" />
+        Ich stimme zu, dass meine Bewertung zu Werbezwecken veröffentlicht werden darf.
+      </label>
+
+      <!-- Absenden -->
       <button
         mat-raised-button
         color="primary"
         type="submit"
-        [disabled]="!feedbackForm.form.valid"
+        [disabled]="feedbackForm.invalid"
       >
         Absenden
       </button>
@@ -106,19 +96,20 @@
       <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
     </form>
 
+    <!-- Vorschau -->
     <div class="content-left">
       <h3>Ihre Vorschau</h3>
 
       <div
         class="review-item preview"
-        *ngIf="feedback.text || feedback.autorName || feedback.rating"
+        *ngIf="feedbackForm.get('text')?.value || feedbackForm.get('autorName')?.value"
       >
         <div class="review-header">
           <div class="review-stars">
             <span
               class="star"
               *ngFor="let star of [1, 2, 3, 4, 5]"
-              [class.filled]="star <= (feedback.rating || 0)"
+              [class.filled]="star <= (feedbackForm.get('rating')?.value || 0)"
             >
               ★
             </span>
@@ -127,19 +118,18 @@
           <div class="reviewer-info">
             <span class="reviewer-name">
               {{
-                feedback.autorName
-                  ? feedback.autorName.split(" ")[0].charAt(0).toUpperCase() +
-                    ". " +
-                    feedback.autorName.split(" ")[1]
-                  : "A. Mustermann"
+                feedbackForm.get('autorName')?.value
+                  ? feedbackForm.get('autorName')?.value.split(' ')[0].charAt(0).toUpperCase() +
+                    '. ' + feedbackForm.get('autorName')?.value.split(' ')[1]
+                  : 'A. Mustermann'
               }}
             </span>
-            <span class="review-date">{{ "Heute" }}</span>
+            <span class="review-date">Heute</span>
           </div>
         </div>
 
         <p class="review-text">
-          {{ feedback.text || "Ihre Bewertung erscheint hier …" }}
+          {{ feedbackForm.get('text')?.value || "Ihre Bewertung erscheint hier …" }}
         </p>
       </div>
     </div>

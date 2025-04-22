@@ -1,22 +1,27 @@
-export interface ExposeAnfrage {
-    customerId: string;
-    indexId: number; 
+export interface ExposeAnfrageDto {
+    requestCustomerId: string;
+    
     salutation: string;
+    company?: string;
+
     firstName: string;
     lastName: string;
     street: string;
     houseNumber: string;
     zip: string;
     city: string;
+
     email: string;
     phone: string;
-    company?: string;
+
     message: string;
+
     acceptedTerms: boolean;
     acceptedWithdrawal: boolean;
     acceptedPrivacy: boolean;
-    immobilienId: string;
-    immobilienTyp: string;
+
+    requestPropertyId: string;
+    
     creationDate?: string;
   }
   

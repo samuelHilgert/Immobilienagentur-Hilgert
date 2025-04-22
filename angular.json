@@ -70,7 +70,8 @@
               "buildTarget": "Immobilien-Hilgert:build:production"
             },
             "development": {
-              "buildTarget": "Immobilien-Hilgert:build:development"
+              "buildTarget": "Immobilien-Hilgert:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"

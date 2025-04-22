@@ -42,7 +42,7 @@ export class BewertungenComponent implements OnInit {
           ? `${parts[0].charAt(0)}. ${parts.slice(1).join(' ')}`
           : parts[0];
       })(),
-      date: (f.creationDate instanceof Date ? f.creationDate : f.creationDate?.toDate?.())?.toLocaleDateString('de-DE') ?? 'Datum unbekannt',
+      date: f.creationDate ? new Date(f.creationDate).toLocaleDateString('de-DE') : 'Datum unbekannt',
       stars: f.rating,
       text: f.text
     }));

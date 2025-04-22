@@ -38,6 +38,12 @@
         <th mat-header-cell *matHeaderCellDef>Telefon</th>
         <td mat-cell *matCellDef="let customer">{{ customer.phone }}</td>
       </ng-container>
+
+            <!-- Mobil -->
+            <ng-container matColumnDef="mobile">
+              <th mat-header-cell *matHeaderCellDef>Mobil</th>
+              <td mat-cell *matCellDef="let customer">{{ customer.mobile }}</td>
+            </ng-container>
   
       <!-- Stadt -->
       <ng-container matColumnDef="city">
@@ -50,6 +56,12 @@
         <th mat-header-cell *matHeaderCellDef>Rollen</th>
         <td mat-cell *matCellDef="let customer">{{ customer.roles.join(', ') }}</td>
       </ng-container>
+
+      <!-- Quelle -->
+      <ng-container matColumnDef="source">
+        <th mat-header-cell *matHeaderCellDef>Quelle</th>
+        <td mat-cell *matCellDef="let customer">{{ customer.source }}</td>
+      </ng-container>
   
       <!-- Erstellungsdatum -->
       <ng-container matColumnDef="creationDate">
@@ -59,7 +71,7 @@
   
       <!-- Header- und Datenzeilen -->
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="goToDetails(row.customerId)"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="goToCustomerDetails(row.customerId)"></tr>
     </table>
   </main>
   
