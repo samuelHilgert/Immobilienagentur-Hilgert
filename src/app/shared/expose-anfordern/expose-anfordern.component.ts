@@ -122,6 +122,7 @@ export class ExposeAnfordernComponent implements OnInit{
       const sharedRef = doc(collection(this.exposeAnfrageService.firestore, 'customers'));
       const sharedId = sharedRef.id;
   
+      // 🧾 Anfrage-Daten vorbereiten
       const dto: ExposeAnfrageDto = {
         requestCustomerId: sharedId,
         requestPropertyId: this.immobilie?.externalId ?? '',
@@ -141,13 +142,15 @@ export class ExposeAnfordernComponent implements OnInit{
         acceptedPrivacy: this.contactForm.value.acceptedPrivacy,
       };
   
-      await this.exposeAnfrageService.submitExposeAnfrage(dto);
+      // 📤 Anfrage absenden
+      await this.exposeAnfrageService.submitExposeAnfrage(dto, sharedId);
   
+      // ✅ Erfolgsmeldung anzeigen
       this.dialog.open(SuccessMsgDialogComponent, {
         panelClass: 'success-dialog',
         width: '350px',
       });
-
+  
       this.resetForm();
       this.formSubmitted = false;
     } catch (err) {

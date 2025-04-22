@@ -24,16 +24,18 @@ export class CustomerService {
   constructor() {}
 
   // Neuen Kunden speichern oder bestehenden aktualisieren
-async saveCustomer(customer: FullCustomer): Promise<{ success: boolean; id?: string; error?: any }> {
-  try {
-    const customerRef = doc(this.db, 'customers', customer.customerId);
-    await setDoc(customerRef, JSON.parse(JSON.stringify(customer)), { merge: true }); // 🔐 entfernt undefined/null
-    return { success: true, id: customer.customerId };
-  } catch (error) {
-    console.error('Fehler beim Speichern des Kunden:', error);
-    return { success: false, error };
-  }
-}
+  async saveCustomer(customer: FullCustomer): Promise<{ success: boolean; id?: string; error?: any }> {
+    try {
+      const id = customer.customerId || doc(collection(this.db, 'customers')).id;
+      const customerRef = doc(this.db, 'customers', id);
+      await setDoc(customerRef, JSON.parse(JSON.stringify({ ...customer, customerId: id })), { merge: true });
+  
+      return { success: true, id };
+    } catch (error) {
+      console.error('Fehler beim Speichern des Kunden:', error);
+      return { success: false, error };
+    }
+  }  
   
   // Falls du Kunden explizit mit einer neuen ID erzeugen willst
   async createEmptyCustomerId(): Promise<string> {
@@ -135,26 +137,26 @@ const ref = doc(this.db, 'customers', id);
     return Math.floor(10000 + Math.random() * 90000).toString();
   }
   
-  async generateUniqueCustomerId(): Promise<string> {
-    let uniqueId = '';
-    let exists = true;
+  // async generateUniqueCustomerId(): Promise<string> {
+  //   let uniqueId = '';
+  //   let exists = true;
   
-    const customerRef = collection(this.db, 'customers');
+  //   const customerRef = collection(this.db, 'customers');
   
-    while (exists) {
-      const potentialId = this.generateRandomId();
-      const snapshot = await getDocs(customerRef);
+  //   while (exists) {
+  //     const potentialId = this.generateRandomId();
+  //     const snapshot = await getDocs(customerRef);
   
-      exists = snapshot.docs.some(
-        (doc) => doc.data()['customerId'] === potentialId
-      );
+  //     exists = snapshot.docs.some(
+  //       (doc) => doc.data()['customerId'] === potentialId
+  //     );
   
-      if (!exists) {
-        uniqueId = potentialId;
-      }
-    }
+  //     if (!exists) {
+  //       uniqueId = potentialId;
+  //     }
+  //   }
   
-    return uniqueId;
-  }
+  //   return uniqueId;
+  // }
   
 }

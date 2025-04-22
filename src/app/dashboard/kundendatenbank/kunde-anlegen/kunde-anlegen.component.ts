@@ -25,7 +25,7 @@ export class KundeAnlegenComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
-    this.generatedId = await this.customerService.generateUniqueCustomerId(); // 💡 Hier async
+    this.generatedId = await this.customerService.createEmptyCustomerId();
 
     const customer = this.initCustomer();
 

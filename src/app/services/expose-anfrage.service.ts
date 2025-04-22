@@ -34,32 +34,23 @@ export class ExposeAnfrageService {
   }
 
   async submitExposeAnfrage(
-    anfrage: ExposeAnfrageDto
+    anfrage: ExposeAnfrageDto,
+    sharedId: string
   ): Promise<{ success: boolean; id?: string; error?: any }> {
     try {
-      const sharedRef = doc(collection(this.firestore, 'customers'));
-      const sharedId = sharedRef.id;
-
-      // ⏳ Anfrage vorerst speichern
-      const exposeRef = doc(
-        collection(this.firestore, 'expose-anfragen'),
-        sharedId
-      );
+      const exposeRef = doc(this.firestore, 'expose-anfragen', sharedId);
+      const customerRef = doc(this.firestore, 'customers', sharedId);
+  
+      // ⏳ Expose-Anfrage speichern
       await setDoc(exposeRef, {
         ...anfrage,
         requestCustomerId: sharedId,
         creationDate: new Date().toISOString(),
       });
-
-      // 💡 BuyerData ergänzen (nur bei Interessent)
-      const buyerData: prospectiveBuyer = {
-        angefragteImmobilienIds: [anfrage.requestPropertyId],
-        requestMessage: anfrage.message,
-      };
-
-      // 🧠 Kunde mit buyerData anlegen
+  
+      // 💡 Kunde inkl. BuyerData
       const customer: Customer & { buyerData: prospectiveBuyer } = {
-        customerId: anfrage.requestCustomerId,
+        customerId: sharedId,
         salutation: anfrage.salutation,
         company: anfrage.company,
         firstName: anfrage.firstName,
@@ -77,47 +68,30 @@ export class ExposeAnfrageService {
         source: CreationSource.ExposeAnfrage,
         creationDate: new Date().toISOString(),
         lastModificationDate: new Date().toISOString(),
-
         buyerData: {
           angefragteImmobilienIds: [anfrage.requestPropertyId],
           requestMessage: anfrage.message,
           processStatus: 'Anfrage',
         },
       };
-
-      await setDoc(
-        sharedRef,
-        {
-          ...customer,
-          'buyerData.angefragteImmobilienIds': [anfrage.requestPropertyId],
-          'buyerData.requestMessage': anfrage.message,
-          'buyerData.processStatus': 'Anfrage',
-        },
-        { merge: true }
-      );
-
+  
+      await setDoc(customerRef, customer, { merge: true });
+  
       // 📩 Interne Mail
-      const internalMailEndpoint =
-        'https://hilgert-immobilien.de/sendExposeAnfrageMail.php';
+      const internalMailEndpoint = 'https://hilgert-immobilien.de/sendExposeAnfrageMail.php';
       await this.http.post(internalMailEndpoint, anfrage).toPromise();
-
+  
       // 📩 Automatische Antwort an Kunden
-      const immobilie = await this.immobilienService.getProperty(
-        anfrage.requestPropertyId
-      );
+      const immobilie = await this.immobilienService.getProperty(anfrage.requestPropertyId);
       const mapMarketingType = (code: string) => {
         switch ((code || '').toUpperCase()) {
-          case 'PURCHASE':
-            return 'Kauf';
-          case 'RENT':
-            return 'Miete';
-          case 'LEASEHOLD':
-            return 'Erbpacht';
-          default:
-            return 'Kauf';
+          case 'PURCHASE': return 'Kauf';
+          case 'RENT': return 'Miete';
+          case 'LEASEHOLD': return 'Erbpacht';
+          default: return 'Kauf';
         }
       };
-
+  
       const mailPayload = {
         email: anfrage.email,
         externalId: anfrage.requestPropertyId,
@@ -130,21 +104,18 @@ export class ExposeAnfrageService {
         immobilienTyp: immobilie?.propertyType || '',
         exposePdfUrl: immobilie?.exposePdfUrl || '',
       };
-
+  
       setTimeout(async () => {
         try {
           await this.http
-            .post(
-              'https://hilgert-immobilien.de/sendExposeAntwortMail.php',
-              mailPayload
-            )
+            .post('https://hilgert-immobilien.de/sendExposeAntwortMail.php', mailPayload)
             .toPromise();
         } catch (e) {
           console.error('Fehler beim Senden der Antwortmail', e);
         }
       }, 10000);
-
-      // 🧹 Optional: Anfrage nach Verarbeitung löschen
+  
+      // 🧹 Exposé-Anfrage nach 20s löschen
       setTimeout(async () => {
         try {
           await deleteDoc(exposeRef);
@@ -152,13 +123,13 @@ export class ExposeAnfrageService {
           console.warn('Expose-Anfrage konnte nicht gelöscht werden:', e);
         }
       }, 20000);
-
+  
       return { success: true, id: sharedId };
     } catch (error) {
       console.error('❌ Fehler beim Verarbeiten der Anfrage:', error);
       return { success: false, error };
     }
-  }
+  }  
 
   // 🔐 Nur Admins können alle Anfragen zu einer Immobilie einsehen
   async getAnfragenByImmobilienId(
