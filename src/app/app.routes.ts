@@ -42,6 +42,12 @@ import { KundeDetailsComponent } from './dashboard/kundendatenbank/kunde-details
 import { ExposeAnfragenDatenbankComponent } from './dashboard/immobilien/immobilien-datenbank/expose-anfragen-datenbank/expose-anfragen-datenbank.component';
 import { UmsatzComponent } from './dashboard/umsatz/umsatz.component';
 import { SupportTicketsComponent } from './dashboard/support-tickets/support-tickets.component';
+import { ImmobilienDatenbankComponent } from './dashboard/immobilien/immobilien-datenbank/immobilien-datenbank.component';
+import { PropertyProcessViewComponent } from './dashboard/immobilien/immobilien-datenbank/shared/property-process-view/property-process-view.component';
+import { PropertyFormsSetsComponent } from './dashboard/immobilien/immobilien-datenbank/shared/property-forms-sets/property-forms-sets.component';
+import { PropertyDocsSetsComponent } from './dashboard/immobilien/immobilien-datenbank/shared/property-docs-sets/property-docs-sets.component';
+import { PropertyImagesSetsComponent } from './dashboard/immobilien/immobilien-datenbank/shared/property-images-sets/property-images-sets.component';
+import { PropertyExposeSetsComponent } from './dashboard/immobilien/immobilien-datenbank/shared/property-expose-sets/property-expose-sets.component';
 
 export const routes: Routes = [
   {
@@ -139,6 +145,10 @@ export const routes: Routes = [
             component: ImmobilieAnlegenComponent
           },
           {
+            path: 'immobilie-datenbank',
+            component: ImmobilienDatenbankComponent,
+          },
+          {
             path: 'wohnung-details-form/:externalId',
             component: WohnungDetailsFormComponent,
           },
@@ -151,11 +161,31 @@ export const routes: Routes = [
             component: GrundstueckDetailsFormComponent,
           },      
         ]
-      },   
+      },      
+      {
+        path: 'property-process-view/:externalId',
+        component: PropertyProcessViewComponent
+      },
       {
         path: 'expose-anfragen-datenbank/:externalId',
         component: ExposeAnfragenDatenbankComponent,
-      },        
+      },     
+      {
+        path: 'property-expose-sets/:externalId',
+        component: PropertyExposeSetsComponent
+      },
+      {
+        path: 'property-images-sets/:externalId',
+        component: PropertyImagesSetsComponent
+      },
+      {
+        path: 'property-docs-sets/:externalId',
+        component: PropertyDocsSetsComponent
+      },
+      {
+        path: 'property-forms-sets/:externalId',
+        component: PropertyFormsSetsComponent
+      },
       {
         path: 'suchauftraege',
         component: SuchauftraegeComponent,

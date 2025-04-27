@@ -165,14 +165,14 @@
 
             <p
               class="icon-text"
-              *ngIf="immobilie.propertyStatus !== 'Referenz'"
+              *ngIf="immobilie.propertyStatus !== 'Referenz' && immobilie.propertyStatus !== 'Reserviert'"
             >
               {{ immobilie.value | number : "1.0-0" }}
             </p>
 
             <p
               class="icon-text"
-              *ngIf="immobilie.propertyStatus === 'Referenz'"
+              *ngIf="immobilie.propertyStatus === 'Referenz' || immobilie.propertyStatus === 'Reserviert'"
             >
               Auf Anfrage
             </p>

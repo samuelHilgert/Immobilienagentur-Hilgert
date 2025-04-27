@@ -32,8 +32,8 @@ switch ($_SERVER['REQUEST_METHOD']) {
         $houseNumber = $params->houseNumber ?? '';
         $zip = $params->zip ?? '';
         $city = $params->city ?? '';
-        $immobilienId = $params->immobilienId ?? '';
-        $immobilienTyp = $params->immobilienTyp ?? '';
+        $requestPropertyId = $params->requestPropertyId ?? '';
+        $propertyType = $params->propertyType ?? '';
 
         $acceptedTerms = $params->acceptedTerms ? 'Ja' : 'Nein';
         $acceptedWithdrawal = $params->acceptedWithdrawal ? 'Ja' : 'Nein';
@@ -51,7 +51,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
             $street $houseNumber<br>
             $zip $city<br><br>
             <strong>Immobilie:</strong><br>
-            $immobilienTyp (ID: $immobilienId)<br><br>
+            $propertyType (ID: $requestPropertyId)<br><br>
             <strong>Einverständniserklärungen:</strong><br>
             Ich akzeptiere die allgemeinen Geschäftsbedingungen: $acceptedTerms<br>
             Ich akzeptiere die Widerrufsbelehrung: $acceptedWithdrawal<br>

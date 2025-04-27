@@ -21,12 +21,13 @@ export interface Immobilie {
   lastModificationDate?: string;
 
   // eigene Felder ergänzt, weil wichtig für mich
-  ownerIds: string[]; 
+  ownerIds: string[];
+  extendedExposeAvailable: boolean;
   representingPersonIds: string[]; 
   exposePdfUrl?: string | null;
   propertyType: 'Wohnung' | 'Haus' | 'Grundstück';
   propertyStatus: 'Angebot' | 'Referenz' | 'Reserviert' | 'Bearbeitung';
-  uploadPublicTargets: {
+  uploadPublicTargets: { // wo soll es hochgeladen werden
     homepage: boolean;
     immoScout: boolean;
     facebook: boolean;
@@ -34,7 +35,7 @@ export interface Immobilie {
     newsletter: boolean;
     magazin: boolean;
   };
-  sendCustomerTargets: {
+  sendCustomerTargets: { // für an wen soll es gesendet werden
     investoren: boolean;
     suchende: boolean;
     partner: boolean;

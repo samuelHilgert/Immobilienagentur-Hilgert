@@ -5,7 +5,7 @@ import { Immobilie, WohnungDetails } from '../models/immobilie.model';
 import { firstValueFrom } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { MediaAttachment } from '../models/media.model';
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { getDownloadURL, listAll, ref, uploadBytes } from 'firebase/storage';
 import { doc, updateDoc } from 'firebase/firestore';
 
 @Injectable({
@@ -186,6 +186,20 @@ export class ImmobilienService {
     }
   }
 
+    // Exposé-Formular ruft Immobilie mit WohnungDetails per ID aus Firebase ab
+    async getWohnungById(id: string): Promise<WohnungDetails> {
+      try {
+        const result = await this.getProperty(id); // ✅ nutzt interne Firebase-Methode
+        if (!result || result.success === false) {
+          throw new Error(`Immobilie mit ID ${id} nicht gefunden.`);
+        }
+        return result as WohnungDetails;
+      } catch (error) {
+        console.error('Fehler beim Laden der Immobilie mit ID:', id, error);
+        throw error;
+      }
+    }
+
   // Neue öffentliche Methode, um Medien zu laden
   async getMediaForImmobilie(id: string): Promise<MediaAttachment[]> {
     try {
@@ -298,6 +312,44 @@ export class ImmobilienService {
       return { success: false };
     }
   }
+
+  /**
+ * Prüft, ob ein Objektnachweis im Storage für die angegebene Immobilie existiert.
+ */
+  async checkObjektnachweisExists(externalId: string): Promise<{ exists: boolean; url?: string }> {
+    try {
+      const filePath = `forms/objektnachweis/${externalId}/objektnachweis-${externalId}.pdf`;
+      const fileRef = ref(this.firebaseService.storage, filePath);
+  
+      const url = await getDownloadURL(fileRef);
+      return { exists: true, url };
+    } catch (error) {
+      return { exists: false };
+    }
+  }
+  
+
+/**
+ * Lädt eine PDF-Datei als Objektnachweis hoch und gibt den Download-Link zurück.
+ */
+async uploadObjektnachweis(file: File, externalId: string): Promise<{ success: boolean; url?: string; error?: string }> {
+  if (!file || !externalId) {
+    return { success: false, error: 'Datei oder External ID fehlt' };
+  }
+
+  try {
+    const storagePath = `forms/objektnachweis/${externalId}/objektnachweis-${externalId}.pdf`;
+
+    const storageRef = ref(this.firebaseService.storage, storagePath);
+    const snapshot = await uploadBytes(storageRef, file);
+    const downloadUrl = await getDownloadURL(snapshot.ref);
+
+    return { success: true, url: downloadUrl };
+  } catch (error: any) {
+    console.error('Fehler beim Hochladen des Objektnachweises:', error);
+    return { success: false, error: error.message || 'Unbekannter Fehler' };
+  }
+}
 
   deleteStorageFolder(path: string): Promise<void> {
     return this.firebaseService.deleteStorageFolder(path);
