@@ -41,9 +41,9 @@ export class ExposeAnfrageService {
       const customer = createCustomerFromExposeAnfrage(anfrage, sharedId); // greift auf die factory zu für den Init des Objekts
 
       // 🧠 Nach erfolgreicher Kundenanlage / Anfrage:
-      const inquiryProcessId = sharedId; // kann gleich der Anfrage-ID sein
+      const inquiryProcessId = `${sharedId}_${anfrage.requestPropertyId}`;
 
-      const process = createInitialInquiryProcess(anfrage, sharedId); // greift auf die factory zu für den Init des Objekts
+      const process = createInitialInquiryProcess(anfrage, inquiryProcessId); // greift auf die factory zu für den Init des Objekts
 
       // 🔥 Firestore Save:
       const processRef = doc(
