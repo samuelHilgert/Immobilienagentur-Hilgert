@@ -2,9 +2,15 @@
 
 import { Injectable } from '@angular/core';
 import {
-  getFirestore, collection, doc, setDoc, getDoc, getDocs,
-  updateDoc, deleteDoc
-} from 'firebase/firestore';
+  Firestore,
+  collection,
+  doc,
+  setDoc,
+  getDoc,
+  getDocs,
+  updateDoc,
+  deleteDoc
+} from '@angular/fire/firestore';
 import { initializeApp } from 'firebase/app';
 import { environment } from '../../environments/environments';
 import { Customer } from '../models/customer.model';
@@ -18,10 +24,10 @@ type FullCustomer = Customer & { buyerData?: prospectiveBuyer };
 
 export class CustomerService {
 
-  private app = initializeApp(environment.firebase);
-  private db = getFirestore(this.app);
+  // private app = initializeApp(environment.firebase);
+  // private db = getFirestore(this.app);
 
-  constructor() {}
+  constructor(private db: Firestore) {}
 
   // Neuen Kunden speichern oder bestehenden aktualisieren
   async saveCustomer(customer: FullCustomer): Promise<{ success: boolean; id?: string; error?: any }> {

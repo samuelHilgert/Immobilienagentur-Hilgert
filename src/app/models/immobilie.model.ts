@@ -21,6 +21,7 @@ export interface Immobilie {
   lastModificationDate?: string;
 
   // eigene Felder ergänzt, weil wichtig für mich
+  introNote: string; // Kurzgefasste Objektbeschreibung für Vorstellung
   ownerIds: string[];
   extendedExposeAvailable: boolean;
   representingPersonIds: string[]; 

@@ -48,6 +48,7 @@ import { PropertyFormsSetsComponent } from './dashboard/immobilien/immobilien-da
 import { PropertyDocsSetsComponent } from './dashboard/immobilien/immobilien-datenbank/shared/property-docs-sets/property-docs-sets.component';
 import { PropertyImagesSetsComponent } from './dashboard/immobilien/immobilien-datenbank/shared/property-images-sets/property-images-sets.component';
 import { PropertyExposeSetsComponent } from './dashboard/immobilien/immobilien-datenbank/shared/property-expose-sets/property-expose-sets.component';
+import { ProtocolInquiryPropertyComponent } from './dashboard/immobilien/protocol-inquiry-property/protocol-inquiry-property.component';
 
 export const routes: Routes = [
   {
@@ -196,6 +197,10 @@ export const routes: Routes = [
       {
         path: 'kundendatenbank',
         component: KundendatenbankComponent,
+      },
+      {
+        path: 'protocol-inquiry-property/:customerId/:externalId',
+        component: ProtocolInquiryPropertyComponent,
       },
       {
         path: 'umsatz',

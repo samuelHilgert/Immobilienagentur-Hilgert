@@ -12,7 +12,8 @@ import { CommonModule } from '@angular/common';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSelectModule } from '@angular/material/select';
-import { MatCheckbox } from '@angular/material/checkbox';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 export const MATERIAL_MODULES = [
   MatCardModule,
@@ -30,5 +31,6 @@ export const MATERIAL_MODULES = [
   MatDividerModule,
   ReactiveFormsModule,
   MatSelectModule,
-  MatCheckbox
+  MatCheckboxModule,
+  MatSlideToggleModule
 ];

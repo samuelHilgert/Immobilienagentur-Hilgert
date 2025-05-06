@@ -15,7 +15,7 @@ Disallow: /feedback-for-cash
 Disallow: /dashboard-login
 Disallow: /dashboard
 
-# Dashboard-Unterseiten explizit blockieren
+# Dashboard-Unterseiten
 Disallow: /dashboard/umsatz
 Disallow: /dashboard/kunde-anlegen
 Disallow: /dashboard/kunde-details
@@ -32,7 +32,7 @@ Disallow: /dashboard/werbung
 Disallow: /dashboard/ablage
 Disallow: /dashboard/support-tickets
 
-# Immobilien-Bereich
+# Immobilien-Unterbereiche
 Disallow: /dashboard/immobilien
 Disallow: /dashboard/immobilien/immobilie-anlegen
 Disallow: /dashboard/immobilien/immobilie-datenbank
@@ -41,6 +41,7 @@ Disallow: /dashboard/immobilien/wohnung-details-form
 Disallow: /dashboard/immobilien/haus-details-form
 Disallow: /dashboard/immobilien/grundstueck-details-form
 Disallow: /dashboard/immobilien/immobilien-datenbank/expose-anfragen-datenbank
+Disallow: /dashboard/immobilien/protocol-inquiry-property
 
 # Property-Tools
 Disallow: /dashboard/property-process-view
@@ -49,5 +50,5 @@ Disallow: /dashboard/property-images-sets
 Disallow: /dashboard/property-docs-sets
 Disallow: /dashboard/property-forms-sets
 
-# Optional: No indexing of search results (falls vorhanden)
+# Optional: Keine Indexierung von Suchergebnissen
 Disallow: /*?search=

@@ -12,6 +12,7 @@
         <div class="review-grid">
           <div class="review-pair">
             <div
+            *ngIf="activeReviews[0]"
             class="review-item"
             [ngClass]="{
               fade: true,
@@ -40,6 +41,7 @@
             </div>
 
             <div
+            *ngIf="activeReviews[1]"
             class="review-item"
             [ngClass]="{
               fade: true,

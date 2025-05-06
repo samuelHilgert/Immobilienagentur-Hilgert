@@ -92,10 +92,10 @@
                 <p><strong>Etage:</strong></p>
                 <p>{{ wohnungDetails?.floor }}</p>
               </div>
-              <div class="detail-row" *ngIf="wohnungDetails?.numberOfFloors">
+              <!-- <div class="detail-row" *ngIf="wohnungDetails?.numberOfFloors">
                 <p><strong>Anzahl Etagen:</strong></p>
                 <p>{{ wohnungDetails?.numberOfFloors }}</p>
-              </div>
+              </div> -->
               <div class="detail-row" *ngIf="wohnungDetails?.numberOfBedRooms">
                 <p><strong>Schlafzimmer:</strong></p>
                 <p>{{ wohnungDetails?.numberOfBedRooms }}</p>
@@ -120,27 +120,30 @@
                 <p><strong>Qualität der Ausstattung:</strong></p>
                 <p>{{ interiorQualityLabels[type] || 'Keine Angabe' }}</p>
               </div>
-              <div class="detail-row" *ngIf="wohnungDetails">
+              <!-- <div class="detail-row" *ngIf="wohnungDetails">
                 <p><strong>Letzte Modernisierung/Sanierung:</strong></p>
                 <p>{{ wohnungDetails.lastRefurbishment != null && wohnungDetails.lastRefurbishment !== '' ? wohnungDetails.lastRefurbishment : 'Keine Angabe' }}</p>
-              </div>
-              <div class="detail-row" *ngIf="wohnungDetails?.heatingType as type">
+              </div> -->
+              <!-- NUR ERWEITERTES EXPOSE -->
+              <!-- <div class="detail-row" *ngIf="wohnungDetails?.heatingType as type">
                 <p><strong>Heizungsart:</strong></p>
                 <p>{{ heatingTypeLabels[type] || 'Keine Angabe' }}</p>
               </div>
               <div class="detail-row" *ngIf="wohnungDetails?.firingType as type">
                 <p><strong>Wesentliche Energieträger:</strong></p>
                 <p>{{ firingTypeLabels[type] || 'Keine Angabe' }}</p>
-              </div>
-              <div class="detail-row" *ngIf="!wohnungDetails?.constructionYearUnknown">
+              </div> -->
+              <!-- <div class="detail-row" *ngIf="!wohnungDetails?.constructionYearUnknown">
                 <p><strong>Baujahr:</strong></p>
                 <p>{{ wohnungDetails?.constructionYear }}</p>
-              </div>
-              <div class="detail-row" *ngIf="wohnungDetails?.constructionYearUnknown">
+              </div> -->
+              <!-- <div class="detail-row" *ngIf="wohnungDetails?.constructionYearUnknown">
                 <p><strong>Baujahr:</strong></p>
                 <p>Baujahr unbekannt</p>
-              </div>
-              <div class="detail-row" *ngIf="wohnungDetails?.handicappedAccessible as type">
+              </div> -->
+                            <!-- NUR ERWEITERTES EXPOSE -->
+
+              <!-- <div class="detail-row" *ngIf="wohnungDetails?.handicappedAccessible as type">
                 <p><strong>Stufenloser Zugang:</strong></p>
                 <p>{{ Yes_No_Labels[type] || 'Keine Angabe' }}</p>
               </div>
@@ -155,11 +158,12 @@
               <div class="detail-row" *ngIf="wohnungDetails?.rented === 'YES'">
                 <p><strong>Mieteinnahmen pro Monat:</strong></p>
                 <p>{{ wohnungDetails?.rentalIncome }} €</p>
-              </div>
+              </div> -->
             </div>
 
+            <!-- NUR ERWEITERTES EXPOSE -->
             <!-- Energieausweis Skala -->
-            <div class="energiewert-wrapper" *ngIf="wohnung.thermalCharacteristic">
+            <!-- <div class="energiewert-wrapper" *ngIf="wohnung.thermalCharacteristic">
               <div class="detail-row"><p><strong>Energiewert:</strong></p></div>
               <div class="spacer-m"></div>
               <div class="detail-row" *ngIf="wohnung?.buildingEnergyRatingType as type">
@@ -170,50 +174,43 @@
                 [energyValue]="wohnung?.thermalCharacteristic"
                 [ausweistyp]="wohnung?.buildingEnergyRatingType"
               ></app-energieklasse-diagramm>
-            </div>
+            </div> -->
 
 
           </div>
 
           <div class="spacer-m"></div>
           <div class="spacer-m"></div>
-
-          <!-- <div class="notes-wrapper">
-            <div class="detail-row" *ngIf="wohnung.descriptionNote">
-              <p><strong>Objektbeschreibung:</strong> <br/>{{ wohnung?.descriptionNote || 'keine Angabe' }}</p>
-            </div>
-            <div class="detail-row" *ngIf="wohnung.furnishingNote">
-              <p><strong>Ausstattung:</strong> <br/>{{ wohnung?.furnishingNote || 'keine Angabe' }}</p>
-            </div>
-            <div class="detail-row" *ngIf="wohnung.locationNote">
-              <p><strong>Lage:</strong> <br/>{{ wohnung?.locationNote || 'keine Angabe' }}</p>
-            </div>
-            <div class="detail-row" *ngIf="wohnung.otherNote">
-              <p><strong>Sonstiges:</strong> <br/>{{ wohnung?.otherNote || 'keine Angabe' }}</p>
-            </div>
-          </div> -->
 
           <div class="notes-wrapper">
-            <div class="note-textarea" *ngIf="wohnung.descriptionNote">
+
+            <div class="note-textarea" *ngIf="immobilie.introNote">
+              <p><strong>Kurzbeschreibung:</strong></p>
+              <div [innerHTML]="immobilie.introNote | nl2br"></div>
+            </div>
+                        <!-- NUR ERWEITERTES EXPOSE -->
+
+            <!-- <div class="note-textarea" *ngIf="wohnung.descriptionNote">
               <p><strong>Objektbeschreibung:</strong></p>
               <div [innerHTML]="wohnung.descriptionNote | nl2br"></div>
-            </div>
-            <div class="note-textarea" *ngIf="wohnung.furnishingNote">
+            </div> -->
+             
+            <!-- <div class="note-textarea" *ngIf="wohnung.furnishingNote">
               <p><strong>Ausstattung:</strong></p>
               <div [innerHTML]="wohnung.furnishingNote | nl2br"></div>
-            </div>
-            <div class="note-textarea" *ngIf="wohnung.locationNote">
+            </div> -->
+
+            <!-- <div class="note-textarea" *ngIf="wohnung.locationNote">
               <p><strong>Lage:</strong></p>
               <div [innerHTML]="wohnung.locationNote | nl2br"></div>
-            </div>
-            <div class="note-textarea" *ngIf="wohnung.otherNote">
+            </div> -->
+
+            <!-- <div class="note-textarea" *ngIf="wohnung.otherNote">
               <p><strong>Sonstiges:</strong></p>
               <div [innerHTML]="wohnung.otherNote | nl2br"></div>
-            </div>
+            </div> -->
           </div>
           
-          
-
         </div>
         
 <!-- Haus -->
@@ -232,10 +229,10 @@
         <p><strong>Nutzfläche:</strong></p>
         <p>{{ haus.usableFloorSpace }} m²</p>
       </div>
-      <div class="detail-row" *ngIf="haus?.numberOfFloors">
+      <!-- <div class="detail-row" *ngIf="haus?.numberOfFloors">
         <p><strong>Anzahl Etagen:</strong></p>
         <p>{{ haus.numberOfFloors }}</p>
-      </div>
+      </div> -->
       <div class="detail-row" *ngIf="haus?.numberOfBedRooms">
         <p><strong>Schlafzimmer:</strong></p>
         <p>{{ haus.numberOfBedRooms }}</p>
@@ -260,19 +257,20 @@
         <p><strong>Bauphase:</strong></p>
         <p>{{ constructionPhaseLabels[type] || 'Keine Angabe' }}</p>
       </div>
-      <div class="detail-row" *ngIf="haus?.constructionYear">
+      <!-- <div class="detail-row" *ngIf="haus?.constructionYear">
         <p><strong>Baujahr:</strong></p>
         <p>{{ haus.constructionYear }}</p>
-      </div>
+      </div> -->
       <div class="detail-row" *ngIf="haus?.interiorQuality as type">
         <p><strong>Qualität der Ausstattung:</strong></p>
         <p>{{ interiorQualityLabels[type] || 'Keine Angabe' }}</p>
       </div>
-      <div class="detail-row" *ngIf="haus?.lastRefurbishment">
+      <!-- <div class="detail-row" *ngIf="haus?.lastRefurbishment">
         <p><strong>Letzte Modernisierung/ Sanierung:</strong></p>
         <p>{{ haus.lastRefurbishment }}</p>
-      </div>
-      <div class="detail-row" *ngIf="haus?.heatingType as type">
+      </div> -->
+       <!-- NUR ERWEITERTES EXPOSE -->
+      <!-- <div class="detail-row" *ngIf="haus?.heatingType as type">
         <p><strong>Heizungsart:</strong></p>
         <p>{{ heatingTypeLabels[type] || 'Keine Angabe' }}</p>
       </div>
@@ -285,7 +283,7 @@
               : (firingTypeLabels[type] || 'Keine Angabe')
           }}
         </p>
-      </div>
+      </div> -->
       <div class="detail-row" *ngIf="haus?.parkingSpaceType as type">
         <p><strong>Garage/Stellplatz:</strong></p>
         <p>{{ parkingSpaceTypeLabels[type] || 'Keine Angabe' }}</p>
@@ -386,7 +384,7 @@
       </p>
       <div class="spacer-m"></div>
       <div class="spacer-m"></div>
-      <a class="standard-btn" (click)="onExposeRequest()">Erweitertes Exposé anfordern</a>
+      <a class="standard-btn" (click)="onExposeRequest()">Exposé anfordern</a>
 
     </div>
 
@@ -429,34 +427,4 @@
     </div>
   </div>
 
-  <!-- <strong> Sonstiges:</strong> <br />
-              SIE HABEN INTERESSE? <br />
-              Gerne stehen wir Ihnen jederzeit zur Verfügung und helfen Ihnen,
-              wo wir nur können, um Ihnen die angebotene Immobilie so
-              transparent und umfassend wie möglich zu präsentieren. Gerne
-              können wir auch einen Besichtigungstermin vereinbaren. Rufen Sie
-              uns einfach an. Bei bestehendem Interesse können wir Ihnen gerne
-              weitere Unterlagen und Informationen zukommen lassen.<br /><br />
-              Diese Unterlagen liegen schon für Sie bereit: <br />
-              - Ein erweitertes Exposé <br />
-              - Originalgrundrisse, Baubeschreibung und Lageplan <br />
-              - Wohnflächenberechnung <br />
-              - Energieausweis <br />
-              - Überblick laufende Nebenkosten <br />
-              - Bestätigung Baulastenverzeichnis <br />
-              - Mietverträge und Nebenkostenabrechnungen <br />
-              - Mietaufstellungsübersicht <br />
-              - Kautionsübersicht <br />
-              - Grundsteuerbescheid <br />
-              - Aktueller Grundbuchauszug <br />
-              - Wohngebäudeversicherungsschein <br />
-              - Weitere Fotos, insbesondere von den Wohnungen <br /><br />
-              Unsere Zusatzangebote über unsere verlässlichen Partner:<br />
-              - Finanzierungsbeispiel<br />
-              - Kostenfreie und unverbindliche Finanzierungsberatung<br />
-              - Planung & Umsetzung von Reparatur-, Modernisierungs- und
-              Sanierungsmaßnahmen<br />
-              - Kostenfreie Beratung zu Energie- und Modernisierungsmaßnahmen
-              sowie zu staatlichen Zuschüssen
-            </p> -->
 </div>

@@ -78,6 +78,7 @@ body {
   border: 1px solid c.$standard-btn-bg-border;
   cursor: pointer;
   transition: background-color 0.3s ease-in-out;
+  white-space: nowrap;
 
   &:hover {
     background-color: c.$standard-btn-bg;
@@ -93,6 +94,7 @@ body {
   border: 1px solid c.$standard-btn-bg-border;
   cursor: pointer;
   transition: background-color 0.3s ease-in-out;
+  white-space: nowrap;
 
   &:hover {
     color: c.$standard-btn-text-hover;

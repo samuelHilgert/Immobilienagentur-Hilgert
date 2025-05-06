@@ -1,22 +1,13 @@
 import { Injectable } from '@angular/core';
-import {
-  Firestore,
-  collection,
-  addDoc,
-  doc,
-  setDoc,
-} from '@angular/fire/firestore';
+import { Firestore, collection, doc, setDoc } from '@angular/fire/firestore';
 import { HttpClient } from '@angular/common/http';
-import { CustomerService } from './customer.service';
-import {
-  CreationSource,
-  Customer,
-  CustomerRole,
-} from '../models/customer.model';
 import { ImmobilienService } from './immobilien.service';
 import { deleteDoc, getDocs, query, where } from 'firebase/firestore';
-import { prospectiveBuyer } from '../models/prospectiveBuyer.model';
 import { ExposeAnfrageDto } from '../models/expose-anfrage.model';
+import { createInitialInquiryProcess } from '../factories/inquiry-process.factory';
+import { createCustomerFromExposeAnfrage } from '../factories/customer.factory';
+import { mapMarketingType } from '../factories/marketing-type.util';
+import { createExposeAnswerMailPayload } from '../factories/expose-mail.factory';
 
 @Injectable({
   providedIn: 'root',
@@ -26,9 +17,8 @@ export class ExposeAnfrageService {
 
   constructor(
     private http: HttpClient,
-    private customerService: CustomerService,
     private immobilienService: ImmobilienService,
-    firestore: Firestore // 👉 ohne private
+    firestore: Firestore
   ) {
     this.firestore = firestore; // 👉 manuell zuweisen
   }
@@ -40,96 +30,75 @@ export class ExposeAnfrageService {
     try {
       const exposeRef = doc(this.firestore, 'expose-anfragen', sharedId);
       const customerRef = doc(this.firestore, 'customers', sharedId);
-  
+
       // ⏳ Expose-Anfrage speichern
       await setDoc(exposeRef, {
         ...anfrage,
         requestCustomerId: sharedId,
         creationDate: new Date().toISOString(),
       });
-  
-      // 💡 Kunde inkl. BuyerData
-      const customer: Customer & { buyerData: prospectiveBuyer } = {
-        customerId: sharedId,
-        salutation: anfrage.salutation,
-        company: anfrage.company,
-        firstName: anfrage.firstName,
-        lastName: anfrage.lastName,
-        street: anfrage.street,
-        houseNumber: anfrage.houseNumber,
-        zip: anfrage.zip,
-        city: anfrage.city,
-        email: anfrage.email,
-        phone: '',
-        mobile: anfrage.phone,
-        profession: '',
-        birthday: '',
-        roles: [CustomerRole.Interessent],
-        source: CreationSource.ExposeAnfrage,
-        creationDate: new Date().toISOString(),
-        lastModificationDate: new Date().toISOString(),
-        buyerData: {
-          angefragteImmobilienIds: [anfrage.requestPropertyId],
-          requestMessage: anfrage.message,
-          processStatus: 'Anfrage',
-        },
-      };
-  
+
+      const customer = createCustomerFromExposeAnfrage(anfrage, sharedId); // greift auf die factory zu für den Init des Objekts
+
+      // 🧠 Nach erfolgreicher Kundenanlage / Anfrage:
+      const inquiryProcessId = sharedId; // kann gleich der Anfrage-ID sein
+
+      const process = createInitialInquiryProcess(anfrage, sharedId); // greift auf die factory zu für den Init des Objekts
+
+      // 🔥 Firestore Save:
+      const processRef = doc(
+        this.firestore,
+        'property-inquiry-processes',
+        inquiryProcessId
+      );
+      await setDoc(processRef, process);
+
       await setDoc(customerRef, customer, { merge: true });
-  
+
       // 📩 Interne Mail
-      const internalMailEndpoint = 'https://hilgert-immobilien.de/sendExposeAnfrageMail.php';
+      const internalMailEndpoint =
+        'https://hilgert-immobilien.de/sendExposeAnfrageMail.php';
       await this.http.post(internalMailEndpoint, anfrage).toPromise();
-  
+
       // 📩 Automatische Antwort an Kunden
-      const immobilie = await this.immobilienService.getProperty(anfrage.requestPropertyId);
-      const mapMarketingType = (code: string) => {
-        switch ((code || '').toUpperCase()) {
-          case 'PURCHASE': return 'Kauf';
-          case 'RENT': return 'Miete';
-          case 'LEASEHOLD': return 'Erbpacht';
-          default: return 'Kauf';
-        }
-      };
-  
-      const mailPayload = {
-        email: anfrage.email,
-        externalId: anfrage.requestPropertyId,
-        lastName: anfrage.lastName,
-        salutation: anfrage.salutation,
-        numberOfRooms: immobilie?.numberOfRooms || '',
-        city: immobilie?.city || '',
-        value: immobilie?.value || 0,
-        marketingType: mapMarketingType(immobilie?.marketingType || ''),
-        immobilienTyp: immobilie?.propertyType || '',
-        exposePdfUrl: immobilie?.exposePdfUrl || '',
-      };
-  
+      const immobilie = await this.immobilienService.getProperty(
+        anfrage.requestPropertyId
+      );
+
+      const marketingTypeText = mapMarketingType(immobilie?.marketingType || ''); // greift auf die util zu, um den Wert zurückzugeben
+
+      const mailPayload = createExposeAnswerMailPayload(anfrage, immobilie); // greift auf die factory zu für den Init des Objekts
+
       setTimeout(async () => {
         try {
           await this.http
-            .post('https://hilgert-immobilien.de/sendExposeAntwortMail.php', mailPayload)
+            .post(
+              'https://hilgert-immobilien.de/sendExposeAntwortMail.php',
+              mailPayload
+            )
             .toPromise();
+
         } catch (e) {
           console.error('Fehler beim Senden der Antwortmail', e);
         }
       }, 10000);
-  
+
       // 🧹 Exposé-Anfrage nach 20s löschen
       setTimeout(async () => {
         try {
           await deleteDoc(exposeRef);
+
         } catch (e) {
           console.warn('Expose-Anfrage konnte nicht gelöscht werden:', e);
         }
       }, 20000);
-  
+
       return { success: true, id: sharedId };
     } catch (error) {
       console.error('❌ Fehler beim Verarbeiten der Anfrage:', error);
       return { success: false, error };
     }
-  }  
+  }
 
   // 🔐 Nur Admins können alle Anfragen zu einer Immobilie einsehen
   async getAnfragenByImmobilienId(
