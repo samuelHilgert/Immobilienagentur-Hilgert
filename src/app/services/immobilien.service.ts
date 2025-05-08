@@ -327,6 +327,24 @@ export class ImmobilienService {
       return { exists: false };
     }
   }
+
+  async updateProperty(externalId: string, updates: Partial<Immobilie>): Promise<{ success: boolean; error?: string }> {
+    try {
+      // Referenz zum Dokument
+      const propertyRef = doc(this.firebaseService.db, 'properties', externalId);
+  
+      // lastModificationDate automatisch setzen
+      updates.lastModificationDate = new Date().toISOString();
+  
+      // Firestore aktualisieren
+      await updateDoc(propertyRef, updates);
+  
+      return { success: true };
+    } catch (error) {
+      console.error('Fehler beim Aktualisieren der Immobilie:', error);
+      return { success: false, error: 'Aktualisierung fehlgeschlagen' };
+    }
+  }  
   
 
 /**

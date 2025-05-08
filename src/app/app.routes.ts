@@ -49,6 +49,7 @@ import { PropertyDocsSetsComponent } from './dashboard/immobilien/immobilien-dat
 import { PropertyImagesSetsComponent } from './dashboard/immobilien/immobilien-datenbank/shared/property-images-sets/property-images-sets.component';
 import { PropertyExposeSetsComponent } from './dashboard/immobilien/immobilien-datenbank/shared/property-expose-sets/property-expose-sets.component';
 import { ProtocolInquiryPropertyComponent } from './dashboard/immobilien/protocol-inquiry-property/protocol-inquiry-property.component';
+import { EpxosePreviewComponent } from './shared/epxose-preview/epxose-preview.component';
 
 export const routes: Routes = [
   {
@@ -74,6 +75,10 @@ export const routes: Routes = [
   { path: 'expose-anfordern', 
     component: ExposeAnfordernComponent 
   },
+  {   path: 'expose-preview/:inquiryProcessId',
+    component: EpxosePreviewComponent
+  },
+
   {
     path: 'kontakt',
     component: KontaktComponent,

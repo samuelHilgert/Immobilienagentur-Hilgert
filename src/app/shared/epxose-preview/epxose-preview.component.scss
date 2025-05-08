@@ -1,0 +1,398 @@
+@use "./../../../styles.scss" as s;
+@use "./../../../assets/fonts.scss" as f;
+@use "./../../../assets/colors.scss" as c;
+
+section {
+    @include s.f_c_fs_fs;
+    gap:12px;
+    height: auto;
+    min-height: 500px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 80px 64px;
+    margin-top:140px; // weil hero ausgeblendet wird
+    background-color: c.$bg-color;
+}
+
+.dialog-content {
+  padding-right: 64px;
+}
+
+.detail-row {
+  @include s.f_r_sb_fs;
+  width:100%;
+}
+
+.note-textarea {
+  @include s.f_c_fs_fs;
+  gap:12px;
+  width:100%;
+}
+
+.doc-title-row {
+  padding-bottom: 24px;
+}
+
+.title-row {
+  padding-bottom: 18px;
+}
+
+.double-divider-line {
+  margin: 4px 0;
+  height: 2px;
+  width: 100%;
+  background-color: c.$primary-color;
+}
+
+.divider-line {
+  margin: 24px 0;
+  height: 2px;
+  width: 100%;
+  background-color: c.$primary-color;
+}
+
+h3 {
+  margin-top: 24px;
+  margin-bottom: 8px;
+  font-size: 1.3rem;
+  color: c.$primary-color;
+}
+
+.id-ort-row {
+  @include s.f_r_sb_fs;
+  width: 50%;
+  box-sizing: border-box;
+  padding-top: 18px;
+
+  p {
+    &:first-of-type {
+      width: 40%;
+      box-sizing: border-box;
+    }
+  }
+}
+
+.basic-info-wrapper {
+  @include s.f_r_sb_fs;
+  gap: 24px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 24px;
+}
+
+.basic-info {
+  @include s.f_c_fs_fs;
+  gap: 4px;
+  width: 50%;
+  box-sizing: border-box;
+}
+
+.basic-payments-info {
+  @include s.f_c_fs_fs;
+  width: 40%;
+  box-sizing: border-box;
+}
+
+.spacer-m {
+  padding-bottom: 12px;
+}
+
+.details-dialog {
+  position: relative;
+  padding: 64px 0;
+  width: 100%;
+  box-sizing: border-box;
+
+  h2 {
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+  }
+
+  .img-box {
+    @include s.f_c_fs_c;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 400px;
+    box-sizing: border-box;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      box-sizing: border-box;
+      object-position: center 60%;
+    }
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    color: #444;
+    cursor: pointer;
+
+    &:hover {
+      color: c.$primary-color;
+    }
+  }
+
+  .more-info-wrapper {
+    @include s.f_r_sb_fs;
+    gap: 24px;
+
+    .more-infos {
+      width: 50%;
+      box-sizing: border-box;
+      @include s.f_c_fs_fs;
+      gap: 4px;
+    }
+
+    .energiewert-wrapper {
+      @include s.f_c_c_fs;
+      gap: 8px;
+      width: 40%;
+      box-sizing: border-box;
+
+      app-energieklasse-diagramm {
+        width: 100%;
+        box-sizing: border-box;
+      }
+    }
+
+  }
+
+  .notes-wrapper {
+    @include s.f_c_fs_fs;
+    gap: 24px;
+  }
+
+  .contact-container {
+    @include s.f_c_fs_fs;
+    gap: 24px;
+    width: 100%;
+    box-sizing: border-box;
+
+    a {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      text-decoration: none;
+      color: c.$primary-text;
+      transition: color 0.3s ease;
+
+      &:hover {
+        color: c.$primary-color;
+      }
+
+      mat-icon {
+        color: c.$primary-color;
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    >p:first-child {
+      width: 30%;
+      box-sizing: border-box;
+    }
+
+    .contact-wrapper {
+      @include s.f_r_fs_fe;
+      gap: 24px;
+      width: 100%;
+      box-sizing: border-box;
+
+      img {
+        width: 200px;
+        height: auto;
+      }
+
+      .content-col {
+        @include s.f_c_fs_fs;
+        gap: 4px;
+      }
+    }
+  }
+}
+
+///////////// Responsive 
+
+// Standard Desktop bis 1439px
+@media (max-width: 1439px) {
+.details-dialog {
+  padding:24px 64px !important;
+  }
+
+  .dialog-content {
+    width:100% !important;
+    padding:0;
+  }
+
+  .basic-info-wrapper {
+    flex-direction: column !important;
+    width:100% !important;
+  }
+
+  .basic-info {
+    width:100% !important;
+  }
+
+  .basic-payments-info {
+    width:100% !important;
+    gap:4px;
+  }
+
+  .more-info-wrapper {
+    flex-direction: column !important;
+    width:100% !important;
+    gap: 16px;
+  }
+
+  .more-infos {
+    width:100% !important;
+  }
+
+  .energiewert-wrapper {
+    width:100% !important;
+  }
+
+  .energieklasse-container {
+    width:100% !important;
+  }
+
+  app-energieklasse-diagramm {
+    width:100% !important;
+  }
+
+  .disclaimer-diagramm {
+    width:100% !important;
+  }
+
+  .notes-wrapper {
+    width:100% !important;
+  }
+
+.bottom-container {
+  width:100% !important;
+}
+
+
+  .details-dialog {
+    padding: 48px 0;
+
+    .img-box {
+      height: 340px;
+    }
+
+    .contact-container .contact-wrapper {
+      img {
+        width: 180px;
+      }
+    }
+  }
+
+  .dialog-content {
+    padding-right: 32px;
+  }
+}
+
+// Tablets quer & kleiner: bis 1024px
+@media (max-width: 1024px) {
+  .basic-info-wrapper,
+  .more-info-wrapper {
+    gap: 24px;
+    width:60%;
+
+    .basic-info,
+    .basic-payments-info,
+    .more-infos,
+    .energiewert-wrapper {
+      width: 100%;
+    }
+  }
+
+  .dialog-content {
+    padding-right: 16px;
+  }
+
+  .img-box {
+    height: 280px;
+  }
+}
+
+// Tablets hoch / große Smartphones bis 768px
+@media (max-width: 768px) {
+
+  .details-dialog {
+    padding:24px 32px !important;
+
+    .img-box {
+      height: 220px;
+    }
+
+    .title-row h3,
+    .doc-title-row h2 {
+      font-size: 1.3rem;
+    }
+
+    .contact-container .contact-wrapper {
+      @include s.f_c_fs_fs;
+
+      img {
+        width: 160px;
+      }
+
+      .content-col {
+        @include s.f_c_fs_fs;
+      }
+    }
+  }
+}
+
+// Smartphones < 576px
+@media (max-width: 575px) {
+  .details-dialog {
+    padding: 24px 0 !important;
+
+    .img-box {
+      height: 180px;
+    }
+
+    .detail-row {
+      flex-direction: column;
+      align-items: flex-start;
+
+      p {
+        width: 100% !important;
+      }
+    }
+
+    .contact-container a {
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .close-btn {
+      font-size: 1.2rem;
+      top: 12px;
+      right: 12px;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+    }
+  }
+}
+
+@media (max-width: 440px) {
+h3 {
+  font-size:1rem !important;
+  padding:0 12px;
+}
+}
