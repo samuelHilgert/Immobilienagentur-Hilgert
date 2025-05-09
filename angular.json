@@ -36,7 +36,7 @@
               "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.scss"
             ],
-            "scripts": [],
+            "scripts": [  "node_modules/html2pdf.js/dist/html2pdf.bundle.min.js"],
             "allowedCommonJsDependencies": ["aos"]
           },
           "configurations": {

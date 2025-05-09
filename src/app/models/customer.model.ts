@@ -44,6 +44,7 @@ export interface Customer {
 
   birthday: string;
   profession: string;
+  homepage?: string;
 
   roles: CustomerRole[];
 

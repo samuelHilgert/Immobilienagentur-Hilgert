@@ -65,6 +65,7 @@ export class KundeAnlegenComponent implements OnInit {
       roles: [],
       profession: '',
       birthday: '',
+      homepage: '',
       source: CreationSource.Manuell,
       creationDate: '',
       lastModificationDate: '',

@@ -24,14 +24,24 @@ import {
   parkingSpaceTypeLabels,
   buildingEnergyRatingTypeLabels,
 } from '../../utils/label-mappings.util';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { Nl2brPipe } from '../pipes/nl2br.pipe';
 import { EnergieklasseDiagrammComponent } from '../energieklasse-diagramm/energieklasse-diagramm.component';
+import { MediaService } from '../../services/media.service';
+import { ImageDialogComponent } from '../image-dialog/image-dialog.component';
+
+declare var html2pdf: any;
 
 @Component({
   selector: 'app-expose-preview',
   standalone: true,
-  imports: [CommonModule, MATERIAL_MODULES, RouterModule, Nl2brPipe, EnergieklasseDiagrammComponent],
+  imports: [
+    CommonModule,
+    MATERIAL_MODULES,
+    RouterModule,
+    Nl2brPipe,
+    EnergieklasseDiagrammComponent,
+  ],
   templateUrl: './epxose-preview.component.html',
   styleUrl: './epxose-preview.component.scss',
 })
@@ -58,28 +68,34 @@ export class EpxosePreviewComponent implements OnInit {
     private route: ActivatedRoute,
     private exposePreviewService: ExposePreviewService,
     private immobilienService: ImmobilienService,
-    private router: Router
+    private router: Router,
+    private mediaService: MediaService,
+    private dialog: MatDialog
   ) {}
 
   async ngOnInit() {
     const inquiryProcessId =
       this.route.snapshot.paramMap.get('inquiryProcessId');
-
     if (!inquiryProcessId || !inquiryProcessId.includes('_')) return;
 
     const [customerId, propertyExternalId] = inquiryProcessId.split('_');
 
     try {
-      const [immobilie, preview] = await Promise.all([
+      const [immobilie, preview, mediaList] = await Promise.all([
         this.immobilienService.getProperty(propertyExternalId),
         this.exposePreviewService.getExposePreview(propertyExternalId),
+        this.mediaService.getMediaForProperty(propertyExternalId),
       ]);
 
-      this.media = immobilie.media || []; // wenn du media brauchst
+      const titleImage = mediaList.find((m) => m.isTitleImage);
+      const fallbackImage = mediaList[0];
+      const imageToUse = titleImage || fallbackImage;
+
+      this.media = mediaList;
+
       this.immobilie = immobilie;
       this.loadDetails();
 
-      // 🔍 Zugriff prüfen
       if (preview.extendedExposeAccess?.includes(inquiryProcessId)) {
         this.exposeLevel = 'erweitert';
       } else if (preview.shortExposeAccess?.includes(inquiryProcessId)) {
@@ -88,21 +104,27 @@ export class EpxosePreviewComponent implements OnInit {
         this.exposeLevel = 'normal';
       }
 
-      console.log(' this.exposeLevel : ', this.exposeLevel);
+      console.log('Exposé-Level:', this.exposeLevel);
+      console.log('Geladene Medien:', this.media);
     } catch (error) {
       console.error('Fehler beim Laden des Exposés:', error);
     }
   }
 
+  // Titelbild ermitteln
+  getTitleImage(): MediaAttachment | undefined {
+    return this.mediaService.getTitleImage(this.media);
+  }
+
   async loadDetails(): Promise<void> {
     const id = this.immobilie?.externalId;
     const type = this.immobilie?.propertyType;
-  
+
     if (!id) return;
-  
+
     try {
       const fullData = await this.immobilienService.getProperty(id);
-      
+
       if (type === 'Wohnung') {
         this.wohnungDetails = fullData.apartmentDetails;
       } else if (type === 'Haus') {
@@ -115,10 +137,13 @@ export class EpxosePreviewComponent implements OnInit {
     }
   }
 
-  getLabel(map: Record<string, string>, key: string | null | undefined): string {
+  getLabel(
+    map: Record<string, string>,
+    key: string | null | undefined
+  ): string {
     if (!key) return 'Keine Angabe';
     return map[key] ?? 'Keine Angabe';
-  }  
+  }
 
   get wohnung() {
     return (this.immobilie as any).apartmentDetails ?? null;
@@ -145,4 +170,46 @@ export class EpxosePreviewComponent implements OnInit {
   close() {
     this.router.navigate(['/']); // oder wo auch immer du hin willst
   }
+
+  printPage() {
+    window.print();
+  }
+
+  downloadAsPDF() {
+    const element = document.getElementById('druckbereich');
+    if (!element) {
+      console.warn('Druckbereich nicht gefunden!');
+      return;
+    }
+
+    if (typeof html2pdf === 'undefined') {
+      console.error('html2pdf ist nicht verfügbar!');
+      return;
+    }
+
+    const opt = {
+      margin: 0.5,
+      filename: `Hilgert-Immobilien-Exposé-${
+        this.immobilie?.externalId || 'immobilie'
+      }.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'cm', format: 'a4', orientation: 'portrait' },
+    };
+
+    html2pdf().from(element).set(opt).save();
+  }
+
+  openImageDialog(imageUrl: string): void {
+    const index = this.media.findIndex(m => m.url === imageUrl);
+    this.dialog.open(ImageDialogComponent, {
+      data: {
+        mediaList: this.media,
+        currentIndex: index,
+      },
+      width: '90vw',
+      maxWidth: '800px',
+    });
+  }
+  
 }

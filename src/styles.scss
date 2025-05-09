@@ -312,6 +312,13 @@ body {
   align-items: center;
 }
 
+@mixin f_r_sb_fe {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
 @mixin f_c_fs_c {
   display: flex;
   flex-direction: column;

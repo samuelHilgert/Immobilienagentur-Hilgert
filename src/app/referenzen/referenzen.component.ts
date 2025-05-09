@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { MATERIAL_MODULES } from '../shared/material-imports';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { PaginationService } from '../services/pagination.service';
+import { MediaService } from '../services/media.service';
 
 @Component({
   selector: 'app-referenzen',
@@ -26,6 +27,7 @@ export class ReferenzenComponent implements OnInit {
   constructor(
     private immobilienService: ImmobilienService,
     private elementRef: ElementRef,
+    private mediaService: MediaService,
     private paginationService: PaginationService<Immobilie>
   ) {}
 
@@ -56,26 +58,19 @@ export class ReferenzenComponent implements OnInit {
 
         this.paginationService.setData(this.immobilien, 8);
 
+        // Bilder werden geladen
         const mediaPromises = this.immobilien.map((immobilie) => {
-          if (
-            immobilie.externalId &&
-            !this.mediaAttachments[immobilie.externalId]
-          ) {
-            return new Promise<void>((resolve) => {
-              this.immobilienService
-                .getMediaByExternalId(immobilie.externalId!)
-                .subscribe({
-                  next: (media) => {
-                    this.mediaAttachments[immobilie.externalId!] = media;
-                    resolve();
-                  },
-                  error: () => resolve(),
-                });
-            });
-          }
-          return Promise.resolve();
+          return this.mediaService.getMediaForProperty(immobilie.externalId!).then((mediaList) => {
+            const titleImage = mediaList.find((m) => m.isTitleImage);
+            const fallbackImage = mediaList[0];
+            const imageToUse = titleImage || fallbackImage;
+        
+            if (imageToUse) {
+              this.mediaAttachments[immobilie.externalId!] = [imageToUse];
+            }
+          });
         });
-
+             
         await Promise.all(mediaPromises);
 
         this.isLoading = false;

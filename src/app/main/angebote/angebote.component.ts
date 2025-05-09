@@ -14,6 +14,7 @@ import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ImmobilienDetailsComponent } from '../../shared/immobilien-details/immobilien-details.component';
 import { MatDialog } from '@angular/material/dialog';
+import { MediaService } from '../../services/media.service';
 
 @Component({
   selector: 'app-angebote',
@@ -45,6 +46,7 @@ export class AngeboteComponent implements OnInit, AfterViewInit {
   constructor(
     private immobilienService: ImmobilienService,
     private elementRef: ElementRef,
+    private mediaService: MediaService,
     private dialog: MatDialog
   ) {}
 
@@ -74,23 +76,15 @@ export class AngeboteComponent implements OnInit, AfterViewInit {
         });
 
         const mediaPromises = this.immobilien.map((immobilie) => {
-          if (
-            immobilie.externalId &&
-            !this.mediaAttachments[immobilie.externalId]
-          ) {
-            return new Promise<void>((resolve) => {
-              this.immobilienService
-                .getMediaByExternalId(immobilie.externalId!)
-                .subscribe({
-                  next: (media) => {
-                    this.mediaAttachments[immobilie.externalId!] = media;
-                    resolve();
-                  },
-                  error: () => resolve(),
-                });
-            });
-          }
-          return Promise.resolve();
+          return this.mediaService.getMediaForProperty(immobilie.externalId!).then((mediaList) => {
+            const titleImage = mediaList.find((m) => m.isTitleImage);
+            const fallbackImage = mediaList[0];
+            const imageToUse = titleImage || fallbackImage;
+        
+            if (imageToUse) {
+              this.mediaAttachments[immobilie.externalId!] = [imageToUse];
+            }
+          });
         });
 
         await Promise.all(mediaPromises);

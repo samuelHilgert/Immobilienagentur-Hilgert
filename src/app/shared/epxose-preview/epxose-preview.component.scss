@@ -9,10 +9,34 @@ section {
     min-height: 500px;
     width: 100%;
     box-sizing: border-box;
-    padding: 80px 64px;
+    padding: 80px 5%;
     margin-top:140px; // weil hero ausgeblendet wird
     background-color: c.$bg-color;
 }
+
+@media print {
+  button {
+    display: none; // Versteckt Druck-Button beim Drucken
+  }
+
+  .details-dialog {
+    box-shadow: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+
+  .contact-container {
+    page-break-before: always; // Trennung auf neue Seite, optional
+  }
+}
+
+.right-content-wrapper {
+  @include s.f_c_c_fs;
+  gap: 8px;
+  width: 40%;
+  box-sizing: border-box;
+} 
 
 .dialog-content {
   padding-right: 64px;
@@ -155,7 +179,7 @@ h3 {
     .energiewert-wrapper {
       @include s.f_c_c_fs;
       gap: 8px;
-      width: 40%;
+      width: 100%;
       box-sizing: border-box;
 
       app-energieklasse-diagramm {
@@ -164,6 +188,21 @@ h3 {
       }
     }
 
+  }
+
+  .adBox {
+    @include s.f_c_c_fs;
+    gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .image-preview-box {
+    @include s.f_c_c_fs;
+    gap: 12px;
+    padding-top:48px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .notes-wrapper {
@@ -202,7 +241,7 @@ h3 {
       box-sizing: border-box;
     }
 
-    .contact-wrapper {
+    .person-wrapper {
       @include s.f_r_fs_fe;
       gap: 24px;
       width: 100%;
@@ -218,6 +257,23 @@ h3 {
         gap: 4px;
       }
     }
+  }
+}
+
+.contact-wrapper {
+  @include s.f_r_sb_fe;
+  gap: 24px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.v-card-box {
+  @include s.f_r_fs_fe;
+  gap: 4px;
+
+  img {
+    width:150px;
+    height:150px;
   }
 }
 
@@ -301,6 +357,26 @@ h3 {
     padding-right: 32px;
   }
 }
+
+.image-preview-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  img.thumbnail {
+    width: 100px;
+    height: auto;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: transform 0.2s;
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+}
+
 
 // Tablets quer & kleiner: bis 1024px
 @media (max-width: 1024px) {
@@ -395,4 +471,10 @@ h3 {
   font-size:1rem !important;
   padding:0 12px;
 }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
 }

@@ -8,7 +8,11 @@ export interface PropertyInquiryProcess {
 
   // Die drei Ids bilden zusamemn den sicheren Token, um das individuelle Exposé für den Kunden anzuzeigen (weil ja jedes unterschiedlich weit freigeschaltet sein wird)
 
-  exposeAccessLevel: 'normal' | 'gekürzt' | 'erweitert'; // die Online Version in ImmoScout und HP ist normal, d.h. ganz kurz
+  exposeAccessLevel: 'normal' | 'gekürzt' | 'erweitert'; 
+// die Online Version in ImmoScout und HP ist normal, d.h. ganz kurz
+// gekürzt, wenn Kunde die Richtlinien bestätigt hat
+// erweitert wird sein, wenn der Kunde bereits besichtigt hat, dann erhält er Links zu Unterlagen und mehrere Fotos usw.
+
   inquiryProcessStatus: InquiryProcessStatus; // ausgelagert als enum type 
   protocolNotes?: string; // wichtig, z.B. Grund falls Interessent kein Interesse mehr hat oder wenn Interessent Fragen hat zur Immobilie
 

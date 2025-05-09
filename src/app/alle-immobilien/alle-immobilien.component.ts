@@ -8,6 +8,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatDialog } from '@angular/material/dialog';
 import { ImmobilienDetailsComponent } from '../shared/immobilien-details/immobilien-details.component';
 import { PaginationService } from '../services/pagination.service';
+import { MediaService } from '../services/media.service';
 
 @Component({
   selector: 'app-alle-immobilien',
@@ -29,6 +30,7 @@ export class AlleImmobilienComponent implements OnInit {
     private immobilienService: ImmobilienService,
     private dialog: MatDialog,
     private paginationService: PaginationService<Immobilie>,
+    private mediaService: MediaService
   ) {}
 
   ngOnInit(): void {
@@ -50,20 +52,17 @@ export class AlleImmobilienComponent implements OnInit {
   
           this.paginationService.setData(this.immobilien, 8);
 
-        const mediaPromises = this.immobilien.map((immobilie) => {
-          if (immobilie.externalId && !this.mediaAttachments[immobilie.externalId]) {
-            return new Promise<void>((resolve) => {
-              this.immobilienService.getMediaByExternalId(immobilie.externalId!).subscribe({
-                next: (media) => {
-                  this.mediaAttachments[immobilie.externalId!] = media;
-                  resolve();
-                },
-                error: () => resolve(),
-              });
+          const mediaPromises = this.immobilien.map((immobilie) => {
+            return this.mediaService.getMediaForProperty(immobilie.externalId!).then((mediaList) => {
+              const titleImage = mediaList.find((m) => m.isTitleImage);
+              const fallbackImage = mediaList[0]; // falls kein Titelbild gesetzt ist
+              const imageToUse = titleImage || fallbackImage;
+          
+              if (imageToUse) {
+                this.mediaAttachments[immobilie.externalId!] = [imageToUse];
+              }
             });
-          }
-          return Promise.resolve();
-        });
+          });          
   
         await Promise.all(mediaPromises);
   

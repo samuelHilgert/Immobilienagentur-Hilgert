@@ -1,0 +1,12 @@
+<div  style="text-align: center">
+  <img [src]="currentImage.url" alt="Bildansicht" style="max-width: 100%; max-height: 80vh;" />
+
+  <div class="noselect" style="margin-top: 10px; font-style: italic;" *ngIf="currentImage.description">
+    {{ currentImage.description }}
+  </div>
+
+  <div style="margin-top: 20px;">
+    <button mat-button (click)="previousImage()" [disabled]="currentIndex === 0">← Zurück</button>
+    <button mat-button (click)="nextImage()" [disabled]="currentIndex === mediaList.length - 1">Weiter →</button>
+  </div>
+</div>
