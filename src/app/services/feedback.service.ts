@@ -64,17 +64,23 @@ export class FeedbackService {
   }
 
   async getFeedback(): Promise<Feedback[]> {
-    const feedbackCollection = collection(this.firebase.db, 'feedbacks');
-    
-    // Abfrage nach `publicAccepted` und Sortierung nach `creationDate` in absteigender Reihenfolge
-    const q = query(
-      feedbackCollection,
-      where('publicAccepted', '==', true),
-      orderBy('creationDate', 'desc') // Sortierung nach creationDate, absteigend
-    );
+    try {
+      const feedbackCollection = collection(this.firebase.db, 'feedbacks');
+      
+      // Abfrage nach `publicAccepted` und Sortierung nach `creationDate` in absteigender Reihenfolge
+      const q = query(
+        feedbackCollection,
+        where('publicAccepted', '==', true),
+        orderBy('creationDate', 'desc') // Sortierung nach creationDate, absteigend
+      );
   
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => doc.data() as Feedback);
+      const snapshot = await getDocs(q);
+      return snapshot.docs.map(doc => doc.data() as Feedback);
+    } catch (error) {
+      console.error('Fehler beim Abrufen der Feedbacks:', error);
+      throw new Error('Fehler beim Abrufen der Feedbacks');
+    }
   }
+  
   
 }
