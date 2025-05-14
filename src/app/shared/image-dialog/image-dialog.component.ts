@@ -36,4 +36,10 @@ export class ImageDialogComponent {
       this.currentIndex++;
     }
   }
+  
+  // verhindert dass man das bild mit rechtsklick groß anzeigen lassen kann, um Missbrauch vorzubeugen 
+  disableRightClick(event: MouseEvent) {
+    event.preventDefault();
+  }
+  
 }

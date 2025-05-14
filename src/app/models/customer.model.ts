@@ -1,4 +1,5 @@
 import { prospectiveBuyer } from "./prospectiveBuyer.model";
+import { tenant } from "./tenant.model";
 
 export enum CustomerRole {
   Interessent = 'Interessent',
@@ -53,4 +54,5 @@ export interface Customer {
   lastModificationDate: string;
 
   buyerData?: prospectiveBuyer;
+  tenantData?: tenant;
 }

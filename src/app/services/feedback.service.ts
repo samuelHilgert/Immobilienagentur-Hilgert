@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Feedback } from '../models/feedback.model';
 import { FirebaseService } from './firebase.service';
-import { collection, doc, getDocs, setDoc, query, where } from 'firebase/firestore';
+import { collection, doc, getDocs, setDoc, query, where, orderBy } from 'firebase/firestore';
 import { HttpClient } from '@angular/common/http';
 import { CreationSource, Customer, CustomerRole } from '../models/customer.model';
 
@@ -65,9 +65,16 @@ export class FeedbackService {
 
   async getFeedback(): Promise<Feedback[]> {
     const feedbackCollection = collection(this.firebase.db, 'feedbacks');
-    const q = query(feedbackCollection, where('publicAccepted', '==', true));
+    
+    // Abfrage nach `publicAccepted` und Sortierung nach `creationDate` in absteigender Reihenfolge
+    const q = query(
+      feedbackCollection,
+      where('publicAccepted', '==', true),
+      orderBy('creationDate', 'desc') // Sortierung nach creationDate, absteigend
+    );
   
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => doc.data() as Feedback);
   }
+  
 }

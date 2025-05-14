@@ -23,6 +23,7 @@ export interface Immobilie {
   // eigene Felder ergänzt, weil wichtig für mich
   introNote: string; // Kurzgefasste Objektbeschreibung für Vorstellung
   ownerIds: string[];
+  tenantIds?: string[];
   extendedExposeAvailable: boolean;
   representingPersonIds: string[]; 
   exposePdfUrl?: string | null;

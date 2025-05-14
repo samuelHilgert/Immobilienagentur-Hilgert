@@ -4,7 +4,6 @@
 // Anhand dieser Infos kann ich auch andere Immobilien vorschlagen
 export interface prospectiveBuyer {
   angefragteImmobilienIds?: string[]; // können mehrere sein 
-
   netIncome?: number; // Nettoeinkommen
   equity?: number; // Eigenkapital
   existingProperties?: string; // Vorhandene Immobilien, Ja oder 4 ETWs oder 2 Häuser 
@@ -18,28 +17,4 @@ export interface prospectiveBuyer {
   preferredLocations?: string[]; // Gesuchte Orte mit Kommas getrennt
   otherDescription?: string; // Sonstige Beschreibung von mir ergänzt
   Financiers?: string; // Hat der Kunde einen Finanzierer an der Hand oder bevorzugt er eine bestimmte Bank?
-
-  // bald nicht mehr gebraucht
-  // firstViewingDate?: Date; // Erster Besichtigungstag
-  // secondViewingDate?: Date; // Zweiter Besichtigungstag
-  // notaryAppointmentDate?: Date; // Notartermin
-  // finalPurchasePrice?: number; // Finaler Verkaufspreis
-  // handoverDate?: Date; // Übergabetermin
-  // processStatus?: // Status Prozess
-  //   | 'Anfrage'
-  //   | 'Exposé erhalten'
-  //   | 'Kleiner Bonitätscheck'
-  //   | 'Erstbesichtigung'
-  //   | 'Zweitbesichtigung'
-  //   | 'Bankbestätigung'
-  //   | 'Großer Bonitätscheck'
-  //   | 'Darlehensvertrag'
-  //   | 'Notartermin'
-  //   | 'Übergabe';
-  // requestMessage?: string; // Message aus expose anfrage
-  // // 📩 Mail send tracking
-  // mailExposeSentAt?: { [externalId: string]: string[] };
-  // mailAppointmentConfirmationSentAt?: string[];
-  // mailCreditCheckSentAt?: string[];
-  // mailDropboxLinkSentAt?: string[];
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router, RouterLink, RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CreationSource, Customer, CustomerRole } from '../../../models/customer.model';
 import { CustomerService } from '../../../services/customer.service';
 import { MATERIAL_MODULES } from '../../../shared/material-imports';
@@ -17,6 +17,7 @@ export class KundeAnlegenComponent implements OnInit {
   customerForm!: FormGroup;
   roles = Object.values(CustomerRole);
   generatedId: string = ''; 
+  isTenant: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -26,9 +27,8 @@ export class KundeAnlegenComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.generatedId = await this.customerService.createEmptyCustomerId();
-
     const customer = this.initCustomer();
-
+  
     this.customerForm = this.fb.group({
       customerId: [customer.customerId],
       salutation: [customer.salutation],
@@ -44,7 +44,14 @@ export class KundeAnlegenComponent implements OnInit {
       roles: [customer.roles],
       profession: [customer.profession],
       birthday: [customer.birthday],
+      homepage: [customer.homepage],
       source: [customer.source],
+      tenantDescription: [''] // <-- neues Feld
+    });
+  
+    // Dynamische Beobachtung
+    this.customerForm.get('roles')?.valueChanges.subscribe((roles: CustomerRole[]) => {
+      this.isTenant = roles.includes(CustomerRole.Mieter);
     });
   }
 
@@ -81,10 +88,15 @@ export class KundeAnlegenComponent implements OnInit {
       const customer: Customer = {
         ...formValue,
         customerId: this.generatedId,
+        zip: formValue.postalCode,
         indexId,
         creationDate: new Date().toISOString(),
         lastModificationDate: new Date().toISOString(),
+        tenantData: formValue.roles.includes(CustomerRole.Mieter)
+          ? { otherDescription: formValue.tenantDescription }
+          : undefined
       };
+      
 
       const result = await this.customerService.saveCustomer(customer);
 

@@ -1,5 +1,5 @@
 <div  style="text-align: center">
-  <img [src]="currentImage.url" alt="Bildansicht" style="max-width: 100%; max-height: 80vh;" />
+  <img [src]="currentImage.url" alt="Bildansicht" style="max-width: 100%; max-height: 80vh;"   (contextmenu)="disableRightClick($event)" />
 
   <div class="noselect" style="margin-top: 10px; font-style: italic;" *ngIf="currentImage.description">
     {{ currentImage.description }}

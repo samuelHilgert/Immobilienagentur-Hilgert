@@ -34,28 +34,32 @@ export class BewertungenComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     const feedbacks = await this.feedbackService.getFeedback();
-
-    this.allReviews = feedbacks.map(f => ({
-      name: (() => {
-        const parts = (f.autorName || 'Anonym').trim().split(' ');
-        return parts.length > 1
-          ? `${parts[0].charAt(0)}. ${parts.slice(1).join(' ')}`
-          : parts[0];
-      })(),
-      date: f.creationDate ? new Date(f.creationDate).toLocaleDateString('de-DE') : 'Datum unbekannt',
-      stars: f.rating,
-      text: f.text
-    }));
-
+  
+    // Feedbacks nach dem creationDate sortieren, absteigend
+    this.allReviews = feedbacks
+      .map(f => ({
+        name: (() => {
+          const parts = (f.autorName || 'Anonym').trim().split(' ');
+          return parts.length > 1
+            ? `${parts[0].charAt(0)}. ${parts.slice(1).join(' ')}`
+            : parts[0];
+        })(),
+        date: f.creationDate ? new Date(f.creationDate).toLocaleDateString('de-DE') : 'Datum unbekannt',
+        stars: f.rating,
+        text: f.text
+      }))
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());  // Sortierung nach Datum (absteigend)
+  
     if (this.allReviews.length < 2) return;
-
+  
     this.activeReviews[0] = this.allReviews[this.currentIndexes[0]];
     this.activeReviews[1] = this.allReviews[this.currentIndexes[1]];
-
+  
     this.cdr.detectChanges();
-
+  
     this.intervalId = setInterval(() => this.updateReview(), 4000);
   }
+  
 
   updateReview(): void {
     const i = this.toggle;
