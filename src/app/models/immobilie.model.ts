@@ -2,7 +2,7 @@
 export interface Immobilie {
   // teilweise wiederholende aus den Details, weil diese infos für die Kurzvorstellungen wichtig sind
   externalId?: string;
-  indexId:number;
+  indexId: number;
   marketingType: 'PURCHASE';
   title: string;
   street: string;
@@ -25,11 +25,12 @@ export interface Immobilie {
   ownerIds: string[];
   tenantIds?: string[];
   extendedExposeAvailable: boolean;
-  representingPersonIds: string[]; 
+  representingPersonIds: string[];
   exposePdfUrl?: string | null;
   propertyType: 'Wohnung' | 'Haus' | 'Grundstück';
   propertyStatus: 'Angebot' | 'Referenz' | 'Reserviert' | 'Bearbeitung';
-  uploadPublicTargets: { // wo soll es hochgeladen werden
+  uploadPublicTargets: {
+    // wo soll es hochgeladen werden
     homepage: boolean;
     immoScout: boolean;
     facebook: boolean;
@@ -37,11 +38,21 @@ export interface Immobilie {
     newsletter: boolean;
     magazin: boolean;
   };
-  sendCustomerTargets: { // für an wen soll es gesendet werden
+  sendCustomerTargets: {
+    // für an wen soll es gesendet werden
     investoren: boolean;
     suchende: boolean;
     partner: boolean;
   };
+  // Finanzierungsbeispiel
+  debitInterest?: number; // Sollzins
+  effectiveInterestRate?: number; // Effektiv
+  transferTax?: number; // Grunderwerbsteuer
+  notaryFee?: number; // Notargebühren
+  courtageNumber?: number; // Maklergebühr
+  capitalEmployed?: number; // Eingesetztes Kapital
+  fixedInterestRates?: number; // Laufzeit
+  fixedMonthlyRate?: number; // Monatliche Gesamtrate
 }
 
 // ✅ NEUES INTERFACE für Wohnungen
@@ -140,6 +151,7 @@ export interface WohnungDetails {
   priceIntervalType: 'ONE_TIME_CHARGE';
   energyPerformanceCertificate?: boolean;
   serviceCharge?: number;
+  maintenanceReserve?: string;
 }
 
 // ✅ NEUES INTERFACE für Häuser
@@ -363,4 +375,3 @@ export interface GrundstueckDetails {
   // constructionPhase?: "PROJECTED" | "UNDER_CONSTRUCTION" | "COMPLETED" | "NO_INFORMATION"; // Bauphase
   // buildingType: "NO_INFORMATION" | "SINGLE_FAMILY_HOUSE" | "MID_TERRACE_HOUSE" | "END_TERRACE_HOUSE" | "MULTI_FAMILY_HOUSE" | "BUNGALOW" | "FARMHOUSE" | "SEMIDETACHED_HOUSE" | "VILLA" | "CASTLE_MANOR_HOUSE" | "SPECIAL_REAL_ESTATE" | "OTHER"; // Haustyp
 }
-

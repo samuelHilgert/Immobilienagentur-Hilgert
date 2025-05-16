@@ -47,7 +47,8 @@ export class MediaService {
   async uploadMedia(
     file: File,
     externalId: string,
-    type: 'image' | 'video'
+    type: 'image' | 'video',
+    category: 'FLOOR_PLAN' | 'IMAGE' | 'VIDEO' = 'IMAGE' // ← NEU
   ): Promise<{ success: boolean; id?: string; url?: string; error?: any }> {
     try {
       const timestamp = new Date().getTime();
@@ -61,6 +62,7 @@ export class MediaService {
         id: mediaId,
         externalId,
         type,
+        category, // ← NEU
         url: downloadURL,
         uploadDate: new Date().toISOString(),
         isTitleImage: false,
@@ -74,7 +76,7 @@ export class MediaService {
       console.error('Fehler beim Hochladen des Mediums:', error);
       return { success: false, error };
     }
-  }
+  }  
 
     //Titelbild ermitteln
     getTitleImage(mediaList: MediaAttachment[]): MediaAttachment | undefined {

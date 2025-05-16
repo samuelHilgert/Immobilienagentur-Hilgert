@@ -1,10 +1,14 @@
 <section>
-  <div class="no-print">
-    <button mat-raised-button color="primary" (click)="printPage()">
-      Seite drucken
+  <div class="option-btns-div no-print">
+    <button mat-raised-button class="expose-option-btn" (click)="printPage()">
+      Drucken
     </button>
-    <button mat-raised-button color="accent" (click)="downloadAsPDF()">
-      Als PDF herunterladen
+    <button
+      mat-raised-button
+      class="expose-option-btn"
+      (click)="downloadAsPDF()"
+    >
+      PDF Export
     </button>
   </div>
 
@@ -13,8 +17,29 @@
       <div class="details-dialog">
         <div class="doc-title-row">
           <h2>
-            <strong>Exposé ({{ exposeLevel }})</strong>
+            <strong
+              >Exposé ({{
+                exposeLevel === "normal"
+                  ? "Kurzvorschau"
+                  : exposeLevel === "gekürzt"
+                  ? "gekürzte Version"
+                  : exposeLevel === "erweitert"
+                  ? "erweiterte Version"
+                  : ""
+              }})</strong
+            >
           </h2>
+          <div class="expose-version-note">
+            <p *ngIf="!accessIsExtended">
+              Diese Exposé ist limitiert. Im Laufe des weiteren Verfahrens,
+              erhalten Sie von uns Zugriffsrechte zu weiteren Informationen und
+              Fotos
+            </p>
+            <p>
+              Zuletzt aktualisiert:
+              {{ immobilie.lastModificationDate | date : "dd.MM.yyyy" }}
+            </p>
+          </div>
         </div>
 
         <div class="img-box" *ngIf="media?.length">
@@ -60,6 +85,16 @@
               <div class="detail-row">
                 <p><strong>Ort:</strong></p>
                 <p>{{ immobilie.postcode }} {{ immobilie.city }}</p>
+              </div>
+              <div class="detail-row" *ngIf="!accessIsNormal">
+                <p><strong>Straße/Hr.:</strong></p>
+                <p>{{ immobilie.street }} {{ immobilie.houseNumber }}</p>
+              </div>
+              <div class="detail-row" *ngIf="!accessIsNormal">
+                <p class="disclaimer-note-red">
+                  Bitte betreten Sie das Grundstück nicht vor unserem
+                  Besichtigungstermin!
+                </p>
               </div>
               <div class="spacer-m"></div>
               <div class="detail-row">
@@ -251,10 +286,7 @@
                       <p>{{ Yes_No_Labels[type] || "Keine Angabe" }}</p>
                     </div>
 
-                    <div
-                      class="detail-row"
-                      *ngIf="accessIsShort || accessIsExtended"
-                    >
+                    <div class="detail-row" *ngIf="!accessIsNormal">
                       <p><strong>Hausgeld:</strong></p>
                       <p>
                         {{
@@ -266,27 +298,95 @@
                         €
                       </p>
                     </div>
+
                     <div
                       class="detail-row"
                       *ngIf="
-                        (accessIsShort || accessIsExtended) &&
-                        wohnungDetails?.rented as type
+                        !accessIsNormal && wohnungDetails?.maintenanceReserve
+                      "
+                    >
+                      <p><strong>Instandhaltungsrücklage:</strong></p>
+                      <p>
+                        {{ wohnungDetails?.maintenanceReserve }}
+                      </p>
+                    </div>
+
+                    <div
+                      class="detail-row"
+                      *ngIf="
+                        wohnungDetails?.rented !== null &&
+                        wohnungDetails?.rented !== undefined
                       "
                     >
                       <p><strong>Vermietet:</strong></p>
-                      <p>{{ Yes_No_Labels[type] || "Keine Angabe" }}</p>
+                      <p>{{ wohnungDetails?.rented ? "Ja" : "Nein" }}</p>
                     </div>
+
                     <div
                       class="detail-row"
                       *ngIf="
-                        (accessIsShort || accessIsExtended) &&
-                        wohnungDetails?.rented === 'YES'
+                        !accessIsNormal &&
+                        wohnungDetails?.rented &&
+                        wohnungDetails?.rentalIncome != 0
                       "
                     >
-                      <p><strong>Mieteinnahmen pro Monat:</strong></p>
+                      <p><strong>Einnahmen (Kalt):</strong></p>
+
                       <p>{{ wohnungDetails?.rentalIncome }} €</p>
                     </div>
+
+                    <div class="detail-row" *ngIf="!accessIsNormal">
+                      <p><strong>Frei ab:</strong></p>
+                      <p>{{ wohnungDetails?.freeFrom }}</p>
+                    </div>
+
+                    <div class="spacer-m"></div>
+                    <div class="spacer-m"></div>
+
+                    <div
+                      class="note-textarea"
+                      *ngIf="accessIsNormal && immobilie.introNote"
+                    >
+                      <p><strong>Kurzbeschreibung:</strong></p>
+                      <div [innerHTML]="immobilie.introNote | nl2br"></div>
+                    </div>
+
+                    <!-- NUR ERWEITERTES EXPOSE -->
+
+                    <div
+                      class="notes-wrapper"
+                      *ngIf="
+                        (accessIsShort || accessIsExtended) &&
+                        immobilie.introNote
+                      "
+                    >
+                      <div
+                        class="note-textarea"
+                        *ngIf="wohnung.descriptionNote"
+                      >
+                        <p><strong>Objektbeschreibung:</strong></p>
+                        <div
+                          [innerHTML]="wohnung.descriptionNote | nl2br"
+                        ></div>
+                      </div>
+
+                      <div class="note-textarea" *ngIf="wohnung.furnishingNote">
+                        <p><strong>Ausstattung:</strong></p>
+                        <div [innerHTML]="wohnung.furnishingNote | nl2br"></div>
+                      </div>
+
+                      <div class="note-textarea" *ngIf="wohnung.locationNote">
+                        <p><strong>Lage:</strong></p>
+                        <div [innerHTML]="wohnung.locationNote | nl2br"></div>
+                      </div>
+
+                      <div class="note-textarea" *ngIf="wohnung.otherNote">
+                        <p><strong>Sonstiges:</strong></p>
+                        <div [innerHTML]="wohnung.otherNote | nl2br"></div>
+                      </div>
+                    </div>
                   </div>
+                  
                   <!-- ///////////// -->
 
                   <!-- NUR WENN FREIGESCHALTET -->
@@ -320,6 +420,9 @@
                         [energyValue]="wohnung?.thermalCharacteristic"
                         [ausweistyp]="wohnung?.buildingEnergyRatingType"
                       ></app-energieklasse-diagramm>
+
+                      <div class="spacer-m"></div>
+                      <div class="spacer-m"></div>
                     </div>
 
                     <div class="adBox">
@@ -330,10 +433,16 @@
                         bei erfolgreichem Vermittlungsabschluss erhalten Sie
                         einen Teil unserer Provision.
                       </p>
-                      <p>Sprechen Sie uns an und erfahren Sie mehr.</p>
+                      <p>Sprechen Sie uns an und erfahren Sie hierzu mehr.</p>
                     </div>
 
-                    <div class="image-preview-box" *ngIf="(accessIsShort || accessIsExtended) && media && media.length > 1">
+                    <div class="spacer-m"></div>
+
+                    <div
+                      class="image-preview-box"
+                      *ngIf="!accessIsNormal && media && media.length > 1"
+                    >
+                      <h3>Weitere Fotos</h3>
                       <ng-container *ngFor="let img of media">
                         <img
                           class="thumbnail"
@@ -342,19 +451,202 @@
                           (click)="openImageDialog(img.url)"
                         />
                       </ng-container>
-                    </div>         
-
-                    <div class="adBox"   *ngIf="accessIsNormal || accessIsShort">
-                      <h3>Wir freuen uns über Ihr Feedback!</h3>
-                      <p>
-                        Mit Ihrer Bewertung
-                        helfen Sie anderen, einen Eindruck von unserer Arbeit zu
-                        gewinnen – besonders denen, die uns noch nicht kennen.
-                      </p>
-                      <p>Bewerten Sie uns hierzu einfach auf ImmoScout24. Den Link erhalten Sie in den kommenden Tagen von ImmooScout per E-Mail.</p>
                     </div>
 
-                    <div class="adBox"   *ngIf="accessIsExtended">
+                    <div
+                      class="image-preview-box"
+                      *ngIf="
+                        !accessIsNormal &&
+                        mediaFloorPlans &&
+                        mediaFloorPlans.length > 0
+                      "
+                    >
+                      <h3>Grundrisse</h3>
+                      <ng-container *ngFor="let img of mediaFloorPlans">
+                        <img
+                          class="thumbnail"
+                          [src]="img.url"
+                          [alt]="img.description || 'Grundriss'"
+                          (click)="openImageDialog(img.url)"
+                        />
+                      </ng-container>
+                    </div>
+
+                    <div class="spacer-m"></div>
+                    <div class="spacer-m"></div>
+
+                    <div class="financing-example" *ngIf="!accessIsNormal">
+                      <h3>Finanzierungsvorschlag</h3>
+                      <p>
+                        <strong>Berechnung der groben Kreditkosten:*</strong>
+                      </p>
+
+                      <div class="condition-box">
+                        <div class="line-row">
+                          <p class="label">Sollzins / Effektiver Jahreszins:</p>
+                          <p class="wert">
+                            {{
+                              immobilie.debitInterest | number : "1.2-2" : "de"
+                            }}
+                            % /
+                            {{
+                              immobilie.effectiveInterestRate
+                                | number : "1.2-2" : "de"
+                            }}
+                            %
+                          </p>
+                        </div>
+                        <div class="line-row">
+                          <p class="label">Zinsbindung:</p>
+                          <p class="wert">
+                            {{ immobilie.fixedInterestRates }} Jahre
+                          </p>
+                        </div>
+                      </div>
+
+                      <div class="costs-overview-wrapper">
+                        <div class="costs-overview-box">
+                          <p><strong>Voraussichtliche Kosten:</strong></p>
+
+                          <div class="line-row">
+                            <p>Kaufpreis:</p>
+                            <p>{{ kaufpreis | number : "1.0-0" : "de" }} €</p>
+                          </div>
+
+                          <div class="line-row">
+                            <p>
+                              Grunderwerbsteuer ({{ immobilie.transferTax }} %):
+                            </p>
+                            <p>
+                              {{ grunderwerbsteuer | number : "1.0-0" : "de" }}
+                              €
+                            </p>
+                          </div>
+
+                          <div class="line-row">
+                            <p>Notargebühr ({{ immobilie.notaryFee }} %):</p>
+                            <p>
+                              {{ notargebuehr | number : "1.0-0" : "de" }} €
+                            </p>
+                          </div>
+
+                          <div class="line-row">
+                            <p>
+                              Maklergebühr ({{ immobilie.courtageNumber }} %):
+                            </p>
+                            <p>
+                              {{ maklergebuehr | number : "1.0-0" : "de" }} €
+                            </p>
+                          </div>
+                          <div class="line-row">
+                            <p><strong>Gesamtkosten: </strong></p>
+                            <p>
+                              <strong
+                                >{{ gesamtkosten | number : "1.0-0" : "de" }} €
+                              </strong>
+                            </p>
+                          </div>
+                        </div>
+                        <div class="costs-overview-box">
+                          <p><strong>Ihr eingesetztes Kapital</strong></p>
+
+                          <div class="line-row">
+                            <p>Bank- und Sparguthaben:</p>
+                            <p>
+                              {{
+                                immobilie.capitalEmployed
+                                  | number : "1.0-0" : "de"
+                              }}
+                              €
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="credit-box">
+                        <div class="line-row">
+                          <p><strong>Ihr benötigtes Darlehen: </strong></p>
+                          <p>
+                            <strong>
+                              {{
+                                benoetigtesDarlehen | number : "1.0-0" : "de"
+                              }}
+                              €
+                            </strong>
+                          </p>
+                        </div>
+
+                        <div class="line-row">
+                          <p><strong>Ihre monatliche Zinsrate: </strong></p>
+                          <p>
+                            <strong>
+                              {{ monatlicheZinsen | number : "1.0-0" : "de" }}
+                              €
+                            </strong>
+                          </p>
+                        </div>
+
+                        <div class="line-row">
+                          <p><strong>Ihr monatliche Tilgungsrate: </strong></p>
+                          <p>
+                            <strong>
+                              {{ monatlicheTilgung | number : "1.0-0" : "de" }}
+                              €
+                            </strong>
+                          </p>
+                        </div>
+
+                        <div class="line-row">
+                          <p>
+                            <strong>Ihre monatliche Gesamtbelastung: </strong>
+                          </p>
+                          <p>
+                            <strong>
+                              {{ gesamtBelastung | number : "1.0-0" : "de" }}
+                              €
+                            </strong>
+                          </p>
+                        </div>
+                      </div>
+
+                      <div class="financing-example-note">
+                        <p>
+                          Ggf. ist eine Finanzierung auch ohne Eigenkpaital
+                          möglich.
+                        </p>
+                        <p>
+                          *Die Informationen wurden bereitgestellt von FSK
+                          BAUFINANZIERUNG - unserem Partner für
+                          Finanzierungsfragen.
+                        </p>
+                        <div class="fincanel-expert-contact">
+                          <p>Ansprechpartner:</p>
+                          <p>Herr Andreas Böck</p>
+                          <a class="no-link" href="tel:+4915120077474">
+                            <span>(0151 200 774 74)</span>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="spacer-m"></div>
+                    <div class="spacer-m"></div>
+
+                    <div class="adBox" *ngIf="accessIsNormal || accessIsShort">
+                      <h3>Wir freuen uns über Ihr Feedback!</h3>
+                      <p>
+                        Mit Ihrer Bewertung helfen Sie anderen, einen Eindruck
+                        von unserer Arbeit zu gewinnen – besonders denen, die
+                        uns noch nicht kennen.
+                      </p>
+                      <p>
+                        Bewerten Sie uns hierzu einfach auf ImmoScout24. Den
+                        Link erhalten Sie in den kommenden Tagen von ImmoScout
+                        per E-Mail zugesendet.
+                      </p>
+                    </div>
+
+                    <div class="adBox" *ngIf="accessIsExtended">
                       <h3>Ein Danke für Ihre Zeit!</h3>
                       <p>
                         Wir freuen uns über Ihr Feedback! Mit Ihrer Bewertung
@@ -363,53 +655,19 @@
                         Als kleines Dankeschön für Ihre Zeit erhalten Sie einen
                         10 € Shopping-Gutschein.
                       </p>
-                      <p>Bewerten Sie uns hierzu einfach
-                        auf Google: <a href="https://g.page/r/CeZdl-Z9XP8YEAE/review" target="_blank">Link zum Formular</a>
+                      <p>
+                        Bewerten Sie uns hierzu einfach auf Google:
+                        <a
+                          href="https://g.page/r/CeZdl-Z9XP8YEAE/review"
+                          target="_blank"
+                          >Link zum Formular</a
+                        >
+                      </p>
                     </div>
                   </div>
                 </div>
 
                 <!-- ///////////// -->
-
-                <div class="spacer-m"></div>
-                <div class="spacer-m"></div>
-
-                <div
-                  class="note-textarea"
-                  *ngIf="accessIsNormal && immobilie.introNote"
-                >
-                  <p><strong>Kurzbeschreibung:</strong></p>
-                  <div [innerHTML]="immobilie.introNote | nl2br"></div>
-                </div>
-
-                <!-- NUR ERWEITERTES EXPOSE -->
-
-                <div
-                  class="notes-wrapper"
-                  *ngIf="
-                    (accessIsShort || accessIsExtended) && immobilie.introNote
-                  "
-                >
-                  <div class="note-textarea" *ngIf="wohnung.descriptionNote">
-                    <p><strong>Objektbeschreibung:</strong></p>
-                    <div [innerHTML]="wohnung.descriptionNote | nl2br"></div>
-                  </div>
-
-                  <div class="note-textarea" *ngIf="wohnung.furnishingNote">
-                    <p><strong>Ausstattung:</strong></p>
-                    <div [innerHTML]="wohnung.furnishingNote | nl2br"></div>
-                  </div>
-
-                  <div class="note-textarea" *ngIf="wohnung.locationNote">
-                    <p><strong>Lage:</strong></p>
-                    <div [innerHTML]="wohnung.locationNote | nl2br"></div>
-                  </div>
-
-                  <div class="note-textarea" *ngIf="wohnung.otherNote">
-                    <p><strong>Sonstiges:</strong></p>
-                    <div [innerHTML]="wohnung.otherNote | nl2br"></div>
-                  </div>
-                </div>
               </div>
 
               <!-- Haus -->
@@ -669,11 +927,54 @@
 
           <div class="bottom-container">
             <h3>Interesse geweckt?</h3>
-            <p>
-              Bitte sprechen Sie uns an, gerne können wir einen
-              Besichtigungstermin vereinbaren.
+            <p *ngIf="accessIsNormal">
+              Gerne stehen wir Ihnen jederzeit zur Verfügung und helfen Ihnen,
+              wo wir nur können, um Ihnen die angebotene Immobilie so
+              transparent und umfassend wie möglich zu präsentieren. Bei
+              bestehendem Interesse können wir Ihnen gerne weitere Inhalte wie
+              weitere Fotos und weitere Informationen freischalten.
             </p>
+
+            <p *ngIf="!accessIsShort">
+              Gerne stehen wir Ihnen jederzeit zur Verfügung und helfen Ihnen,
+              wo wir nur können, um Ihnen die angebotene Immobilie so
+              transparent und umfassend wie möglich zu präsentieren. Bei
+              bestehendem Interesse können wir gerne einen Besichtigungstermin
+              vereinbaren. Rufen Sie uns hierzu einfach an. Weitere Unterlagen
+              wie Abrechnungen, Kosten-/Einnahmenübersichten, Grundbuchauszug
+              etc. erhalten Sie im Anschluss.
+            </p>
+
+            <p *ngIf="accessIsExtended">
+              Gerne stehen wir Ihnen jederzeit zur Verfügung und helfen Ihnen,
+              wo wir nur können, um Ihnen die angebotene Immobilie so
+              transparent und umfassend wie möglich zu präsentieren. Sollten Sie
+              noch weitere Unterlagen oder eine Zweitbesichtigung wünschen,
+              sprechen Sie uns einfach an.
+            </p>
+
             <div class="spacer-m"></div>
+            <div class="spacer-m"></div>
+          </div>
+
+          <div class="disclaimer-container">
+            <h3>Hinweis:</h3>
+            <p>
+              Wir übernehmen keine Haftung für die Richtigkeit der Angaben in
+              diesem Exposé. Für die Prüfung der Informationen sind sowohl Sie
+              als Interessent(in) als auch der/die Eigentümer(in)
+              verantwortlich. Bitte beachten Sie unbedingt die
+              Originalunterlagen zur Immobilie, die Sie bereits erhalten haben
+              oder noch von uns erhalten werden.
+            </p>
+
+            <p *ngIf="!accessIsNormal">
+              Die oben genannten Angaben sind vertraulich und dementsprechend
+              vertraulich zu behandeln. Eine Weitergabe an Dritte ist nur mit
+              unserer ausdrücklichen schriftlichen Genehmigung zulässig. Es
+              gelten die besonderen Bedingungen gemäß unseren rechtlichen
+              Hinweisen in den AGB unter www.hilgert-immobilien.de/impressum.
+            </p>
             <div class="spacer-m"></div>
           </div>
 
@@ -695,6 +996,10 @@
                 </div>
 
                 <div class="content-col">
+                  <p><strong>Hilgert Immobilien</strong></p>
+                  <p class="contact-slogan"><strong>Immobilienverkauf mit Leidenschaft seit 1993</strong></p>
+                  <div class="spacer-m"></div>
+
                   <p><strong>Samuel Hilgert</strong></p>
                   <p>Immobilienberater & Vermittler</p>
                   <div class="spacer-m"></div>
@@ -711,6 +1016,10 @@
                   <a href="mailto:info@hilgert-immobilien.de">
                     <mat-icon>email</mat-icon>
                     <span>info&#64;hilgert-immobilien.de</span>
+                  </a>
+                  <a href="www.hilgert-immobilien.de" target="_blank">
+                    <mat-icon>laptop</mat-icon>
+                    <span>wwww.hilgert-immobilien.de</span>
                   </a>
                 </div>
               </div>
@@ -739,3 +1048,6 @@
 
 <!-- Beispiel für Normal
 http://localhost:4200/expose-preview/MK3JTlXMDdIk3dIFsDPo_23523 -->
+
+<!-- Beispiel für Erweitert
+http://localhost:4200/expose-preview/ltltV5z7zYD3wcomDGd8_23523 -->

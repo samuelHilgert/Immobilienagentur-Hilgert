@@ -1,17 +1,33 @@
 @use "./../../../styles.scss" as s;
 @use "./../../../assets/fonts.scss" as f;
 @use "./../../../assets/colors.scss" as c;
+@use "./../../../assets/elements.scss" as e;
 
 section {
-    @include s.f_c_fs_fs;
-    gap:12px;
-    height: auto;
-    min-height: 500px;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 80px 5%;
-    margin-top:140px; // weil hero ausgeblendet wird
-    background-color: c.$bg-color;
+  @include s.f_c_fs_fs;
+  gap: 12px;
+  height: auto;
+  min-height: 500px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 80px 5%;
+  margin-top: 140px; // weil hero ausgeblendet wird
+  background-color: c.$bg-color;
+}
+
+.option-btns-div {
+  @include s.f_r_fs_fs;
+  gap: 12px;
+  padding: 20px 2%;
+  background-color: rgba(c.$primary-color, 0.02);
+  border-bottom: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 @media print {
@@ -31,12 +47,19 @@ section {
   }
 }
 
+.expose-version-note {
+  @include s.f_r_sb_fs;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .right-content-wrapper {
   @include s.f_c_c_fs;
   gap: 8px;
   width: 40%;
   box-sizing: border-box;
-} 
+}
 
 .dialog-content {
   padding-right: 64px;
@@ -44,13 +67,14 @@ section {
 
 .detail-row {
   @include s.f_r_sb_fs;
-  width:100%;
+  width: 100%;
 }
 
 .note-textarea {
   @include s.f_c_fs_fs;
-  gap:12px;
-  width:100%;
+  text-align:justify;
+  gap: 12px;
+  width: 100%;
 }
 
 .doc-title-row {
@@ -200,7 +224,7 @@ h3 {
   .image-preview-box {
     @include s.f_c_c_fs;
     gap: 12px;
-    padding-top:48px;
+    padding-top: 48px;
     width: 100%;
     box-sizing: border-box;
   }
@@ -272,8 +296,77 @@ h3 {
   gap: 4px;
 
   img {
-    width:150px;
-    height:150px;
+    width: 150px;
+    height: 150px;
+  }
+}
+
+.disclaimer-container {
+  @include s.f_c_fs_fs;
+  gap: 12px;
+}
+
+.financing-example {
+  @include s.f_c_fs_fs;
+  gap: 28px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.costs-overview-box {
+  @include s.f_c_fs_fs;
+  gap: 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.costs-overview-wrapper {
+  @include s.f_c_fs_fs;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.credit-box {
+  @include s.f_c_fs_fs;
+  gap: 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.condition-box {
+  @include s.f_c_fs_fs;
+  gap: 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.line-row {
+  @include s.f_r_sb_fs;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.financing-example-note {
+  @include s.f_c_fs_fs;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.fincanel-expert-contact {
+  @include s.f_r_fs_fs;
+  gap: 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.no-link {
+  text-decoration: none;
+  color: c.$primary-color;
+
+  :hover {
+    color: c.$primary-color;
   }
 }
 
@@ -281,62 +374,62 @@ h3 {
 
 // Standard Desktop bis 1439px
 @media (max-width: 1439px) {
-.details-dialog {
-  padding:24px 64px !important;
+  .details-dialog {
+    padding: 24px 64px !important;
   }
 
   .dialog-content {
-    width:100% !important;
-    padding:0;
+    width: 100% !important;
+    padding: 0;
   }
 
   .basic-info-wrapper {
     flex-direction: column !important;
-    width:100% !important;
+    width: 100% !important;
   }
 
   .basic-info {
-    width:100% !important;
+    width: 100% !important;
   }
 
   .basic-payments-info {
-    width:100% !important;
-    gap:4px;
+    width: 100% !important;
+    gap: 4px;
   }
 
   .more-info-wrapper {
     flex-direction: column !important;
-    width:100% !important;
+    width: 100% !important;
     gap: 16px;
   }
 
   .more-infos {
-    width:100% !important;
+    width: 100% !important;
   }
 
   .energiewert-wrapper {
-    width:100% !important;
+    width: 100% !important;
   }
 
   .energieklasse-container {
-    width:100% !important;
+    width: 100% !important;
   }
 
   app-energieklasse-diagramm {
-    width:100% !important;
+    width: 100% !important;
   }
 
   .disclaimer-diagramm {
-    width:100% !important;
+    width: 100% !important;
   }
 
   .notes-wrapper {
-    width:100% !important;
+    width: 100% !important;
   }
 
-.bottom-container {
-  width:100% !important;
-}
+  .bottom-container {
+    width: 100% !important;
+  }
 
 
   .details-dialog {
@@ -358,7 +451,13 @@ h3 {
   }
 }
 
-.image-preview-box {
+.contact-slogan {
+  font-size: 14px !important;
+  font-style: italic;
+}
+
+.image-preview-box,
+.floor-plan-preview-box {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -380,10 +479,11 @@ h3 {
 
 // Tablets quer & kleiner: bis 1024px
 @media (max-width: 1024px) {
+
   .basic-info-wrapper,
   .more-info-wrapper {
     gap: 24px;
-    width:60%;
+    width: 60%;
 
     .basic-info,
     .basic-payments-info,
@@ -406,7 +506,7 @@ h3 {
 @media (max-width: 768px) {
 
   .details-dialog {
-    padding:24px 32px !important;
+    padding: 24px 32px !important;
 
     .img-box {
       height: 220px;
@@ -467,10 +567,10 @@ h3 {
 }
 
 @media (max-width: 440px) {
-h3 {
-  font-size:1rem !important;
-  padding:0 12px;
-}
+  h3 {
+    font-size: 1rem !important;
+    padding: 0 12px;
+  }
 }
 
 @media print {

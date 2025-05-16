@@ -1,12 +1,17 @@
-<div  style="text-align: center">
-  <img [src]="currentImage.url" alt="Bildansicht" style="max-width: 100%; max-height: 80vh;"   (contextmenu)="disableRightClick($event)" />
+<div class="image-dialog">
+  
+<div  class="image-dialog-container">
+  <img [src]="currentImage.url" alt="Bildansicht"  (contextmenu)="disableRightClick($event)" />
 
   <div class="noselect" style="margin-top: 10px; font-style: italic;" *ngIf="currentImage.description">
     {{ currentImage.description }}
   </div>
 
-  <div style="margin-top: 20px;">
+  <div class="panel-btns-div">
     <button mat-button (click)="previousImage()" [disabled]="currentIndex === 0">← Zurück</button>
     <button mat-button (click)="nextImage()" [disabled]="currentIndex === mediaList.length - 1">Weiter →</button>
   </div>
+</div>
+
+
 </div>

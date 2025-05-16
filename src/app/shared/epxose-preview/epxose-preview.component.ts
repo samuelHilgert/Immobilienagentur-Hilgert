@@ -49,6 +49,7 @@ export class EpxosePreviewComponent implements OnInit {
   immobilie: Immobilie | null = null;
   exposeLevel: 'normal' | 'gekürzt' | 'erweitert' = 'normal';
   media: MediaAttachment[] = [];
+  mediaFloorPlans: MediaAttachment[] = [];
   wohnungDetails: WohnungDetails | null = null;
   hausDetails: HausDetails | null = null;
   grundstueckDetails: GrundstueckDetails | null = null;
@@ -91,7 +92,8 @@ export class EpxosePreviewComponent implements OnInit {
       const fallbackImage = mediaList[0];
       const imageToUse = titleImage || fallbackImage;
 
-      this.media = mediaList;
+      this.media = mediaList.filter(m => m.category !== 'FLOOR_PLAN');
+      this.mediaFloorPlans = mediaList.filter(m => m.category === 'FLOOR_PLAN');      
 
       this.immobilie = immobilie;
       this.loadDetails();
@@ -201,15 +203,69 @@ export class EpxosePreviewComponent implements OnInit {
   }
 
   openImageDialog(imageUrl: string): void {
-    const index = this.media.findIndex(m => m.url === imageUrl);
+    const allMedia = [...this.media, ...this.mediaFloorPlans];
+    const index = allMedia.findIndex(m => m.url === imageUrl);
+  
     this.dialog.open(ImageDialogComponent, {
       data: {
-        mediaList: this.media,
+        mediaList: allMedia,
         currentIndex: index,
       },
       width: '90vw',
       maxWidth: '800px',
-    });
+      height: '90vh',
+      maxHeight: '800px',
+      panelClass: 'image-dialog-panel'
+    });    
+  }  
+
+  // Berechnungen für das Finanzierungsbeispiel
+  get kaufpreis(): number {
+    return this.immobilie?.value ?? 0;
+  }
+  
+  get grunderwerbsteuer(): number {
+    return this.kaufpreis * ((this.immobilie?.transferTax ?? 0) / 100);
+  }
+  
+  get notargebuehr(): number {
+    return this.kaufpreis * ((this.immobilie?.notaryFee ?? 0) / 100);
+  }
+  
+  get maklergebuehr(): number {
+    return this.kaufpreis * ((this.immobilie?.courtageNumber ?? 0) / 100);
+  }
+
+  get gesamtkosten(): number {
+    return (
+      this.kaufpreis +
+      this.grunderwerbsteuer +
+      this.notargebuehr +
+      this.maklergebuehr
+    );
+  }
+  
+  get eingesetztesKapital(): number {
+    return this.immobilie?.capitalEmployed ?? 0;
+  }
+  
+  get benoetigtesDarlehen(): number {
+    return this.gesamtkosten - this.eingesetztesKapital;
+  }
+
+  get monatlicheZinsen(): number {
+    const darlehen = this.benoetigtesDarlehen;
+    const sollzins = this.immobilie?.debitInterest ?? 0;
+  
+    return (darlehen * (sollzins / 100)) / 12;
+  }
+
+  get monatlicheTilgung(): number {
+    return this.gesamtBelastung - this.monatlicheZinsen;
+  }
+  
+  get gesamtBelastung(): number {
+    return this.immobilie?.fixedMonthlyRate ?? 0;
   }
   
 }

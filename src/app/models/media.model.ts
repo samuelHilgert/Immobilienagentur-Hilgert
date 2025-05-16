@@ -1,9 +1,10 @@
 export interface MediaAttachment {
-  id?: string;           // Optional, da möglicherweise nicht immer vorhanden
-  externalId: string;    // Pflichtfeld
-  type: 'image' | 'video';
+  id?: string;
+  externalId: string;
+  type: 'image' | 'video'; // → Dateiformat
+  category?: 'IMAGE' | 'FLOOR_PLAN' | 'VIDEO'; // → Zweck des Mediums
   url: string;
-  isTitleImage?: boolean; // Optional
-  description?:string;
-  uploadDate?: string; 
+  isTitleImage?: boolean;
+  description?: string;
+  uploadDate?: string;
 }

@@ -21,6 +21,7 @@ import { getAuth, signInAnonymously } from 'firebase/auth';
 import { collection, doc } from 'firebase/firestore';
 import { MatDialog } from '@angular/material/dialog';
 import { ExposeAnfrageDto } from '../../models/expose-anfrage.model';
+import { MediaService } from '../../services/media.service';
 
 @Component({
   selector: 'app-expose-anfordern',
@@ -41,6 +42,7 @@ export class ExposeAnfordernComponent implements OnInit{
     private fb: FormBuilder,
     private dialog: MatDialog,
     private route: ActivatedRoute,
+    private mediaService: MediaService,
     private exposeAnfrageService: ExposeAnfrageService,
     private immobilienService: ImmobilienService
   ) {
@@ -190,6 +192,10 @@ export class ExposeAnfordernComponent implements OnInit{
       this.media = [];
     }
   }
+
+  getTitleImage(): MediaAttachment | undefined {
+    return this.mediaService.getTitleImage(this.media);
+  }  
 
   resetForm(): void {
     this.contactForm.reset({

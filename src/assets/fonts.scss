@@ -43,7 +43,7 @@ body {
 
 .navbar-link {
     // color:c.$navbar-links-text-color;
-    color:c.$primary-text;
+    color: c.$primary-text;
     font-weight: 200;
     line-height: 22px;
     letter-spacing: 1px;
@@ -96,7 +96,11 @@ h4 {
 
 .slogan {
     text-transform: uppercase;
- }
+}
+
+.disclaimer-note-red {
+    font-style: italic;
+}
 
 .headline {
     font-family: 'Times New Roman', Times, serif;

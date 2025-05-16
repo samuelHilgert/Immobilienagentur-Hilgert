@@ -68,6 +68,13 @@ $standard-btn-bg-border: $primary-color;
 $standard-btn-bg-hover: $primary-color;
 $standard-btn-text-hover: white;
 
+//////// expose option button ////////
+$expose-option-btn-bg: rgba($primary-color, 1);
+$expose-option-btn-text: white;
+$expose-option-btn-bg-border: $primary-text;
+$expose-option-btn-bg-hover: white;
+$expose-option-btn-text-hover: $primary-text;
+
 //////// dashboard ////////
 $dashboard-sidebar-text: white;
 

@@ -1,0 +1,29 @@
+@use "./../assets/colors.scss" as c;
+@use "./../assets/fonts.scss" as f;
+
+.expose-option-btn {
+    padding: 10px 20px;
+    font-weight: 500 !important;
+    background-color: c.$expose-option-btn-bg !important;
+    color: c.$expose-option-btn-text !important;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+        background-color: c.$expose-option-btn-bg-hover !important;
+        color: c.$expose-option-btn-text-hover !important;
+    }
+
+    &:active {
+        transform: scale(0.98);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    }
+
+    &:focus-visible {
+        outline: 2px solid #80bdff;
+        outline-offset: 2px;
+    }
+}
