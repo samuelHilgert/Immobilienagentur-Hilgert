@@ -268,4 +268,20 @@ export class EpxosePreviewComponent implements OnInit {
     return this.immobilie?.fixedMonthlyRate ?? 0;
   }
   
+
+  // Grundrisse Galerie unten
+  activeFloorIndex: number = 0;
+
+nextFloorPlan(): void {
+  if (this.activeFloorIndex < this.mediaFloorPlans.length - 1) {
+    this.activeFloorIndex++;
+  }
+}
+
+prevFloorPlan(): void {
+  if (this.activeFloorIndex > 0) {
+    this.activeFloorIndex--;
+  }
+}
+
 }

@@ -353,3 +353,41 @@ body {
   justify-content: flex-start;
   align-items: space-between;
 }
+
+.display-if-print {
+  display: none !important;
+}
+
+@media print {
+
+  @page {
+    margin-top: 2cm; 
+    margin-left: 1cm;
+    margin-right: 1cm;
+    margin-bottom: 2cm;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .page-break {
+    page-break-before: always;
+    /* für ältere Browser */
+    break-before: page;
+    /* moderner Standard */
+  }
+
+  .no-break-inside {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  button {
+    display: none; // Versteckt Druck-Button beim Drucken
+  }
+
+  .display-if-print {
+    display: flex !important;
+  }
+}

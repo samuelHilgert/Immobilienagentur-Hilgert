@@ -57,7 +57,7 @@ main.content {
     }
 
     tr:hover {
-      background-color: lighten($hover-color, 35%);
+      background-color: lightgrey;
       cursor: pointer;
     }    
 
@@ -82,7 +82,7 @@ main.content {
   transition: background-color 0.2s ease;
 
   &:hover {
-    background-color: lighten($hover-color, 35%);
+    background-color: lightgrey;
     cursor: pointer;
   }
 }

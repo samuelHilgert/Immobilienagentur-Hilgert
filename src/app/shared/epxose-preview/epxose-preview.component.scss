@@ -13,6 +13,34 @@ section {
   padding: 80px 5%;
   margin-top: 140px; // weil hero ausgeblendet wird
   background-color: c.$bg-color;
+
+  @media print {
+    margin-top: 0px;
+    padding: 0px;
+  }
+}
+
+.doc-title-row {
+  padding-bottom: 24px;
+}
+
+.title-row {
+  padding-bottom: 18px;
+
+  @media print {
+    >h3 {
+      font-size: 18px !important;
+      letter-spacing: unset;
+      line-height: unset;
+      padding-bottom: 0px;
+    }
+  }
+}
+
+.disclaimer-note-red {
+  @media print {
+    padding:4px 0px;
+  }
 }
 
 .option-btns-div {
@@ -30,35 +58,27 @@ section {
   box-sizing: border-box;
 }
 
-@media print {
-  button {
-    display: none; // Versteckt Druck-Button beim Drucken
-  }
-
-  .details-dialog {
-    box-shadow: none;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-  }
-
-  .contact-container {
-    page-break-before: always; // Trennung auf neue Seite, optional
-  }
-}
-
 .expose-version-note {
   @include s.f_r_sb_fs;
   gap: 12px;
   width: 100%;
   box-sizing: border-box;
+
+  @media print {
+    @include s.f_c_fs_fs;
+  }
 }
 
 .right-content-wrapper {
   @include s.f_c_c_fs;
   gap: 8px;
+  margin-top:64px;
   width: 40%;
   box-sizing: border-box;
+
+  @media print {
+    width: 100%;
+  }
 }
 
 .dialog-content {
@@ -70,19 +90,18 @@ section {
   width: 100%;
 }
 
+.energy-rating-type {
+  @media print {
+    @include s.f_r_fs_fs;
+    gap:12px;
+  }
+}
+
 .note-textarea {
   @include s.f_c_fs_fs;
-  text-align:justify;
+  text-align: justify;
   gap: 12px;
   width: 100%;
-}
-
-.doc-title-row {
-  padding-bottom: 24px;
-}
-
-.title-row {
-  padding-bottom: 18px;
 }
 
 .double-divider-line {
@@ -209,6 +228,11 @@ h3 {
       app-energieklasse-diagramm {
         width: 100%;
         box-sizing: border-box;
+
+        @media print {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
       }
     }
 
@@ -219,6 +243,10 @@ h3 {
     gap: 8px;
     width: 100%;
     box-sizing: border-box;
+    border:2px solid c.$primary-color;
+    padding:12px;
+    padding-top:0px;
+    padding-bottom:28px;
   }
 
   .image-preview-box {
@@ -369,6 +397,167 @@ h3 {
     color: c.$primary-color;
   }
 }
+
+// Fotogalerie mit weiteren Fotos 
+.more-images-gallery {
+  @include s.f_c_fs_fs;
+  gap: 16px;
+  margin-top: 32px;
+
+  .masonry-gallery {
+    column-count: 3;
+    column-gap: 12px;
+
+    @media (max-width: 1024px) {
+      column-count: 2;
+    }
+
+    @media (max-width: 600px) {
+      column-count: 1;
+    }
+  }
+
+  .masonry-item {
+    break-inside: avoid;
+    margin-bottom: 12px;
+
+    img {
+      width: 100%;
+      height: auto;
+      display: block;
+      border-radius: 6px;
+      max-width: 100%;
+      max-height: 400px; 
+      object-fit: cover;
+    }
+  }
+
+  img.thumbnail {
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: transform 0.2s;
+
+    &:hover {
+      transform: scale(1.01);
+    }
+  }
+}
+
+// Grundrisse Slider
+.floor-plans-slider {
+  margin-top:48px;
+}
+
+.floorplan-viewer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  box-sizing: border-box;
+
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .nav-button {
+    font-size: 1rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    user-select: none;
+    transition: color 0.2s ease;
+
+    span {
+      font-size: 3rem;
+    }
+
+    &.left {
+      order: -1;
+    }
+
+    &:hover {
+      color: c.$primary-color;
+    }
+
+    &:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+  }
+}
+
+.floorplan-counter {
+  text-align: center;
+  font-size: 0.9rem;
+  margin-top: 8px;
+  color: #666;
+}
+
+// Floor plans print-modus
+.print-only {
+  display: none;
+}
+
+// Nur beim Drucken anzeigen
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .floor-plans-print {
+    page-break-before: always;
+    padding-top: 24px;
+
+    h3 {
+      font-size: 18px;
+      margin-bottom: 16px;
+    }
+
+    .floorplan-print-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+
+      img {
+        width: 100%;
+        height: auto;
+        page-break-inside: avoid;
+        border: 1px solid #ccc;
+        padding: 4px;
+      }
+    }
+  }
+} 
+
+
+// Printeinstellungen
+@media print {
+  .details-dialog {
+    box-shadow: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+
+
+}
+
+
+
 
 ///////////// Responsive 
 
@@ -570,11 +759,5 @@ h3 {
   h3 {
     font-size: 1rem !important;
     padding: 0 12px;
-  }
-}
-
-@media print {
-  .no-print {
-    display: none !important;
   }
 }

@@ -96,19 +96,24 @@
                   Besichtigungstermin!
                 </p>
               </div>
-              <div class="spacer-m"></div>
+              <div class="spacer-m no-print"></div>
               <div class="detail-row">
                 <p><strong>Kaufpreis:</strong></p>
                 <p>{{ immobilie.value | number : "1.0-0" }} €</p>
               </div>
-              <div class="spacer-m"></div>
-              <div class="detail-row">
+              <div class="spacer-m no-print"></div>
+              <div class="detail-row no-print">
                 <p>
                   <strong>Provision:</strong><br />
                   {{ immobilie.courtage }}
                 </p>
               </div>
-              <div class="spacer-m"></div>
+
+              <div class="detail-row display-if-print">
+                <p><strong>Provision:</strong><br /></p>
+                <p>{{ immobilie.courtage }}</p>
+              </div>
+              <div class="spacer-m no-print"></div>
               <div class="detail-row">
                 <p>
                   <strong>Provisionshinweis:</strong><br />{{
@@ -119,12 +124,10 @@
             </div>
           </div>
 
-          <div class="spacer-m"></div>
-          <h3>Weitere Angaben</h3>
-          <div class="spacer-m"></div>
-
           <!-- Dynamischer Bereich je nach Immobilientyp -->
-          <div class="details-dynamic">
+          <div class="details-dynamic page-break">
+            <h3 class="next-section-print">Weitere Angaben</h3>
+            <div class="spacer-m"></div>
             <ng-container [ngSwitch]="immobilie.propertyType">
               <!-- Wohnung -->
               <div *ngSwitchCase="'Wohnung'">
@@ -361,7 +364,7 @@
                       "
                     >
                       <div
-                        class="note-textarea"
+                        class="note-textarea page-break"
                         *ngIf="wohnung.descriptionNote"
                       >
                         <p><strong>Objektbeschreibung:</strong></p>
@@ -370,7 +373,7 @@
                         ></div>
                       </div>
 
-                      <div class="note-textarea" *ngIf="wohnung.furnishingNote">
+                      <div class="note-textarea page-break" *ngIf="wohnung.furnishingNote">
                         <p><strong>Ausstattung:</strong></p>
                         <div [innerHTML]="wohnung.furnishingNote | nl2br"></div>
                       </div>
@@ -386,11 +389,11 @@
                       </div>
                     </div>
                   </div>
-                  
+
                   <!-- ///////////// -->
 
                   <!-- NUR WENN FREIGESCHALTET -->
-                  <div class="right-content-wrapper">
+                  <div class="right-content-wrapper page-break">
                     <!-- Energieausweis Skala -->
 
                     <div
@@ -405,7 +408,7 @@
                       </div>
                       <div class="spacer-m"></div>
                       <div
-                        class="detail-row"
+                        class="detail-row energy-rating-type"
                         *ngIf="wohnung?.buildingEnergyRatingType as type"
                       >
                         <p><strong>Ausweis-Typ:</strong></p>
@@ -438,7 +441,7 @@
 
                     <div class="spacer-m"></div>
 
-                    <div
+                    <!-- <div
                       class="image-preview-box"
                       *ngIf="!accessIsNormal && media && media.length > 1"
                     >
@@ -451,9 +454,9 @@
                           (click)="openImageDialog(img.url)"
                         />
                       </ng-container>
-                    </div>
+                    </div> -->
 
-                    <div
+                    <!-- <div
                       class="image-preview-box"
                       *ngIf="
                         !accessIsNormal &&
@@ -470,7 +473,7 @@
                           (click)="openImageDialog(img.url)"
                         />
                       </ng-container>
-                    </div>
+                    </div> -->
 
                     <div class="spacer-m"></div>
                     <div class="spacer-m"></div>
@@ -922,6 +925,46 @@
             </ng-container>
           </div>
 
+          <!-- Fotogalerie mit weiteren Fotos -->
+          <div class="more-images-gallery page-break" *ngIf="!accessIsNormal">
+            <h3>Weitere Fotos</h3>
+            <div class="masonry-gallery">
+              <div class="masonry-item" *ngFor="let img of media">
+                <img class="thumbnail" [src]="img.url" [alt]="img.description || 'Bild'"
+                (click)="openImageDialog(img.url)"/>
+              </div>
+            </div>
+          </div>             
+          
+          <!-- Grundrisse floor plans -->
+          <div class="floor-plans-slider no-print" *ngIf="!accessIsNormal && mediaFloorPlans?.length">
+            <div class="floorplan-viewer">
+              <button class="nav-button left" (click)="prevFloorPlan()" [disabled]="activeFloorIndex === 0"><span>‹</span> zurück</button>
+          
+              <img
+                [src]="mediaFloorPlans[activeFloorIndex].url"
+                [alt]="mediaFloorPlans[activeFloorIndex].description || 'Grundriss'"
+              />
+          
+              <button class="nav-button right" (click)="nextFloorPlan()" [disabled]="activeFloorIndex === mediaFloorPlans.length - 1"><span>›</span> vor</button>
+            </div>
+            <p class="floorplan-counter">
+              {{ activeFloorIndex + 1 }} / {{ mediaFloorPlans.length }}
+            </p>
+          </div>
+
+         <!-- Grundrisse floor plans print-mode-->
+              
+          <div class="floor-plans-print print-only" *ngIf="!accessIsNormal && mediaFloorPlans?.length">
+            <div class="floorplan-print-wrapper">
+              <img
+                *ngFor="let img of mediaFloorPlans"
+                [src]="img.url"
+                [alt]="img.description || 'Grundriss'"
+              />
+            </div>
+          </div>          
+          
           <div class="spacer-m"></div>
           <div class="spacer-m"></div>
 
@@ -935,7 +978,7 @@
               weitere Fotos und weitere Informationen freischalten.
             </p>
 
-            <p *ngIf="!accessIsShort">
+            <p *ngIf="accessIsShort">
               Gerne stehen wir Ihnen jederzeit zur Verfügung und helfen Ihnen,
               wo wir nur können, um Ihnen die angebotene Immobilie so
               transparent und umfassend wie möglich zu präsentieren. Bei
@@ -957,7 +1000,7 @@
             <div class="spacer-m"></div>
           </div>
 
-          <div class="disclaimer-container">
+          <div class="disclaimer-container page-break">
             <h3>Hinweis:</h3>
             <p>
               Wir übernehmen keine Haftung für die Richtigkeit der Angaben in
@@ -978,15 +1021,15 @@
             <div class="spacer-m"></div>
           </div>
 
-          <div class="spacer-m"></div>
-          <div class="spacer-m"></div>
-          <div class="spacer-m"></div>
-          <div class="spacer-m"></div>
+          <div class="spacer-m no-print"></div>
+          <div class="spacer-m no-print"></div>
+          <div class="spacer-m no-print"></div>
+          <div class="spacer-m no-print"></div>
 
-          <div class="double-divider-line"></div>
-          <div class="double-divider-line"></div>
+          <div class="double-divider-line no-print"></div>
+          <div class="double-divider-line no-print"></div>
 
-          <div class="contact-container">
+          <div class="contact-container print-settings">
             <h3>Ihr Ansprechpartner</h3>
 
             <div class="contact-wrapper">
@@ -997,7 +1040,11 @@
 
                 <div class="content-col">
                   <p><strong>Hilgert Immobilien</strong></p>
-                  <p class="contact-slogan"><strong>Immobilienverkauf mit Leidenschaft seit 1993</strong></p>
+                  <p class="contact-slogan">
+                    <strong
+                      >Immobilienverkauf mit Leidenschaft seit 1993</strong
+                    >
+                  </p>
                   <div class="spacer-m"></div>
 
                   <p><strong>Samuel Hilgert</strong></p>

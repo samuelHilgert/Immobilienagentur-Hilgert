@@ -62,7 +62,7 @@ section {
       transition: background-color 0.3s ease;
 
       &:hover {
-        background-color: darken(c.$primary-color, 8%);
+        background-color: lightgrey;
       }
 
       &:disabled {
