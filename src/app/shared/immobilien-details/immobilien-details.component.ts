@@ -13,7 +13,7 @@ import { Nl2brPipe } from '../pipes/nl2br.pipe';
 @Component({
   selector: 'app-immobilien-details',
   standalone: true,
-  imports: [CommonModule, MATERIAL_MODULES, EnergieklasseDiagrammComponent, RouterModule, Nl2brPipe],
+  imports: [CommonModule, MATERIAL_MODULES, RouterModule, Nl2brPipe],
   templateUrl: './immobilien-details.component.html',
   styleUrl: './immobilien-details.component.scss',
 })

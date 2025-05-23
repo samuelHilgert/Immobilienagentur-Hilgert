@@ -92,8 +92,10 @@ export class EpxosePreviewComponent implements OnInit {
       const fallbackImage = mediaList[0];
       const imageToUse = titleImage || fallbackImage;
 
-      this.media = mediaList.filter(m => m.category !== 'FLOOR_PLAN');
-      this.mediaFloorPlans = mediaList.filter(m => m.category === 'FLOOR_PLAN');      
+      this.media = mediaList.filter((m) => m.category !== 'FLOOR_PLAN');
+      this.mediaFloorPlans = mediaList.filter(
+        (m) => m.category === 'FLOOR_PLAN'
+      );
 
       this.immobilie = immobilie;
       this.loadDetails();
@@ -204,8 +206,8 @@ export class EpxosePreviewComponent implements OnInit {
 
   openImageDialog(imageUrl: string): void {
     const allMedia = [...this.media, ...this.mediaFloorPlans];
-    const index = allMedia.findIndex(m => m.url === imageUrl);
-  
+    const index = allMedia.findIndex((m) => m.url === imageUrl);
+
     this.dialog.open(ImageDialogComponent, {
       data: {
         mediaList: allMedia,
@@ -215,23 +217,23 @@ export class EpxosePreviewComponent implements OnInit {
       maxWidth: '800px',
       height: '90vh',
       maxHeight: '800px',
-      panelClass: 'image-dialog-panel'
-    });    
-  }  
+      panelClass: 'image-dialog-panel',
+    });
+  }
 
   // Berechnungen für das Finanzierungsbeispiel
   get kaufpreis(): number {
     return this.immobilie?.value ?? 0;
   }
-  
+
   get grunderwerbsteuer(): number {
     return this.kaufpreis * ((this.immobilie?.transferTax ?? 0) / 100);
   }
-  
+
   get notargebuehr(): number {
     return this.kaufpreis * ((this.immobilie?.notaryFee ?? 0) / 100);
   }
-  
+
   get maklergebuehr(): number {
     return this.kaufpreis * ((this.immobilie?.courtageNumber ?? 0) / 100);
   }
@@ -244,11 +246,11 @@ export class EpxosePreviewComponent implements OnInit {
       this.maklergebuehr
     );
   }
-  
+
   get eingesetztesKapital(): number {
     return this.immobilie?.capitalEmployed ?? 0;
   }
-  
+
   get benoetigtesDarlehen(): number {
     return this.gesamtkosten - this.eingesetztesKapital;
   }
@@ -256,32 +258,49 @@ export class EpxosePreviewComponent implements OnInit {
   get monatlicheZinsen(): number {
     const darlehen = this.benoetigtesDarlehen;
     const sollzins = this.immobilie?.debitInterest ?? 0;
-  
+
     return (darlehen * (sollzins / 100)) / 12;
   }
 
   get monatlicheTilgung(): number {
     return this.gesamtBelastung - this.monatlicheZinsen;
   }
-  
+
   get gesamtBelastung(): number {
     return this.immobilie?.fixedMonthlyRate ?? 0;
   }
-  
 
   // Grundrisse Galerie unten
   activeFloorIndex: number = 0;
 
-nextFloorPlan(): void {
-  if (this.activeFloorIndex < this.mediaFloorPlans.length - 1) {
-    this.activeFloorIndex++;
+  nextFloorPlan(): void {
+    if (this.activeFloorIndex < this.mediaFloorPlans.length - 1) {
+      this.activeFloorIndex++;
+    }
   }
-}
 
-prevFloorPlan(): void {
-  if (this.activeFloorIndex > 0) {
-    this.activeFloorIndex--;
+  prevFloorPlan(): void {
+    if (this.activeFloorIndex > 0) {
+      this.activeFloorIndex--;
+    }
   }
-}
 
+  // do not allows rightclick on images
+  disableContextMenu(event: MouseEvent): void {
+    event.preventDefault();
+  }
+
+  // getter functions to know what kind of property it is
+  get isApartment(): boolean {
+    return this.immobilie?.propertyType === 'Wohnung';
+  }
+  
+  get isHouse(): boolean {
+    return this.immobilie?.propertyType === 'Haus';
+  }
+  
+  get isGrundstueck(): boolean {
+    return this.immobilie?.propertyType === 'Grundstück';
+  }
+  
 }

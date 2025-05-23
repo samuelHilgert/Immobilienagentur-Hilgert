@@ -44,6 +44,9 @@ export interface Immobilie {
     suchende: boolean;
     partner: boolean;
   };
+  // expose manuell an Interessenten versenden oder automatisch
+  autoExposeSend: boolean;
+
   // Finanzierungsbeispiel
   debitInterest?: number; // Sollzins
   effectiveInterestRate?: number; // Effektiv

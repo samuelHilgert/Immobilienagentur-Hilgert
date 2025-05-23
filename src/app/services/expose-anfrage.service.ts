@@ -55,39 +55,53 @@ export class ExposeAnfrageService {
 
       await setDoc(customerRef, customer, { merge: true });
 
-      // 📩 Interne Mail
-      const internalMailEndpoint =
-        'https://hilgert-immobilien.de/sendExposeAnfrageMail.php';
-      await this.http.post(internalMailEndpoint, anfrage).toPromise();
-
-      // 📩 Automatische Antwort an Kunden
+      // 🔎 Immobilie laden
       const immobilie = await this.immobilienService.getProperty(
         anfrage.requestPropertyId
       );
 
-      const marketingTypeText = mapMarketingType(immobilie?.marketingType || ''); // greift auf die util zu, um den Wert zurückzugeben
+      // 📩 Interne Mail – jetzt mit autoExposeSend im Payload
+      const internalMailEndpoint =
+        'https://hilgert-immobilien.de/sendExposeAnfrageMail.php';
+
+      await this.http
+        .post(internalMailEndpoint, {
+          ...anfrage,
+          autoExposeSend: immobilie?.autoExposeSend || false,
+        })
+        .toPromise();
+
+      // 🧾 Weitere Verarbeitung
+      const marketingTypeText = mapMarketingType(
+        immobilie?.marketingType || ''
+      );
 
       const mailPayload = createExposeAnswerMailPayload(anfrage, immobilie); // greift auf die factory zu für den Init des Objekts
 
-      setTimeout(async () => {
-        try {
-          await this.http
-            .post(
-              'https://hilgert-immobilien.de/sendExposeAntwortMail.php',
-              mailPayload
-            )
-            .toPromise();
-
-        } catch (e) {
-          console.error('Fehler beim Senden der Antwortmail', e);
-        }
-      }, 10000);
+      // 📩 Nur senden, wenn Auto-Versand aktiviert ist
+      if (immobilie?.autoExposeSend) {
+        setTimeout(async () => {
+          try {
+            await this.http
+              .post(
+                'https://hilgert-immobilien.de/sendExposeAntwortMail.php',
+                mailPayload
+              )
+              .toPromise();
+          } catch (e) {
+            console.error('Fehler beim Senden der Antwortmail', e);
+          }
+        }, 10000);
+      } else {
+        console.log(
+          '✋ Automatischer Exposé-Versand deaktiviert für diese Immobilie.'
+        );
+      }
 
       // 🧹 Exposé-Anfrage nach 20s löschen
       setTimeout(async () => {
         try {
           await deleteDoc(exposeRef);
-
         } catch (e) {
           console.warn('Expose-Anfrage konnte nicht gelöscht werden:', e);
         }

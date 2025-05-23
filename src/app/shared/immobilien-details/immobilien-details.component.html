@@ -294,6 +294,7 @@
       </div>
     </div>
 
+      <!-- 
     <div class="energiewert-wrapper" *ngIf="haus.thermalCharacteristic">
       <div class="detail-row">
         <p><strong>Energiewert:</strong></p>
@@ -308,7 +309,9 @@
         [ausweistyp]="haus?.buildingEnergyRatingType"
       ></app-energieklasse-diagramm>
     </div>
+    -->
   </div>
+
 
   <div class="spacer-m"></div>
   <div class="spacer-m"></div>
@@ -329,22 +332,22 @@
   </div> -->
 
   <div class="notes-wrapper">
-    <div class="note-textarea" *ngIf="haus.descriptionNote">
-      <p><strong>Objektbeschreibung:</strong></p>
-      <div [innerHTML]="haus.descriptionNote | nl2br"></div>
+    <div class="note-textarea" *ngIf="immobilie.introNote">
+      <p><strong>Kurzbeschreibung:</strong></p>
+      <div [innerHTML]="immobilie.introNote | nl2br"></div>
     </div>
-    <div class="note-textarea" *ngIf="haus.furnishingNote">
+    <!-- <div class="note-textarea" *ngIf="haus.furnishingNote">
       <p><strong>Ausstattung:</strong></p>
       <div [innerHTML]="haus.furnishingNote | nl2br"></div>
-    </div>
-    <div class="note-textarea" *ngIf="haus.locationNote">
+    </div> -->
+    <!-- <div class="note-textarea" *ngIf="haus.locationNote">
       <p><strong>Lage:</strong></p>
       <div [innerHTML]="haus.locationNote | nl2br"></div>
-    </div>
-    <div class="note-textarea" *ngIf="haus.otherNote">
+    </div> -->
+    <!-- <div class="note-textarea" *ngIf="haus.otherNote">
       <p><strong>Sonstiges:</strong></p>
       <div [innerHTML]="haus.otherNote | nl2br"></div>
-    </div>
+    </div> -->
   </div>
   
   
@@ -379,8 +382,7 @@
       <h3>Interesse geweckt?</h3>
       <p>
         Hier erhalten Sie das erweiterte Exposé mit weiteren Informationen zur
-        Immobilie. Wir bitten um Verständnis, dass wir Besichtigungstermine erst
-        im Anschluss daran vergeben.
+        Immobilie. Wir bitten um Verständnis, dass wir Ihnen vor der Exposé-Anfrage keine weiteren Informationen, Unterlagen und Besichtigungstermine zur Verfügung stellen können.
       </p>
       <div class="spacer-m"></div>
       <div class="spacer-m"></div>

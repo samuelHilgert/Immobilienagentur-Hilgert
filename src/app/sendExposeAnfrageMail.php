@@ -34,6 +34,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
         $city = $params->city ?? '';
         $requestPropertyId = $params->requestPropertyId ?? '';
         $propertyType = $params->propertyType ?? '';
+        $autoExposeSend = isset($params->autoExposeSend) && $params->autoExposeSend ? 'Ja' : 'Nein';
 
         $acceptedTerms = $params->acceptedTerms ? 'Ja' : 'Nein';
         $acceptedWithdrawal = $params->acceptedWithdrawal ? 'Ja' : 'Nein';
@@ -52,6 +53,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
             $zip $city<br><br>
             <strong>Immobilie:</strong><br>
             $propertyType (ID: $requestPropertyId)<br><br>
+            <strong>Automatischer Exposé-Versand aktiviert:</strong> $autoExposeSend<br><br>
             <strong>Einverständniserklärungen:</strong><br>
             Ich akzeptiere die allgemeinen Geschäftsbedingungen: $acceptedTerms<br>
             Ich akzeptiere die Widerrufsbelehrung: $acceptedWithdrawal<br>

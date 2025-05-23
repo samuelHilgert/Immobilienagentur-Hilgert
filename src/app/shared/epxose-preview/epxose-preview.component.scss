@@ -39,7 +39,7 @@ section {
 
 .disclaimer-note-red {
   @media print {
-    padding:4px 0px;
+    padding: 4px 0px;
   }
 }
 
@@ -69,17 +69,7 @@ section {
   }
 }
 
-.right-content-wrapper {
-  @include s.f_c_c_fs;
-  gap: 8px;
-  margin-top:64px;
-  width: 40%;
-  box-sizing: border-box;
 
-  @media print {
-    width: 100%;
-  }
-}
 
 .dialog-content {
   padding-right: 64px;
@@ -93,7 +83,7 @@ section {
 .energy-rating-type {
   @media print {
     @include s.f_r_fs_fs;
-    gap:12px;
+    gap: 12px;
   }
 }
 
@@ -208,34 +198,63 @@ h3 {
     }
   }
 
-  .more-info-wrapper {
+
+  // content container 
+
+  .content-wrapper {
     @include s.f_r_sb_fs;
+    gap: 148px;
+    width:100%;
+    box-sizing: border-box
+  }
+
+  .left-content-wrapper {
+    @include s.f_c_fs_fs;
+    gap: 48px;
+    width:60%;
+    box-sizing: border-box
+  }
+
+  .more-infos-container {
+    @include s.f_c_fs_fs;
+    gap: 4px;
+    width: 100%;
+    box-sizing: border-box
+  }
+
+  .descriptions-container {
+    @include s.f_c_fs_fs;
     gap: 24px;
+    width: 100%;
+    box-sizing: border-box
+  }
 
-    .more-infos {
-      width: 50%;
-      box-sizing: border-box;
-      @include s.f_c_fs_fs;
-      gap: 4px;
+  .right-content-wrapper {
+    @include s.f_c_fs_fs;
+    gap: 48px;
+    width:40%;
+    box-sizing: border-box;
+
+    @media print {
+      width: 100%;
     }
+  }
 
-    .energiewert-wrapper {
-      @include s.f_c_c_fs;
-      gap: 8px;
+  .energiewert-wrapper {
+    @include s.f_c_c_fs;
+    gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
+
+    app-energieklasse-diagramm {
       width: 100%;
       box-sizing: border-box;
 
-      app-energieklasse-diagramm {
-        width: 100%;
-        box-sizing: border-box;
-
-        @media print {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-        }
+      @media print {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
       }
     }
-
   }
 
   .adBox {
@@ -243,11 +262,26 @@ h3 {
     gap: 8px;
     width: 100%;
     box-sizing: border-box;
-    border:2px solid c.$primary-color;
-    padding:12px;
-    padding-top:0px;
-    padding-bottom:28px;
+    border: 2px solid c.$primary-color;
+    padding: 12px;
+    padding-top: 0px;
+    padding-bottom: 28px;
   }
+
+  .financing-example {
+    @include s.f_c_fs_fs;
+    gap: 14px;
+    width: 100%;
+    box-sizing: border-box;
+
+    h3 {
+      margin: 0;
+    }
+  }
+
+  ///////////// 
+
+
 
   .image-preview-box {
     @include s.f_c_c_fs;
@@ -334,12 +368,6 @@ h3 {
   gap: 12px;
 }
 
-.financing-example {
-  @include s.f_c_fs_fs;
-  gap: 28px;
-  width: 100%;
-  box-sizing: border-box;
-}
 
 .costs-overview-box {
   @include s.f_c_fs_fs;
@@ -427,7 +455,7 @@ h3 {
       display: block;
       border-radius: 6px;
       max-width: 100%;
-      max-height: 400px; 
+      max-height: 400px;
       object-fit: cover;
     }
   }
@@ -446,7 +474,7 @@ h3 {
 
 // Grundrisse Slider
 .floor-plans-slider {
-  margin-top:48px;
+  margin-top: 48px;
 }
 
 .floorplan-viewer {
@@ -541,7 +569,7 @@ h3 {
       }
     }
   }
-} 
+}
 
 
 // Printeinstellungen
