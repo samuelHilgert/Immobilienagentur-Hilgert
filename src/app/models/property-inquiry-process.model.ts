@@ -18,7 +18,7 @@ export interface PropertyInquiryProcess {
 
   // relevant für Exposes.
   requestMessage?: string; // Message vom Exposé-Anfrage Formular
-  exposeSent?: Date; // Wann ging das Exposé raus, i.d.R. creationDate (muss aber nicht).
+  exposeSent?: Date | null; // Wann ging das Exposé raus, i.d.R. creationDate (muss aber nicht).
 
   // Eigentlich Bedingung beim Exposé-Anfrage Formular
   acceptedTermsAt?: Date;

@@ -1,60 +1,75 @@
-<section>
-    <h2>Kundendatenbank</h2>
+<section class="section-dashboard-page">
+  <h2 class="dash-page-title">Kundendatenbank</h2>
+
+  <div class="dash-top-menu-div">
     <a (click)="addCustomer()">➕ Neuen Kunden anlegen</a>
-  </section>
-  
+  </div>
+
+  <div class="dash-top-menu-div">
+    <mat-form-field appearance="fill" style="width: 100%;">
+      <mat-label>Kunde suchen (ID, Name, E-Mail, Mobil, Rolle)</mat-label>
+      <input matInput (input)="applyFilter($event)" placeholder="Suchbegriff eingeben..." />
+    </mat-form-field>
+  </div>  
+
   <main class="content">
     <div *ngIf="isLoading">Daten werden geladen...</div>
-  
+
     <!-- Kunden-Tabelle -->
-    <table mat-table [dataSource]="customers" class="mat-elevation-z8" *ngIf="!isLoading">
-              
+    <table
+    mat-table
+    [dataSource]="dataSource"
+    class="mat-elevation-z8"
+    *ngIf="!isLoading"
+  >
       <!-- Kundennummer -->
       <ng-container matColumnDef="customerId">
         <th mat-header-cell *matHeaderCellDef>Kunden-ID</th>
         <td mat-cell *matCellDef="let customer">{{ customer.customerId }}</td>
       </ng-container>
-  
+
       <!-- Vorname -->
       <ng-container matColumnDef="firstName">
         <th mat-header-cell *matHeaderCellDef>Vorname</th>
         <td mat-cell *matCellDef="let customer">{{ customer.firstName }}</td>
       </ng-container>
-  
+
       <!-- Nachname -->
       <ng-container matColumnDef="lastName">
         <th mat-header-cell *matHeaderCellDef>Nachname</th>
         <td mat-cell *matCellDef="let customer">{{ customer.lastName }}</td>
       </ng-container>
-  
+
       <!-- E-Mail -->
       <ng-container matColumnDef="email">
         <th mat-header-cell *matHeaderCellDef>Email</th>
         <td mat-cell *matCellDef="let customer">{{ customer.email }}</td>
       </ng-container>
-  
+
       <!-- Telefon -->
-      <ng-container matColumnDef="phone">
+      <!-- <ng-container matColumnDef="phone">
         <th mat-header-cell *matHeaderCellDef>Telefon</th>
         <td mat-cell *matCellDef="let customer">{{ customer.phone }}</td>
+      </ng-container> -->
+
+      <!-- Mobil -->
+      <ng-container matColumnDef="mobile">
+        <th mat-header-cell *matHeaderCellDef>Mobil</th>
+        <td mat-cell *matCellDef="let customer">{{ customer.mobile }}</td>
       </ng-container>
 
-            <!-- Mobil -->
-            <ng-container matColumnDef="mobile">
-              <th mat-header-cell *matHeaderCellDef>Mobil</th>
-              <td mat-cell *matCellDef="let customer">{{ customer.mobile }}</td>
-            </ng-container>
-  
       <!-- Stadt -->
       <ng-container matColumnDef="city">
         <th mat-header-cell *matHeaderCellDef>Stadt</th>
         <td mat-cell *matCellDef="let customer">{{ customer.city }}</td>
       </ng-container>
-  
+
       <!-- Rollen -->
       <ng-container matColumnDef="roles">
         <th mat-header-cell *matHeaderCellDef>Rollen</th>
-        <td mat-cell *matCellDef="let customer">{{ customer.roles.join(', ') }}</td>
+        <td mat-cell *matCellDef="let customer">
+          {{ customer.roles.join(", ") }}
+        </td>
       </ng-container>
 
       <!-- Quelle -->
@@ -62,16 +77,22 @@
         <th mat-header-cell *matHeaderCellDef>Quelle</th>
         <td mat-cell *matCellDef="let customer">{{ customer.source }}</td>
       </ng-container>
-  
+
       <!-- Erstellungsdatum -->
       <ng-container matColumnDef="creationDate">
         <th mat-header-cell *matHeaderCellDef>Erstellt am</th>
-        <td mat-cell *matCellDef="let customer">{{ customer.creationDate | date:'shortDate' }}</td>
+        <td mat-cell *matCellDef="let customer">
+          {{ customer.creationDate | date : "shortDate" }}
+        </td>
       </ng-container>
-  
+
       <!-- Header- und Datenzeilen -->
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="goToCustomerDetails(row.customerId)"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns"
+        (click)="goToCustomerDetails(row.customerId)"
+      ></tr>
     </table>
   </main>
-  
+</section>

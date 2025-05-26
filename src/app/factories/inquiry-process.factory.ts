@@ -1,5 +1,6 @@
 import { PropertyInquiryProcess } from '../models/property-inquiry-process.model';
 import { ExposeAnfrageDto } from '../models/expose-anfrage.model';
+import { createLogEntry } from '../utils/log-entry.util';
 
 export function createInitialInquiryProcess(
   anfrage: ExposeAnfrageDto,
@@ -12,7 +13,7 @@ export function createInitialInquiryProcess(
     exposeAccessLevel: 'normal',
     inquiryProcessStatus: 'Anfrage',
     requestMessage: anfrage.message,
-    exposeSent: new Date(),
+    exposeSent: null,
     acceptedTermsAt: new Date(),
     acceptedWithdrawalAt: new Date(),
     acceptedPrivacyAt: new Date(),
@@ -30,11 +31,11 @@ export function createInitialInquiryProcess(
     creationDate: new Date(),
     lastUpdateDate: new Date(),
     historyLog: [
-      {
-        date: new Date(),
-        user: anfrage.email,
-        action: 'Anfrage über Exposé-Formular eingegangen',
-      },
+      createLogEntry(
+        'Anfrage über Exposé-Formular eingegangen',
+        anfrage.email,
+        anfrage.message
+      )
     ],
   };
 }

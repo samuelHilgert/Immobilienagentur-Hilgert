@@ -2,50 +2,33 @@
 @use "./../../assets/fonts.scss" as f;
 @use "./../../assets/colors.scss" as c;
 
-// Farben & Variablen
-
-.start-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  gap:24px;
-  margin:0;
-  width:100%;
-  box-sizing: border-box;
-}
-
 // Dashboard Layout
 .dashboard {
   display: flex;
-  min-height:100vh;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 100vh;
   max-height: auto;
-}
-
-.nav-title-dashboard {
-width:100%;
-box-sizing: border-box;
-padding:12px 12px;
-margin-bottom:24px;
 }
 
 // Sidebar Styling
 .sidebar {
   width: 250px;
+  box-sizing: border-box;
   background: c.$primary-color;
   color: c.$dashboard-sidebar-text;
   display: flex;
   flex-direction: column;
   padding: 20px;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-  
+
   nav ul {
     list-style: none;
     padding: 0;
-    
+
     li {
       margin-bottom: 15px;
-      
+
       a {
         text-decoration: none;
         color: c.$dashboard-sidebar-text;
@@ -64,19 +47,49 @@ margin-bottom:24px;
   }
 }
 
+.dashboard-page {
+  display: flex;
+  width: calc(100% - 250px);
+  box-sizing: border-box;
+}
+
+.start-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 24px;
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+
+.nav-title-dashboard {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 12px;
+  margin-bottom: 24px;
+}
+
+
+
 // Inhaltsbereich
 .content {
-  display:flex;
+  display: flex;
   flex-direction: column;
-  flex: 1;
-  padding: 40px;
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 40px 38px;
   background: #ecf0f1;
-  gap:20px;
-  
+
+
   h1 {
     color: c.$primary-color;
   }
-  
+
   p {
     color: c.$primary-color;
     font-size: 18px;

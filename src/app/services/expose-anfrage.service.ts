@@ -2,12 +2,14 @@ import { Injectable } from '@angular/core';
 import { Firestore, collection, doc, setDoc } from '@angular/fire/firestore';
 import { HttpClient } from '@angular/common/http';
 import { ImmobilienService } from './immobilien.service';
-import { deleteDoc, getDocs, query, where } from 'firebase/firestore';
+import { deleteDoc, getDoc, getDocs, query, where } from 'firebase/firestore';
 import { ExposeAnfrageDto } from '../models/expose-anfrage.model';
 import { createInitialInquiryProcess } from '../factories/inquiry-process.factory';
 import { createCustomerFromExposeAnfrage } from '../factories/customer.factory';
 import { mapMarketingType } from '../factories/marketing-type.util';
 import { createExposeAnswerMailPayload } from '../factories/expose-mail.factory';
+import { LogEntriesService } from './logEntries.service';
+import { PropertyInquiryProcess } from '../models/property-inquiry-process.model';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +20,7 @@ export class ExposeAnfrageService {
   constructor(
     private http: HttpClient,
     private immobilienService: ImmobilienService,
+    private logEntriesService: LogEntriesService,
     firestore: Firestore
   ) {
     this.firestore = firestore; // 👉 manuell zuweisen
@@ -71,6 +74,14 @@ export class ExposeAnfrageService {
         })
         .toPromise();
 
+      // 📝 Log-Eintrag: Anfrage wurde intern per Mail versendet
+      await this.logEntriesService.logProcessEntry(
+        inquiryProcessId,
+        (anfrage.firstName + ' ' + anfrage.lastName).trim() || 'System',
+        'Exposé Anfrage empfangen',
+        'Die Exposé Anfrage wurde per E-Mail an die info@hilgert-immobilien.de versendet.'
+      );
+
       // 🧾 Weitere Verarbeitung
       const marketingTypeText = mapMarketingType(
         immobilie?.marketingType || ''
@@ -88,6 +99,34 @@ export class ExposeAnfrageService {
                 mailPayload
               )
               .toPromise();
+
+            // Hole den aktuellen Stand aus Firestore (um Änderungen nicht zu überschreiben)
+            const latestProcessSnap = await getDoc(processRef);
+            const latestProcess =
+              latestProcessSnap.data() as PropertyInquiryProcess;
+
+            // Update-Felder setzen
+            latestProcess.exposeSent = new Date();
+            latestProcess.inquiryProcessStatus = 'Exposé';
+            latestProcess.lastUpdateDate = new Date();
+
+            // 🔥 Speichern
+            await setDoc(processRef, latestProcess, { merge: true });
+
+            // Loggen
+            await this.logEntriesService.logProcessEntry(
+              inquiryProcessId,
+              (anfrage.firstName + ' ' + anfrage.lastName).trim() || 'System',
+              'Status geändert',
+              'Status nach Exposé-Versand automatisch zu "Exposé" geändert.'
+            );
+
+            await this.logEntriesService.logProcessEntry(
+              inquiryProcessId,
+              (anfrage.firstName + ' ' + anfrage.lastName).trim() || 'System',
+              'Exposé automatisch versendet',
+              `Exposé wurde automatisch an ${anfrage.email} versendet.`
+            );
           } catch (e) {
             console.error('Fehler beim Senden der Antwortmail', e);
           }

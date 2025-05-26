@@ -8,15 +8,12 @@ $secondary-color: #34495e;
 $text-color: #ecf0f1;
 $hover-color: #1abc9c;
 
-section {
-  max-width: 900px;
-  margin: 0 auto;
-  margin-top: -20px;
-  padding: 25px;
-  background: #f9f9f9;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  font-family: Arial, sans-serif;
+.section-dashboard-page {
+  @include s.f_c_fs_fs; 
+  gap: 24px;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0px 0px;
 
   a {
     display: inline-block;
@@ -34,13 +31,24 @@ section {
   }
 }
 
-main.content {
-  padding: 20px;
-  max-width: 100%;
+.dash-top-menu-div {
+  @include s.f_r_fs_fs;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 12px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.content {
+  padding: 20px 0px;
+  width: 100%;
+  box-sizing: border-box;
   overflow-x: auto;
 
   table {
     width: 100%;
+    box-sizing: border-box;
     border-collapse: collapse;
     font-family: Arial, sans-serif;
     background: white;

@@ -19,9 +19,12 @@
         </ul>
       </nav>
     </aside>
+
+    <div class="dashboard-page">
   
     <!-- Inhaltsbereich -->
     <app-header-dashboard></app-header-dashboard>
+
     <main class="content">
       <div *ngIf="!routerActive" class="start-content">
       <h1>Willkommen auf dem Dashboard</h1>
@@ -29,5 +32,8 @@
     </div>
       <router-outlet></router-outlet> 
     </main>
+
+  </div>
+
   </section>
   
