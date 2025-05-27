@@ -8,7 +8,6 @@ import { createInitialInquiryProcess } from '../factories/inquiry-process.factor
 import { createCustomerFromExposeAnfrage } from '../factories/customer.factory';
 import { mapMarketingType } from '../factories/marketing-type.util';
 import { createExposeAnswerMailPayload } from '../factories/expose-mail.factory';
-import { LogEntriesService } from './logEntries.service';
 import { PropertyInquiryProcess } from '../models/property-inquiry-process.model';
 
 @Injectable({
@@ -20,7 +19,6 @@ export class ExposeAnfrageService {
   constructor(
     private http: HttpClient,
     private immobilienService: ImmobilienService,
-    private logEntriesService: LogEntriesService,
     firestore: Firestore
   ) {
     this.firestore = firestore; // 👉 manuell zuweisen
@@ -74,20 +72,16 @@ export class ExposeAnfrageService {
         })
         .toPromise();
 
-      // 📝 Log-Eintrag: Anfrage wurde intern per Mail versendet
-      await this.logEntriesService.logProcessEntry(
-        inquiryProcessId,
-        (anfrage.firstName + ' ' + anfrage.lastName).trim() || 'System',
-        'Exposé Anfrage empfangen',
-        'Die Exposé Anfrage wurde per E-Mail an die info@hilgert-immobilien.de versendet.'
-      );
-
       // 🧾 Weitere Verarbeitung
       const marketingTypeText = mapMarketingType(
         immobilie?.marketingType || ''
       );
 
       const mailPayload = createExposeAnswerMailPayload(anfrage, immobilie); // greift auf die factory zu für den Init des Objekts
+
+      console.log('[Auto-Versand] Immobilie:', immobilie);
+      console.log('[Auto-Versand] autoExposeSend:', immobilie?.autoExposeSend);
+      console.log('[Auto-Versand] Payload:', mailPayload);
 
       // 📩 Nur senden, wenn Auto-Versand aktiviert ist
       if (immobilie?.autoExposeSend) {
@@ -110,23 +104,6 @@ export class ExposeAnfrageService {
             latestProcess.inquiryProcessStatus = 'Exposé';
             latestProcess.lastUpdateDate = new Date();
 
-            // 🔥 Speichern
-            await setDoc(processRef, latestProcess, { merge: true });
-
-            // Loggen
-            await this.logEntriesService.logProcessEntry(
-              inquiryProcessId,
-              (anfrage.firstName + ' ' + anfrage.lastName).trim() || 'System',
-              'Status geändert',
-              'Status nach Exposé-Versand automatisch zu "Exposé" geändert.'
-            );
-
-            await this.logEntriesService.logProcessEntry(
-              inquiryProcessId,
-              (anfrage.firstName + ' ' + anfrage.lastName).trim() || 'System',
-              'Exposé automatisch versendet',
-              `Exposé wurde automatisch an ${anfrage.email} versendet.`
-            );
           } catch (e) {
             console.error('Fehler beim Senden der Antwortmail', e);
           }
@@ -140,6 +117,8 @@ export class ExposeAnfrageService {
       // 🧹 Exposé-Anfrage nach 20s löschen
       setTimeout(async () => {
         try {
+          console.log('Versuche zu löschen als UID:', sharedId);
+
           await deleteDoc(exposeRef);
         } catch (e) {
           console.warn('Expose-Anfrage konnte nicht gelöscht werden:', e);

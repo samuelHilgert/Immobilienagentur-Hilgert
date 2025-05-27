@@ -29,10 +29,17 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     const auth = getAuth();
-    signInAnonymously(auth)
-      .then((cred) => console.log('✅ Anonym eingeloggt:', cred.user.uid))
-      .catch((err) => console.error('❌ Anonyme Anmeldung fehlgeschlagen:', err));
-      
+
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        console.log('✅ Benutzer ist bereits eingeloggt:', user.uid);
+      } else {
+        signInAnonymously(auth)
+          .then((cred) => console.log('✅ Anonym eingeloggt:', cred.user.uid))
+          .catch((err) => console.error('❌ Anonyme Anmeldung fehlgeschlagen:', err));
+      }
+    });
+    
     this.checkCurrentRoute(this.router.url);
   
     this.router.events.pipe(

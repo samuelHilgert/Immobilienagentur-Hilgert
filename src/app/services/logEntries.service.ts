@@ -4,7 +4,6 @@ import { PropertyInquiryProcess } from '../models/property-inquiry-process.model
 import { createLogEntry, addLogEntryToProcess } from '../utils/log-entry.util';
 
 // log-entries.service.ts
-
 @Injectable({ providedIn: 'root' })
 export class LogEntriesService {
   constructor(private firestore: Firestore) {}
@@ -28,7 +27,8 @@ export class LogEntriesService {
       const entry = createLogEntry(action, user, comment);
       addLogEntryToProcess(process, entry);
 
-      await setDoc(processRef, process, { merge: true });
+      // 👉 Nur historyLog schreiben, sonst schlägt es fehl
+      await setDoc(processRef, { historyLog: process.historyLog }, { merge: true });
     } catch (error) {
       console.error(`[Log] Fehler beim Schreiben des Log-Eintrags für ${processId}:`, error);
     }

@@ -107,6 +107,16 @@ $headers .= "Reply-To: {$from}\r\n";
 // ✅ Mail senden
 $success = mail($email, $subject, $htmlMessage, $headers);
 
+if (!$success) {
+  http_response_code(500);
+  error_log("❌ Mailversand fehlgeschlagen an $email (ID: $externalId)");
+  echo json_encode([
+    'success' => false,
+    'message' => 'E-Mail konnte nicht versendet werden',
+  ]);
+  exit;
+}
 // Antwort zurück
-echo json_encode(['success' => $success]);
+echo json_encode(['success' => true]);
+
 ?>
