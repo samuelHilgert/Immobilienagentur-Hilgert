@@ -120,6 +120,10 @@
                 <p><strong>Qualität der Ausstattung:</strong></p>
                 <p>{{ interiorQualityLabels[type] || 'Keine Angabe' }}</p>
               </div>
+              <div class="detail-row" *ngIf="wohnungDetails?.freeFrom">
+                <p><strong>Frei ab:</strong></p>
+                <p>{{ wohnungDetails?.freeFrom || 'Keine Angabe' }}</p>
+              </div>    
               <!-- <div class="detail-row" *ngIf="wohnungDetails">
                 <p><strong>Letzte Modernisierung/Sanierung:</strong></p>
                 <p>{{ wohnungDetails.lastRefurbishment != null && wohnungDetails.lastRefurbishment !== '' ? wohnungDetails.lastRefurbishment : 'Keine Angabe' }}</p>
@@ -265,6 +269,11 @@
         <p><strong>Qualität der Ausstattung:</strong></p>
         <p>{{ interiorQualityLabels[type] || 'Keine Angabe' }}</p>
       </div>
+      <div class="detail-row" *ngIf="hausDetails?.freeFrom">
+        <p><strong>Frei ab:</strong></p>
+        <p>{{ hausDetails?.freeFrom || 'Keine Angabe' }}</p>
+      </div>
+      
       <!-- <div class="detail-row" *ngIf="haus?.lastRefurbishment">
         <p><strong>Letzte Modernisierung/ Sanierung:</strong></p>
         <p>{{ haus.lastRefurbishment }}</p>

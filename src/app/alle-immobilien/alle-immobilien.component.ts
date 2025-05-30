@@ -36,36 +36,52 @@ export class AlleImmobilienComponent implements OnInit {
   ngOnInit(): void {
     this.isLoading = true;
     this.loadStatus = 0;
-  
+
     this.immobilienService.getImmobilien().subscribe({
       next: async (data) => {
         this.immobilien = (data || [])
-        .filter((immo: Immobilie) => immo.uploadPublicTargets?.homepage === true)
-        .sort((a: Immobilie, b: Immobilie) => {
-          // Zuerst nach propertyStatus
-          if (a.propertyStatus === 'Angebot' && b.propertyStatus !== 'Angebot') return -1;
-          if (a.propertyStatus !== 'Angebot' && b.propertyStatus === 'Angebot') return 1;
-      
-          // Danach nach indexId (numerisch absteigend)
-          return (b.indexId || 0) - (a.indexId || 0);
-        });
-  
-          this.paginationService.setData(this.immobilien, 8);
+          .filter(
+            (immo: Immobilie) =>
+              immo.uploadPublicTargets?.homepage === true &&
+              ['Angebot', 'Referenz', 'Reserviert'].includes(
+                immo.propertyStatus
+              )
+          )
+          .sort((a: Immobilie, b: Immobilie) => {
+            // Zuerst nach propertyStatus
+            if (
+              a.propertyStatus === 'Angebot' &&
+              b.propertyStatus !== 'Angebot'
+            )
+              return -1;
+            if (
+              a.propertyStatus !== 'Angebot' &&
+              b.propertyStatus === 'Angebot'
+            )
+              return 1;
 
-          const mediaPromises = this.immobilien.map((immobilie) => {
-            return this.mediaService.getMediaForProperty(immobilie.externalId!).then((mediaList) => {
+            // Danach nach indexId (numerisch absteigend)
+            return (b.indexId || 0) - (a.indexId || 0);
+          });
+
+        this.paginationService.setData(this.immobilien, 8);
+
+        const mediaPromises = this.immobilien.map((immobilie) => {
+          return this.mediaService
+            .getMediaForProperty(immobilie.externalId!)
+            .then((mediaList) => {
               const titleImage = mediaList.find((m) => m.isTitleImage);
               const fallbackImage = mediaList[0]; // falls kein Titelbild gesetzt ist
               const imageToUse = titleImage || fallbackImage;
-          
+
               if (imageToUse) {
                 this.mediaAttachments[immobilie.externalId!] = [imageToUse];
               }
             });
-          });          
-  
+        });
+
         await Promise.all(mediaPromises);
-  
+
         this.isLoading = false; // 👈 Spinner hier beenden!
       },
       error: (err) => {
@@ -74,7 +90,7 @@ export class AlleImmobilienComponent implements OnInit {
         this.isLoading = false; // 👈 Auch im Fehlerfall beenden!
       },
     });
-  }  
+  }
 
   getMediaForImmobilie(externalId: string | undefined): MediaAttachment[] {
     if (!externalId) return [];
@@ -83,40 +99,43 @@ export class AlleImmobilienComponent implements OnInit {
 
   toggleCard(immobilie: Immobilie): void {
     const id = immobilie.externalId;
-  
-    if ((immobilie.propertyStatus === 'Referenz' || immobilie.propertyStatus === 'Reserviert') && id) {
+
+    if (
+      (immobilie.propertyStatus === 'Referenz' ||
+        immobilie.propertyStatus === 'Reserviert') &&
+      id
+    ) {
       if (this.overlayTimeouts[id]) {
         clearTimeout(this.overlayTimeouts[id]);
       }
-  
+
       this.expandedCards[id] = true;
-  
+
       this.overlayTimeouts[id] = setTimeout(() => {
         this.expandedCards[id] = false;
         delete this.overlayTimeouts[id];
       }, 2000);
     }
-  
+
     if (immobilie.propertyStatus === 'Angebot') {
       this.openImmobilienDetails(immobilie);
     }
   }
-  
-  
+
   openImmobilienDetails(immobilie: Immobilie): void {
     const media = this.mediaAttachments[immobilie.externalId!];
-  
+
     this.dialog.open(ImmobilienDetailsComponent, {
       panelClass: 'details-dialog',
       data: {
         immobilie,
-        media
+        media,
       },
-      autoFocus: false
+      autoFocus: false,
     });
   }
-  
-   // Proxy-Getter fürs Template
+
+  // Proxy-Getter fürs Template
   get paginatedImmobilien(): Immobilie[] {
     return this.paginationService.paginatedItems;
   }

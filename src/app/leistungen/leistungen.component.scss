@@ -131,3 +131,62 @@ section.services-section {
     }
   }
   
+
+  .netzwerk-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    height: 600px;
+    margin: 2rem auto;
+    background: #f9f9f9;
+    border-radius: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .netzwerk-zentrum {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #003366;
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 50px;
+    font-weight: bold;
+    z-index: 2;
+  }
+  
+  .netzwerk-node {
+    position: absolute;
+    background: white;
+    border: 2px solid #ccc;
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    width: max-content;
+    z-index: 2;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .handwerker       { top: 10%; left: 20%; }
+  .notar            { top: 10%; right: 20%; }
+  .finanzierer      { top: 50%; right: 5%; transform: translateY(-50%); }
+  .bauunternehmer   { bottom: 10%; right: 20%; }
+  .architekt        { bottom: 10%; left: 20%; }
+  .energieberater   { top: 50%; left: 5%; transform: translateY(-50%); }
+  
+  .netzwerk-lines {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  
+    line {
+      stroke: #999;
+      stroke-width: 2;
+    }
+  }
+  

@@ -94,16 +94,18 @@ export class ExposeAnfrageService {
               )
               .toPromise();
 
-            // Hole den aktuellen Stand aus Firestore (um Änderungen nicht zu überschreiben)
-            const latestProcessSnap = await getDoc(processRef);
-            const latestProcess =
-              latestProcessSnap.data() as PropertyInquiryProcess;
+            const now = new Date().toISOString();
 
-            // Update-Felder setzen
-            latestProcess.exposeSent = new Date();
-            latestProcess.inquiryProcessStatus = 'Exposé';
-            latestProcess.lastUpdateDate = new Date();
-
+            await setDoc(
+              processRef,
+              {
+                exposeSent: now,
+                inquiryProcessStatus: 'Exposé',
+                lastUpdateDate: now,
+              },
+              { merge: true }
+            );
+            
           } catch (e) {
             console.error('Fehler beim Senden der Antwortmail', e);
           }
@@ -117,7 +119,7 @@ export class ExposeAnfrageService {
       // 🧹 Exposé-Anfrage nach 20s löschen
       setTimeout(async () => {
         try {
-          console.log('Versuche zu löschen als UID:', sharedId);
+          console.log('gelöscht als UID:', sharedId);
 
           await deleteDoc(exposeRef);
         } catch (e) {
