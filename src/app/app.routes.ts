@@ -50,11 +50,129 @@ import { PropertyImagesSetsComponent } from './dashboard/immobilien/immobilien-d
 import { PropertyExposeSetsComponent } from './dashboard/immobilien/immobilien-datenbank/shared/property-expose-sets/property-expose-sets.component';
 import { ProtocolInquiryPropertyComponent } from './dashboard/immobilien/protocol-inquiry-property/protocol-inquiry-property.component';
 import { EpxosePreviewComponent } from './shared/epxose-preview/epxose-preview.component';
+import { DashStartComponent } from './dashboard/dash-start/dash-start.component';
 
 export const routes: Routes = [
   {
     path: '',
     component: MainComponent,
+  },
+  {
+    path: 'dashboard-login',
+    component: DashboardLoginComponent,
+  },
+  {
+    path: 'dashboard',
+    component: DashboardComponent,
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: '',
+        component: DashStartComponent,
+      },
+      {
+        path: 'immobilien',
+        component: ImmobilienComponent,
+        children: [
+          {
+            path: '',
+            component: ImmobilienDatenbankComponent,
+          },
+          {
+            path: 'immobilie-anlegen',
+            component: ImmobilieAnlegenComponent,
+          },
+          {
+            path: 'wohnung-details-form/:externalId',
+            component: WohnungDetailsFormComponent,
+          },
+          {
+            path: 'haus-details-form/:externalId',
+            component: HausDetailsFormComponent,
+          },
+          {
+            path: 'grundstueck-details-form/:externalId',
+            component: GrundstueckDetailsFormComponent,
+          },
+        ],
+      },
+      {
+        path: 'property-process-view/:externalId',
+        component: PropertyProcessViewComponent,
+      },
+      {
+        path: 'expose-anfragen-datenbank/:externalId',
+        component: ExposeAnfragenDatenbankComponent,
+      },
+      {
+        path: 'property-expose-sets/:externalId',
+        component: PropertyExposeSetsComponent,
+      },
+      {
+        path: 'property-images-sets/:externalId',
+        component: PropertyImagesSetsComponent,
+      },
+      {
+        path: 'property-docs-sets/:externalId',
+        component: PropertyDocsSetsComponent,
+      },
+      {
+        path: 'property-forms-sets/:externalId',
+        component: PropertyFormsSetsComponent,
+      },
+      {
+        path: 'suchauftraege',
+        component: SuchauftraegeComponent,
+        children: [
+          {
+            path: 'suchauftrag-anlegen',
+            component: SuchauftragAnlegenComponent,
+          },
+        ],
+      },
+      {
+        path: 'kundendatenbank',
+        component: KundendatenbankComponent,
+      },
+      {
+        path: 'protocol-inquiry-property/:customerId/:externalId',
+        component: ProtocolInquiryPropertyComponent,
+      },
+      {
+        path: 'umsatz',
+        component: UmsatzComponent,
+      },
+      {
+        path: 'support-tickets',
+        component: SupportTicketsComponent,
+      },
+      {
+        path: 'kunde-anlegen',
+        component: KundeAnlegenComponent,
+      },
+      {
+        path: 'kunde-details/:id',
+        component: KundeDetailsComponent,
+      },
+      {
+        path: 'bewertungen',
+        component: BewertungenComponent,
+        children: [
+          { path: 'bewertung-anlegen', component: BewertungAnlegenComponent },
+        ],
+      },
+      { path: 'newsletter', component: NewsletterComponent },
+      {
+        path: 'partner',
+        component: PartnerComponent,
+        children: [
+          { path: 'partner-anlegen', component: PartnerAnlegenComponent },
+        ],
+      },
+      { path: 'social-media', component: SocialMediaComponent },
+      { path: 'werbung', component: WerbungComponent },
+      { path: 'ablage', component: AblageComponent },
+    ],
   },
   {
     path: 'immobilien',
@@ -72,11 +190,10 @@ export const routes: Routes = [
     path: 'immobilienbewertung',
     component: ImmobilienbewertungComponent,
   },
-  { path: 'expose-anfordern', 
-    component: ExposeAnfordernComponent 
-  },
-  {   path: 'expose-preview/:inquiryProcessId',
-    component: EpxosePreviewComponent
+  { path: 'expose-anfordern', component: ExposeAnfordernComponent },
+  {
+    path: 'expose-preview/:inquiryProcessId',
+    component: EpxosePreviewComponent,
   },
 
   {
@@ -131,117 +248,6 @@ export const routes: Routes = [
     path: 'widerruf',
     component: WiderrufComponent,
   },
-  {
-    path: 'dashboard-login',
-    component: DashboardLoginComponent,
-  },
-  {
-    path: 'dashboard',
-    component: DashboardComponent,
-    canActivate: [AuthGuard], // 🔐 Schützt das Dashboard
-    children: [
 
-      // 👈 Nested Routes innerhalb des Dashboards!
-      {
-        path: 'immobilien',
-        component: ImmobilienComponent,
-        children: [
-          {
-            path: 'immobilie-anlegen',
-            component: ImmobilieAnlegenComponent
-          },
-          {
-            path: 'immobilie-datenbank',
-            component: ImmobilienDatenbankComponent,
-          },
-          {
-            path: 'wohnung-details-form/:externalId',
-            component: WohnungDetailsFormComponent,
-          },
-          {
-            path: 'haus-details-form/:externalId',
-            component: HausDetailsFormComponent,
-          },
-          {
-            path: 'grundstueck-details-form/:externalId',
-            component: GrundstueckDetailsFormComponent,
-          },      
-        ]
-      },      
-      {
-        path: 'property-process-view/:externalId',
-        component: PropertyProcessViewComponent
-      },
-      {
-        path: 'expose-anfragen-datenbank/:externalId',
-        component: ExposeAnfragenDatenbankComponent,
-      },     
-      {
-        path: 'property-expose-sets/:externalId',
-        component: PropertyExposeSetsComponent
-      },
-      {
-        path: 'property-images-sets/:externalId',
-        component: PropertyImagesSetsComponent
-      },
-      {
-        path: 'property-docs-sets/:externalId',
-        component: PropertyDocsSetsComponent
-      },
-      {
-        path: 'property-forms-sets/:externalId',
-        component: PropertyFormsSetsComponent
-      },
-      {
-        path: 'suchauftraege',
-        component: SuchauftraegeComponent,
-        children: [
-          { path: 'suchauftrag-anlegen', component: SuchauftragAnlegenComponent },
-        ],
-      },
-      {
-        path: 'kundendatenbank',
-        component: KundendatenbankComponent,
-      },
-      {
-        path: 'protocol-inquiry-property/:customerId/:externalId',
-        component: ProtocolInquiryPropertyComponent,
-      },
-      {
-        path: 'umsatz',
-        component: UmsatzComponent,
-      },
-      {
-        path: 'support-tickets',
-        component: SupportTicketsComponent,
-      },
-      {
-        path: 'kunde-anlegen',
-        component: KundeAnlegenComponent
-      },
-      {
-        path: 'kunde-details/:id',
-        component: KundeDetailsComponent
-      },
-      {
-        path: 'bewertungen',
-        component: BewertungenComponent,
-        children: [
-          { path: 'bewertung-anlegen', component: BewertungAnlegenComponent },
-        ],
-      },
-      { path: 'newsletter', component: NewsletterComponent },
-      {
-        path: 'partner',
-        component: PartnerComponent,
-        children: [
-          { path: 'partner-anlegen', component: PartnerAnlegenComponent },
-        ],
-      },
-      { path: 'social-media', component: SocialMediaComponent },
-      { path: 'werbung', component: WerbungComponent },
-      { path: 'ablage', component: AblageComponent },
-    ],
-  },
   { path: '**', redirectTo: '' },
 ];

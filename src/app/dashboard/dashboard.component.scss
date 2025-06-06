@@ -2,7 +2,6 @@
 @use "./../../assets/fonts.scss" as f;
 @use "./../../assets/colors.scss" as c;
 
-// Dashboard Layout
 .dashboard {
   display: flex;
   width: 100%;
@@ -11,16 +10,66 @@
   max-height: auto;
 }
 
-// Sidebar Styling
+.dashboard.sidebar-closed .dashboard-page {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.sidebar.closed .sidebar-close-btn {
+  padding: 300px 2px;
+}
+
 .sidebar {
+  position: relative;
+  display: flex;
+  flex-direction: row;
   width: 250px;
   box-sizing: border-box;
-  background: c.$primary-color;
+  background: c.$dashboard-sidebar-bg;
   color: c.$dashboard-sidebar-text;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+  padding: 0 20px;
+  transition: width 0.3s ease;
+
+  &.closed {
+    top: 9%;
+    width: 10px;
+    padding: 0 10px;
+    background-color: c.$dashboard-page-bg;
+    overflow: hidden;
+
+    nav .title {
+      display: none;
+    }
+
+    ul li a {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .sidebar-close-btn {
+    position: absolute;
+    @include s.f_c_fs_c;
+    right:0;
+    height:100%;
+    box-sizing: border-box;
+    background-color: c.$primary-color;
+    color: white;
+    padding: 300px 6px;
+    cursor: pointer;
+    z-index: 2;
+  }
+
+  nav {
+    display: flex;
+    flex-direction: column;
+  }
+
+  nav .title {
+    padding: 12px;
+    margin-bottom: 24px;
+  }
 
   nav ul {
     list-style: none;
@@ -32,66 +81,30 @@
       a {
         text-decoration: none;
         color: c.$dashboard-sidebar-text;
-        font-size: 16px;
         display: block;
         padding: 10px;
-        border-radius: 5px;
-        transition: background 0.3s ease;
 
         &:hover {
-          background: 1abc9c;
-          color: c.$contrast-color;
+          color: c.$dashboard-sidebar-text-hover;
         }
       }
     }
   }
+
+
 }
 
 .dashboard-page {
-  display: flex;
+  @include s.f_c_fs_fs;
   width: calc(100% - 250px);
   box-sizing: border-box;
-}
-
-.start-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 24px;
   margin: 0;
-  width: 100%;
-  box-sizing: border-box;
-}
+  padding: 32px;
+  background-color: c.$dashboard-page-bg;
 
-
-
-.nav-title-dashboard {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 12px 12px;
-  margin-bottom: 24px;
-}
-
-
-
-// Inhaltsbereich
-.content {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  box-sizing: border-box;
-
-  padding: 40px 38px;
-  background: #ecf0f1;
-
-
-  h1 {
-    color: c.$primary-color;
-  }
-
-  p {
-    color: c.$primary-color;
-    font-size: 18px;
+  app-header-dashboard,
+  router-outlet {
+    width: 100%;
+    box-sizing: border-box;
   }
 }

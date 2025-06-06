@@ -1,17 +1,11 @@
-<!-- Übersicht mit Tabelle nur bei /dashboard/immobilien -->
-<section *ngIf="isMainView">
-  <h2>Immobilien</h2>
+<section>
+  <h3>Immobilien</h3>
 
-  <div class="section-immobilie-anlegen">
-    <a routerLink="immobilie-anlegen">Neue Immobilie anlegen</a>
-  </div>
 
-  <div class="section-immobilien-datenbank" *ngIf="isMainView">
-    <app-immobilien-datenbank *ngIf="isMainView"></app-immobilien-datenbank>
-  </div>
-</section>
+    <nav class="dash-page-top-nav" *ngIf="showTopMenu">
+      <a class="dash-page-top-nav-btn" routerLink="immobilie-anlegen">Neue Immobilie anlegen</a>
+    </nav>
 
-<!-- Detail oder Anlegen etc. -->
-<main class="content" *ngIf="!isMainView">
+
   <router-outlet></router-outlet>
-</main>
+</section>

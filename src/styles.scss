@@ -368,9 +368,9 @@ body {
 
   @page {
     margin-top: 2cm; 
-    margin-left: 1cm;
-    margin-right: 1cm;
     margin-bottom: 2cm;
+    width:100% !important;
+    box-sizing: border-box !important;
   }
 
   .no-print {

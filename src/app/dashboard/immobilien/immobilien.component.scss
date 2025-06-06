@@ -1,58 +1,16 @@
 @use "./../../../styles.scss" as s;
 @use "./../../../assets/fonts.scss" as f;
 @use "./../../../assets/colors.scss" as c;
-
-// Farben & Variablen
-$primary-color: #2c3e50;
-$secondary-color: #34495e;
-$text-color: #ecf0f1;
-$hover-color: #1abc9c;
+@use "./../../../assets/elements.scss" as e;
 
 section {
   @include s.f_c_fs_fs;
   gap: 24px;
   width: 100%;
   box-sizing: border-box;
-  margin: 0px auto;
-  margin-top: -20px;
-  padding: 25px 0px;
 }
 
-.section-immobilie-anlegen {
-  @include s.f_c_fs_fs;
+router-outlet {
   width: 100%;
   box-sizing: border-box;
-  padding: 24px 12px;
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.section-immobilien-datenbank {
-  @include s.f_c_fs_fs;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0px;
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-// Inhaltsbereich
-.content {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  padding: 40px;
-  background: #ecf0f1;
-  gap: 20px;
-
-  h1 {
-    color: $primary-color;
-  }
-
-  p {
-    color: $secondary-color;
-    font-size: 18px;
-  }
 }

@@ -1,9 +1,9 @@
-
 //////// default settings //////// 
 $bg-color: #fafcff;
 $primary-color: #2D4459; // #2D4459 marineblau for important elements and logo
 $contrast-color: #c8a47b; // warmer goldton als Kontrastfarbe
 $primary-text: #050a30; // general text navy_blue
+$secondary-text: #fdfeff;
 $online: #28a745;
 $offline: grey;
 $error-msg: red;
@@ -44,12 +44,12 @@ $referenzen-ribbon-bg: $primary-color;
 $referenzen-ribbon-text: white;
 
 //////// angebote ////////
-$angebote-slider-arrows: $contrast-color; 
+$angebote-slider-arrows: $contrast-color;
 $angebote-slider-arrows-hover: $primary-color;
 $angebot-card-bg: $card-bg;
-$angebot-card-icon:$contrast-color; 
+$angebot-card-icon: $contrast-color;
 $link-weitere-angebote: $primary-color;
-$link-weitere-angebote-hover: $contrast-color; 
+$link-weitere-angebote-hover: $contrast-color;
 
 //////// contact ////////
 
@@ -76,5 +76,20 @@ $expose-option-btn-bg-hover: white;
 $expose-option-btn-text-hover: $primary-text;
 
 //////// dashboard ////////
-$dashboard-sidebar-text: white;
-
+$dashboard-sidebar-bg: $primary-color;
+$dashboard-sidebar-text: $secondary-text;
+$dashboard-sidebar-text-hover: $contrast-color;
+$dashboard-page-bg: #ecf0f1;
+$dash-page-top-nav-bg: #ecf0f1;
+$dash-page-top-nav-border: #ecf0f1;
+$dash-page-top-nav-btn-bg: $contrast-color;
+$dash-page-top-nav-btn-text: white;
+$dash-page-top-nav-btn-bg-hover: $primary-color;
+$dash-page-top-nav-btn-text-hover: white;
+$dash-page-topline-menu-bg: transparent;
+$dash-page-topline-btn-bg: #ecf0f1;
+$dash-page-topline-btn-text: $primary-color;
+$dash-page-topline-btn-bg-hover: $primary-color;
+$dash-page-topline-btn-text-hover: $primary-color;
+$dash-page-bg-alt: #f5f5f5;
+$dash-page-database-row-bg-hover: #e4e4e4;

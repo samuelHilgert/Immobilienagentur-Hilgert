@@ -8,15 +8,16 @@ section {
   gap: 12px;
   height: auto;
   min-height: 500px;
-  width: 100%;
+  width: 90%;
+  margin:0 auto;
   box-sizing: border-box;
   padding: 80px 5%;
-  margin-top: 140px; // weil hero ausgeblendet wird
+  margin-top: 140px; // weil hero ausgeblendet wirdfincanel-expert-contact
   background-color: c.$bg-color;
 
   @media print {
-    margin-top: 0px;
-    padding: 0px;
+    padding:0 !important;
+    margin:0 !important;
   }
 }
 
@@ -68,8 +69,6 @@ section {
     @include s.f_c_fs_fs;
   }
 }
-
-
 
 .dialog-content {
   padding-right: 64px;
@@ -131,10 +130,10 @@ h3 {
 
 .basic-info-wrapper {
   @include s.f_r_sb_fs;
-  gap: 24px;
+  gap:4px;
   width: 100%;
   box-sizing: border-box;
-  margin-top: 24px;
+  padding: 24px 0px;
 }
 
 .basic-info {
@@ -142,12 +141,14 @@ h3 {
   gap: 4px;
   width: 50%;
   box-sizing: border-box;
+
 }
 
 .basic-payments-info {
   @include s.f_c_fs_fs;
   width: 40%;
   box-sizing: border-box;
+
 }
 
 .spacer-m {
@@ -411,7 +412,7 @@ h3 {
 }
 
 .fincanel-expert-contact {
-  @include s.f_r_fs_fs;
+  @include s.f_c_fs_fs;
   gap: 4px;
   width: 100%;
   box-sizing: border-box;
@@ -436,11 +437,11 @@ h3 {
     column-count: 3;
     column-gap: 12px;
 
-    @media (max-width: 1024px) {
+    @media screen and (max-width: 1024px) {
       column-count: 2;
     }
 
-    @media (max-width: 600px) {
+    @media screen and (max-width: 600px) {
       column-count: 1;
     }
   }
@@ -537,7 +538,15 @@ h3 {
 }
 
 // Nur beim Drucken anzeigen
+
 @media print {
+
+  section {
+      margin-top: 0px;
+      padding: 0px;
+      width: 70%;
+  }
+
   .no-print {
     display: none !important;
   }
@@ -590,7 +599,8 @@ h3 {
 ///////////// Responsive 
 
 // Standard Desktop bis 1439px
-@media (max-width: 1439px) {
+@media screen and (max-width: 1439px) {
+
   .details-dialog {
     padding: 24px 64px !important;
   }
@@ -693,9 +703,8 @@ h3 {
   }
 }
 
-
 // Tablets quer & kleiner: bis 1024px
-@media (max-width: 1024px) {
+@media screen and (max-width: 1024px) {
 
   .basic-info-wrapper,
   .more-info-wrapper {
@@ -720,7 +729,7 @@ h3 {
 }
 
 // Tablets hoch / große Smartphones bis 768px
-@media (max-width: 768px) {
+@media screen and (max-width: 768px) {
 
   .details-dialog {
     padding: 24px 32px !important;
@@ -749,7 +758,7 @@ h3 {
 }
 
 // Smartphones < 576px
-@media (max-width: 575px) {
+@media screen and (max-width: 575px) {
   .details-dialog {
     padding: 24px 0 !important;
 
@@ -783,7 +792,7 @@ h3 {
   }
 }
 
-@media (max-width: 440px) {
+@media screen and (max-width: 440px) {
   h3 {
     font-size: 1rem !important;
     padding: 0 12px;

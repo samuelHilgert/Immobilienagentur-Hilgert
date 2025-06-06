@@ -13,7 +13,7 @@
   </div>
 
   <ng-container *ngIf="immobilie; else loading">
-    <div id="druckbereich">
+    <div id="printContent">
       <div class="details-dialog">
         <div class="doc-title-row">
           <h2>
@@ -56,79 +56,82 @@
           </h3>
         </div>
 
+        <div class="double-divider-line no-print"></div>
+        <div class="double-divider-line no-print"></div>
+
+        <!-- /////////// general infos about property for all types of properties  -->
+        <div class="basic-info-wrapper">
+          <div class="basic-info">
+            <div class="detail-row">
+              <p><strong>Objekt-ID:</strong></p>
+              <p>{{ immobilie.externalId }}</p>
+            </div>
+            <div class="spacer-m"></div>
+            <div class="detail-row">
+              <p><strong>Kategorie:</strong></p>
+              <p>Kauf</p>
+            </div>
+            <div class="detail-row">
+              <p><strong>Objekttyp:</strong></p>
+              <p>{{ immobilie.propertyType }}</p>
+            </div>
+            <div class="detail-row">
+              <p><strong>Anzahl Zimmer:</strong></p>
+              <p>{{ immobilie.numberOfRooms }}</p>
+            </div>
+            <div class="detail-row">
+              <p><strong>Wohnfläche:</strong></p>
+              <p>{{ immobilie.livingSpace }} m²</p>
+            </div>
+          </div>
+
+          <div class="basic-payments-info">
+            <div class="detail-row">
+              <p><strong>Ort:</strong></p>
+              <p>{{ immobilie.postcode }} {{ immobilie.city }}</p>
+            </div>
+            <div class="detail-row" *ngIf="!accessIsNormal">
+              <p><strong>Straße/Hr.:</strong></p>
+              <p>{{ immobilie.street }} {{ immobilie.houseNumber }}</p>
+            </div>
+            <div class="detail-row" *ngIf="!accessIsNormal">
+              <p class="disclaimer-note-red">
+                Bitte betreten Sie das Grundstück nicht vor unserem
+                Besichtigungstermin!
+              </p>
+            </div>
+            <div class="spacer-m no-print"></div>
+            <div class="detail-row">
+              <p><strong>Kaufpreis:</strong></p>
+              <p>{{ immobilie.value | number : "1.0-0" }} €</p>
+            </div>
+            <div class="spacer-m no-print"></div>
+            <div class="detail-row no-print">
+              <p>
+                <strong>Provision:</strong><br />
+                {{ immobilie.courtage }}
+              </p>
+            </div>
+
+            <div class="detail-row display-if-print">
+              <p><strong>Provision:</strong><br /></p>
+              <p>{{ immobilie.courtage }}</p>
+            </div>
+            <div class="spacer-m no-print"></div>
+            <div class="detail-row">
+              <p>
+                <strong>Provisionshinweis:</strong><br />{{
+                  immobilie.courtageNote
+                }}
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div class="double-divider-line"></div>
         <div class="double-divider-line"></div>
 
         <div class="dialog-content">
-          <!-- /////////// general infos about property for all types of properties  -->
-          <div class="basic-info-wrapper">
-            <div class="basic-info">
-              <div class="detail-row">
-                <p><strong>Objekt-ID:</strong></p>
-                <p>{{ immobilie.externalId }}</p>
-              </div>
-              <div class="spacer-m"></div>
-              <div class="detail-row">
-                <p><strong>Kategorie:</strong></p>
-                <p>Kauf</p>
-              </div>
-              <div class="detail-row">
-                <p><strong>Objekttyp:</strong></p>
-                <p>{{ immobilie.propertyType }}</p>
-              </div>
-              <div class="detail-row">
-                <p><strong>Anzahl Zimmer:</strong></p>
-                <p>{{ immobilie.numberOfRooms }}</p>
-              </div>
-              <div class="detail-row">
-                <p><strong>Wohnfläche:</strong></p>
-                <p>{{ immobilie.livingSpace }} m²</p>
-              </div>
-            </div>
-
-            <div class="basic-payments-info">
-              <div class="detail-row">
-                <p><strong>Ort:</strong></p>
-                <p>{{ immobilie.postcode }} {{ immobilie.city }}</p>
-              </div>
-              <div class="detail-row" *ngIf="!accessIsNormal">
-                <p><strong>Straße/Hr.:</strong></p>
-                <p>{{ immobilie.street }} {{ immobilie.houseNumber }}</p>
-              </div>
-              <div class="detail-row" *ngIf="!accessIsNormal">
-                <p class="disclaimer-note-red">
-                  Bitte betreten Sie das Grundstück nicht vor unserem
-                  Besichtigungstermin!
-                </p>
-              </div>
-              <div class="spacer-m no-print"></div>
-              <div class="detail-row">
-                <p><strong>Kaufpreis:</strong></p>
-                <p>{{ immobilie.value | number : "1.0-0" }} €</p>
-              </div>
-              <div class="spacer-m no-print"></div>
-              <div class="detail-row no-print">
-                <p>
-                  <strong>Provision:</strong><br />
-                  {{ immobilie.courtage }}
-                </p>
-              </div>
-
-              <div class="detail-row display-if-print">
-                <p><strong>Provision:</strong><br /></p>
-                <p>{{ immobilie.courtage }}</p>
-              </div>
-              <div class="spacer-m no-print"></div>
-              <div class="detail-row">
-                <p>
-                  <strong>Provisionshinweis:</strong><br />{{
-                    immobilie.courtageNote
-                  }}
-                </p>
-              </div>
-            </div>
-          </div>
-
           <!-- dynamic area depends on property type -->
           <div class="details-dynamic page-break">
             <h3 class="next-section-print">Weitere Angaben</h3>
@@ -533,7 +536,6 @@
                   <!-- ///////////// end of notes warpper for apartments -->
 
                   <div class="notes-wrapper" *ngIf="!accessIsNormal && isHouse">
-                    
                     <div class="note-textarea" *ngIf="haus.descriptionNote">
                       <p><strong>Objektbeschreibung:</strong></p>
                       <div [innerHTML]="haus.descriptionNote | nl2br"></div>
@@ -559,10 +561,29 @@
               <!-- ///////////// end of left-content-wrapper-->
 
               <div class="right-content-wrapper page-break">
+                <!-- object video box -->
+                <div class="object-video-box" *ngIf="getVideoMedia() as video">
+                  <video
+                    width="100%"
+                    height="auto"
+                    controls
+                    [poster]="getTitleImage()?.url"
+                    (contextmenu)="disableContextMenu($event)"
+                  >
+                    <source [src]="video.url" type="video/mp4" />
+                    Ihr Browser unterstützt das Video-Tag nicht.
+                  </video>
+                </div>                
+
                 <!-- energyrating diagramm -->
                 <div
                   class="energiewert-wrapper"
-                  *ngIf="!accessIsNormal && isApartment && wohnung && wohnung.thermalCharacteristic"
+                  *ngIf="
+                    !accessIsNormal &&
+                    isApartment &&
+                    wohnung &&
+                    wohnung.thermalCharacteristic
+                  "
                 >
                   <div class="detail-row">
                     <p><strong>Energiewert:</strong></p>
@@ -588,7 +609,12 @@
 
                 <div
                   class="energiewert-wrapper"
-                  *ngIf="!accessIsNormal && isHouse && haus && haus.thermalCharacteristic"
+                  *ngIf="
+                    !accessIsNormal &&
+                    isHouse &&
+                    haus &&
+                    haus.thermalCharacteristic
+                  "
                 >
                   <div class="detail-row">
                     <p><strong>Energiewert:</strong></p>
@@ -759,14 +785,38 @@
                     </p>
                     <div class="fincanel-expert-contact">
                       <p>Ansprechpartner:</p>
-                      <p>Herr Andreas Böck</p>
-                      <a class="no-link" href="tel:+4915120077474">
-                        <span>(0151 200 774 74)</span>
-                      </a>
+                      <p>
+                        Herr Andreas Böck
+                        <a class="no-link" href="tel:+4915120077474">
+                          <span>(0151 200 774 74)</span>
+                        </a>
+                      </p>
+                      <p>
+                        oder per Mail an:
+                        <a href="mailto:info@fsk-baufinanzierung.de">
+                          <span>info&#64;fsk-baufinanzierung.de</span>
+                        </a>
+                      </p>
                     </div>
                   </div>
                 </div>
                 <!-- ///////////// -->
+
+                <!-- ad Immobilienbewertung -->
+                <div class="adBox">
+                  <h3>Sie möchten eine Immobilie verkaufen?</h3>
+                  <p>
+                    Sie besitzen bereits eine Immobilie, welche Sie überlegen zu
+                    verkaufen? Gerne erstellen wir für Sie eine kostenfreie und
+                    unverbindliche Immobilienbewertung, um den aktuellen
+                    Marktwert Ihrer Immobilie zu ermitteln. Einen Maklervertrag
+                    unterschreiben Sie bei uns erst, wenn Sie sich wirklich
+                    bereit für den Verkauf fühlen.
+                  </p>
+                  <a href="tel:+4917644476237" target="_blank"
+                    >Jetzt Termin vereinbaren!</a
+                  >
+                </div>
 
                 <!-- ad feedback -->
                 <div class="adBox" *ngIf="accessIsNormal || accessIsShort">

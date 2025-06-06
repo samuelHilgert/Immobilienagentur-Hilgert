@@ -180,7 +180,7 @@ export class EpxosePreviewComponent implements OnInit {
   }
 
   downloadAsPDF() {
-    const element = document.getElementById('druckbereich');
+    const element = document.getElementById('printContent');
     if (!element) {
       console.warn('Druckbereich nicht gefunden!');
       return;
@@ -302,5 +302,11 @@ export class EpxosePreviewComponent implements OnInit {
   get isGrundstueck(): boolean {
     return this.immobilie?.propertyType === 'Grundstück';
   }
+
+  // searching for video 
+  getVideoMedia(): MediaAttachment | undefined {
+    return this.media.find((m) => m.type === 'video');
+  }
+  
   
 }
