@@ -9,6 +9,25 @@ section {
   background-color: c.$bg-color;
 }
 
+.title-div {
+  
+  h2 {
+    color: c.$primary-text;
+    position: relative;
+
+    &:after {
+      content: '';
+      display: block;
+      width: 700px;
+      height: 2px;
+      background-color: c.$primary-color;
+      margin: 20px auto 0;
+      border-radius: 2px;
+    }
+  }
+  
+}
+
 .spinner-wrapper {
   display: flex;
   justify-content: center;
@@ -19,7 +38,7 @@ section {
 .immobilien-grid {
   @include s.f_r_fs_fs;
   gap: 18px;
-  padding-top:24px;
+  padding-top: 24px;
   flex-wrap: wrap;
 }
 
@@ -48,9 +67,9 @@ mat-error {
 
 .angebote-grid {
   @include s.f_r_se_fs;
-  width:100%;
+  width: 100%;
   box-sizing: border-box;
-  padding-top:24px;
+  padding-top: 24px;
   transition: transform 0.5s ease-in-out;
 }
 
@@ -59,7 +78,7 @@ mat-card {
   width: 600px;
   height: 700px;
   flex: 0 0 auto;
-  margin-top:40px;
+  margin-top: 40px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.5s ease;
 
@@ -68,33 +87,33 @@ mat-card {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 
-      /* Der Ribbon für die Referenzen */
-      .ribbon {
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 150px;
-        height: 150px;
-        overflow: hidden;
-        pointer-events: none;
-      
-        span {
-          position: absolute;
-          top: 130px;
-          right: -82px;
-          width: 300px;
-          background-color: c.$referenzen-ribbon-bg;
-          color: c.$referenzen-ribbon-text;
-          text-align: center;
-          font-size: 0.85rem;
-          font-weight: bold;
-          transform: rotate(45deg);
-          transform-origin: top right;
-          padding: 8px 0;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-          letter-spacing: 1px;
-        }
-      }
+  /* Der Ribbon für die Referenzen */
+  .ribbon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 150px;
+    height: 150px;
+    overflow: hidden;
+    pointer-events: none;
+
+    span {
+      position: absolute;
+      top: 130px;
+      right: -82px;
+      width: 300px;
+      background-color: c.$referenzen-ribbon-bg;
+      color: c.$referenzen-ribbon-text;
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: bold;
+      transform: rotate(45deg);
+      transform-origin: top right;
+      padding: 8px 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      letter-spacing: 1px;
+    }
+  }
 
   mat-card-header {
     @include s.f_c_fs_c;
@@ -114,27 +133,27 @@ mat-card {
     }
   }
 
-    // dieser Container mit dem Hiwneistext legt sich übers Bild wenn die Immobilie angeklickt wird, aber diese bereits verkauft wurde
-    .verkauft-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 396px;
-      background-color: rgba(0, 0, 0, 0.6);
-      color: white;
-      @include s.f_c_c_c;
-      text-align: center;
-      font-size: 1.2rem;
-      padding: 20px;
-      box-sizing: border-box;
-      z-index: 10;
-    }    
+  // dieser Container mit dem Hiwneistext legt sich übers Bild wenn die Immobilie angeklickt wird, aber diese bereits verkauft wurde
+  .verkauft-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 396px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    @include s.f_c_c_c;
+    text-align: center;
+    font-size: 1.2rem;
+    padding: 20px;
+    box-sizing: border-box;
+    z-index: 10;
+  }
 
   mat-card-content {
     @include s.f_c_fs_sb;
     width: 100%;
-    height:auto;
+    height: auto;
     padding: 24px 18px;
     box-sizing: border-box;
     flex-grow: 1;
@@ -146,9 +165,9 @@ mat-card {
 
     mat-card-title {
       @include s.f_c_fs_fs;
-      padding-top:20px;
+      padding-top: 20px;
       width: 100%;
-      height:130px;
+      height: 130px;
       font-size: 1.3rem;
       font-weight: lighter;
     }
@@ -201,7 +220,7 @@ mat-card {
   width: 100%;
   height: 300px;
   background-color: #f4f4f4;
-}    
+}
 
 /* Link zu weiteren Angeboten */
 .link-weitere-angebote {
@@ -225,7 +244,7 @@ mat-card {
 
 .hinweis-weitere-immobilien {
   @include s.f_r_c_c;
-  margin-top:54px;
+  margin-top: 54px;
 }
 
 .pagination-controls {

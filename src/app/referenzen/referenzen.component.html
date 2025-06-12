@@ -1,26 +1,34 @@
 <section>
-  <h2>Erfolgreich vermittelte Immobilien</h2>
+  <div class="title-div">
+    <h2>Erfolgreich vermittelte Immobilien</h2>
+  </div>
 
-    <!-- Ladecircle -->
-    <div *ngIf="isLoading" class="spinner-wrapper">
-      <mat-spinner diameter="40"></mat-spinner>
-    </div>
-    
+  <!-- Ladecircle -->
+  <div *ngIf="isLoading" class="spinner-wrapper">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
   <mat-error *ngIf="errorMessage">{{ errorMessage }}</mat-error>
 
   <div class="immobilien-grid" *ngIf="immobilien.length">
-
     <ng-container *ngFor="let immobilie of paginatedImmobilien">
       <mat-card (click)="toggleCard(immobilie)">
-          <div *ngIf="immobilie.propertyStatus === 'Referenz'" class="ribbon">
-            <span>verkauft</span>
-          </div>
+        <div *ngIf="immobilie.propertyStatus === 'Referenz'" class="ribbon">
+          <span>verkauft</span>
+        </div>
 
         <mat-card-header>
-                      <!-- Dieser Hinweistext erscheint über dem Bild, wenn die Immobilie angeklickt wird, aber diese bereits verkauft wurde -->
-                      <div *ngIf="immobilie.propertyStatus === 'Referenz' && immobilie.externalId && expandedCards[immobilie.externalId]" class="verkauft-overlay">
-                        <p>Diese Immobilie wurde bereits verkauft</p>
-                    </div>
+          <!-- Dieser Hinweistext erscheint über dem Bild, wenn die Immobilie angeklickt wird, aber diese bereits verkauft wurde -->
+          <div
+            *ngIf="
+              immobilie.propertyStatus === 'Referenz' &&
+              immobilie.externalId &&
+              expandedCards[immobilie.externalId]
+            "
+            class="verkauft-overlay"
+          >
+            <p>Diese Immobilie wurde bereits verkauft</p>
+          </div>
 
           <ng-container
             *ngIf="
@@ -133,11 +141,17 @@
               <path d="M20,55 L55,55" />
             </svg>
 
-            <p class="icon-text" *ngIf="immobilie.propertyStatus !== 'Referenz'">
+            <p
+              class="icon-text"
+              *ngIf="immobilie.propertyStatus !== 'Referenz'"
+            >
               {{ immobilie.value | number : "1.0-0" }}
             </p>
 
-            <p class="icon-text" *ngIf="immobilie.propertyStatus === 'Referenz'">
+            <p
+              class="icon-text"
+              *ngIf="immobilie.propertyStatus === 'Referenz'"
+            >
               Auf Anfrage
             </p>
           </div>
@@ -148,18 +162,22 @@
 
   <!-- Pagination, Durchblättrn der Immobilien (immer 8) -->
   <div class="pagination-controls">
-    <button mat-icon-button (click)="goToPreviousPage()" [disabled]="currentPage === 0">
+    <button
+      mat-icon-button
+      (click)="goToPreviousPage()"
+      [disabled]="currentPage === 0"
+    >
       <mat-icon>chevron_left</mat-icon>
     </button>
-  
-    <span class="page-range">
-      {{ getRangeStart() }}–{{ getRangeEnd() }}
-    </span>
-  
-    <button mat-icon-button (click)="goToNextPage()" [disabled]="currentPage >= totalPages - 1">
+
+    <span class="page-range"> {{ getRangeStart() }}–{{ getRangeEnd() }} </span>
+
+    <button
+      mat-icon-button
+      (click)="goToNextPage()"
+      [disabled]="currentPage >= totalPages - 1"
+    >
       <mat-icon>chevron_right</mat-icon>
     </button>
   </div>
-  
-  
 </section>
