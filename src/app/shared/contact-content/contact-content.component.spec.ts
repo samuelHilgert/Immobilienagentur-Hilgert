@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ActionAnfragenComponent } from './action-anfragen.component';
+import { ContactContentComponent } from './contact-content.component';
 
-describe('ActionAnfragenComponent', () => {
-  let component: ActionAnfragenComponent;
-  let fixture: ComponentFixture<ActionAnfragenComponent>;
+describe('KontaktContentComponent', () => {
+  let component: ContactContentComponent;
+  let fixture: ComponentFixture<ContactContentComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ActionAnfragenComponent]
+      imports: [ContactContentComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ActionAnfragenComponent);
+    fixture = TestBed.createComponent(ContactContentComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

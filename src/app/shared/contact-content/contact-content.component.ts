@@ -16,13 +16,13 @@ import { MATERIAL_MODULES } from '../material-imports';
 import { SuccessMsgDialogComponent } from '../success-msg-dialog/success-msg-dialog.component';
 
 @Component({
-  selector: 'app-kontakt-content',
+  selector: 'app-contact-content',
   standalone: true,
   imports: [ReactiveFormsModule, MATERIAL_MODULES],
-  templateUrl: './kontakt-content.component.html',
-  styleUrl: './kontakt-content.component.scss'
+  templateUrl: './contact-content.component.html',
+  styleUrl: './contact-content.component.scss'
 })
-export class KontaktContentComponent implements OnInit {
+export class ContactContentComponent implements OnInit {
   contactForm: FormGroup;
   isSubmitting = false;
   

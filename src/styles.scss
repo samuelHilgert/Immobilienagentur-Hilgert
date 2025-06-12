@@ -1,7 +1,13 @@
+// -----------------------------------
+// 🔗 imports
+// -----------------------------------
 @use "./assets/fonts.scss" as f;
 @use "./assets/colors.scss" as c;
 @use "./assets/elements.scss" as e;
 
+// -----------------------------------
+// 🌐 global styles
+// -----------------------------------
 * {
   margin: 0;
   scroll-behavior: smooth;
@@ -21,7 +27,7 @@ body {
   transition: background-color 0.3s ease-in-out;
   -webkit-overflow-scrolling: touch;
   will-change: scroll-position;
-  overflow-x: hidden; // optional, gegen horizontales Scrollen
+  overflow-x: hidden;
 }
 
 :root {
@@ -32,6 +38,9 @@ body {
   --primary-color: black;
 }
 
+// -----------------------------------
+// 🖱 scrollbar
+// -----------------------------------
 ::-webkit-scrollbar {
   width: 4px;
   height: 10px;
@@ -44,46 +53,29 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background-color: #00000000;
-  border: 1px solid #00000000;
+  background-color: transparent;
+  border: 1px solid transparent;
 }
 
+// -----------------------------------
+// 🎨 Utility
+// -----------------------------------
 .filter-bg {
   background-color: c.$header-info-box-bg-color;
   color: c.$header-info-box-text-color;
 }
 
-.section-bg-v1 {
-  background-color: c.$section-bg-v1;
-  padding: 64px 48px;
-
-  @media (max-width: 768px) {
-    padding: 64px 12px;
-  }
-}
-
-.section-bg-v2 {
-  background-color: c.$section-bg-v2;
-  padding: 64px 48px;
-
-  @media (max-width: 768px) {
-    padding: 64px 12px;
-  }
-}
-
-.standard-btn {
-  color: c.$standard-btn-text-hover;
-  background-color: c.$standard-btn-bg-hover;
-  padding: 12px 18px;
-  border-radius: 0px;
-  border: 1px solid c.$standard-btn-bg-border;
+.term-text-link {
+  color: c.$primary-color;
   cursor: pointer;
-  transition: background-color 0.3s ease-in-out;
-  white-space: nowrap;
+  text-decoration: underline;
+
+  &::after {
+    color: c.$primary-color;
+  }
 
   &:hover {
-    background-color: c.$standard-btn-bg;
-    color: c.$standard-btn-text;
+    color: c.$contrast-color;
   }
 }
 
@@ -91,15 +83,57 @@ body {
   color: brown;
 }
 
+.width-100 {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+// -----------------------------------
+// 🧩 sections
+// -----------------------------------
+.section-bg-v1,
+.section-bg-v2 {
+  padding: 64px 48px;
+
+  @media (max-width: 768px) {
+    padding: 64px 12px;
+  }
+}
+
+.section-bg-v1 {
+  background-color: c.$section-bg-v1;
+}
+
+.section-bg-v2 {
+  background-color: c.$section-bg-v2;
+}
+
+// -----------------------------------
+// 🔘 buttons
+// -----------------------------------
+.standard-btn,
 .standard-btn-reverse {
-  background-color: c.$standard-btn-bg;
-  color: c.$standard-btn-text;
   padding: 12px 18px;
   border-radius: 0px;
   border: 1px solid c.$standard-btn-bg-border;
   cursor: pointer;
   transition: background-color 0.3s ease-in-out;
   white-space: nowrap;
+}
+
+.standard-btn {
+  color: c.$standard-btn-text-hover;
+  background-color: c.$standard-btn-bg-hover;
+
+  &:hover {
+    background-color: c.$standard-btn-bg;
+    color: c.$standard-btn-text;
+  }
+}
+
+.standard-btn-reverse {
+  background-color: c.$standard-btn-bg;
+  color: c.$standard-btn-text;
 
   &:hover {
     color: c.$standard-btn-text-hover;
@@ -107,23 +141,51 @@ body {
   }
 }
 
-.ripple-effect {
-  position: absolute;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.4);
-  transform: scale(0);
-  animation: ripple-animation 0.6s ease-out forwards;
-  pointer-events: none;
-  z-index: 0;
+// -----------------------------------
+// 🪟 dialogs
+// -----------------------------------
+.details-dialog .mat-mdc-dialog-surface,
+.success-dialog .mat-mdc-dialog-surface {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  border-radius: 0px;
+  margin: 50px auto;
+  padding: 32px;
+  box-sizing: border-box;
+  background: #fff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
 }
 
-@keyframes ripple-animation {
-  to {
-    transform: scale(1);
-    opacity: 0;
+.details-dialog .mat-mdc-dialog-surface {
+  min-width: 70vw !important;
+  max-width: 70vw !important;
+  height: 90vh;
+
+  @media (max-width: 1024px) {
+    min-width: 85vw !important;
+    max-width: 85vw !important;
+  }
+
+  @media (max-width: 575px) {
+    min-width: 95vw !important;
+    max-width: 95vw !important;
+    height: 90vh !important;
+    margin: 20px auto;
   }
 }
 
+.success-dialog .mat-mdc-dialog-surface {
+  min-width: 40vw !important;
+  max-width: 40vw !important;
+  height: 40vh;
+  text-align: center;
+}
+
+// -----------------------------------
+// 🧱 components & elements
+// -----------------------------------
 .vertical-line {
   height: 0;
   width: 3px;
@@ -146,230 +208,41 @@ body {
 
   &:hover {
     background-color: c.$contrast-color;
-    color: white;
   }
 }
 
-.width-100 {
-  width: 100%;
-  box-sizing: border-box;
+// -----------------------------------
+// 🌊 ripple effect
+// -----------------------------------
+.ripple-effect {
+  position: absolute;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.4);
+  transform: scale(0);
+  animation: ripple-animation 0.6s ease-out forwards;
+  pointer-events: none;
+  z-index: 0;
 }
 
-.details-dialog .mat-mdc-dialog-surface {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  border-radius: 0px;
-  margin: 50px auto;
-  padding: 32px;
-  min-width: 70vw !important;
-  max-width: 70vw !important;
-  box-sizing: border-box;
-  height: 90vh;
-  background: #fff;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-
-  @media (max-width: 1024px) {
-    min-width: 85vw !important;
-    max-width: 85vw !important;
-  }
-
-  @media (max-width: 575px) {
-    min-width: 95vw !important;
-    max-width: 95vw !important;
-    height: 90vh !important;
-    margin: 20px auto;
+@keyframes ripple-animation {
+  to {
+    transform: scale(1);
+    opacity: 0;
   }
 }
 
-.success-dialog .mat-mdc-dialog-surface {
-  text-align: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  border-radius: 0px;
-  margin: 50px auto;
-  padding: 32px;
-  min-width: 40vw !important;
-  max-width: 40vw !important;
-  box-sizing: border-box;
-  height: 40vh;
-  background: #fff;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-}
-
-.term-text-link {
-  color: c.$primary-color;
-  cursor: pointer;
-  text-decoration: underline;
-
-  &::after {
-    color: c.$primary-color;
-  }
-
-  &:hover {
-    color: c.$contrast-color;
-  }
-}
-
-@mixin f_r_c_c {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-}
-
-@mixin f_r_fs_fs {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: flex-start;
-}
-
-@mixin f_r_fs_fe {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: flex-end;
-}
-
-@mixin f_r_fe_fs {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  align-items: flex-start;
-}
-
-@mixin f_r_fe_c {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-end;
-  align-items: center;
-}
-
-@mixin f_r_se_c {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  align-items: center;
-}
-
-@mixin f_r_fs_c {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-}
-
-@mixin f_r_c_fs {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-@mixin f_r_sb_c {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-}
-
-@mixin f_r_sb_fs {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-@mixin f_r_se_fs {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  align-items: flex-start;
-}
-
-@mixin f_c_c_c {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-@mixin f_c_fs_fs {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-}
-
-@mixin f_c_c_sb {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: space-between;
-}
-
-@mixin f_c_sb_c {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-}
-
-@mixin f_r_sb_fe {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-end;
-}
-
-@mixin f_c_fs_c {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-}
-
-@mixin f_c_c_fs {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-}
-
-@mixin f_c_sb_fs {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-@mixin f_c_fs_sb {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: space-between;
-}
-
-
-////////// dashboard /////////// 
-
-
-////////// dashboard end /////////// 
-
+// -----------------------------------
+// 🖨 print view
+// -----------------------------------
 .display-if-print {
   display: none !important;
 }
 
 @media print {
-
   @page {
-    margin-top: 2cm; 
+    margin-top: 2cm;
     margin-bottom: 2cm;
-    width:100% !important;
+    width: 100% !important;
     box-sizing: border-box !important;
   }
 
@@ -379,9 +252,7 @@ body {
 
   .page-break {
     page-break-before: always;
-    /* für ältere Browser */
     break-before: page;
-    /* moderner Standard */
   }
 
   .no-break-inside {
@@ -390,10 +261,41 @@ body {
   }
 
   button {
-    display: none; // Versteckt Druck-Button beim Drucken
+    display: none;
   }
 
   .display-if-print {
     display: flex !important;
   }
 }
+
+// -----------------------------------
+// 🔧 flexbox mixins
+// -----------------------------------
+@mixin f_r_c_c       { display: flex; flex-direction: row; justify-content: center; align-items: center; }
+@mixin f_r_fs_fs     { display: flex; flex-direction: row; justify-content: flex-start; align-items: flex-start; }
+@mixin f_r_fs_fe     { display: flex; flex-direction: row; justify-content: flex-start; align-items: flex-end; }
+@mixin f_r_fe_fs     { display: flex; flex-direction: row; justify-content: flex-end; align-items: flex-start; }
+@mixin f_r_fe_c      { display: flex; flex-direction: row; justify-content: flex-end; align-items: center; }
+@mixin f_r_se_c      { display: flex; flex-direction: row; justify-content: space-evenly; align-items: center; }
+@mixin f_r_fs_c      { display: flex; flex-direction: row; justify-content: flex-start; align-items: center; }
+@mixin f_r_c_fs      { display: flex; flex-direction: row; justify-content: center; align-items: flex-start; }
+@mixin f_r_sb_c      { display: flex; flex-direction: row; justify-content: space-between; align-items: center; }
+@mixin f_r_sb_fs     { display: flex; flex-direction: row; justify-content: space-between; align-items: flex-start; }
+@mixin f_r_se_fs     { display: flex; flex-direction: row; justify-content: space-evenly; align-items: flex-start; }
+
+@mixin f_r_sb_fe     { display: flex; flex-direction: row; justify-content: space-between; align-items: flex-end; }
+
+@mixin f_c_c_c       { display: flex; flex-direction: column; justify-content: center; align-items: center; }
+@mixin f_c_fs_fs     { display: flex; flex-direction: column; justify-content: flex-start; align-items: flex-start; }
+@mixin f_c_c_sb      { display: flex; flex-direction: column; justify-content: center; align-items: space-between; }
+@mixin f_c_sb_c      { display: flex; flex-direction: column; justify-content: space-between; align-items: center; }
+@mixin f_c_fs_c      { display: flex; flex-direction: column; justify-content: flex-start; align-items: center; }
+@mixin f_c_c_fs      { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
+@mixin f_c_sb_fs     { display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; }
+@mixin f_c_fs_sb     { display: flex; flex-direction: column; justify-content: flex-start; align-items: space-between; }
+
+// -----------------------------------
+// 📊 placeholder
+// -----------------------------------
+// dashboard styles 

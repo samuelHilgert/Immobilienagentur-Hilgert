@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { MATERIAL_MODULES } from '../shared/material-imports';
-import { KontaktContentComponent } from '../shared/kontakt-content/kontakt-content.component';
+import { ContactContentComponent } from '../shared/contact-content/contact-content.component';
 
 @Component({
   selector: 'app-kontakt',
   standalone: true,
-  imports: [MATERIAL_MODULES, KontaktContentComponent],  
+  imports: [MATERIAL_MODULES, ContactContentComponent],  
   templateUrl: './kontakt.component.html',
   styleUrl: './kontakt.component.scss'
 })
