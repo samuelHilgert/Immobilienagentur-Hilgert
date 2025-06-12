@@ -1,0 +1,1781 @@
+
+
+<div class="immobilie-anlegen">
+  <h2>Neue Immobilie anlegen</h2>
+
+  <nav class="immobilien-nav">
+    <ul class="immobilien-menu">
+      <li
+        (click)="setImmobilienArt('wohnung')"
+        [class.active]="selectedArt === 'wohnung'"
+      >
+        Wohnung
+      </li>
+      <li
+        (click)="setImmobilienArt('haus')"
+        [class.active]="selectedArt === 'haus'"
+      >
+        Haus
+      </li>
+      <li
+        (click)="setImmobilienArt('grundstueck')"
+        [class.active]="selectedArt === 'grundstueck'"
+      >
+        Grundstück
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Gemeinsames Formular für ALLE Immobilien -->
+  <form
+    (ngSubmit)="
+      selectedArt === 'wohnung'
+        ? submitWohnung()
+        : selectedArt === 'haus'
+        ? submitHaus()
+        : submitGrundstueck()
+    "
+    class="immobilien-form"
+  >
+    <h4>Worum handelt es sich?</h4>
+
+    <mat-form-field>
+      <mat-select
+        [(ngModel)]="immobilie.propertyStatus"
+        name="propertyStatus"
+        placeholder="Kategorie"
+        required
+      >
+        <mat-option value="Referenz">Bearbeitung</mat-option>
+        <mat-option value="Angebot">Angebot</mat-option>
+        <mat-option value="Referenz">Referenz</mat-option>
+        <mat-option value="Referenz">Reserviert</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <h3>Allgemeine Informationen</h3>
+
+    <input
+      type="text"
+      [value]="immobilie.externalId"
+      name="externalId"
+      placeholder="Externe ID"
+      readonly
+    />
+
+    <!-- <input type="text" [(ngModel)]="immobilie.marketingType" name="marketingType" placeholder="Vermarktungsart"> wird nicht benötigt, da nur verkauf-->
+    <input
+      type="text"
+      [(ngModel)]="immobilie.title"
+      name="title"
+      placeholder="Überschrift"
+      maxlength="100"
+      required
+    />
+    <div class="input-row">
+      <input
+        type="text"
+        [(ngModel)]="immobilie.street"
+        name="street"
+        maxlength="100"
+        placeholder="Straße"
+      />
+      <input
+        type="text"
+        [(ngModel)]="immobilie.houseNumber"
+        name="houseNumber"
+        maxlength="10"
+        placeholder="Hausnummer"
+      />
+    </div>
+    <div class="input-row-reverse">
+      <input
+        type="text"
+        [(ngModel)]="immobilie.postcode"
+        name="postcode"
+        maxlength="5"
+        placeholder="PLZ"
+        required
+      />
+      <input
+        type="text"
+        [(ngModel)]="immobilie.city"
+        name="city"
+        maxlength="50"
+        placeholder="Stadt"
+        required
+      />
+    </div>
+    <div class="input-row-both">
+      <input
+        type="number"
+        step="0.01"
+        [ngModel]="immobilie.value === 0 ? null : immobilie.value"
+        (ngModelChange)="immobilie.value = $event"
+        name="value"
+        placeholder="Kaufpreis"
+        min="0"
+      />
+      <input
+        type="number"
+        step="any"
+        [ngModel]="
+          immobilie.numberOfRooms === 0 ? null : immobilie.numberOfRooms
+        "
+        (ngModelChange)="immobilie.numberOfRooms = $event"
+        name="numberOfRooms"
+        placeholder="Anzahl Zimmer"
+        min="0"
+      />
+    </div>
+    <div class="input-row-both">
+      <input
+        type="number"
+        step="any"
+        [ngModel]="immobilie.livingSpace === 0 ? null : immobilie.livingSpace"
+        (ngModelChange)="immobilie.livingSpace = $event"
+        name="livingSpace"
+        placeholder="Wohnfläche"
+        min="0"
+      />
+      <input
+        type="number"
+        step="any"
+        [ngModel]="immobilie.plotArea === 0 ? null : immobilie.plotArea"
+        (ngModelChange)="immobilie.plotArea = $event"
+        name="plotArea"
+        placeholder="Grundstücksfläche"
+        min="0"
+      />
+    </div>
+
+    <textarea
+    [(ngModel)]="immobilie.introNote"
+    name="introNote"
+    placeholder="Kurzbeschreibung"
+    maxlength="3000"
+  ></textarea>
+
+    <textarea
+      [(ngModel)]="immobilie.descriptionNote"
+      name="descriptionNote"
+      placeholder="Objektbeschreibung"
+      maxlength="3000"
+    ></textarea>
+
+    <mat-form-field>
+      <mat-select
+        [(ngModel)]="immobilie.hasCourtage"
+        name="hasCourtage"
+        placeholder="Provision"
+        required
+      >
+        <mat-option value="NO_INFORMATION">Keine Angabe</mat-option>
+        <mat-option value="YES">Provision: Ja</mat-option>
+        <mat-option value="NO">Provision: Nein</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <input
+      type="text"
+      [(ngModel)]="immobilie.courtage"
+      name="courtage"
+      maxlength="100"
+      placeholder="Provisionshöhe z.B. 3,57%"
+    />
+
+    <textarea
+      [(ngModel)]="immobilie.courtageNote"
+      name="courtageNote"
+      maxlength="500"
+      placeholder="Provisionshinweis"
+    ></textarea>
+
+    <h3>Angaben zum Finanzierungsbeispiel</h3>
+    <div class="finanzierungs-felder">
+      <div class="input-row-both">
+
+        <label for="debitInterest">Sollzins</label>
+        <input
+          type="number"
+          step="0.01"
+          [(ngModel)]="immobilie.debitInterest"
+          name="debitInterest"
+          placeholder="Sollzins (%)"
+          min="0"
+          max="10"
+        />
+
+        <label for="debitInterest">Effektivzins</label>
+        <input
+          type="number"
+          step="0.01"
+          [(ngModel)]="immobilie.effectiveInterestRate"
+          name="effectiveInterestRate"
+          placeholder="Effektivzins (%)"
+          min="0"
+          max="10"
+        />
+
+      </div>
+
+      <label for="fixedMonthlyRate">Monatliche Gesamtrate</label>
+      <input
+        type="number"
+        step="0.01"
+        [(ngModel)]="immobilie.fixedMonthlyRate"
+        name="fixedMonthlyRate"
+        placeholder="Monatliche Gesamtrate in €"
+        min="0"
+        max="10"
+      />
+
+      <div class="input-row-both">
+        <label for="debitInterest">Zinsbindung</label>
+        <input
+          type="number"
+          step="any"
+          [(ngModel)]="immobilie.fixedInterestRates"
+          name="fixedInterestRates"
+          placeholder="Zinsbindung (in Jahren)"
+          min="0"
+        />
+        <label for="debitInterest">Summe Eigenkapital</label>
+        <input
+          type="number"
+          step="0.01"
+          [(ngModel)]="immobilie.capitalEmployed"
+          name="capitalEmployed"
+          placeholder="Eigenkapital (€)"
+          min="0"
+        />
+      </div>
+    
+      <div class="input-row-both">
+        <label for="debitInterest">Grunderwerbsteuer in %</label>
+        <input
+          type="number"
+          step="0.01"
+          [(ngModel)]="immobilie.transferTax"
+          name="transferTax"
+          placeholder="Grunderwerbsteuer (%)"
+          min="0"
+          max="10"
+        />
+        <label for="debitInterest">Notargebühr in %</label>
+        <input
+          type="number"
+          step="0.01"
+          [(ngModel)]="immobilie.notaryFee"
+          name="notaryFee"
+          placeholder="Notarkosten (%)"
+          min="0"
+          max="10"
+        />
+        <label for="courtageNumber">Maklergebühr in %</label>
+        <input
+          type="number"
+          step="0.01"
+          [(ngModel)]="immobilie.courtageNumber"
+          name="courtageNumber"
+          placeholder="Maklergebühr (%)"
+          min="0"
+          max="10"
+        />
+      </div>
+    </div>    
+
+    <input
+      type="string"
+      [(ngModel)]="immobilie.creationDate"
+      name="creationDate"
+      placeholder="Erstellungsdatum"
+      disabled
+    />
+    <input
+      type="string"
+      [(ngModel)]="immobilie.lastModificationDate"
+      name="lastModificationDate"
+      placeholder="Letzte Änderung"
+      disabled
+    />
+
+    <!-- <h3>Bilder & Videos hochladen</h3>
+      <input type="file" (change)="uploadMedia($event, 'image')">
+      <button (click)="uploadMedia($event, 'video')">Medium hochladen</button> -->
+
+    <h3>Bilder & Videos hochladen</h3>
+    <div class="media-uploads">
+      <div class="upload-section">
+        <h4>Bilder hochladen</h4>
+        <input
+          type="file"
+          multiple
+          accept="image/*"
+          (change)="uploadMedia($event, 'image')"
+          [disabled]="isLoading"
+        />
+        <div *ngIf="isLoading" class="loading-indicator">Lade hoch...</div>
+      </div>
+
+      <div class="upload-section">
+        <h4>Videos hochladen</h4>
+        <input
+          type="file"
+          accept="video/mp4,video/webm"
+          (change)="uploadMedia($event, 'video')"
+          [disabled]="isLoading"
+        />
+      </div>
+    </div>
+
+    <h3>Objektnachweis für Besichtigungen (optional)</h3>
+
+    <!-- Dateiupload für Objektnachweis -->
+    <div class="upload-section">
+      <label for="objektnachweisUpload">PDF-Datei hochladen:</label>
+      <input
+        type="file"
+        accept="application/pdf"
+        (change)="onObjektnachweisSelected($event)"
+        [disabled]="isLoading"
+      />
+    </div>
+    
+    <!-- Anzeige des Status -->
+    <div class="objektnachweis-status">
+      <ng-container [ngSwitch]="objektnachweisStatus">
+        <p *ngSwitchCase="'checking'">📡 Prüfung läuft...</p>
+        <p *ngSwitchCase="'exists'">
+          ✅ Objektnachweis vorhanden:
+          <a [href]="objektnachweisUrl" target="_blank">Jetzt ansehen</a>
+        </p>
+        <p *ngSwitchCase="'missing'">❌ Noch keine Datei hinzugefügt</p>
+      </ng-container>
+    </div>
+    
+
+    <div
+      class="media-gallery"
+      *ngIf="uploadedMedia && uploadedMedia.length > 0"
+    >
+      <h4>Hochgeladene Medien</h4>
+      <div class="media-items">
+        <div *ngFor="let media of uploadedMedia" class="media-item">
+          <div class="media-preview">
+            <img *ngIf="media.type === 'image'" [src]="media.url" width="100" />
+            <video
+              *ngIf="media.type === 'video'"
+              [src]="media.url"
+              controls
+              width="200"
+            ></video>
+          </div>
+          <div class="media-controls">
+            <div class="title-image-control">
+              <input
+                type="radio"
+                name="titleImage"
+                [value]="media.id"
+                [(ngModel)]="titleImageId"
+                [checked]="getString(titleImageId) === getString(media.id)"
+              />
+              <label>Als Titelbild festlegen</label>
+            </div>
+            <button class="delete-btn" (click)="deleteMedia(media)">
+              Löschen
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngFor="let media of uploadedMedia">
+      <img *ngIf="media.type === 'image'" [src]="media.url" width="100" />
+      <video
+        *ngIf="media.type === 'video'"
+        [src]="media.url"
+        controls
+        width="200"
+      ></video>
+    </div>
+
+    <!-- ///////////// ANFANG FELDER FÜR WOHNUNGEN -->
+    <div *ngIf="selectedArt === 'wohnung'" class="zusatzfeld">
+      <h3>Wohnungsdetails</h3>
+      <div class="col-block">
+        <input
+          type="text"
+          [(ngModel)]="wohnung.searchField1"
+          name="searchField1"
+          placeholder="Suchfeld 1 um Kunden die Suche zu erleichtern"
+        />
+        <input
+          type="text"
+          [(ngModel)]="wohnung.searchField2"
+          name="searchField2"
+          placeholder="Suchfeld 2 um Kunden die Suche zu erleichtern"
+        />
+        <input
+          type="text"
+          [(ngModel)]="wohnung.searchField3"
+          name="searchField3"
+          placeholder="Suchfeld 3 um Kunden die Suche zu erleichtern"
+        />
+        <input
+          type="number"
+          [ngModel]="wohnung.groupNumber === 0 ? null : wohnung.groupNumber"
+          (ngModelChange)="wohnung.groupNumber = $event"
+          name="groupNumber"
+          maxlength="10"
+          placeholder="Gruppennummer"
+        />
+        <input
+          type="text"
+          [(ngModel)]="wohnung.contactId"
+          value=""
+          name="contactId"
+          placeholder="Ansprechpartner"
+          disabled
+        />
+      </div>
+
+      <div class="checkbox-row">
+        <label for="showAddress">Straße und Hausnummer anzeigen</label
+        ><input
+          type="checkbox"
+          [(ngModel)]="wohnung.showAddress"
+          name="showAddress"
+        />
+      </div>
+
+      <label for="apartmentType">Wohnungskategorie auswählen:</label>
+      <mat-form-field>
+        <mat-select
+          [(ngModel)]="wohnung.apartmentType"
+          name="apartmentType"
+          placeholder="Wohnungstyp"
+          required
+        >
+          <mat-option value="NO_INFORMATION">Keine Angabe</mat-option>
+          <mat-option value="ROOF_STOREY">Dachgeschoss</mat-option>
+          <mat-option value="LOFT">Loft</mat-option>
+          <mat-option value="MAISONETTE">Maisonette</mat-option>
+          <mat-option value="PENTHOUSE">Penthouse</mat-option>
+          <mat-option value="TERRACED_FLAT">Terrassenwohnung</mat-option>
+          <mat-option value="GROUND_FLOOR">Erdgeschosswohnung</mat-option>
+          <mat-option value="APARTMENT">Etagenwohnung</mat-option>
+          <mat-option value="RAISED_GROUND_FLOOR">Hochparterre</mat-option>
+          <mat-option value="HALF_BASEMENT">Souterrain</mat-option>
+          <mat-option value="OTHER">Sonstiges</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div class="input-row-both">
+        <input
+          type="number"
+          [ngModel]="wohnung.floor === 0 ? null : wohnung.floor"
+          (ngModelChange)="wohnung.floor = $event"
+          name="floor"
+          placeholder="Etage"
+          min="0"
+          max="999"
+        />
+        <input
+          type="number"
+          [ngModel]="
+            wohnung.numberOfFloors === 0 ? null : wohnung.numberOfFloors
+          "
+          (ngModelChange)="wohnung.numberOfFloors = $event"
+          name="numberOfFloors"
+          placeholder="Etagen Gesamt"
+          min="0"
+          max="999"
+        />
+      </div>
+
+      <input
+        type="number"
+        step="any"
+        [ngModel]="
+          wohnung.usableFloorSpace === 0 ? null : wohnung.usableFloorSpace
+        "
+        (ngModelChange)="wohnung.usableFloorSpace = $event"
+        name="usableFloorSpace"
+        placeholder="Nutzfläche"
+        min="0"
+      />
+      <div class="input-row-both">
+        <input
+          type="number"
+          step="any"
+          [ngModel]="
+            wohnung.numberOfBedRooms === 0 ? null : wohnung.numberOfBedRooms
+          "
+          (ngModelChange)="wohnung.numberOfBedRooms = $event"
+          name="numberOfBedRooms"
+          placeholder="Anzahl Schlafzimmer"
+          min="0"
+          max="99"
+        />
+        <input
+          type="number"
+          step="any"
+          [ngModel]="
+            wohnung.numberOfBathRooms === 0 ? null : wohnung.numberOfBathRooms
+          "
+          (ngModelChange)="wohnung.numberOfBathRooms = $event"
+          name="numberOfBathRooms"
+          placeholder="Anzahl Badezimmer"
+          min="0"
+          max="99"
+        />
+      </div>
+      <div class="col-block">
+        <div class="checkbox-row">
+          <label for="balcony">Balkon/ Terrasse</label>
+          <input type="checkbox" [(ngModel)]="wohnung.balcony" name="balcony" />
+        </div>
+        <div class="checkbox-row">
+          <label for="guestToilet">Gäste-WC</label>
+          <input
+            type="checkbox"
+            [checked]="wohnung.guestToilet === 'YES'"
+            (ngModelChange)="
+              wohnung.guestToilet = $event ? 'YES' : 'NOT_APPLICABLE'
+            "
+            name="guestToilet"
+          />
+        </div>
+        <div class="checkbox-row">
+          <label for="garden">Garten/ -mitbenutzung</label>
+          <input type="checkbox" [(ngModel)]="wohnung.garden" name="garden" />
+        </div>
+        <div class="checkbox-row">
+          <label for="builtInKitchen">Einbauküche</label>
+          <input
+            type="checkbox"
+            [(ngModel)]="wohnung.builtInKitchen"
+            name="builtInKitchen"
+          />
+        </div>
+        <div class="checkbox-row">
+          <label for="cellar">Keller</label>
+          <!-- 
+            //Schlechtere Methode, untere besser, aber benötigt zwei Funktionen in ts
+            <input
+          type="checkbox"
+         [checked]="wohnung.cellar === 'YES'"
+         (ngModelChange)="wohnung.cellar = $event ? 'YES' : 'NOT_APPLICABLE'"
+         name="cellar"
+       /> -->
+
+          <input
+            type="checkbox"
+            [ngModel]="getCheckboxValue(wohnung, 'cellar')"
+            (ngModelChange)="setCheckboxValue(wohnung, 'cellar', $event)"
+            name="cellar"
+          />
+        </div>
+        <div class="checkbox-row">
+          <label for="lift">Personenaufzug</label>
+          <input type="checkbox" [(ngModel)]="wohnung.lift" name="lift" />
+        </div>
+        <div class="checkbox-row">
+          <label for="handicappedAccessible">Stufenloser Zugang</label>
+          <input
+            type="checkbox"
+            [checked]="wohnung.handicappedAccessible === 'YES'"
+            (ngModelChange)="
+              wohnung.handicappedAccessible = $event ? 'YES' : 'NOT_APPLICABLE'
+            "
+            name="handicappedAccessible"
+          />
+        </div>
+      </div>
+
+      <div class="input-row-both">
+        <input
+          type="text"
+          [(ngModel)]="wohnung.numberOfParkingSpaces"
+          name="numberOfParkingSpaces"
+          placeholder="Anzahl Garage/ Stellplatz"
+        />
+        <input
+          type="number"
+          step="any"
+          [ngModel]="
+            wohnung.parkingSpacePrice === 0 ? null : wohnung.parkingSpacePrice
+          "
+          (ngModelChange)="wohnung.parkingSpacePrice = $event"
+          name="parkingSpacePrice"
+          placeholder="Garage/ Stellplatz-Kaufpreis"
+          min="0"
+          max="9999999"
+        />
+      </div>
+
+      <mat-form-field>
+        <mat-select
+          [(ngModel)]="wohnung.parkingSpaceType"
+          name="parkingSpaceType"
+          placeholder="Garage/ Stellplatz"
+        >
+          <mat-option value="NO_INFORMATION">Keine Angabe</mat-option>
+          <mat-option value="GARAGE">Garage</mat-option>
+          <mat-option value="OUTSIDE">Außenstellplatz</mat-option>
+          <mat-option value="CARPORT">Carport</mat-option>
+          <mat-option value="DUPLEX">Duplex</mat-option>
+          <mat-option value="CAR_PARK">Parkhaus</mat-option>
+          <mat-option value="UNDERGROUND_GARAGE">Tiefgarage</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div>
+        <p><strong>Objektzustand auswählen:</strong></p>
+      </div>
+      <mat-form-field>
+        <mat-select
+          [(ngModel)]="wohnung.condition"
+          name="condition"
+          placeholder="Objektzustand"
+          required
+        >
+          <mat-option value="NO_INFORMATION">Keine Angabe</mat-option>
+          <mat-option value="FIRST_TIME_USE">Erstbezug</mat-option>
+          <mat-option value="FIRST_TIME_USE_AFTER_REFURBISHMENT"
+            >Erstbezug nach Sanierung</mat-option
+          >
+          <mat-option value="MINT_CONDITION">Neuwertig</mat-option>
+          <mat-option value="REFURBISHED">Saniert</mat-option>
+          <mat-option value="MODERNIZED">Modernisiert</mat-option>
+          <mat-option value="FULLY_RENOVATED"
+            >Vollstaendig Reonviert</mat-option
+          >
+          <mat-option value="MODERNIZED">Modernisiert</mat-option>
+          <mat-option value="WELL_KEPT">Gepflegt</mat-option>
+          <mat-option value="NEED_OF_RENOVATION"
+            >Renovierungsbedürftig</mat-option
+          >
+          <mat-option value="NEGOTIABLE">Nach Vereinbarung</mat-option>
+          <mat-option value="RIPE_FOR_DEMOLITION">Abbruchreif</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <input
+        type="number"
+        [ngModel]="
+          wohnung.constructionYear === 0 ? null : wohnung.constructionYear
+        "
+        (ngModelChange)="wohnung.constructionYear = $event"
+        name="constructionYear"
+        placeholder="Baujahr"
+        min="0"
+        max="9999"
+      />
+
+      <div class="checkbox-row">
+        <label for="constructionYearUnknown">Baujahr nicht bekannt</label>
+        <input
+          type="checkbox"
+          [(ngModel)]="wohnung.constructionYearUnknown"
+          name="constructionYearUnknown"
+        />
+      </div>
+
+      <input
+        type="text"
+        [(ngModel)]="wohnung.lastRefurbishment"
+        name="lastRefurbishment"
+        placeholder="Letzte Modernisierung/ Sanierung"
+      />
+      <div class="checkbox-row">
+        <label for="listed">Denkmalschutzobjekt</label>
+        <input
+          type="checkbox"
+          [checked]="wohnung.listed === 'YES'"
+          (ngModelChange)="wohnung.listed = $event ? 'YES' : 'NOT_APPLICABLE'"
+          name="listed"
+        />
+      </div>
+
+      <div>
+        <p><strong>Qualität der Ausstattung auswählen:</strong></p>
+      </div>
+
+      <mat-form-field>
+        <mat-select
+          [(ngModel)]="wohnung.interiorQuality"
+          name="interiorQuality"
+          placeholder="Qualität der Ausstattung"
+          required
+        >
+          <mat-option value="NO_INFORMATION">Keine Angabe</mat-option>
+          <mat-option value="LUXURY">luxus</mat-option>
+          <mat-option value="SOPHISTICATED">gehoben</mat-option>
+          <mat-option value="NORMAL">normal</mat-option>
+          <mat-option value="SIMPLE">einfach</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="checkbox-row">
+        <label for="rented">vermietet</label>
+        <input
+          type="checkbox"
+          [checked]="wohnung.rented === 'YES'"
+          (ngModelChange)="wohnung.rented = $event ? 'YES' : 'NOT_APPLICABLE'"
+          name="rented"
+        />
+      </div>
+
+      <div class="input-row-both">
+        <input
+          type="number"
+          step="any"
+          [ngModel]="wohnung.serviceCharge === 0 ? null : wohnung.serviceCharge"
+          (ngModelChange)="wohnung.serviceCharge = $event"
+          name="serviceCharge"
+          placeholder="Hausgeld"
+          min="0"
+        />
+
+        <input
+        type="text"
+        [(ngModel)]="wohnung.maintenanceReserve"
+        name="maintenanceReserveNote"
+        placeholder="IHR-Rücklage"
+      />
+      
+        <input
+          type="number"
+          step="any"
+          [ngModel]="wohnung.rentalIncome === 0 ? null : wohnung.rentalIncome"
+          (ngModelChange)="wohnung.rentalIncome = $event"
+          name="rentalIncome"
+          placeholder="Mieteinnahmen pro Monat"
+          min="0"
+        />
+      </div>
+
+      <div class="input-row-both">
+        <input
+          type="number"
+          [ngModel]="wohnung.tenancy === 0 ? null : wohnung.tenancy"
+          (ngModelChange)="wohnung.tenancy = $event"
+          name="tenancy"
+          placeholder="Pachtdauer"
+          min="0"
+          max="990"
+        />
+        <input
+          type="number"
+          step="any"
+          [ngModel]="
+            wohnung.leaseholdInterest === 0 ? null : wohnung.leaseholdInterest
+          "
+          (ngModelChange)="wohnung.leaseholdInterest = $event"
+          name="leaseholdInterest"
+          placeholder="Erbbauzins"
+          min="0"
+        />
+      </div>
+
+      <input
+        type="text"
+        [(ngModel)]="wohnung.freeFrom"
+        name="freeFrom"
+        maxlength="50"
+        placeholder="Bezufgsfrei ab"
+      />
+
+      <div class="checkbox-row">
+        <label for="summerResidencePractical"
+          >Als Ferienimmobilie geeignet</label
+        >
+        <input
+          type="checkbox"
+          [checked]="wohnung.summerResidencePractical === 'YES'"
+          (ngModelChange)="
+            wohnung.summerResidencePractical = $event ? 'YES' : 'NOT_APPLICABLE'
+          "
+          name="summerResidencePractical"
+        />
+      </div>
+
+      <div class="checkbox-row">
+        <label for="energyPerformanceCertificate"
+          >Energieausweis vorhanden</label
+        >
+        <input
+          type="checkbox"
+          [(ngModel)]="wohnung.energyPerformanceCertificate"
+          name="energyPerformanceCertificate"
+        />
+      </div>
+
+      <div>
+        <p><strong>Energieausweistyp auswählen:</strong></p>
+      </div>
+      <!-- Wenn Energieausweis vorhanden -->
+      <mat-form-field>
+        <mat-select
+          [(ngModel)]="wohnung.buildingEnergyRatingType"
+          name="buildingEnergyRatingType"
+          placeholder="Energieausweistyp"
+        >
+          <mat-option value="NO_INFORMATION">Keine Angabe</mat-option>
+          <mat-option value="ENERGY_REQUIRED">Endenergiebedarf</mat-option>
+          <mat-option value="ENERGY_CONSUMPTION"
+            >Energieverbrauchskennwert</mat-option
+          >
+        </mat-select>
+      </mat-form-field>
+      <!-- Wenn Energieausweistyp ausgewählt, also nicht "Keine Angabe"-->
+      <input
+        type="number"
+        step="any"
+        [ngModel]="
+          wohnung.thermalCharacteristic === 0
+            ? null
+            : wohnung.thermalCharacteristic
+        "
+        (ngModelChange)="wohnung.thermalCharacteristic = $event"
+        name="thermalCharacteristic"
+        placeholder="Energiewert kWh/(m²*a)"
+      />
+      <!-- Wenn Verbrauchsausweis -->
+      <div class="checkbox-row">
+        <label for="energyConsumptionContainsWarmWater"
+          >Energieverbrauch für Warmwasser enthalten</label
+        >
+        <input
+          type="checkbox"
+          [checked]="wohnung.energyConsumptionContainsWarmWater === 'YES'"
+          (ngModelChange)="
+            wohnung.energyConsumptionContainsWarmWater = $event
+              ? 'YES'
+              : 'NOT_APPLICABLE'
+          "
+          name="energyConsumptionContainsWarmWater"
+        />
+      </div>
+
+      <mat-form-field>
+        <mat-select
+          [(ngModel)]="wohnung.firingType"
+          name="firingType"
+          placeholder="Wesentlicher Energieträger"
+          required
+        >
+          <mat-option value="NO_INFORMATION">Keine Angabe</mat-option>
+          <mat-option value="GEOTHERMAL">Erdwärme</mat-option>
+          <mat-option value="SOLAR_HEATING">Solarheizung</mat-option>
+          <mat-option value="PELLET_HEATING">Pelletheizung</mat-option>
+          <mat-option value="GAS">Gas</mat-option>
+          <mat-option value="OIL">Öl</mat-option>
+          <mat-option value="ELECTRICITY">Strom</mat-option>
+          <mat-option value="COAL">Kohle</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-select
+          [(ngModel)]="wohnung.heatingType"
+          name="heatingType"
+          placeholder="Heizungsart"
+          required
+        >
+          <mat-option value="NO_INFORMATION">Keine Angabe</mat-option>
+          <mat-option value="SELF_CONTAINED_CENTRAL_HEATING"
+            >Etagenheizung</mat-option
+          >
+          <mat-option value="STOVE_HEATING">Ofenheizung</mat-option>
+          <mat-option value="CENTRAL_HEATING">Zentralheizung</mat-option>
+          <mat-option value="COMBINED_HEAT_AND_POWER_PLANT"
+            >Blockheizkraftwerk</mat-option
+          >
+          <mat-option value="ELECTRIC_HEATING">Elektro-Heizung</mat-option>
+          <mat-option value="DISTRICT_HEATING">Fernwärme</mat-option>
+          <mat-option value="FLOOR_HEATING">Fußbodenheizung</mat-option>
+          <mat-option value="GAS_HEATING">Gas-Heizung</mat-option>
+          <mat-option value="WOOD_PELLET_HEATING"
+            >Holz-Pelletheizung</mat-option
+          >
+          <mat-option value="NIGHT_STORAGE_HEATER"
+            >Nachtspeicherofen</mat-option
+          >
+          <mat-option value="OIL_HEATING">Öl-Heizung</mat-option>
+          <mat-option value="SOLAR_HEATING">Solar-Heizung</mat-option>
+          <mat-option value="HEAT_PUMP">Wärmepumpe</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <textarea
+        [(ngModel)]="wohnung.furnishingNote"
+        name="furnishingNote"
+        maxlength="3000"
+        placeholder="Ausstattung"
+      ></textarea>
+      <textarea
+        [(ngModel)]="wohnung.locationNote"
+        name="locationNote"
+        maxlength="3000"
+        placeholder="Lage"
+      ></textarea>
+      <textarea
+        [(ngModel)]="wohnung.otherNote"
+        name="otherNote"
+        maxlength="3000"
+        placeholder="Sonstige Angaben"
+      ></textarea>
+    </div>
+
+    <!-- ///////////// ENDE FELDER FÜR WOHNUNGEN -->
+
+    <!-- ///////////// ANFANG FELDER FÜR HÄUSER -->
+    <div *ngIf="selectedArt === 'haus'" class="zusatzfeld">
+      <h3>Hausdetails</h3>
+      <div class="col-block">
+        <input
+          type="text"
+          [(ngModel)]="haus.searchField1"
+          name="searchField1"
+          placeholder="Suchfeld 1 um Kunden die Suche zu erleichtern"
+        />
+        <input
+          type="text"
+          [(ngModel)]="haus.searchField2"
+          name="searchField2"
+          placeholder="Suchfeld 2 um Kunden die Suche zu erleichtern"
+        />
+        <input
+          type="text"
+          [(ngModel)]="haus.searchField3"
+          name="searchField3"
+          placeholder="Suchfeld 3 um Kunden die Suche zu erleichtern"
+        />
+        <input
+          type="number"
+          [ngModel]="haus.groupNumber === 0 ? null : haus.groupNumber"
+          (ngModelChange)="haus.groupNumber = $event"
+          name="groupNumber"
+          maxlength="10"
+          placeholder="Gruppennummer"
+        />
+        <input
+          type="text"
+          [(ngModel)]="haus.contactId"
+          value=""
+          name="contactId"
+          placeholder="Ansprechpartner"
+          disabled
+        />
+      </div>
+
+      <div class="checkbox-row">
+        <label for="showAddress">Straße und Hausnummer anzeigen</label
+        ><input
+          type="checkbox"
+          [(ngModel)]="haus.showAddress"
+          name="showAddress"
+        />
+      </div>
+
+      <label for="buildingType">Haustyp auswählen:</label>
+      <mat-form-field>
+        <mat-select
+          [(ngModel)]="haus.buildingType"
+          name="buildingType"
+          placeholder="Haustyp"
+          required
+        >
+          <mat-option value="NO_INFORMATION">Keine Angabe</mat-option>
+          <mat-option value="SINGLE_FAMILY_HOUSEY">Einfamilienhaus</mat-option>
+          <mat-option value="MID_TERRACE_HOUSE">Reihenmittelhaus</mat-option>
+          <mat-option value="END_TERRACE_HOUSE">Reiheneckhaus</mat-option>
+          <mat-option value="MULTI_FAMILY_HOUSE">Mehrfamilienhaus</mat-option>
+          <mat-option value="BUNGALOW">Bungalow</mat-option>
+          <mat-option value="FARMHOUSE">Bauernhaus</mat-option>
+          <mat-option value="SEMIDETACHED_HOUSE">Doppelhaushälfte</mat-option>
+          <mat-option value="VILLA">VILLA</mat-option>
+          <mat-option value="CASTLE_MANOR_HOUSE">Burg/Schloss</mat-option>
+          <mat-option value="SPECIAL_REAL_ESTATE"
+            >Besondere Immobilie</mat-option
+          >
+          <mat-option value="OTHER">Sonstiges</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <label for="constructionPhase">Bauphase auswählen:</label>
+      <mat-form-field>
+        <mat-select
+          [(ngModel)]="haus.constructionPhase"
+          name="constructionPhase"
+          placeholder="Bauphase"
+          required
+        >
+          <mat-option value="NO_INFORMATION">Keine Angabe</mat-option>
+          <mat-option value="PROJECTED">Haus in Planung</mat-option>
+          <mat-option value="UNDER_CONSTRUCTION">Haus im Bau</mat-option>
+          <mat-option value="COMPLETED">Haus fertig gestellt</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="input-row-both">
+        <input
+          type="number"
+          [ngModel]="haus.numberOfFloors === 0 ? null : haus.numberOfFloors"
+          (ngModelChange)="haus.numberOfFloors = $event"
+          name="numberOfFloors"
+          placeholder="Etagen Gesamt"
+          min="0"
+          max="999"
+        />
+
+        <input
+          type="number"
+          step="any"
+          [ngModel]="haus.usableFloorSpace === 0 ? null : haus.usableFloorSpace"
+          (ngModelChange)="haus.usableFloorSpace = $event"
+          name="usableFloorSpace"
+          placeholder="Nutzfläche"
+          min="0"
+        />
+      </div>
+
+      <div class="input-row-both">
+        <input
+          type="number"
+          step="any"
+          [ngModel]="haus.numberOfBedRooms === 0 ? null : haus.numberOfBedRooms"
+          (ngModelChange)="haus.numberOfBedRooms = $event"
+          name="numberOfBedRooms"
+          placeholder="Anzahl Schlafzimmer"
+          min="0"
+          max="99"
+        />
+        <input
+          type="number"
+          step="any"
+          [ngModel]="
+            haus.numberOfBathRooms === 0 ? null : haus.numberOfBathRooms
+          "
+          (ngModelChange)="haus.numberOfBathRooms = $event"
+          name="numberOfBathRooms"
+          placeholder="Anzahl Badezimmer"
+          min="0"
+          max="99"
+        />
+      </div>
+      <div class="col-block">
+        <div class="checkbox-row">
+          <label for="lodgerFlat">Hat das Haus eine Einliegerwohnung?</label>
+          <input
+            type="checkbox"
+            [(ngModel)]="haus.lodgerFlat"
+            name="lodgerFlat"
+          />
+        </div>
+        <div class="checkbox-row">
+          <label for="guestToilet">Gäste-WC</label>
+          <input
+            type="checkbox"
+            [checked]="haus.guestToilet === 'YES'"
+            (ngModelChange)="
+              haus.guestToilet = $event ? 'YES' : 'NOT_APPLICABLE'
+            "
+            name="guestToilet"
+          />
+        </div>
+
+        <div class="checkbox-row">
+          <label for="cellar">Keller</label>
+          <input
+            type="checkbox"
+            [checked]="haus.cellar === 'YES'"
+            (ngModelChange)="haus.cellar = $event ? 'YES' : 'NOT_APPLICABLE'"
+            name="cellar"
+          />
+        </div>
+
+        <div class="checkbox-row">
+          <label for="handicappedAccessible">Stufenloser Zugang</label>
+          <input
+            type="checkbox"
+            [checked]="haus.handicappedAccessible === 'YES'"
+            (ngModelChange)="
+              haus.handicappedAccessible = $event ? 'YES' : 'NOT_APPLICABLE'
+            "
+            name="handicappedAccessible"
+          />
+        </div>
+      </div>
+
+      <div class="input-row-both">
+        <input
+          type="text"
+          [(ngModel)]="haus.numberOfParkingSpaces"
+          name="numberOfParkingSpaces"
+          placeholder="Anzahl Garage/ Stellplatz"
+        />
+        <input
+          type="number"
+          step="any"
+          [ngModel]="
+            haus.parkingSpacePrice === 0 ? null : haus.parkingSpacePrice
+          "
+          (ngModelChange)="haus.parkingSpacePrice = $event"
+          name="parkingSpacePrice"
+          placeholder="Garage/ Stellplatz-Kaufpreis"
+          min="0"
+          max="9999999"
+        />
+      </div>
+
+      <mat-form-field>
+        <mat-select
+          [(ngModel)]="haus.parkingSpaceType"
+          name="parkingSpaceType"
+          placeholder="Garage/ Stellplatz"
+        >
+          <mat-option value="NO_INFORMATION">Keine Angabe</mat-option>
+          <mat-option value="GARAGE">Garage</mat-option>
+          <mat-option value="OUTSIDE">Außenstellplatz</mat-option>
+          <mat-option value="CARPORT">Carport</mat-option>
+          <mat-option value="DUPLEX">Duplex</mat-option>
+          <mat-option value="CAR_PARK">Parkhaus</mat-option>
+          <mat-option value="UNDERGROUND_GARAGE">Tiefgarage</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div>
+        <p><strong>Objektzustand auswählen:</strong></p>
+      </div>
+      <mat-form-field>
+        <mat-select
+          [(ngModel)]="haus.condition"
+          name="condition"
+          placeholder="Objektzustand"
+          required
+        >
+          <mat-option value="NO_INFORMATION">Keine Angabe</mat-option>
+          <mat-option value="FIRST_TIME_USE">Erstbezug</mat-option>
+          <mat-option value="FIRST_TIME_USE_AFTER_REFURBISHMENT"
+            >Erstbezug nach Sanierung</mat-option
+          >
+          <mat-option value="MINT_CONDITION">Neuwertig</mat-option>
+          <mat-option value="REFURBISHED">Saniert</mat-option>
+          <mat-option value="MODERNIZED">Modernisiert</mat-option>
+          <mat-option value="FULLY_RENOVATED"
+            >Vollstaendig Reonviert</mat-option
+          >
+          <mat-option value="MODERNIZED">Modernisiert</mat-option>
+          <mat-option value="WELL_KEPT">Gepflegt</mat-option>
+          <mat-option value="NEED_OF_RENOVATION"
+            >Renovierungsbedürftig</mat-option
+          >
+          <mat-option value="NEGOTIABLE">Nach Vereinbarung</mat-option>
+          <mat-option value="RIPE_FOR_DEMOLITION">Abbruchreif</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="input-row-both">
+        <input
+          type="number"
+          [ngModel]="haus.constructionYear === 0 ? null : haus.constructionYear"
+          (ngModelChange)="haus.constructionYear = $event"
+          name="constructionYear"
+          placeholder="Baujahr"
+          min="0"
+          max="9999"
+        />
+
+        <input
+          type="text"
+          [(ngModel)]="haus.lastRefurbishment"
+          name="lastRefurbishment"
+          placeholder="Letzte Modernisierung/ Sanierung"
+        />
+      </div>
+
+      <div class="checkbox-row">
+        <label for="constructionYearUnknown">Baujahr nicht bekannt</label>
+        <input
+          type="checkbox"
+          [(ngModel)]="haus.constructionYearUnknown"
+          name="constructionYearUnknown"
+        />
+      </div>
+
+      <div class="checkbox-row">
+        <label for="listed">Denkmalschutzobjekt</label>
+        <input
+          type="checkbox"
+          [checked]="haus.listed === 'YES'"
+          (ngModelChange)="haus.listed = $event ? 'YES' : 'NOT_APPLICABLE'"
+          name="listed"
+        />
+      </div>
+
+      <div>
+        <p><strong>Qualität der Ausstattung auswählen:</strong></p>
+      </div>
+
+      <mat-form-field>
+        <mat-select
+          [(ngModel)]="haus.interiorQuality"
+          name="interiorQuality"
+          placeholder="Qualität der Ausstattung"
+          required
+        >
+          <mat-option value="NO_INFORMATION">Keine Angabe</mat-option>
+          <mat-option value="LUXURY">luxus</mat-option>
+          <mat-option value="SOPHISTICATED">gehoben</mat-option>
+          <mat-option value="NORMAL">normal</mat-option>
+          <mat-option value="SIMPLE">einfach</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="checkbox-row">
+        <label for="rented">vermietet</label>
+        <input
+          type="checkbox"
+          [checked]="haus.rented === 'YES'"
+          (ngModelChange)="haus.rented = $event ? 'YES' : 'NOT_APPLICABLE'"
+          name="rented"
+        />
+      </div>
+
+      <div class="input-row-both">
+        <input
+          type="number"
+          step="any"
+          [ngModel]="haus.rentalIncome === 0 ? null : haus.rentalIncome"
+          (ngModelChange)="haus.rentalIncome = $event"
+          name="rentalIncome"
+          placeholder="Mieteinnahmen pro Monat"
+          min="0"
+        />
+        <input
+          type="number"
+          [ngModel]="haus.tenancy === 0 ? null : haus.tenancy"
+          (ngModelChange)="haus.tenancy = $event"
+          name="tenancy"
+          placeholder="Pachtdauer"
+          min="0"
+          max="990"
+        />
+        <input
+          type="number"
+          step="any"
+          [ngModel]="
+            haus.leaseholdInterest === 0 ? null : haus.leaseholdInterest
+          "
+          (ngModelChange)="haus.leaseholdInterest = $event"
+          name="leaseholdInterest"
+          placeholder="Erbbauzins"
+          min="0"
+        />
+      </div>
+
+      <input
+        type="text"
+        [(ngModel)]="haus.freeFrom"
+        name="freeFrom"
+        maxlength="50"
+        placeholder="Bezufgsfrei ab"
+      />
+
+      <div class="checkbox-row">
+        <label for="summerResidencePractical"
+          >Als Ferienimmobilie geeignet</label
+        >
+        <input
+          type="checkbox"
+          [checked]="haus.summerResidencePractical === 'YES'"
+          (ngModelChange)="
+            haus.summerResidencePractical = $event ? 'YES' : 'NOT_APPLICABLE'
+          "
+          name="summerResidencePractical"
+        />
+      </div>
+
+      <div class="checkbox-row">
+        <label for="energyPerformanceCertificate"
+          >Energieausweis vorhanden</label
+        >
+        <input
+          type="checkbox"
+          [(ngModel)]="haus.energyPerformanceCertificate"
+          name="energyPerformanceCertificate"
+        />
+      </div>
+
+      <div>
+        <p><strong>Energieausweistyp auswählen:</strong></p>
+      </div>
+      <!-- Wenn Energieausweis vorhanden -->
+      <mat-form-field>
+        <mat-select
+          [(ngModel)]="haus.buildingEnergyRatingType"
+          name="buildingEnergyRatingType"
+          placeholder="Energieausweistyp"
+        >
+          <mat-option value="NO_INFORMATION">Keine Angabe</mat-option>
+          <mat-option value="ENERGY_REQUIRED">Endenergiebedarf</mat-option>
+          <mat-option value="ENERGY_CONSUMPTION"
+            >Energieverbrauchskennwert</mat-option
+          >
+        </mat-select>
+      </mat-form-field>
+      <!-- Wenn Energieausweistyp ausgewählt, also nicht "Keine Angabe"-->
+      <input
+        type="number"
+        step="any"
+        [ngModel]="
+          haus.thermalCharacteristic === 0 ? null : haus.thermalCharacteristic
+        "
+        (ngModelChange)="haus.thermalCharacteristic = $event"
+        name="thermalCharacteristic"
+        placeholder="Energiewert kWh/(m²*a)"
+      />
+      <!-- Wenn Verbrauchsausweis -->
+      <div class="checkbox-row">
+        <label for="energyConsumptionContainsWarmWater"
+          >Energieverbrauch für Warmwasser enthalten</label
+        >
+        <input
+          type="checkbox"
+          [checked]="haus.energyConsumptionContainsWarmWater === 'YES'"
+          (ngModelChange)="
+            haus.energyConsumptionContainsWarmWater = $event
+              ? 'YES'
+              : 'NOT_APPLICABLE'
+          "
+          name="energyConsumptionContainsWarmWater"
+        />
+      </div>
+
+      <mat-form-field>
+        <mat-select
+          [(ngModel)]="haus.firingType"
+          name="firingType"
+          placeholder="Wesentlicher Energieträger"
+          required
+        >
+          <mat-option value="NO_INFORMATION">Keine Angabe</mat-option>
+          <mat-option value="GEOTHERMAL">Erdwärme</mat-option>
+          <mat-option value="SOLAR_HEATING">Solarheizung</mat-option>
+          <mat-option value="PELLET_HEATING">Pelletheizung</mat-option>
+          <mat-option value="GAS">Gas</mat-option>
+          <mat-option value="OIL">Öl</mat-option>
+          <mat-option value="ELECTRICITY">Strom</mat-option>
+          <mat-option value="COAL">Kohle</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-select
+          [(ngModel)]="haus.heatingType"
+          name="heatingType"
+          placeholder="Heizungsart"
+          required
+        >
+          <mat-option value="NO_INFORMATION">Keine Angabe</mat-option>
+          <mat-option value="SELF_CONTAINED_CENTRAL_HEATING"
+            >Etagenheizung</mat-option
+          >
+          <mat-option value="STOVE_HEATING">Ofenheizung</mat-option>
+          <mat-option value="CENTRAL_HEATING">Zentralheizung</mat-option>
+          <mat-option value="COMBINED_HEAT_AND_POWER_PLANT"
+            >Blockheizkraftwerk</mat-option
+          >
+          <mat-option value="ELECTRIC_HEATING">Elektro-Heizung</mat-option>
+          <mat-option value="DISTRICT_HEATING">Fernwärme</mat-option>
+          <mat-option value="FLOOR_HEATING">Fußbodenheizung</mat-option>
+          <mat-option value="GAS_HEATING">Gas-Heizung</mat-option>
+          <mat-option value="WOOD_PELLET_HEATING"
+            >Holz-Pelletheizung</mat-option
+          >
+          <mat-option value="NIGHT_STORAGE_HEATER"
+            >Nachtspeicherofen</mat-option
+          >
+          <mat-option value="OIL_HEATING">Öl-Heizung</mat-option>
+          <mat-option value="SOLAR_HEATING">Solar-Heizung</mat-option>
+          <mat-option value="HEAT_PUMP">Wärmepumpe</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <textarea
+        [(ngModel)]="haus.furnishingNote"
+        name="furnishingNote"
+        maxlength="3000"
+        placeholder="Ausstattung"
+      ></textarea>
+      <textarea
+        [(ngModel)]="haus.locationNote"
+        name="locationNote"
+        maxlength="3000"
+        placeholder="Lage"
+      ></textarea>
+      <textarea
+        [(ngModel)]="haus.otherNote"
+        name="otherNote"
+        maxlength="3000"
+        placeholder="Sonstige Angaben"
+      ></textarea>
+    </div>
+
+    <!-- ///////////// ENDE FELDER FÜR HÄUSER -->
+
+    <!-- ///////////// ANFANG FELDER FÜR GRUNDSTÜCKE -->
+    <div *ngIf="selectedArt === 'grundstueck'" class="zusatzfeld">
+      <h3>Grundstücksdetails</h3>
+      <div class="col-block">
+        <input
+          type="text"
+          [(ngModel)]="grundstueck.searchField1"
+          name="searchField1"
+          placeholder="Suchfeld 1 um Kunden die Suche zu erleichtern"
+        />
+        <input
+          type="text"
+          [(ngModel)]="grundstueck.searchField2"
+          name="searchField2"
+          placeholder="Suchfeld 2 um Kunden die Suche zu erleichtern"
+        />
+        <input
+          type="text"
+          [(ngModel)]="grundstueck.searchField3"
+          name="searchField3"
+          placeholder="Suchfeld 3 um Kunden die Suche zu erleichtern"
+        />
+        <input
+          type="number"
+          [ngModel]="
+            grundstueck.groupNumber === 0 ? null : grundstueck.groupNumber
+          "
+          (ngModelChange)="grundstueck.groupNumber = $event"
+          name="groupNumber"
+          maxlength="10"
+          placeholder="Gruppennummer"
+        />
+        <input
+          type="text"
+          [(ngModel)]="grundstueck.contactId"
+          value=""
+          name="contactId"
+          placeholder="Ansprechpartner"
+          disabled
+        />
+      </div>
+
+      <div class="checkbox-row">
+        <label for="showAddress">Straße und Hausnummer anzeigen</label
+        ><input
+          type="checkbox"
+          [(ngModel)]="grundstueck.showAddress"
+          name="showAddress"
+        />
+      </div>
+
+      <label for="commercializationType">Vermarktungsart auswählen:</label>
+      <mat-form-field>
+        <mat-select
+          [(ngModel)]="grundstueck.commercializationType"
+          name="commercializationType"
+          placeholder="Vermarktungsart"
+          required
+        >
+          <mat-option value="BUY">Kauf</mat-option>
+          <mat-option value="LEASEHOLD">Pacht</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <label for="recommendedUseTypes">Nutzungsart auswählen:</label>
+      <mat-form-field>
+        <mat-select
+          [(ngModel)]="grundstueck.recommendedUseTypes"
+          name="recommendedUseTypes"
+          placeholder="Nutzungsart"
+          required
+        >
+          <mat-option value="NO_INFORMATION">Keine Angabe</mat-option>
+          <mat-option value="LEASEHOLD">Pacht</mat-option>
+          <mat-option value="FUTURE_DEVELOPMENT_LAND"
+            >Bauerwartungsland</mat-option
+          >
+          <mat-option value="TWINHOUSE">Doppelhaus</mat-option>
+          <mat-option value="SINGLE_FAMILY_HOUSE">Einfamilienhaus</mat-option>
+          <mat-option value="GARAGE">Garagen</mat-option>
+          <mat-option value="GARDEN">Garten</mat-option>
+          <mat-option value="NO_DEVELOPMENT">Keine Bebauung</mat-option>
+          <mat-option value="APARTMENT_BUILDING">Mehrfamilienhaus</mat-option>
+          <mat-option value="ORCHARD">Obstpflanzung</mat-option>
+          <mat-option value="TERRACE_HOUSE">Reihenhaus</mat-option>
+          <mat-option value="PARKING_SPACE">Stellplaetze</mat-option>
+          <mat-option value="VILLA">Villa</mat-option>
+          <mat-option value="FORREST">Wald</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <label for="siteDevelopmentType">Erschliessungszustand auswählen:</label>
+      <mat-form-field>
+        <mat-select
+          [(ngModel)]="grundstueck.siteDevelopmentType"
+          name="siteDevelopmentType"
+          placeholder="Erschliessungszustand"
+          required
+        >
+          <mat-option value="NO_INFORMATION">Keine Angabe</mat-option>
+          <mat-option value="DEVELOPED">Erschlossen</mat-option>
+          <mat-option value="DEVELOPED_PARTIALLY">Teilerschlossen</mat-option>
+          <mat-option value="NOT_DEVELOPED">Unerschlossen</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <label for="siteConstructibleType">Bebaubar nach:</label>
+      <mat-form-field>
+        <mat-select
+          [(ngModel)]="grundstueck.siteConstructibleType"
+          name="siteConstructibleType"
+          placeholder="Bebaubar"
+          required
+        >
+          <mat-option value="NO_INFORMATION">Keine Angabe</mat-option>
+          <mat-option value="CONSTRUCTION_PLAN"
+            >Bebauung nach Bebauungsplan</mat-option
+          >
+          <mat-option value="NEIGHBOUR_CONSTRUCTION"
+            >Nachbarbebauung</mat-option
+          >
+          <mat-option value="EXTERNALAREA">Außengebiet</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="checkbox-row">
+        <label for="listed">Kurzfristig bebaubar</label>
+        <input
+          type="checkbox"
+          [(ngModel)]="grundstueck.shortTermConstructible"
+          name="shortTermConstructible"
+        />
+      </div>
+
+      <div class="checkbox-row">
+        <label for="listed">Baugenehmigung vorhanden</label>
+        <input
+          type="checkbox"
+          [(ngModel)]="grundstueck.buildingPermission"
+          name="buildingPermission"
+        />
+      </div>
+
+      <div class="checkbox-row">
+        <label for="listed">Abriss notwendig</label>
+        <input
+          type="checkbox"
+          [(ngModel)]="grundstueck.demolition"
+          name="demolition"
+        />
+      </div>
+
+      <div class="input-row-both">
+        <input
+          type="number"
+          step="0.01"
+          [ngModel]="grundstueck.grz === 0 ? null : grundstueck.grz"
+          (ngModelChange)="grundstueck.grz = $event"
+          name="grz"
+          placeholder="GRZ"
+          min="0"
+          max="10"
+        />
+        <input
+          type="number"
+          step="0.01"
+          [ngModel]="grundstueck.gfz === 0 ? null : grundstueck.gfz"
+          (ngModelChange)="grundstueck.gfz = $event"
+          name="gfz"
+          placeholder="GFZ"
+          min="0"
+          max="10"
+        />
+      </div>
+
+      <div class="input-row-both">
+        <input
+          type="number"
+          step="0.01"
+          [ngModel]="
+            grundstueck.minDivisible === 0 ? null : grundstueck.minDivisible
+          "
+          (ngModelChange)="grundstueck.minDivisible = $event"
+          name="minDivisible"
+          placeholder="Teilbar ab"
+          min="0"
+        />
+
+        <input
+          type="number"
+          [ngModel]="grundstueck.tenancy === 0 ? null : grundstueck.tenancy"
+          (ngModelChange)="grundstueck.tenancy = $event"
+          name="tenancy"
+          placeholder="Pachtdauer"
+          min="0"
+          max="990"
+        />
+      </div>
+
+      <input
+        type="text"
+        [(ngModel)]="grundstueck.freeFrom"
+        name="freeFrom"
+        maxlength="50"
+        placeholder="Verfügbar ab"
+      />
+
+      <textarea
+        [(ngModel)]="grundstueck.locationNote"
+        name="locationNote"
+        maxlength="3000"
+        placeholder="Lage"
+      ></textarea>
+      <textarea
+        [(ngModel)]="grundstueck.otherNote"
+        name="otherNote"
+        maxlength="3000"
+        placeholder="Sonstige Angaben"
+      ></textarea>
+    </div>
+
+    <!-- ///////////// ENDE FELDER FÜR GRUNDSTÜCKE -->
+
+    <div class="upload-settings-div">
+      <!-- 🔹 Zusätzliche Felder für Vermarktung -->
+      <h3>Immobilie auf Plattformen inserieren</h3>
+      <div class="col-block">
+        <div class="upload-checkbox-row">
+          <label for="uploadHomepage">Homepage</label>
+          <input
+            type="checkbox"
+            name="uploadHomepage"
+            [(ngModel)]="immobilie.uploadPublicTargets.homepage"
+          />
+        </div>
+        <div class="upload-checkbox-row">
+          <label for="uploadImmoScout">ImmobilienScout24</label>
+          <input
+            type="checkbox"
+            name="uploadImmoScout"
+            [(ngModel)]="immobilie.uploadPublicTargets.immoScout"
+          />
+        </div>
+        <div class="upload-checkbox-row">
+          <label for="uploadFacebook">Facebook</label>
+          <input
+            type="checkbox"
+            name="uploadFacebook"
+            [(ngModel)]="immobilie.uploadPublicTargets.facebook"
+          />
+        </div>
+        <div class="upload-checkbox-row">
+          <label for="uploadInstagram">Instagram</label>
+          <input
+            type="checkbox"
+            name="uploadInstagram"
+            [(ngModel)]="immobilie.uploadPublicTargets.instagram"
+          />
+        </div>
+        <div class="upload-checkbox-row">
+          <label for="uploadNewsletter">Newsletter</label>
+          <input
+            type="checkbox"
+            name="uploadNewsletter"
+            [(ngModel)]="immobilie.uploadPublicTargets.newsletter"
+          />
+        </div>
+        <div class="upload-checkbox-row">
+          <label for="uploadMagazin">Magazin</label>
+          <input
+            type="checkbox"
+            name="uploadMagazin"
+            [(ngModel)]="immobilie.uploadPublicTargets.magazin"
+          />
+        </div>
+      </div>
+
+      <h3>Immobilie an Kunden senden</h3>
+      <div class="col-block">
+        <div class="upload-checkbox-row">
+          <label for="sendInvestoren">Passende Kapitalanleger</label>
+          <input
+            type="checkbox"
+            name="sendInvestoren"
+            [(ngModel)]="immobilie.sendCustomerTargets.investoren"
+          />
+        </div>
+        <div class="upload-checkbox-row">
+          <label for="sendKundenSuchende"
+            >Passende Suchenende (mit Suchaufträgen)</label
+          >
+          <input
+            type="checkbox"
+            name="sendKundenSuchende"
+            [(ngModel)]="immobilie.sendCustomerTargets.suchende"
+          />
+        </div>
+        <div class="upload-checkbox-row">
+          <label for="sendPartner">Passende Partner</label>
+          <input
+            type="checkbox"
+            name="sendPartner"
+            [(ngModel)]="immobilie.sendCustomerTargets.partner"
+          />
+        </div>
+      </div>
+    </div>
+
+    <h3>Eigentümer & Verkäufer</h3>
+
+    <!-- Eigentümer -->
+    <mat-form-field appearance="fill">
+      <mat-label>Eigentümer auswählen</mat-label>
+      <mat-select
+        [(ngModel)]="immobilie.ownerIds"
+        name="ownerIds"
+        multiple
+      >
+        <mat-option
+          *ngFor="let person of owners"
+          [value]="person.customerId"
+        >
+          {{ person.salutation }} {{ person.firstName }} {{ person.lastName }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    
+    <!-- Vertretende Personen -->
+    <mat-form-field appearance="fill">
+      <mat-label>Vertretende Personen</mat-label>
+      <mat-select
+        [(ngModel)]="immobilie.representingPersonIds"
+        name="representingPersonIds"
+        multiple
+      >
+        <mat-option
+          *ngFor="let person of vertretendePersonen"
+          [value]="person.customerId"
+        >
+          {{ person.salutation }} {{ person.firstName }} {{ person.lastName }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>    
+    
+    <button type="submit">Immobilie speichern</button>
+    <!-- Nach dem Submit-Button -->
+    <div *ngIf="successMessage" class="success-message">
+      {{ successMessage }}
+    </div>
+    <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+  </form>
+</div>

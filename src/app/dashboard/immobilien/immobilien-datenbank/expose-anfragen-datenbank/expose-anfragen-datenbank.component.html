@@ -1,0 +1,65 @@
+<section class="section-bg-v1"> 
+
+  <div *ngIf="immobilie" class="go-back-btn-div">
+    <a 
+      class="go-back-btn" 
+      [routerLink]="[
+      '/dashboard/immobilien',
+      (immobilie.propertyType.toLowerCase() || '') + '-details-form',
+      immobilie.externalId
+    ]"
+    >
+      Zurück
+    </a>
+  </div>
+
+  <h2>Exposé-Anfragen</h2>
+
+  <div *ngIf="immobilie" class="object-infos">
+    <p><strong>{{ immobilie.title }}</strong></p>
+    <p>Objekt-ID: {{ immobilie.externalId }}</p>
+    <p>Objekttyp: {{ immobilie.propertyType }}</p>
+    <p>{{ immobilie.street }} {{ immobilie.houseNumber }}, {{ immobilie.postcode }} {{ immobilie.city }}</p>
+    <p>Kaufpreis: {{ immobilie.value }} €</p>
+  </div>
+
+<!-- 1. Ladeindikator -->
+<div *ngIf="isLoading" class="loading-indicator">
+  <p>⏳ Daten werden geladen...</p>
+</div>
+  
+<!-- 2. Tabelle nur wenn Daten da sind -->
+<div *ngIf="!isLoading && customer.length > 0">
+    <p><strong>{{ customer.length }}</strong> Exposé-Anfragen gefunden</p>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Status</th>
+          <th>Name</th>
+          <th>Anschrift</th>
+          <th>Telefon/Mobil</th>
+          <th>E-Mail</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr 
+        *ngFor="let a of customer; index as i"
+        class="clickable-row"
+        (click)="goToCustomerDetails(a.customerId || '')">
+        <td>{{ customer.length - i }}</td>
+        <td>{{ getStatusForCustomer(a.customerId || '') }}</td>
+        <td>{{ a.salutation }} {{ a.firstName }} {{ a.lastName }}</td>
+        <td>{{ a.street }} {{ a.houseNumber }}, {{ a.zip }} {{ a.city }}</td>
+        <td>{{ a.phone }} / {{ a.mobile }}</td>
+        <td>{{ a.email }}</td>
+      </tr>      
+      </tbody>      
+    </table>
+  </div>
+
+  <!-- 3. Kein Ergebnis -->
+<div *ngIf="!isLoading && customer.length === 0">
+  <p>Keine Anfragen gefunden.</p>
+</div>
+</section>

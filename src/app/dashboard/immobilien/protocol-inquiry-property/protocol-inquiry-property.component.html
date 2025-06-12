@@ -1,0 +1,330 @@
+<ng-template #loadingTemplate>
+  <p>Lade Daten...</p>
+  <p *ngIf="!loading && !process">❌ Kein Prozess gefunden.</p>
+</ng-template>
+
+<div class="go-back-btn-div" *ngIf="customer && immobilie">
+  <a class="go-back-btn" (click)="goBack()">Zurück</a>
+</div>
+
+<section *ngIf="!loading && process; else loadingTemplate">
+  <div>
+    <h2>Prozessübersicht</h2>
+  </div>
+
+  <form [formGroup]="form">
+    <!-- Kundendaten -->
+    <mat-card>
+      <mat-card-title>Kundendaten</mat-card-title>
+      <mat-card-content>
+        <p><strong>Kunden-ID:</strong> {{ process.customerId }}</p>
+        <p>
+          <strong>Name:</strong> {{ customer?.firstName }}
+          {{ customer?.lastName }}
+        </p>
+        <p><strong>E-Mail:</strong> {{ customer?.email }}</p>
+        <p><strong>Telefon:</strong> {{ customer?.phone }}</p>
+        <p><strong>Mobil:</strong> {{ customer?.mobile }}</p>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Immobilie -->
+    <mat-card>
+      <mat-card-title>Angefragte Immobilie</mat-card-title>
+      <mat-card-content>
+        <p><strong>Objekt-ID:</strong> {{ process.propertyExternalId }}</p>
+        <p><strong>Objektart:</strong> {{ immobilie?.propertyType }}</p>
+        <p><strong>Titel:</strong> {{ immobilie?.title }}</p>
+        <p>
+          <strong>Anschrift:</strong> {{ immobilie?.street }}
+          {{ immobilie?.houseNumber }}, {{ immobilie?.postcode }}
+          {{ immobilie?.city }}
+        </p>
+        <p><strong>Zimmer:</strong> {{ immobilie?.numberOfRooms }}</p>
+        <p><strong>Wfl.:</strong> {{ immobilie?.livingSpace }}</p>
+        <p><strong>Angebotspreis:</strong> {{ immobilie?.value }} €</p>
+        <p><strong>Vereinbarte Provision:</strong> {{ immobilie?.courtage }}</p>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Basisinfos -->
+    <mat-card>
+      <mat-card-title>Status & Basisinfos</mat-card-title>
+      <mat-card-content>
+        <mat-form-field appearance="fill">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="inquiryProcessStatus">
+            <mat-option *ngFor="let s of statuses" [value]="s">{{
+              s
+            }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Exposé-Level</mat-label>
+          <mat-select formControlName="exposeAccessLevel">
+            <mat-option value="normal">Normal</mat-option>
+            <mat-option value="gekürzt">Gekürzt</mat-option>
+            <mat-option value="erweitert">Erweitert</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Zustimmung & Exposé -->
+    <mat-card>
+      <mat-card-title>Exposé-Anfrage</mat-card-title>
+      <mat-card-content>
+        <p>
+          <strong>Datum der Anfrage:</strong>
+          {{ process.creationDate | date : "short" }}
+        </p>
+        <p><strong>Nachricht:</strong></p>
+        <p>{{ process.requestMessage || "—" }}</p>
+        <p><strong>Bedingungen akzeptiert:</strong></p>
+        <ul>
+          <li>
+            AGB akzeptiert am:
+            {{
+              process.acceptedTermsAt
+                ? (process.acceptedTermsAt | date : "short")
+                : "❌"
+            }}
+          </li>
+          <li>
+            Widerruf akzeptiert am:
+            {{
+              process.acceptedWithdrawalAt
+                ? (process.acceptedWithdrawalAt | date : "short")
+                : "❌"
+            }}
+          </li>
+          <li>
+            Datenschutz akzeptiert am:
+            {{
+              process.acceptedPrivacyAt
+                ? (process.acceptedPrivacyAt | date : "short")
+                : "❌"
+            }}
+          </li>
+        </ul>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Exposé erhalten -->
+    <mat-card>
+      <mat-card-title>Exposé erhalten</mat-card-title>
+      <mat-card-content>
+        <p *ngIf="process.exposeSent; else noExpose">
+          Exposé-Link am {{ process.exposeSent | date }} via E-Mail zugesendet.
+        </p>
+        <ng-template #noExpose>
+          <p>Noch kein Exposé erhalten.</p>
+        </ng-template>
+      </mat-card-content>
+    </mat-card>
+    
+
+    <!-- Besichtigungen -->
+    <mat-card>
+      <mat-card-title>Besichtigungen</mat-card-title>
+      <mat-card-content>
+        <div
+          formArrayName="viewingAppointments"
+          class="appointments-content-box"
+        >
+          <div
+            *ngFor="let appt of viewingAppointments.controls; let i = index"
+            [formGroupName]="i"
+            class="appointments-content"
+          >
+            <div class="appointment-box-row">
+              <mat-form-field>
+                <mat-label>Typ</mat-label>
+                <mat-select formControlName="viewingType">
+                  <mat-option value="Erstbesichtigung"
+                    >Erstbesichtigung</mat-option
+                  >
+                  <mat-option value="Zweitbesichtigung"
+                    >Zweitbesichtigung</mat-option
+                  >
+                  <mat-option value="Drittbesichtigung"
+                    >Drittbesichtigung</mat-option
+                  >
+                  <mat-option value="Gutachterbegehung"
+                    >Gutachterbegehung</mat-option
+                  >
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="fill">
+                <mat-label>Besichtigung (Datum & Uhrzeit)</mat-label>
+                <input
+                  matInput
+                  type="datetime-local"
+                  formControlName="viewingDate"
+                />
+              </mat-form-field>
+
+              <mat-checkbox formControlName="confirmed">Bestätigt</mat-checkbox>
+              <mat-checkbox formControlName="canceled">Abgesagt</mat-checkbox>
+            </div>
+
+            <div class="appointment-box-row">
+              <mat-form-field>
+                <mat-label>Grund (falls abgesagt)</mat-label>
+                <input matInput formControlName="cancellationReason" />
+              </mat-form-field>
+
+              <mat-form-field>
+                <mat-label>Notizen</mat-label>
+                <textarea matInput formControlName="notes"></textarea>
+              </mat-form-field>
+            </div>
+
+            <div class="appointment-box-row">
+              <button
+                mat-icon-button
+                color="warn"
+                (click)="deleteAppointment(i)"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+              <button
+                mat-stroked-button
+                color="primary"
+                (click)="saveSingleAppointment(i)"
+              >
+                Speichern
+              </button>
+            </div>
+
+            <mat-divider></mat-divider>
+          </div>
+        </div>
+
+        <button mat-button (click)="addAppointment()">+ Neuer Termin</button>
+      </mat-card-content>
+    </mat-card>
+    <!-- //////////  -->
+
+    <!-- Finanzierung -->
+    <mat-card>
+      <mat-card-title>Finanzierung</mat-card-title>
+      <mat-card-content>
+        <mat-form-field appearance="fill">
+          <mat-label>Art</mat-label>
+          <input matInput formControlName="kindOfFinance" />
+        </mat-form-field>
+
+        <mat-slide-toggle formControlName="CooperationWithFSK"
+          >FSK-Kooperation</mat-slide-toggle
+        >
+
+        <mat-form-field appearance="fill">
+          <mat-label>Finanzierungsrahmen (€)</mat-label>
+          <input matInput type="number" formControlName="fundedSum" />
+        </mat-form-field>
+
+        <mat-slide-toggle formControlName="bankConfirmation"
+          >Bankbestätigung</mat-slide-toggle
+        >
+        <mat-slide-toggle formControlName="selfDisclosure"
+          >Selbstauskunft erhalten</mat-slide-toggle
+        >
+        <mat-slide-toggle formControlName="schufaScore"
+          >Schufa erhalten</mat-slide-toggle
+        >
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Kauf & Übergabe -->
+    <mat-card>
+      <mat-card-title>Kauf & Übergabe</mat-card-title>
+      <mat-card-content>
+        <mat-slide-toggle formControlName="copyOfIDCardReceived"
+          >Ausweiskopie erhalten</mat-slide-toggle
+        >
+
+        <mat-form-field appearance="fill">
+          <mat-label>Notartermin</mat-label>
+          <input
+            matInput
+            type="datetime-local"
+            formControlName="notaryAppointmentDate"
+          />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Übergabetyp</mat-label>
+          <input matInput formControlName="handoverType" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Übergabedatum</mat-label>
+          <input
+            matInput
+            type="datetime-local"
+            formControlName="handoverDate"
+          />
+        </mat-form-field>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Eigentümer -->
+    <mat-card>
+      <mat-card-title>Eigentümer</mat-card-title>
+      <mat-card-content>
+        <mat-form-field appearance="fill">
+          <mat-label>Vom Eigentümer bestätigt am</mat-label>
+          <input
+            matInput
+            type="datetime-local"
+            formControlName="confirmationFinalPriceByOwner"
+          />
+        </mat-form-field>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Weitere Aktionen -->
+    <mat-card>
+      <mat-card-title>Weitere Aktionen</mat-card-title>
+      <mat-card-content>
+        <ul>
+          <li>
+            Feedbacklink gesendet: {{ process.feedbackLinkSent ? "✅" : "❌" }}
+          </li>
+          <li>
+            Feedback mit Gutschein:
+            {{ process.feedbackLinkWithCouponSent ? "✅" : "❌" }}
+          </li>
+          <li>
+            Tippgeberlink gesendet:
+            {{ process.sharingCommissionLinkSent ? "✅" : "❌" }}
+          </li>
+        </ul>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Logbuch -->
+    <mat-card>
+      <mat-card-title>Letzte Änderungen</mat-card-title>
+      <mat-card-content>
+        <p>Letzte Änderung: {{ process.lastUpdateDate | date : "short" }}</p>
+
+        <ul *ngIf="process.historyLog?.length; else noLog">
+          <li *ngFor="let entry of process.historyLog">
+            {{ entry.date | date : "short" }} – <strong>{{ entry.user }}</strong
+            >: {{ entry.action }}
+            <em *ngIf="entry.comment">({{ entry.comment }})</em>
+          </li>
+        </ul>
+        <ng-template #noLog><p>Keine Einträge vorhanden.</p></ng-template>
+      </mat-card-content>
+    </mat-card>
+
+    <button mat-raised-button color="primary" (click)="save()">
+      Änderungen speichern
+    </button>
+  </form>
+</section>

@@ -1,0 +1,16 @@
+@use "./../../../styles.scss" as s;
+@use "./../../../assets/fonts.scss" as f;
+@use "./../../../assets/colors.scss" as c;
+
+section {
+  @include s.f_c_fs_fs;
+  gap: 18px;
+  width: 100%;
+  box-sizing: border-box;
+  padding:12px;
+  color:black;
+  font-weight:400;
+  h2 {
+    font-weight:400;
+  }
+}

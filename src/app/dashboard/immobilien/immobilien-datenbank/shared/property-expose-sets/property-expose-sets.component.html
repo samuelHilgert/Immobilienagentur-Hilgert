@@ -1,0 +1,66 @@
+<section class="section-bg-v1" *ngIf="immobilie">
+  <div class="go-back-btn-div">
+    <a
+      class="go-back-btn"
+      [routerLink]="[
+        '/dashboard/immobilien',
+        (immobilie.propertyType.toLowerCase() || '') + '-details-form',
+        immobilie.externalId
+      ]"
+    >
+      Zurück
+    </a>
+  </div>
+
+  <h2>Exposé verwalten</h2>
+
+  <div class="expose-actions">
+    <div *ngIf="!immobilie.extendedExposeAvailable" class="no-expose">
+      <label class="dashboard-menu-btn upload-label">
+        Exposé hochladen
+        <input type="file" accept="application/pdf" (change)="uploadExposePdf($event)" hidden />
+      </label>
+      <p class="upload-info">Noch kein Exposé hochgeladen</p>
+    </div>
+
+    <div *ngIf="immobilie.extendedExposeAvailable" class="has-expose">
+      <a [href]="exposePdfUrl" target="_blank" class="dashboard-menu-btn navbar-link">Exposé ansehen</a>
+      <button class="dashboard-menu-btn warn-btn" (click)="deleteExposePdf()">Exposé löschen</button>
+      <p class="upload-success">Exposé ist vorhanden</p>
+    </div>
+  </div>
+
+  <div class="customer-search" *ngIf="immobilie.extendedExposeAvailable">
+    <h3>Exposé an Kunden senden</h3>
+    <input
+      type="text"
+      placeholder="Name, E-Mail oder ID eingeben..."
+      [(ngModel)]="customerSearch"
+      (input)="filterCustomers()"
+    />
+
+    <ul *ngIf="filteredCustomers.length > 0" class="customer-list">
+      <li *ngFor="let customer of filteredCustomers" (click)="selectCustomer(customer)">
+        {{ customer.firstName }} {{ customer.lastName }} – {{ customer.email }}
+      </li>
+    </ul>
+
+    <div *ngIf="selectedCustomer" class="selected-customer">
+      <p>Ausgewählt: {{ selectedCustomer.firstName }} {{ selectedCustomer.lastName }} ({{ selectedCustomer.email }})</p>
+      <button class="dashboard-menu-btn" (click)="sendExposeToCustomer()">Exposé senden</button>
+    </div>
+  </div>
+
+  <div class="auto-send-toggle" *ngIf="immobilie">
+    <label class="dashboard-menu-btn">
+      <input
+        type="checkbox"
+        [(ngModel)]="immobilie.autoExposeSend"
+        (change)="toggleAutoExposeSend()"
+      />
+      Exposé automatisch nach Kundenanfrage versenden
+    </label>
+  </div>
+  
+  
+</section>

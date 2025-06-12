@@ -1,16 +1,5 @@
 # See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
 
-# Verhindert Upload von sensiblen Dateien
-backend/config/config.php
-backend/auth/config.php
-backend/db.php
-backend/debug_login.txt
-backend/login.debug.txt
-
-# Falls du den ganzen Backend-Ordner nicht hochladen willst:
-backend/
-src/app/dashboard/
-
 #
 #
 # Default Settings
@@ -56,3 +45,7 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Umgebungsvariablen ignorieren (wenn sensibel)
+src/environments/environment.ts
+src/environments/environment.prod.ts

@@ -1,0 +1,65 @@
+<div class="dash-page-content-bg properties-amount-div">
+  <p>{{ immobilien.length }} Immobilien gefunden</p>
+</div>
+
+<div class="properties-database-wrapper" *ngIf="immobilien.length">
+  <table class="dash-page-content-bg property-table">
+    <thead>
+      <tr>
+        <th>Bild</th>
+        <th>Lfd.Nr.</th>
+        <th>Objekt-ID</th>
+        <th>Status</th>
+        <th>Titel</th>
+        <th>Adresse</th>
+        <th>PLZ / Ort</th>
+        <th>Kaufpreis</th>
+        <th>Wohnfläche</th>
+        <th>Zimmer</th>
+        <th>Grundstück</th>
+        <th>Provision</th>
+        <th>Erstellt</th>
+        <th>Geändert</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        *ngFor="let immo of immobilien"
+        (click)="navigateToDetails(immo.externalId!)"
+        class="clickable-row"
+        (mouseenter)="hoveredRow = immo.externalId ?? null"
+        (mouseleave)="hoveredRow = null"
+        [class.hovered]="hoveredRow === immo.externalId"
+      >
+        <td>
+          <img
+            *ngIf="getMediaForImmobilie(immo.externalId)?.[0]?.url; else keinBild"
+            [src]="getMediaForImmobilie(immo.externalId)[0].url"
+            alt="Titelbild"
+            class="thumb"
+          />
+          <ng-template #keinBild>
+            <div class="thumb placeholder">–</div>
+          </ng-template>
+        </td>
+        <td>{{ immo.indexId }}</td>
+        <td>{{ immo.externalId }}</td>
+        <td>{{ immo.propertyStatus }}</td>
+        <td>{{ immo.title }}</td>
+        <td>{{ immo.street }} {{ immo.houseNumber }}</td>
+        <td>{{ immo.postcode }} {{ immo.city }}</td>
+        <td>{{ immo.value | currency : "EUR" }}</td>
+        <td>{{ immo.livingSpace }} m²</td>
+        <td>{{ immo.numberOfRooms }}</td>
+        <td>{{ immo.plotArea }} m²</td>
+        <td>
+          {{ immo.hasCourtage === "YES" ? immo.courtage || "ja" : "nein" }}
+        </td>
+        <td>{{ immo.creationDate | date : "shortDate" }}</td>
+        <td>{{ immo.lastModificationDate | date : "shortDate" }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<router-outlet></router-outlet>

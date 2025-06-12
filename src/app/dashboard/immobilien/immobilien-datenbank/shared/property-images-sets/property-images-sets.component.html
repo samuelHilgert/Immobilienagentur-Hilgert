@@ -1,0 +1,117 @@
+<section class="section-bg-v1" *ngIf="!isLoading">
+  <div *ngIf="immobilie" class="go-back-btn-div">
+    <a
+      class="go-back-btn"
+      [routerLink]="[
+        '/dashboard/immobilien',
+        (immobilie.propertyType.toLowerCase() || '') + '-details-form',
+        immobilie.externalId
+      ]"
+    >
+      Zurück
+    </a>
+  </div>
+
+  <h2>Bilder verwalten</h2>
+  <p>Achte darauf, dass die Bilder komprimiert hochgeladen werden, um Speicher zu reduzieren und sie nicht für andere Zwecke missbraucht werden</p>
+
+  <div *ngIf="media?.length === 0">Keine Bilder vorhanden.</div>
+
+  <div class="media-grid">
+    <div class="media-card" *ngFor="let item of media">
+      <div class="image-wrapper" (click)="openDialog(item)">
+        <img [src]="item.url" [alt]="item.description || 'Immobilienbild'" />
+        <span class="title-badge" *ngIf="item.isTitleImage">Titelbild</span>
+      </div>      
+
+        <mat-form-field appearance="outline" class="description-field">
+          <mat-label>Bildbeschreibung</mat-label>
+          <input
+            matInput
+            #descInput
+            [value]="item.description"
+            (blur)="updateDescription(item.id!, descInput.value)"
+          />
+        </mat-form-field>
+        
+
+      <div class="button-group">
+        <button
+          mat-button
+          color="primary"
+          (click)="markAsTitleImage(item.id!)"
+          *ngIf="!item.isTitleImage"
+        >
+          Als Titelbild setzen
+        </button>
+        <button mat-button color="warn" (click)="deleteImage(item.id!)">
+          Löschen
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="upload-area">
+    <input
+      type="file"
+      accept="image/*"
+      (change)="onFileSelected($event)"
+      hidden
+      #fileInput
+    />
+    <button mat-raised-button color="primary" (click)="fileInput.click()">
+      Bild hinzufügen
+    </button>
+  </div>
+
+  <h2>Grundrisse verwalten</h2>
+<p>Hier kannst du Grundrisspläne hochladen und beschriften.</p>
+
+<div *ngIf="mediaFloorPlans?.length === 0">Keine Grundrisse vorhanden.</div>
+
+<div class="media-grid">
+  <div class="media-card" *ngFor="let item of mediaFloorPlans">
+    <div class="image-wrapper" (click)="openDialog(item)">
+      <img [src]="item.url" [alt]="item.description || 'Grundrissbild'" />
+    </div>
+
+    <mat-form-field appearance="outline" class="description-field">
+      <mat-label>Grundriss-Beschreibung</mat-label>
+      <input
+        matInput
+        #descInput
+        [value]="item.description"
+        (blur)="updateDescription(item.id!, descInput.value)"
+      />
+    </mat-form-field>
+
+    <div class="button-group">
+      <button mat-button color="warn" (click)="deleteImage(item.id!)">
+        Löschen
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="upload-area">
+  <input
+    type="file"
+    accept="image/*"
+    (change)="onFloorPlanSelected($event)"
+    hidden
+    #floorInput
+  />
+  <button mat-raised-button color="accent" (click)="floorInput.click()">
+    Grundriss hinzufügen
+  </button>
+</div>
+
+  
+</section>
+
+<!-- Optional: Bild-Vollbild-Dialog -->
+<ng-template #imageDialog let-data>
+  <div class="dialog-image">
+    <img [src]="data" style="width: 100%; height: auto" />
+  </div>
+</ng-template>

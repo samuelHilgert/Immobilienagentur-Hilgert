@@ -1,0 +1,49 @@
+<div class="immo-edit-header">
+  <nav class="header-nav">
+    <a
+      class="header-btn"
+      *ngIf="immobilie?.externalId"
+      [routerLink]="['/dashboard/property-process-view', immobilie.externalId]"
+    >
+      Verlauf
+    </a>
+    <a
+      class="header-btn"
+      *ngIf="immobilie?.externalId"
+      [routerLink]="[
+        '/dashboard/expose-anfragen-datenbank',
+        immobilie.externalId
+      ]"
+    >
+      Anfragen
+    </a>
+    <a
+      class="header-btn"
+      *ngIf="immobilie?.externalId"
+      [routerLink]="['/dashboard/property-expose-sets', immobilie.externalId]"
+    >
+      Exposé
+    </a>
+    <a
+      class="header-btn"
+      *ngIf="immobilie?.externalId"
+      [routerLink]="['/dashboard/property-images-sets', immobilie.externalId]"
+    >
+      Bilder
+    </a>
+    <a
+      class="header-btn"
+      *ngIf="immobilie?.externalId"
+      [routerLink]="['/dashboard/property-docs-sets', immobilie.externalId]"
+    >
+      Dokumente
+    </a>
+    <a
+      class="header-btn"
+      *ngIf="immobilie?.externalId"
+      [routerLink]="['/dashboard/property-forms-sets', immobilie.externalId]"
+    >
+      Formulare
+    </a>
+  </nav>
+</div>

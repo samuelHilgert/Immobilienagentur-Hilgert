@@ -1,0 +1,21 @@
+@use "./../../../styles.scss" as s;
+@use "./../../../assets/fonts.scss" as f;
+@use "./../../../assets/colors.scss" as c;
+
+section {
+    @include s.f_r_fe_fs;
+    gap: 24px;
+    width: 100%;
+    box-sizing: border-box;
+    padding-right: 32px;
+}
+
+.dash-page-topline-menu {
+    @include s.f_r_fe_c;
+    width: 100%;
+    box-sizing: border-box;
+    gap: 24px;
+    margin: 0;
+    padding: 0;
+    background-color: c.$dash-page-topline-menu-bg;
+}

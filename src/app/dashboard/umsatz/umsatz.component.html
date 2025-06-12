@@ -1,0 +1,227 @@
+<h2>Umsatzerwartung 2025</h2>
+
+<div class="add-object-wrapper" style="margin-bottom: 1rem;">
+  <mat-form-field appearance="fill">
+    <mat-label>Immobilie hinzufügen</mat-label>
+    <mat-select [(value)]="ausgewaehlteImmobilieId">
+      <mat-option *ngFor="let immo of getVerfuegbareImmobilien()" [value]="immo.externalId">
+        {{ immo.externalId }} – {{ getKundenNachnamen(immo.ownerIds) }}
+      </mat-option>
+      
+    </mat-select>
+  </mat-form-field>
+  
+
+  <button mat-raised-button color="primary" (click)="addAusgewaehlteImmobilie()" [disabled]="!ausgewaehlteImmobilieId">
+    Hinzufügen
+  </button>
+</div>
+
+<table *ngIf="!isLoading && immobilien.length > 0">
+  <thead>
+    <tr>
+      <th>Objekt hinzuüfgen</th>
+      <th *ngFor="let immo of immobilien; let i = index">
+        <button mat-button color="warn" (click)="confirmRemove(i)">Löschen</button>
+      </th>
+      <th>-</th> 
+    </tr>
+    <tr>
+      <th>Objekt</th>
+      <th *ngFor="let immo of immobilien">ID: {{ immo.externalId }} <br> ET: {{ getKundenNachnamen(immo.ownerIds) }}</th>
+      <th>Summe</th> 
+    </tr>
+  </thead>
+  
+
+  <tbody>
+
+    <tr>
+      <td>Angebotspreis</td>
+      <td *ngFor="let immo of immobilien">
+        {{ immo.value | number: '1.0-0':'de-DE' }} €
+      </td>
+      <td>
+        {{ getAngebotspreisSumme() | number: '1.0-0':'de-DE' }} €
+      </td>
+    </tr>
+
+    <tr>
+      <td>Provisionssatz (brutto)</td>
+      <td *ngFor="let immo of immobilien">
+        <ng-container *ngIf="extractCourtageProzent(immo.courtage) !== null; else noData">
+          {{ (extractCourtageProzent(immo.courtage)! * 2) | number: '1.2-2':'de-DE' }} %
+        </ng-container>
+        <ng-template #noData>–</ng-template>
+      </td>
+      <td>–</td> 
+    </tr>
+
+    <tr>
+      <td>Provisionssatz (netto)</td>
+      <td *ngFor="let immo of immobilien">
+        <ng-container *ngIf="getProvisionSatzNetto(immo.courtage) !== null; else noData">
+          {{ (getProvisionSatzNetto(immo.courtage)!  * 2)| number: '1.2-2':'de-DE' }} %
+        </ng-container>
+        <ng-template #noData>–</ng-template>
+      </td>
+      <td>–</td> 
+    </tr>    
+
+    <tr>
+      <td>Provision (netto)</td>
+      <td *ngFor="let immo of immobilien">
+        <ng-container *ngIf="extractCourtageProzent(immo.courtage) !== null; else noData">
+          {{
+            getProvisionNetto(immo.value, extractCourtageProzent(immo.courtage)!) | number: '1.0-0':'de-DE'
+          }} €
+        </ng-container>
+        <ng-template #noData>–</ng-template>
+      </td>
+      <td>
+        {{ getProvisionNettoSumme() | number: '1.0-0':'de-DE' }} €
+      </td>
+    </tr>
+
+    <tr>
+      <td>Umsatzsteuer</td>
+      <td *ngFor="let immo of immobilien">
+        <ng-container *ngIf="extractCourtageProzent(immo.courtage) !== null; else noData">
+          {{
+            getUmsatzsteuer(getProvisionNetto(immo.value, extractCourtageProzent(immo.courtage)!)) | number: '1.0-0':'de-DE'
+          }} €
+        </ng-container>
+        <ng-template #noData>–</ng-template>
+      </td>
+      <td>
+        {{ getUmsatzsteuerSumme() | number: '1.0-0':'de-DE' }} €
+      </td>
+    </tr>
+
+    <tr>
+      <td>Provision (brutto)</td>
+      <td *ngFor="let immo of immobilien">
+        <ng-container *ngIf="extractCourtageProzent(immo.courtage) !== null; else noData">
+          {{
+            getProvisionBrutto(getProvisionNetto(immo.value, extractCourtageProzent(immo.courtage)!)) | number: '1.0-0':'de-DE'
+          }} €
+        </ng-container>
+        <ng-template #noData>–</ng-template>
+      </td>
+      <td>
+        {{ getProvisionBruttoSumme() | number: '1.0-0':'de-DE' }} €
+      </td>
+    </tr>
+
+    <tr>
+      <td>Betriebsausgaben (3%)</td>
+      <td *ngFor="let immo of immobilien">
+        <ng-container *ngIf="extractCourtageProzent(immo.courtage) !== null; else noData">
+          {{
+            getBetriebsausgaben(getProvisionNetto(immo.value, extractCourtageProzent(immo.courtage)!)) | number: '1.0-0':'de-DE'
+          }} €
+        </ng-container>
+        <ng-template #noData>–</ng-template>
+      </td>
+      <td>
+        {{ getBetriebsausgabenSumme() | number: '1.0-0':'de-DE' }} €
+      </td>
+    </tr>
+
+    <tr>
+      <td>GKV-Beitrag (15%)</td>
+      <td *ngFor="let immo of immobilien">
+        <ng-container *ngIf="extractCourtageProzent(immo.courtage) !== null; else noData">
+          {{
+            getGKVBeitrag(getProvisionNetto(immo.value, extractCourtageProzent(immo.courtage)!)) | number: '1.0-0':'de-DE'
+          }} €
+        </ng-container>
+        <ng-template #noData>–</ng-template>
+      </td>
+      <td>
+        {{ getGKVBeitragSumme() | number: '1.0-0':'de-DE' }} €
+      </td>
+    </tr>    
+
+    <tr>
+      <td>EinkSt.</td>
+      <td *ngFor="let immo of immobilien">
+        <ng-container *ngIf="extractCourtageProzent(immo.courtage) !== null; else noData">
+          {{
+            getEinkSt(getProvisionNetto(immo.value, extractCourtageProzent(immo.courtage)!)) | number: '1.0-0':'de-DE'
+          }} €
+        </ng-container>
+        <ng-template #noData>–</ng-template>
+      </td>
+      <td>
+        {{ getEinkStSumme() | number: '1.0-0':'de-DE' }} €
+      </td>
+    </tr>
+
+    <tr>
+      <td>Lohn</td>
+      <td *ngFor="let immo of immobilien">
+        <ng-container *ngIf="extractCourtageProzent(immo.courtage) !== null; else noData">
+          {{
+            getLohnBrutto(getProvisionNetto(immo.value, extractCourtageProzent(immo.courtage)!)) | number: '1.0-0':'de-DE'
+          }} €
+        </ng-container>
+        <ng-template #noData>–</ng-template>
+      </td>
+      <td>
+        {{ getLohnBruttoSumme() | number: '1.0-0':'de-DE' }} €
+      </td>
+    </tr>
+    
+    <tr>
+      <td>Spenden (10%)</td>
+      <td *ngFor="let immo of immobilien">
+        <ng-container *ngIf="extractCourtageProzent(immo.courtage) !== null; else noData">
+          {{
+            getSpenden(getLohnBrutto(getProvisionNetto(immo.value, extractCourtageProzent(immo.courtage)!))) | number: '1.0-0':'de-DE'
+          }} €
+        </ng-container>
+        <ng-template #noData>–</ng-template>
+      </td>
+      <td>
+        {{ getSpendenSumme() | number: '1.0-0':'de-DE' }} €
+      </td>
+    </tr>
+
+    <tr>
+      <td>Übrig</td>
+      <td *ngFor="let immo of immobilien">
+        <ng-container *ngIf="extractCourtageProzent(immo.courtage) !== null; else noData">
+          {{
+            getLohnNetto(getProvisionNetto(immo.value, extractCourtageProzent(immo.courtage)!)) | number: '1.0-0':'de-DE'
+          }} €
+        </ng-container>
+        <ng-template #noData>–</ng-template>
+      </td>
+      <td>
+        {{ getLohnNettoSumme() | number: '1.0-0':'de-DE' }} €
+      </td>
+    </tr>
+    
+    <tr>
+      <td>Übrig mon. (auf 1 Jahr)</td>
+      <td *ngFor="let immo of immobilien">
+        <ng-container *ngIf="extractCourtageProzent(immo.courtage) !== null; else noData">
+          {{
+            getLohnMonatlich(getProvisionNetto(immo.value, extractCourtageProzent(immo.courtage)!)) | number: '1.0-0':'de-DE'
+          }} €
+        </ng-container>
+        <ng-template #noData>–</ng-template>
+      </td>
+      <td>
+        {{ getLohnMonatlichSumme() | number: '1.0-0':'de-DE' }} €
+      </td>
+    </tr>
+    
+    
+  </tbody>
+
+
+</table>
+
+

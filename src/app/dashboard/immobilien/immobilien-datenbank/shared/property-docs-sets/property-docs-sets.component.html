@@ -1,0 +1,18 @@
+<section class="section-bg-v1">
+    <div *ngIf="immobilie" class="go-back-btn-div">
+      <a
+        class="go-back-btn"
+        [routerLink]="[
+          '/dashboard/immobilien',
+          (immobilie.propertyType.toLowerCase() || '') + '-details-form',
+          immobilie.externalId
+        ]"
+      >
+        Zurück
+      </a>
+    </div>
+  
+    <p>Dokumente verwalten</p>
+    
+  </section>
+  

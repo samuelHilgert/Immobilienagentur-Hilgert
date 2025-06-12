@@ -1,0 +1,161 @@
+<section>
+  <button type="button" class="back-button" (click)="goBack()">← Zurück</button>
+
+  <h2>Kundendaten bearbeiten</h2>
+
+  <form [formGroup]="customerForm" (ngSubmit)="onSubmit()" *ngIf="customerForm">
+    <label>
+      Kunden-ID:
+      <input type="text" formControlName="customerId" readonly />
+    </label>
+
+    <label>
+      Anrede:
+      <input type="text" formControlName="salutation" />
+    </label>
+
+    <label>
+      Vorname:
+      <input type="text" formControlName="firstName" />
+    </label>
+
+    <label>
+      Nachname:
+      <input type="text" formControlName="lastName" />
+    </label>
+
+    <label>
+      Straße:
+      <input type="text" formControlName="street" />
+    </label>
+
+    <label>
+      Hausnummer:
+      <input type="text" formControlName="houseNumber" />
+    </label>
+
+    <label>
+      PLZ:
+      <input type="text" formControlName="zip" />
+    </label>
+
+    <label>
+      Stadt:
+      <input type="text" formControlName="city" />
+    </label>
+
+    <label>
+      E-Mail:
+      <input type="email" formControlName="email" />
+    </label>
+
+    <label>
+      Telefon:
+      <input type="text" formControlName="phone" />
+    </label>
+
+    <label>
+      Mobil:
+      <input type="text" formControlName="mobile" />
+    </label>
+
+    <label>
+      Geburtstag:
+      <input type="text" formControlName="birthday" />
+    </label>
+
+    <label>
+      Beruf:
+      <input type="text" formControlName="profession" />
+    </label>
+
+    <label>
+      Rolle(n):
+      <select formControlName="roles" multiple>
+        <option *ngFor="let role of roles" [value]="role.key">
+          {{ role.label }}
+        </option>
+      </select>
+    </label>
+
+    <label>
+      Quelle (z.B. Exposé, Kontakt, manuell):
+      <input type="text" formControlName="source" />
+    </label>
+
+    <div *ngIf="isInteressent && isInteressentReady">
+      <div class="angefragte-immobilien" *ngIf="angefragteImmobilien.length">
+        <label>Angefragte Immobilien:</label>
+        <div class="immo-grid">
+          <div class="immo-card" *ngFor="let immo of angefragteImmobilien">
+            <img
+            [src]="titleImages[immo.externalId]?.url || 'https://via.placeholder.com/100'"
+            alt="Titelbild"
+            (click)="navigateToProtocol(immo.externalId)"
+            style="cursor: pointer"
+          />          
+            <div class="immo-id">{{ immo.externalId }}</div>
+          </div>
+        </div>
+      </div>
+
+      <label>Anmerkungen:</label>
+      <textarea type="string" formControlName="otherDescription"></textarea>
+
+      <label>
+        Netto-Einkommen:
+        <input type="number" formControlName="netIncome" />
+      </label>
+
+      <label>
+        Eigenkapital:
+        <input type="number" formControlName="equity" />
+      </label>
+
+      <label>
+        Bestehende Immobilien:
+        <input type="text" formControlName="existingProperties" />
+      </label>
+
+      <label>
+        Aktienvermögen:
+        <input type="number" formControlName="stockAssets" />
+      </label>
+
+      <label>
+        Bankbestätigung (vorhanden):
+        <input type="checkbox" formControlName="bankConfirmationAvailable" />
+      </label>
+
+      <label *ngIf="customerForm.get('bankConfirmationAvailable')?.value">
+        Höhe der Bankbestätigung:
+        <input type="number" formControlName="bankConfirmationAmount" />
+      </label>
+
+      <label>
+        Kaufende Personen:
+        <input type="number" formControlName="numberOfBuyers" />
+      </label>
+
+      <label>
+        Einziehende Personen:
+        <input type="number" formControlName="numberOfOccupants" />
+      </label>
+
+      <label>
+        Gesuchte Orte (kommagetrennt):
+        <input type="text" formControlName="preferredLocations" />
+      </label>
+    </div>
+
+    <button type="submit" [disabled]="customerForm.invalid">
+      Änderungen speichern
+    </button>
+  </form>
+
+  <div class="bottom-options">
+    <button type="button" class="delete-button" (click)="onDelete()">
+      Kunde löschen
+    </button>
+  </div>
+</section>

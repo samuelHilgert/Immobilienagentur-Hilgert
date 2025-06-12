@@ -1,0 +1,66 @@
+<section class="section-bg-v1">
+    <div *ngIf="immobilie" class="go-back-btn-div">
+      <a
+        class="go-back-btn"
+        [routerLink]="[
+          '/dashboard/immobilien',
+          (immobilie.propertyType.toLowerCase() || '') + '-details-form',
+          immobilie.externalId
+        ]"
+      >
+        Zurück
+      </a>
+    </div>
+  
+    <p>Formulare verwalten</p>
+    
+    <div class="customer-search">
+      <h3>Terminbestätigung an Kunden senden</h3>
+      <input
+        type="text"
+        placeholder="Name, E-Mail oder ID eingeben..."
+        [(ngModel)]="customerSearch"
+        (input)="filterCustomers()"
+      />
+    
+      <ul *ngIf="filteredCustomers.length > 0" class="customer-list">
+        <li *ngFor="let customer of filteredCustomers" (click)="selectCustomer(customer)">
+          {{ customer.firstName }} {{ customer.lastName }} – {{ customer.email }}
+        </li>
+      </ul>
+    
+      <div *ngIf="selectedCustomer" class="selected-customer">
+        <p>Ausgewählt: {{ selectedCustomer.firstName }} {{ selectedCustomer.lastName }} ({{ selectedCustomer.email }})</p>
+        <button class="dashboard-menu-btn" (click)="sendAppointmentConfirmationToCustomer()">
+          Terminbestätigung senden
+        </button>
+      </div>
+      
+    </div>
+
+    <div class="customer-search">
+      <h3>Terminbestätigung (Zweitbescihtigung) an Kunden senden</h3>
+ 
+      
+    </div>
+
+    <div class="objektnachweis-section">
+      <h3>Objektnachweis verwalten</h3>
+    
+      <div *ngIf="objektnachweisStatus === 'checking'">Prüfe auf vorhandenen Objektnachweis...</div>
+    
+      <div *ngIf="objektnachweisStatus === 'exists'">
+        <p>Objektnachweis vorhanden: <a [href]="objektnachweisUrl" target="_blank">Herunterladen</a></p>
+        <p>Möchtest du ihn neu hochladen?</p>
+      </div>
+    
+      <div *ngIf="objektnachweisStatus === 'missing'">
+        <p>Noch kein Objektnachweis hochgeladen.</p>
+      </div>
+    
+      <input type="file" accept="application/pdf" (change)="onObjektnachweisSelected($event)" />
+    </div>
+    
+    
+  </section>
+  

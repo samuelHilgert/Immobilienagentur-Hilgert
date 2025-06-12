@@ -1,0 +1,79 @@
+@use "./../../../../styles.scss" as s;
+@use "./../../../../assets/fonts.scss" as f;
+@use "./../../../../assets/colors.scss" as c;
+
+.properties-amount-div {
+  @include s.f_r_fs_c;
+  padding: 12px 24px;
+  font-weight: 400;
+}
+
+.properties-database-wrapper {
+  width: 1100px;
+  box-sizing: border-box;
+  overflow-x: scroll;
+
+  .property-table {
+    border-collapse: collapse;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+
+    .clickable-row {
+      cursor: pointer;
+    }
+
+    th,
+    td {
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 14px;
+      vertical-align: middle;
+    }
+
+    thead {
+      background-color: c.$primary-color;
+      color: white;
+
+      th {
+        font-weight: 600;
+        font-size: 13px;
+        white-space: nowrap;
+      }
+    }
+
+    tbody {
+      tr {
+        border-bottom: 1px solid #eee;
+        transition: background-color 0.2s ease;
+
+        &.hovered {
+          background-color: c.$dash-page-database-row-bg-hover;
+        }
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .thumb {
+          width: 80px;
+          height: 60px;
+          object-fit: cover;
+          border-radius: 4px;
+          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .placeholder {
+          width: 80px;
+          height: 60px;
+          background: #eee;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 12px;
+          color: #888;
+          border-radius: 4px;
+        }
+      }
+    }
+  }
+}
