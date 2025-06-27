@@ -31,6 +31,7 @@ export interface PropertyInquiryProcess {
 
   // relevant für nach der Erstbesichtigung
   giveDocuments: boolean; // wenn Kunde berechtigt sein soll, weitere Unterlagen zum Objekt zu bekommmen
+  rejectionReasons: string; // Aussagen von Kunden, warum sie ablehnen
 
   // relevant für Finanzierungsphase
   kindOfFinance: 'keine Angabe' | 'Bank' | 'Finanzberater' | 'selbst';
@@ -69,6 +70,7 @@ export type InquiryProcessStatus =
   | 'Anfrage'
   | 'Exposé'
   | 'Besichtigung'
+  | 'Starkes Interesse'
   | 'Finanzierung'
   | 'Verhandlung'
   | 'Kaufvorbereitung'

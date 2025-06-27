@@ -20,7 +20,7 @@
     <p>Objekt-ID: {{ immobilie.externalId }}</p>
     <p>Objekttyp: {{ immobilie.propertyType }}</p>
     <p>{{ immobilie.street }} {{ immobilie.houseNumber }}, {{ immobilie.postcode }} {{ immobilie.city }}</p>
-    <p>Kaufpreis: {{ immobilie.value }} €</p>
+    <p>Kaufpreis: {{ immobilie.value | currency:'EUR':'symbol':'1.0-0':'de' }}</p>
   </div>
 
 <!-- 1. Ladeindikator -->

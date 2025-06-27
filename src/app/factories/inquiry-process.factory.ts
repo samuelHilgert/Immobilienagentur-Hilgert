@@ -12,6 +12,7 @@ export function createInitialInquiryProcess(
     propertyExternalId: anfrage.requestPropertyId,
     exposeAccessLevel: 'normal',
     inquiryProcessStatus: 'Anfrage',
+    rejectionReasons: '',
     requestMessage: anfrage.message,
     exposeSent: null,
     acceptedTermsAt: new Date(),

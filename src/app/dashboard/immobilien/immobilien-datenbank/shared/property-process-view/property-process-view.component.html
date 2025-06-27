@@ -12,6 +12,60 @@
     </a>
   </div>
 
-  <p>Verlauf ansehen</p>
-  
+  <h2>Verlauf ansehen</h2>
+
+      <!-- Allgemein -->
+      <mat-card>
+        <mat-card-title>Allgemein</mat-card-title>
+        <mat-card-content>
+          <p><strong>Inserierter Angebotspreis:</strong> {{ immobilie?.value | currency:'EUR':'symbol':'1.0-0':'de' }}</p>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Anfragen -->
+      <mat-card>
+        <mat-card-title>Anfragen</mat-card-title>
+        <mat-card-content>
+          <p><strong>Anfragen insgesamt:</strong> {{ totalInquiries }}</p>
+          <p><strong>davon Erstbesichtigungen:</strong> {{ firstViewings }}</p>
+          <p><strong>davon Zweitbesichtigungen:</strong> {{ secondViewings }}</p>
+          <p><strong>davon Drittbesichtigungen:</strong> {{ thirdViewings }}</p>
+          <p><strong>davon Starkes Interesse:</strong> {{ strongInterest }}</p>
+          <ul>
+            <li *ngFor="let name of customersWithStrongInterest">{{ name }}</li>
+          </ul>
+          
+        </mat-card-content>
+      </mat-card>
+
+     <!-- Ablehnungen -->
+     <mat-card>
+      <mat-card-title>Ablehnungen</mat-card-title>
+      <mat-card-content>
+        <p><strong>Ablehnungen insgesamt:</strong> {{ totalRejections }}</p>
+        <ul>
+          <li *ngFor="let reason of rejectionReasonsList">{{ reason }}</li>
+        </ul>
+      </mat-card-content>
+    </mat-card>
+
+     <!-- Kaufangebote -->
+      <mat-card>
+        <mat-card-title>Kaufangebote</mat-card-title>
+        <mat-card-content>
+          <p><strong>Insgesamt:</strong> {{ totalPurchaseOffers }}</p>
+      
+          <div *ngFor="let offer of allPurchaseOffers">
+            <strong>{{ offer.offerSum | currency:'EUR':'symbol':'1.0-0':'de' }}</strong>  
+            von {{ offer.customerName }}  
+            am {{ offer.offerDate | date:'shortDate' }}
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+  <!-- <p>davon in Fianzierungsgesprächen: {{ inFinancing }}</p>
+  <p>davon in Kaufpreisverhandlungen: {{ inNegotiation }}</p> -->
+
+
+
 </section>

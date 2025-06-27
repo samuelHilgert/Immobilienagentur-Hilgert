@@ -33,4 +33,6 @@ export class PropertyInquiryService {
     const ref = doc(this.firestore, 'property-inquiry-processes', inquiryProcessId);
     await updateDoc(ref, data);
   }
+
+  
 }

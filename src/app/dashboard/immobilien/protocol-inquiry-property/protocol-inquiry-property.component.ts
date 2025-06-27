@@ -21,7 +21,6 @@ import { LogEntriesService } from '../../../services/logEntries.service';
   templateUrl: './protocol-inquiry-property.component.html',
   styleUrl: './protocol-inquiry-property.component.scss',
 })
-
 export class ProtocolInquiryPropertyComponent implements OnInit {
   process: PropertyInquiryProcess | null = null;
   customer: Customer | null = null;
@@ -34,6 +33,7 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
     'Anfrage',
     'Exposé',
     'Besichtigung',
+    'Starkes Interesse',
     'Finanzierung',
     'Verhandlung',
     'Kaufvorbereitung',
@@ -60,7 +60,11 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
     const propertyId = this.route.snapshot.paramMap.get('externalId');
     const from = this.route.snapshot.queryParamMap.get('from');
 
-    if (from === 'expose-anfragen' || from === 'kunden' || from === 'kundendatenbank') {
+    if (
+      from === 'expose-anfragen' ||
+      from === 'kunden' ||
+      from === 'kundendatenbank'
+    ) {
       this.origin = from === 'kundendatenbank' ? 'kunden' : from;
     }
 
@@ -84,6 +88,7 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
 
         this.form = this.fb.group({
           inquiryProcessStatus: [p.inquiryProcessStatus],
+          rejectionReasons: [p.rejectionReasons],
           exposeAccessLevel: [p.exposeAccessLevel],
           objectProof: [p.objectProof],
           giveDocuments: [p.giveDocuments],
@@ -112,12 +117,76 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
               })
             )
           ),
+
+          purchaseOffers: this.fb.array(
+            (p.purchaseOffers || []).map((o) =>
+              this.fb.group({
+                offerDate: [o.offerDate],
+                offerMedium: [o.offerMedium],
+                offerSum: [o.offerSum, Validators.required],
+                offerText: [o.offerText],
+                canceled: [o.canceled],
+                cancellationReason: [o.cancellationReason],
+                confirmed: [o.confirmed],
+                forwarded: [o.forwarded],
+                accepted: [o.accepted],
+              })
+            )
+          ),
         });
       }
     }
 
     this.loading = false;
   }
+
+  ////////////////// add purchase offer ////////////////////////
+  get purchaseOffers() {
+    return this.form.get('purchaseOffers') as FormArray;
+  }
+
+  addPurchaseOffer() {
+    const offerGroup = this.fb.group({
+      offerDate: [new Date()],
+      offerMedium: ['mail'],
+      offerSum: [null, Validators.required],
+      offerText: [''],
+      canceled: [false],
+      cancellationReason: [''],
+      confirmed: [false],
+      forwarded: [null],
+      accepted: [false],
+    });
+  
+    this.purchaseOffers.push(offerGroup);
+  }  
+
+  async savePurchaseOffer(index: number) {
+    if (!this.process) return;
+  
+    const offer = this.purchaseOffers.at(index).value;
+  
+    if (!this.process.purchaseOffers) {
+      this.process.purchaseOffers = [];
+    }
+  
+    this.process.purchaseOffers[index] = offer;
+    this.process.lastUpdateDate = new Date();
+  
+    await this.inquiryService.updateProcess(this.process.inquiryProcessId, {
+      purchaseOffers: this.process.purchaseOffers,
+      lastUpdateDate: this.process.lastUpdateDate,
+    });
+  
+    await this.logEntriesService.logProcessEntry(
+      this.process.inquiryProcessId,
+      `${this.customer?.firstName ?? ''} ${this.customer?.lastName ?? ''}`.trim(),
+      'Kaufangebot gespeichert',
+      `Summe: ${offer.offerSum} €`
+    );
+  }
+  
+  /////////////////////////////////////////
 
   ////////////////// Für die Besichtigungstermine ////////////////////////
   get viewingAppointments() {
@@ -194,7 +263,7 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
 
     // 📌 Statusänderung loggen
     const oldStatus = this.process.inquiryProcessStatus;
-    const newStatus = updatedFields.inquiryProcessStatus;    
+    const newStatus = updatedFields.inquiryProcessStatus;
 
     if (oldStatus !== newStatus) {
       await this.logEntriesService.logProcessEntry(
@@ -204,13 +273,16 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
         `von "${oldStatus}" auf "${newStatus}"`
       );
 
-        // 🧠 jetzt erst den neuen Wert setzen
-  this.process.inquiryProcessStatus = newStatus;
-}
+      // 🧠 jetzt erst den neuen Wert setzen
+      this.process.inquiryProcessStatus = newStatus;
+    }
+
+    // 👇 Immer setzen – auch wenn gleich
+    updatedFields.inquiryProcessStatus = this.process.inquiryProcessStatus;
 
     // 📄 Exposé-Level geändert
     const oldLevel = this.process.exposeAccessLevel;
-    const newLevel = updatedFields.exposeAccessLevel;    
+    const newLevel = updatedFields.exposeAccessLevel;
 
     if (oldLevel !== newLevel) {
       await this.exposePreviewService.addInquiryAccess(
@@ -230,9 +302,13 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
       updatedFields.exposeAccessLevel = newLevel;
     }
 
+    updatedFields.purchaseOffers = this.purchaseOffers.value;
+    updatedFields.viewingAppointments = this.viewingAppointments.value;
+
     // 🔁 History mitgeben
     updatedFields.historyLog = this.process.historyLog;
     updatedFields.exposeAccessLevel = this.process.exposeAccessLevel;
+
 
     // ✅ Gesamtspeicherung
     await this.inquiryService.updateProcess(processId, updatedFields);
@@ -247,33 +323,36 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
     alert('Änderungen gespeichert.');
   }
 
-  // back button 
+  // back button
   navigateToProtocol(externalId: string) {
-    this.router.navigate([
-      '/dashboard/protocol-inquiry-property',
-      this.customer?.customerId,
-      externalId,
-    ], {
-      queryParams: {
-        from: this.origin, // 👈 wichtig! falls du aus expose-anfragen kamst
-        externalId: externalId,
+    this.router.navigate(
+      [
+        '/dashboard/protocol-inquiry-property',
+        this.customer?.customerId,
+        externalId,
+      ],
+      {
+        queryParams: {
+          from: this.origin, // 👈 wichtig! falls du aus expose-anfragen kamst
+          externalId: externalId,
+        },
       }
-    });  
+    );
   }
 
   goBack() {
     if (this.origin === 'expose-anfragen' && this.customer && this.immobilie) {
-      this.router.navigate(['/dashboard/kunde-details', this.customer.customerId], {
-        queryParams: {
-          from: 'expose-anfragen', // ⬅️ notwendig, damit dort auch die Rücknavigation stimmt
-          externalId: this.immobilie.externalId,
-        },
-      });
+      this.router.navigate(
+        ['/dashboard/kunde-details', this.customer.customerId],
+        {
+          queryParams: {
+            from: 'expose-anfragen', // ⬅️ notwendig, damit dort auch die Rücknavigation stimmt
+            externalId: this.immobilie.externalId,
+          },
+        }
+      );
     } else {
       this.router.navigate(['/dashboard/kundendatenbank']);
     }
   }
-  
-  
-  
 }

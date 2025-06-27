@@ -32,6 +32,11 @@ section {
     }
   }
 
+  .textarea-style {
+    min-width: 500px;
+    height: 150px;
+  }
+
   .appointments-content-box {
     @include s.f_c_fs_fs;
   }

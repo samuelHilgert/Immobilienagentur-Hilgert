@@ -1,4 +1,6 @@
-//////// default settings //////// 
+// -----------------------------------
+// general colors
+// -----------------------------------
 $bg-color: #fafcff;
 $primary-color: #2D4459; // #2D4459 marineblau for important elements and logo
 $contrast-color: #c8a47b; // warmer goldton als Kontrastfarbe
@@ -12,38 +14,52 @@ $section-bg-v2: #fdfeff;
 $card-bg: rgba(33, 86, 138, 0.015); // primary color is base
 $card-bg-alt: rgba(33, 86, 138, 0.05); // primary color is base
 
-//////// footer ////////
+// -----------------------------------
+// footer
+// -----------------------------------
 $footer-bg: $primary-color;
 $footer-title: $bg-color;
 $footer-slogan: $bg-color;
 $footer-nav-bg: $primary-color;
 $footer-nav-text: $bg-color;
 
-//////// header ////////
+// -----------------------------------
+// header
+// -----------------------------------
 $logo-bg-color: $bg-color;
 $h1-headline: $primary-text;
 $h2-headline: $primary-color;
 $h3-headline: $primary-color;
 $h4-headline: $primary-color;
 
-//////// navbar ////////
+// -----------------------------------
+// navbar
+// -----------------------------------
 $navbar-bg-color: $bg-color;
 $navbar-links-text-color: white;
 $navbar-links-hover-color: white;
 $navbar-links-border-hover: $primary-color;
 
-//////// hero ////////
+// -----------------------------------
+// hero
+// -----------------------------------
 $hero-bg-color: $bg-color;
 
-//////// header-info-box ////////
+// -----------------------------------
+// header-info-box
+// -----------------------------------
 $header-info-box-bg-color: $primary-color;
 $header-info-box-text-color: white;
 
-//////// immobilien ////////
+// -----------------------------------
+// overview - properties boxes 
+// -----------------------------------
 $referenzen-ribbon-bg: $primary-color;
 $referenzen-ribbon-text: white;
 
-//////// angebote ////////
+// -----------------------------------
+// overview - properties offers 
+// -----------------------------------
 $angebote-slider-arrows: $contrast-color;
 $angebote-slider-arrows-hover: $primary-color;
 $angebot-card-bg: $card-bg;
@@ -51,31 +67,41 @@ $angebot-card-icon: $contrast-color;
 $link-weitere-angebote: $primary-color;
 $link-weitere-angebote-hover: $contrast-color;
 
-//////// contact ////////
+// -----------------------------------
+// contact
+// -----------------------------------
 
-//////////////// elements ////////////////
-
-//////// scrollbar ////////
+// -----------------------------------
+// scrollbar
+// -----------------------------------
 $scrollbar-primary-color: $primary-color;
 
-//////// vertical line ////////
+// -----------------------------------
+// vertical line
+// -----------------------------------
 $vertical-line-bg: $primary-color;
 
-//////// standard button ////////
+// -----------------------------------
+// standard button
+// -----------------------------------
 $standard-btn-bg: white;
 $standard-btn-text: $primary-text;
 $standard-btn-bg-border: $primary-color;
 $standard-btn-bg-hover: $primary-color;
 $standard-btn-text-hover: white;
 
-//////// expose option button ////////
+// -----------------------------------
+// expose option button
+// -----------------------------------
 $expose-option-btn-bg: rgba($primary-color, 1);
 $expose-option-btn-text: white;
 $expose-option-btn-bg-border: $primary-text;
 $expose-option-btn-bg-hover: white;
 $expose-option-btn-text-hover: $primary-text;
 
-//////// dashboard ////////
+// -----------------------------------
+// dashboard
+// -----------------------------------
 $dashboard-sidebar-bg: $primary-color;
 $dashboard-sidebar-text: $secondary-text;
 $dashboard-sidebar-text-hover: $contrast-color;
