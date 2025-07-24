@@ -115,10 +115,15 @@ export class EpxosePreviewComponent implements OnInit {
     }
   }
 
-  // Titelbild ermitteln
-  getTitleImage(): MediaAttachment | undefined {
-    return this.mediaService.getTitleImage(this.media);
+  // get title and second title images   
+  getPrimaryTitleImage(): MediaAttachment | undefined {
+    return this.media.find((m) => m.isTitleImage);
   }
+  
+  getAltTitleImage(): MediaAttachment | undefined {
+    return this.media.find((m) => m.isAltTitleImage);
+  }
+  
 
   async loadDetails(): Promise<void> {
     const id = this.immobilie?.externalId;

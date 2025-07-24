@@ -31,6 +31,7 @@ export class MediaService {
     }
   }
 
+  // set title image by dashboard property image settings  
   async setTitleImage(mediaId: string, externalId: string): Promise<void> {
     const mediaCollection = collection(this.db, 'media');
     const q = query(mediaCollection, where('externalId', '==', externalId), where('isTitleImage', '==', true));
@@ -40,15 +41,30 @@ export class MediaService {
     await updateDoc(doc(this.db, 'media', mediaId), { isTitleImage: true });
   }
 
+    // set second title image by dashboard property image settings  
+  async setAltTitleImage(mediaId: string, externalId: string): Promise<void> {
+    const mediaCollection = collection(this.db, 'media');
+  
+    // Vorheriges sekundäres Titelbild zurücksetzen
+    const q = query(mediaCollection, where('externalId', '==', externalId), where('isAltTitleImage', '==', true));
+    const snapshot = await getDocs(q);
+    const resetAltTitlePromises = snapshot.docs.map(doc => updateDoc(doc.ref, { isAltTitleImage: false }));
+    await Promise.all(resetAltTitlePromises);
+  
+    // Neues sekundäres Titelbild setzen
+    await updateDoc(doc(this.db, 'media', mediaId), { isAltTitleImage: true });
+  }  
+  
   async updateDescription(mediaId: string, description: string): Promise<void> {
     await updateDoc(doc(this.db, 'media', mediaId), { description });
   }
 
+  // upload media function for video or image 
   async uploadMedia(
     file: File,
     externalId: string,
     type: 'image' | 'video',
-    category: 'FLOOR_PLAN' | 'IMAGE' | 'VIDEO' = 'IMAGE' // ← NEU
+    category: 'FLOOR_PLAN' | 'IMAGE' | 'VIDEO' = 'IMAGE' 
   ): Promise<{ success: boolean; id?: string; url?: string; error?: any }> {
     try {
       const timestamp = new Date().getTime();
@@ -66,6 +82,7 @@ export class MediaService {
         url: downloadURL,
         uploadDate: new Date().toISOString(),
         isTitleImage: false,
+        isAltTitleImage: false,
         description: ''
       };
   

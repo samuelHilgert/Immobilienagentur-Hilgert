@@ -103,6 +103,11 @@ async markAsTitleImage(mediaId: string) {
   this.media = await this.mediaService.getMediaForProperty(this.immobilienId);
 }
 
+async markAsAltTitleImage(mediaId: string) {
+  await this.mediaService.setAltTitleImage(mediaId, this.immobilienId);
+  this.media = await this.mediaService.getMediaForProperty(this.immobilienId);
+}
+
 async updateDescription(mediaId: string, newDesc: string) {
   await this.mediaService.updateDescription(mediaId, newDesc);
 }
@@ -113,6 +118,7 @@ private async loadMedia() {
   this.mediaFloorPlans = allMedia.filter(m => m.category === 'FLOOR_PLAN');
 }
 
+// upload method for image or video with automatically check
 async onFileSelected(event: Event) {
   const input = event.target as HTMLInputElement;
   if (!input.files || !input.files.length) return;

@@ -5,10 +5,11 @@
 // default button
 // -----------------------------------
 .expose-option-btn {
-    padding: 10px 20px;
-    font-weight: 500 !important;
+    padding: 8px 14px;
+    font-weight: 200 !important;
     background-color: c.$expose-option-btn-bg !important;
     color: c.$expose-option-btn-text !important;
+    font-size:0.8rem;
     border: none;
     border-radius: 8px;
     cursor: pointer;

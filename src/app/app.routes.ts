@@ -190,7 +190,9 @@ export const routes: Routes = [
     path: 'immobilienbewertung',
     component: ImmobilienbewertungComponent,
   },
-  { path: 'expose-anfordern', component: ExposeAnfordernComponent },
+  { 
+    path: 'expose-anfordern', 
+    component: ExposeAnfordernComponent },
   {
     path: 'expose-preview/:inquiryProcessId',
     component: EpxosePreviewComponent,
