@@ -6,6 +6,9 @@ export function createExposeAnswerMailPayload(
   anfrage: ExposeAnfrageDto,
   immobilie: Immobilie
 ) {
+  const baseUrl = 'https://hilgert-immobilien.de'; 
+  const exposeUrl = `${baseUrl}/expose-preview/${anfrage.requestCustomerId}_${anfrage.requestPropertyId}`;
+
   return {
     email: anfrage.email,
     externalId: anfrage.requestPropertyId,
@@ -16,6 +19,6 @@ export function createExposeAnswerMailPayload(
     value: immobilie?.value || 0,
     marketingType: mapMarketingType(immobilie?.marketingType || ''),
     immobilienTyp: immobilie?.propertyType || '',
-    exposePdfUrl: immobilie?.exposePdfUrl || '',
+    exposeUrl // 👈 Das ersetzt exposePdfUrl und html
   };
 }

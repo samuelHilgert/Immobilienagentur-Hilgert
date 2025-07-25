@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, HostListener, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MATERIAL_MODULES } from '../material-imports';
@@ -64,6 +64,7 @@ export class EpxosePreviewComponent implements OnInit {
   firingTypeLabels = firingTypeLabels;
   parkingSpaceTypeLabels = parkingSpaceTypeLabels;
   buildingEnergyRatingTypeLabels = buildingEnergyRatingTypeLabels;
+  videoMedia: MediaAttachment[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -82,17 +83,23 @@ export class EpxosePreviewComponent implements OnInit {
     const [customerId, propertyExternalId] = inquiryProcessId.split('_');
 
     try {
-      const [immobilie, preview, mediaList] = await Promise.all([
+      const [immobilie, preview, mediaList, videoList] = await Promise.all([
         this.immobilienService.getProperty(propertyExternalId),
         this.exposePreviewService.getExposePreview(propertyExternalId),
         this.mediaService.getMediaForProperty(propertyExternalId),
+        this.mediaService.getVideosForProperty(propertyExternalId),
       ]);
+
+      this.videoMedia = videoList;
 
       const titleImage = mediaList.find((m) => m.isTitleImage);
       const fallbackImage = mediaList[0];
       const imageToUse = titleImage || fallbackImage;
 
-      this.media = mediaList.filter((m) => m.category !== 'FLOOR_PLAN');
+      this.media = mediaList.filter(
+        (m) => m.category !== 'FLOOR_PLAN' && m.type === 'image'
+      );
+
       this.mediaFloorPlans = mediaList.filter(
         (m) => m.category === 'FLOOR_PLAN'
       );
@@ -108,22 +115,21 @@ export class EpxosePreviewComponent implements OnInit {
         this.exposeLevel = 'normal';
       }
 
-      console.log('Exposé-Level:', this.exposeLevel);
-      console.log('Geladene Medien:', this.media);
+      // console.log('Exposé-Level:', this.exposeLevel);
+      // console.log('Geladene Medien:', this.media);
     } catch (error) {
       console.error('Fehler beim Laden des Exposés:', error);
     }
   }
 
-  // get title and second title images   
+  // get title and second title images
   getPrimaryTitleImage(): MediaAttachment | undefined {
     return this.media.find((m) => m.isTitleImage);
   }
-  
+
   getAltTitleImage(): MediaAttachment | undefined {
     return this.media.find((m) => m.isAltTitleImage);
   }
-  
 
   async loadDetails(): Promise<void> {
     const id = this.immobilie?.externalId;
@@ -157,9 +163,11 @@ export class EpxosePreviewComponent implements OnInit {
   get wohnung() {
     return (this.immobilie as any).apartmentDetails ?? null;
   }
+
   get haus() {
     return (this.immobilie as any).houseDetails ?? null;
   }
+
   get grundstueck() {
     return (this.immobilie as any).landDetails ?? null;
   }
@@ -185,6 +193,8 @@ export class EpxosePreviewComponent implements OnInit {
   }
 
   downloadAsPDF() {
+    console.log('Download starten...');
+
     const element = document.getElementById('printContent');
     if (!element) {
       console.warn('Druckbereich nicht gefunden!');
@@ -206,11 +216,23 @@ export class EpxosePreviewComponent implements OnInit {
       jsPDF: { unit: 'cm', format: 'a4', orientation: 'portrait' },
     };
 
+    console.log('Optionen gesetzt, starte PDF-Erstellung...');
     html2pdf().from(element).set(opt).save();
   }
 
+  showScrollToTop = false;
+
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    this.showScrollToTop = window.pageYOffset > 300;
+  }
+
+  scrollToTop(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   openImageDialog(imageUrl: string): void {
-    const allMedia = [...this.media, ...this.mediaFloorPlans];
+    const allMedia = [...this.media];
     const index = allMedia.findIndex((m) => m.url === imageUrl);
 
     this.dialog.open(ImageDialogComponent, {
@@ -275,6 +297,10 @@ export class EpxosePreviewComponent implements OnInit {
     return this.immobilie?.fixedMonthlyRate ?? 0;
   }
 
+  get altTitleImage(): MediaAttachment | undefined {
+    return this.media.find((m) => m.isAltTitleImage);
+  }
+
   // Grundrisse Galerie unten
   activeFloorIndex: number = 0;
 
@@ -299,19 +325,17 @@ export class EpxosePreviewComponent implements OnInit {
   get isApartment(): boolean {
     return this.immobilie?.propertyType === 'Wohnung';
   }
-  
+
   get isHouse(): boolean {
     return this.immobilie?.propertyType === 'Haus';
   }
-  
+
   get isGrundstueck(): boolean {
     return this.immobilie?.propertyType === 'Grundstück';
   }
 
-  // searching for video 
+  // searching for video
   getVideoMedia(): MediaAttachment | undefined {
     return this.media.find((m) => m.type === 'video');
   }
-  
-  
 }

@@ -1,38 +1,36 @@
 <section>
-  <div class="wrapper">
+  <div class="option-btns-div no-print">
+    <button mat-raised-button class="expose-option-btn" (click)="printPage()">
+      Drucken
+    </button>
+    <!-- <button
+      mat-raised-button
+      class="expose-option-btn"
+      (click)="downloadAsPDF()"
+    >
+      Speichern
+    </button> -->
+  </div>
+
+  <div class="wrapper" id="printContent">
     <ng-container *ngIf="immobilie; else loading">
-      <div id="printContent">
+      <div>
+        <!-- //// DOC HEADLINE -->
         <div class="doc-headline">
           <h2>
-            <strong
+            <strong>Exposé </strong>
+
+            <!-- <strong
               >Exposé ({{
                 exposeLevel === "normal"
-                  ? "Kurzvorschau"
-                  : exposeLevel === "gekürzt"
                   ? "gekürzte Version"
+                  : exposeLevel === "gekürzt"
+                  ? "Kurzvorschau"
                   : exposeLevel === "erweitert"
                   ? "erweiterte Version"
                   : ""
-              }})</strong
-            >
+              }})</strong> -->
           </h2>
-
-          <div class="option-btns-div no-print">
-            <button
-              mat-raised-button
-              class="expose-option-btn"
-              (click)="printPage()"
-            >
-              Drucken
-            </button>
-            <button
-              mat-raised-button
-              class="expose-option-btn"
-              (click)="downloadAsPDF()"
-            >
-              PDF Export
-            </button>
-          </div>
         </div>
 
         <!-- <div class="doc-subline">
@@ -46,7 +44,6 @@
         </div> -->
 
         <!-- //// IMG SECTION -->
-
         <div class="img-box" *ngIf="media?.length">
           <img
             *ngIf="getPrimaryTitleImage()"
@@ -100,6 +97,7 @@
           </div>
         </div>
 
+        <!-- //// TITLE SECTION -->
         <div class="title-section">
           <div class="title-row">
             <p class="title">
@@ -146,11 +144,11 @@
               <p><strong>Ort:</strong></p>
               <p>{{ immobilie.postcode }} {{ immobilie.city }}</p>
             </div>
-            <div class="detail-row" *ngIf="!accessIsNormal">
+            <div *ngIf="!accessIsShort" class="detail-row">
               <p><strong>Straße/Hr.:</strong></p>
               <p>{{ immobilie.street }} {{ immobilie.houseNumber }}</p>
             </div>
-            <div class="detail-row" *ngIf="!accessIsNormal">
+            <div *ngIf="!accessIsShort" class="detail-row">
               <p class="disclaimer-note-red">
                 Bitte betreten Sie das Grundstück nicht vor unserem
                 Besichtigungstermin!
@@ -179,14 +177,14 @@
           </div>
         </div>
 
-        <div class="double-divider-line"></div>
-        <div class="double-divider-line"></div>
+        <div class="double-divider-line no-print"></div>
+        <div class="double-divider-line no-print"></div>
 
         <!-- /////////// advertisment for new customers  -->
-        <div class="advertise-new-customer">
+        <div class="advertise-new-customer page-break">
           <img
             class="advertise_img"
-            src="img/services/ZG_Foto.jpg"
+            src="/img/services/ZG_Foto.jpg"
             alt=""
             (contextmenu)="disableContextMenu($event)"
           />
@@ -197,14 +195,20 @@
               <p>
                 Sie möchten wissen was Ihre Immobilie wert ist? Gerne erstellen
                 wir für Sie eine kostenfreie und unverbindliche
-                Immobilienbewertung, um den aktuellen Marktwert Ihrer Immobilie
-                zu ermitteln. Einen Maklervertrag unterschreiben Sie bei uns
-                erst, wenn Sie sich für den Verkauf bereit fühlen.
+                Immobilienbewertung, um den aktuellen Wert Ihrer Immobilie zu
+                ermitteln. Einen Maklervertrag unterschreiben Sie bei uns erst,
+                wenn Sie sich bereit dafür fühlen.
               </p>
             </div>
-            <a href="tel:+4917644476237" target="_blank"
-              >Jetzt Termin vereinbaren!</a
+            <a
+              class="no-link standard-btn-reverse width-100"
+              href="/kontakt"
+              target="_blank"
+              >Zum Kontaktformular</a
             >
+            <!-- <a href="tel:+4917644476237" target="_blank"
+              >Jetzt Termin vereinbaren!</a
+            > -->
           </div>
 
           <!-- ad earning -->
@@ -218,773 +222,679 @@
                 unserer Provision.
               </p>
             </div>
-            <a href="tel:+4917644476237" target="_blank"
-              >Jetzt mehr erfahren!</a
+            <a
+              class="no-link standard-btn-reverse width-100"
+              href="/kontakt"
+              target="_blank"
+              >Zum Kontaktformular</a
             >
+            <!-- <a href="tel:+4917644476237" target="_blank"
+              >Jetzt mehr erfahren!</a
+            > -->
           </div>
           <!-- ///////////// -->
         </div>
 
-        <div class="double-divider-line"></div>
-        <div class="double-divider-line"></div>
+        <div class="double-divider-line no-print"></div>
+        <div class="double-divider-line no-print"></div>
 
-
-        <!-- /////////// more property informations  -->
-
-        <div class="next-section-print page-break more-property-infos">
+        <!-- /////////// MORE PROPERTY INFOS SECTION -->
+        <div class="more-property-infos-wrapper">
           <h3 class="">Weitere Angaben</h3>
 
-                  <!-- ///////////// more infos for apartment -->
-                  <div class="more-infos-container" *ngIf="isApartment">
-                    <div
-                      class="detail-row"
-                      *ngIf="wohnungDetails?.apartmentType as type"
-                    >
-                      <p><strong>Wohnungstyp:</strong></p>
-                      <p>{{ apartmentTypeLabels[type] || "Keine Angabe" }}</p>
-                    </div>
-  
-                    <div
-                      class="detail-row"
-                      *ngIf="wohnungDetails?.usableFloorSpace"
-                    >
-                      <p><strong>Nutzfläche:</strong></p>
-                      <p>{{ wohnungDetails?.usableFloorSpace }} m²</p>
-                    </div>
-                    <div class="detail-row" *ngIf="wohnungDetails?.floor">
-                      <p><strong>Etage:</strong></p>
-                      <p>{{ wohnungDetails?.floor }}</p>
-                    </div>
-  
-                    <div
-                      class="detail-row"
-                      *ngIf="
-                        (accessIsShort || accessIsExtended) &&
-                        wohnungDetails?.numberOfFloors
-                      "
-                    >
-                      <p><strong>Anzahl Etagen:</strong></p>
-                      <p>{{ wohnungDetails?.numberOfFloors }}</p>
-                    </div>
-  
-                    <div
-                      class="detail-row"
-                      *ngIf="wohnungDetails?.numberOfBedRooms"
-                    >
-                      <p><strong>Schlafzimmer:</strong></p>
-                      <p>{{ wohnungDetails?.numberOfBedRooms }}</p>
-                    </div>
-                    <div
-                      class="detail-row"
-                      *ngIf="wohnungDetails?.numberOfBathRooms"
-                    >
-                      <p><strong>Badezimmer:</strong></p>
-                      <p>{{ wohnungDetails?.numberOfBathRooms }}</p>
-                    </div>
-                    <div
-                      class="detail-row"
-                      *ngIf="wohnungDetails?.cellar as type"
-                    >
-                      <p><strong>Keller:</strong></p>
-                      <p>{{ Yes_No_Labels[type] || "Keine Angabe" }}</p>
-                    </div>
-                    <div class="detail-row">
-                      <p><strong>Balkon/Terrasse:</strong></p>
-                      <p>
-                        {{
-                          wohnungDetails?.balcony === true
-                            ? True_False_Labels["true"]
-                            : wohnungDetails?.balcony === false
-                            ? True_False_Labels["false"]
-                            : "Keine Angabe"
-                        }}
-                      </p>
-                    </div>
-                    <div class="detail-row">
-                      <p><strong>Personenaufzug:</strong></p>
-                      <p>
-                        {{
-                          wohnungDetails?.lift === true
-                            ? True_False_Labels["true"]
-                            : wohnungDetails?.lift === false
-                            ? True_False_Labels["false"]
-                            : "Keine Angabe"
-                        }}
-                      </p>
-                    </div>
-                    <div
-                      class="detail-row"
-                      *ngIf="wohnungDetails?.interiorQuality as type"
-                    >
-                      <p><strong>Qualität der Ausstattung:</strong></p>
-                      <p>
-                        {{ interiorQualityLabels[type] || "Keine Angabe" }}
-                      </p>
-                    </div>
-  
-                    <!-- NUR WENN FREIGESCHALTET -->
-                    <div
-                      class="detail-row"
-                      *ngIf="
-                        (accessIsShort || accessIsExtended) && wohnungDetails
-                      "
-                    >
-                      <p><strong>Letzte Modernisierung/Sanierung:</strong></p>
-                      <p>
-                        {{
-                          wohnungDetails.lastRefurbishment != null &&
-                          wohnungDetails.lastRefurbishment !== ""
-                            ? wohnungDetails.lastRefurbishment
-                            : "Keine Angabe"
-                        }}
-                      </p>
-                    </div>
-  
-                    <div
-                      class="detail-row"
-                      *ngIf="
-                        (accessIsShort || accessIsExtended) &&
-                        wohnungDetails?.heatingType as type
-                      "
-                    >
-                      <p><strong>Heizungsart:</strong></p>
-                      <p>{{ heatingTypeLabels[type] || "Keine Angabe" }}</p>
-                    </div>
-  
-                    <div
-                      class="detail-row"
-                      *ngIf="
-                        (accessIsShort || accessIsExtended) &&
-                        wohnungDetails?.firingType as type
-                      "
-                    >
-                      <p><strong>Wesentliche Energieträger:</strong></p>
-                      <p>{{ firingTypeLabels[type] || "Keine Angabe" }}</p>
-                    </div>
-  
-                    <div
-                      class="detail-row"
-                      *ngIf="
-                        (accessIsShort || accessIsExtended) &&
-                        !wohnungDetails?.constructionYearUnknown
-                      "
-                    >
-                      <p><strong>Baujahr:</strong></p>
-                      <p>{{ wohnungDetails?.constructionYear }}</p>
-                    </div>
-  
-                    <div
-                      class="detail-row"
-                      *ngIf="
-                        (accessIsShort || accessIsExtended) &&
-                        wohnungDetails?.constructionYearUnknown
-                      "
-                    >
-                      <p><strong>Baujahr:</strong></p>
-                      <p>Baujahr unbekannt</p>
-                    </div>
-  
-                    <div
-                      class="detail-row"
-                      *ngIf="
-                        (accessIsShort || accessIsExtended) &&
-                        wohnungDetails?.handicappedAccessible as type
-                      "
-                    >
-                      <p><strong>Stufenloser Zugang:</strong></p>
-                      <p>{{ Yes_No_Labels[type] || "Keine Angabe" }}</p>
-                    </div>
-  
-                    <div class="detail-row" *ngIf="!accessIsNormal">
-                      <p><strong>Hausgeld:</strong></p>
-                      <p>
-                        {{
-                          wohnungDetails?.serviceCharge != null &&
-                          wohnungDetails?.serviceCharge !== 0
-                            ? wohnungDetails?.serviceCharge
-                            : "Keine Angabe"
-                        }}
-                        €
-                      </p>
-                    </div>
-  
-                    <div
-                      class="detail-row"
-                      *ngIf="
-                        !accessIsNormal && wohnungDetails?.maintenanceReserve
-                      "
-                    >
-                      <p><strong>Instandhaltungsrücklage:</strong></p>
-                      <p>
-                        {{ wohnungDetails?.maintenanceReserve }}
-                      </p>
-                    </div>
-  
-                    <div
-                      class="detail-row"
-                      *ngIf="
-                        wohnungDetails?.rented !== null &&
-                        wohnungDetails?.rented !== undefined
-                      "
-                    >
-                      <p><strong>Vermietet:</strong></p>
-                      <p>{{ wohnungDetails?.rented ? "Ja" : "Nein" }}</p>
-                    </div>
-  
-                    <div
-                      class="detail-row"
-                      *ngIf="
-                        !accessIsNormal &&
-                        wohnungDetails?.rented &&
-                        wohnungDetails?.rentalIncome != 0
-                      "
-                    >
-                      <p><strong>Einnahmen (Kalt):</strong></p>
-  
-                      <p>{{ wohnungDetails?.rentalIncome }} €</p>
-                    </div>
-  
-                    <div class="detail-row" *ngIf="!accessIsNormal">
-                      <p><strong>Frei ab:</strong></p>
-                      <p>{{ wohnungDetails?.freeFrom }}</p>
-                    </div>
-                  </div>
-                  <!-- ///////////// end of more infos for apartment -->
-
-                  <!-- ///////////// more infos for house -->
-                  <div class="more-infos-container" *ngIf="isHouse">
-                    <div class="detail-row" *ngIf="haus?.buildingType as type">
-                      <p><strong>Haustyp:</strong></p>
-                      <p>{{ getLabel(buildingTypeLabels, type) }}</p>
-                    </div>
-                    <div class="detail-row" *ngIf="haus?.plotArea">
-                      <p><strong>Grundstücksfläche:</strong></p>
-                      <p>{{ haus.plotArea }} m²</p>
-                    </div>
-                    <div class="detail-row" *ngIf="haus?.usableFloorSpace">
-                      <p><strong>Nutzfläche:</strong></p>
-                      <p>{{ haus.usableFloorSpace }} m²</p>
-                    </div>
-  
-                    <div
-                      class="detail-row"
-                      *ngIf="
-                        (accessIsShort || accessIsExtended) &&
-                        haus?.numberOfFloors
-                      "
-                    >
-                      <p><strong>Anzahl Etagen:</strong></p>
-                      <p>{{ haus.numberOfFloors }}</p>
-                    </div>
-  
-                    <div class="detail-row" *ngIf="haus?.numberOfBedRooms">
-                      <p><strong>Schlafzimmer:</strong></p>
-                      <p>{{ haus.numberOfBedRooms }}</p>
-                    </div>
-                    <div class="detail-row" *ngIf="haus?.numberOfBathRooms">
-                      <p><strong>Badezimmer:</strong></p>
-                      <p>{{ haus.numberOfBathRooms }}</p>
-                    </div>
-                    <div class="detail-row" *ngIf="haus?.guestToilet as type">
-                      <p><strong>Gäste-WC:</strong></p>
-                      <p>{{ Yes_No_Labels[type] || "Keine Angabe" }}</p>
-                    </div>
-                    <div class="detail-row" *ngIf="haus?.cellar as type">
-                      <p><strong>Keller:</strong></p>
-                      <p>{{ Yes_No_Labels[type] || "Keine Angabe" }}</p>
-                    </div>
-                    <div class="detail-row" *ngIf="haus?.condition as type">
-                      <p><strong>Zustand:</strong></p>
-                      <p>{{ conditionLabels[type] || "Keine Angabe" }}</p>
-                    </div>
-                    <div
-                      class="detail-row"
-                      *ngIf="haus?.constructionPhase as type"
-                    >
-                      <p><strong>Bauphase:</strong></p>
-                      <p>
-                        {{ constructionPhaseLabels[type] || "Keine Angabe" }}
-                      </p>
-                    </div>
-  
-                    <!-- Mit Freischaltung sichtbar -->
-                    <div
-                      class="detail-row"
-                      *ngIf="
-                        (accessIsShort || accessIsExtended) &&
-                        haus?.constructionYear
-                      "
-                    >
-                      <p><strong>Baujahr:</strong></p>
-                      <p>{{ haus.constructionYear }}</p>
-                    </div>
-  
-                    <!-- ///////////// -->
-  
-                    <div class="detail-row" *ngIf="haus?.interiorQuality as type">
-                      <p><strong>Qualität der Ausstattung:</strong></p>
-                      <p>
-                        {{ interiorQualityLabels[type] || "Keine Angabe" }}
-                      </p>
-                    </div>
-  
-                    <!-- Mit Freischaltung sichtbar -->
-                    <div
-                      class="detail-row"
-                      *ngIf="
-                        (accessIsShort || accessIsExtended) &&
-                        haus?.lastRefurbishment as type
-                      "
-                    >
-                      <p>
-                        <strong>Letzte Modernisierung/ Sanierung:</strong>
-                      </p>
-                      <p>{{ haus.lastRefurbishment }}</p>
-                    </div>
-  
-                    <div
-                      class="detail-row"
-                      *ngIf="
-                        (accessIsShort || accessIsExtended) &&
-                        haus?.heatingType as type
-                      "
-                    >
-                      <p><strong>Heizungsart:</strong></p>
-                      <p>{{ heatingTypeLabels[type] || "Keine Angabe" }}</p>
-                    </div>
-  
-                    <div
-                      class="detail-row"
-                      *ngIf="
-                        (accessIsShort || accessIsExtended) &&
-                        haus?.firingType as type
-                      "
-                    >
-                      <p><strong>Wesentliche Energieträger:</strong></p>
-                      <p>
-                        {{
-                          haus?.heatingType === "DISTRICT_HEATING"
-                            ? "Fernwärme"
-                            : firingTypeLabels[type] || "Keine Angabe"
-                        }}
-                      </p>
-                    </div>
-  
-                    <!-- ///////////// -->
-                    <div
-                      class="detail-row"
-                      *ngIf="haus?.parkingSpaceType as type"
-                    >
-                      <p><strong>Garage/Stellplatz:</strong></p>
-                      <p>
-                        {{ parkingSpaceTypeLabels[type] || "Keine Angabe" }}
-                      </p>
-                    </div>
-                    <div class="detail-row" *ngIf="haus?.numberOfParkingSpaces">
-                      <p><strong>Anzahl Garagen/Stellplätze:</strong></p>
-                      <p>{{ haus.numberOfParkingSpaces }}</p>
-                    </div>
-                  </div>
-                  <!-- ///////////// end of more infos for house -->
-        </div>
-
-        <!-- /////////// video of property  -->
-
-        <div>
- 
-
-        </div>
-
-
-
-
-
-
-
-
-
-        <div class="dialog-content">
-          <!-- dynamic area depends on property type -->
-          <div class=" ">
-
-            <div class="content-wrapper">
-              <!-- wrapper for more infos and descriptions for apartment -->
-              <div class="left-content-wrapper">
-               
-
-                <!-- descriptions -->
-                <div class="descriptions-container">
-                  <div
-                    class="note-textarea"
-                    *ngIf="accessIsNormal && immobilie.introNote"
-                  >
-                    <p><strong>Kurzbeschreibung:</strong></p>
-                    <div [innerHTML]="immobilie.introNote | nl2br"></div>
-                  </div>
-
-                  <!-- NUR ERWEITERTES EXPOSE -->
-
-                  <div
-                    class="notes-wrapper"
-                    *ngIf="!accessIsNormal && isApartment"
-                  >
-                    <div
-                      class="note-textarea page-break"
-                      *ngIf="wohnung.descriptionNote"
-                    >
-                      <p><strong>Objektbeschreibung:</strong></p>
-                      <div [innerHTML]="wohnung.descriptionNote | nl2br"></div>
-                    </div>
-
-                    <div
-                      class="note-textarea page-break"
-                      *ngIf="wohnung.furnishingNote"
-                    >
-                      <p><strong>Ausstattung:</strong></p>
-                      <div [innerHTML]="wohnung.furnishingNote | nl2br"></div>
-                    </div>
-
-                    <div class="note-textarea" *ngIf="wohnung.locationNote">
-                      <p><strong>Lage:</strong></p>
-                      <div [innerHTML]="wohnung.locationNote | nl2br"></div>
-                    </div>
-
-                    <div class="note-textarea" *ngIf="wohnung.otherNote">
-                      <p><strong>Sonstiges:</strong></p>
-                      <div [innerHTML]="wohnung.otherNote | nl2br"></div>
-                    </div>
-                  </div>
-                  <!-- ///////////// end of notes warpper for apartments -->
-
-                  <div class="notes-wrapper" *ngIf="!accessIsNormal && isHouse">
-                    <div class="note-textarea" *ngIf="haus.descriptionNote">
-                      <p><strong>Objektbeschreibung:</strong></p>
-                      <div [innerHTML]="haus.descriptionNote | nl2br"></div>
-                    </div>
-                    <div class="note-textarea" *ngIf="haus.furnishingNote">
-                      <p><strong>Ausstattung:</strong></p>
-                      <div [innerHTML]="haus.furnishingNote | nl2br"></div>
-                    </div>
-                    <div class="note-textarea" *ngIf="haus.locationNote">
-                      <p><strong>Lage:</strong></p>
-                      <div [innerHTML]="haus.locationNote | nl2br"></div>
-                    </div>
-
-                    <div class="note-textarea" *ngIf="haus.otherNote">
-                      <p><strong>Sonstiges:</strong></p>
-                      <div [innerHTML]="haus.otherNote | nl2br"></div>
-                    </div>
-                  </div>
-                  <!-- ///////////// end of notes warpper for house -->
-                </div>
-                <!-- ///////////// end of descriptions -->
+          <div class="more-property-infos">
+            <!-- ///////////// more infos for apartment -->
+            <div class="more-infos-container" *ngIf="isApartment">
+              <div
+                class="detail-row"
+                *ngIf="wohnungDetails?.apartmentType as type"
+              >
+                <p><strong>Wohnungstyp:</strong></p>
+                <p>{{ apartmentTypeLabels[type] || "Keine Angabe" }}</p>
               </div>
-              <!-- ///////////// end of left-content-wrapper-->
 
-              <div class="right-content-wrapper page-break">
-                <!-- object video box -->
+              <div class="detail-row" *ngIf="wohnungDetails?.usableFloorSpace">
+                <p><strong>Nutzfläche:</strong></p>
+                <p>{{ wohnungDetails?.usableFloorSpace }} m²</p>
+              </div>
+              <div class="detail-row" *ngIf="wohnungDetails?.floor">
+                <p><strong>Etage:</strong></p>
+                <p>{{ wohnungDetails?.floor }}</p>
+              </div>
 
-                <!-- <div class="object-video-box" *ngIf="getVideoMedia() as video">
+              <div
+                class="detail-row"
+                *ngIf="!accessIsShort && wohnungDetails?.numberOfFloors"
+              >
+                <p><strong>Anzahl Etagen:</strong></p>
+                <p>{{ wohnungDetails?.numberOfFloors }}</p>
+              </div>
+
+              <div class="detail-row" *ngIf="wohnungDetails?.numberOfBedRooms">
+                <p><strong>Schlafzimmer:</strong></p>
+                <p>{{ wohnungDetails?.numberOfBedRooms }}</p>
+              </div>
+              <div class="detail-row" *ngIf="wohnungDetails?.numberOfBathRooms">
+                <p><strong>Badezimmer:</strong></p>
+                <p>{{ wohnungDetails?.numberOfBathRooms }}</p>
+              </div>
+              <div class="detail-row" *ngIf="wohnungDetails?.cellar as type">
+                <p><strong>Keller:</strong></p>
+                <p>{{ Yes_No_Labels[type] || "Keine Angabe" }}</p>
+              </div>
+              <div class="detail-row">
+                <p><strong>Balkon/Terrasse:</strong></p>
+                <p>
+                  {{
+                    wohnungDetails?.balcony === true
+                      ? True_False_Labels["true"]
+                      : wohnungDetails?.balcony === false
+                      ? True_False_Labels["false"]
+                      : "Keine Angabe"
+                  }}
+                </p>
+              </div>
+              <div class="detail-row">
+                <p><strong>Personenaufzug:</strong></p>
+                <p>
+                  {{
+                    wohnungDetails?.lift === true
+                      ? True_False_Labels["true"]
+                      : wohnungDetails?.lift === false
+                      ? True_False_Labels["false"]
+                      : "Keine Angabe"
+                  }}
+                </p>
+              </div>
+              <div
+                class="detail-row"
+                *ngIf="wohnungDetails?.interiorQuality as type"
+              >
+                <p><strong>Qualität der Ausstattung:</strong></p>
+                <p>
+                  {{ interiorQualityLabels[type] || "Keine Angabe" }}
+                </p>
+              </div>
+
+              <!-- NUR WENN FREIGESCHALTET -->
+              <div class="detail-row" *ngIf="!accessIsShort && wohnungDetails">
+                <p><strong>Letzte Modernisierung/Sanierung:</strong></p>
+                <p>
+                  {{
+                    wohnungDetails.lastRefurbishment != null &&
+                    wohnungDetails.lastRefurbishment !== ""
+                      ? wohnungDetails.lastRefurbishment
+                      : "Keine Angabe"
+                  }}
+                </p>
+              </div>
+
+              <div
+                class="detail-row"
+                *ngIf="!accessIsShort && wohnungDetails?.heatingType as type"
+              >
+                <p><strong>Heizungsart:</strong></p>
+                <p>{{ heatingTypeLabels[type] || "Keine Angabe" }}</p>
+              </div>
+
+              <div
+                class="detail-row"
+                *ngIf="!accessIsShort && wohnungDetails?.firingType as type"
+              >
+                <p><strong>Wesentliche Energieträger:</strong></p>
+                <p>{{ firingTypeLabels[type] || "Keine Angabe" }}</p>
+              </div>
+
+              <div
+                class="detail-row"
+                *ngIf="
+                  !accessIsShort && !wohnungDetails?.constructionYearUnknown
+                "
+              >
+                <p><strong>Baujahr:</strong></p>
+                <p>{{ wohnungDetails?.constructionYear }}</p>
+              </div>
+
+              <div
+                class="detail-row"
+                *ngIf="
+                  !accessIsShort && wohnungDetails?.constructionYearUnknown
+                "
+              >
+                <p><strong>Baujahr:</strong></p>
+                <p>Baujahr unbekannt</p>
+              </div>
+
+              <div
+                class="detail-row"
+                *ngIf="
+                  !accessIsShort &&
+                  wohnungDetails?.handicappedAccessible as type
+                "
+              >
+                <p><strong>Stufenloser Zugang:</strong></p>
+                <p>{{ Yes_No_Labels[type] || "Keine Angabe" }}</p>
+              </div>
+
+              <div class="detail-row" *ngIf="!accessIsShort">
+                <p><strong>Hausgeld:</strong></p>
+                <p>
+                  {{
+                    wohnungDetails?.serviceCharge != null &&
+                    wohnungDetails?.serviceCharge !== 0
+                      ? wohnungDetails?.serviceCharge
+                      : "Keine Angabe"
+                  }}
+                  €
+                </p>
+              </div>
+
+              <div
+                class="detail-row"
+                *ngIf="!accessIsShort && wohnungDetails?.maintenanceReserve"
+              >
+                <p><strong>Instandhaltungsrücklage:</strong></p>
+                <p>
+                  {{ wohnungDetails?.maintenanceReserve }}
+                </p>
+              </div>
+
+              <div
+                class="detail-row"
+                *ngIf="
+                  wohnungDetails?.rented !== null &&
+                  wohnungDetails?.rented !== undefined
+                "
+              >
+                <p><strong>Vermietet:</strong></p>
+                <p>{{ wohnungDetails?.rented ? "Ja" : "Nein" }}</p>
+              </div>
+
+              <div
+                class="detail-row"
+                *ngIf="
+                  !accessIsShort &&
+                  wohnungDetails?.rented &&
+                  wohnungDetails?.rentalIncome != 0
+                "
+              >
+                <p><strong>Einnahmen (Kalt):</strong></p>
+
+                <p>{{ wohnungDetails?.rentalIncome }} €</p>
+              </div>
+
+              <div class="detail-row" *ngIf="!accessIsShort">
+                <p><strong>Frei ab:</strong></p>
+                <p>{{ wohnungDetails?.freeFrom }}</p>
+              </div>
+            </div>
+            <!-- ///////////// end of more infos for apartment -->
+
+            <!-- ///////////// more infos for house -->
+            <div class="more-infos-container" *ngIf="isHouse">
+              <div class="detail-row" *ngIf="haus?.buildingType as type">
+                <p><strong>Haustyp:</strong></p>
+                <p>{{ getLabel(buildingTypeLabels, type) }}</p>
+              </div>
+              <div class="detail-row" *ngIf="haus?.plotArea">
+                <p><strong>Grundstücksfläche:</strong></p>
+                <p>{{ haus.plotArea }} m²</p>
+              </div>
+              <div class="detail-row" *ngIf="haus?.usableFloorSpace">
+                <p><strong>Nutzfläche:</strong></p>
+                <p>{{ haus.usableFloorSpace }} m²</p>
+              </div>
+
+              <div
+                class="detail-row"
+                *ngIf="!accessIsShort && haus?.numberOfFloors"
+              >
+                <p><strong>Anzahl Etagen:</strong></p>
+                <p>{{ haus.numberOfFloors }}</p>
+              </div>
+
+              <div class="detail-row" *ngIf="haus?.numberOfBedRooms">
+                <p><strong>Schlafzimmer:</strong></p>
+                <p>{{ haus.numberOfBedRooms }}</p>
+              </div>
+              <div class="detail-row" *ngIf="haus?.numberOfBathRooms">
+                <p><strong>Badezimmer:</strong></p>
+                <p>{{ haus.numberOfBathRooms }}</p>
+              </div>
+              <div class="detail-row" *ngIf="haus?.guestToilet as type">
+                <p><strong>Gäste-WC:</strong></p>
+                <p>{{ Yes_No_Labels[type] || "Keine Angabe" }}</p>
+              </div>
+              <div class="detail-row" *ngIf="haus?.cellar as type">
+                <p><strong>Keller:</strong></p>
+                <p>{{ Yes_No_Labels[type] || "Keine Angabe" }}</p>
+              </div>
+              <div class="detail-row" *ngIf="haus?.condition as type">
+                <p><strong>Zustand:</strong></p>
+                <p>{{ conditionLabels[type] || "Keine Angabe" }}</p>
+              </div>
+              <div class="detail-row" *ngIf="haus?.constructionPhase as type">
+                <p><strong>Bauphase:</strong></p>
+                <p>
+                  {{ constructionPhaseLabels[type] || "Keine Angabe" }}
+                </p>
+              </div>
+
+              <!-- Mit Freischaltung sichtbar -->
+              <div
+                class="detail-row"
+                *ngIf="!accessIsShort && haus?.constructionYear"
+              >
+                <p><strong>Baujahr:</strong></p>
+                <p>{{ haus.constructionYear }}</p>
+              </div>
+
+              <!-- ///////////// -->
+
+              <div class="detail-row" *ngIf="haus?.interiorQuality as type">
+                <p><strong>Qualität der Ausstattung:</strong></p>
+                <p>
+                  {{ interiorQualityLabels[type] || "Keine Angabe" }}
+                </p>
+              </div>
+
+              <!-- Mit Freischaltung sichtbar -->
+              <div
+                class="detail-row"
+                *ngIf="!accessIsShort && haus?.lastRefurbishment as type"
+              >
+                <p>
+                  <strong>Letzte Modernisierung/ Sanierung:</strong>
+                </p>
+                <p>{{ haus.lastRefurbishment }}</p>
+              </div>
+
+              <div
+                class="detail-row"
+                *ngIf="!accessIsShort && haus?.heatingType as type"
+              >
+                <p><strong>Heizungsart:</strong></p>
+                <p>{{ heatingTypeLabels[type] || "Keine Angabe" }}</p>
+              </div>
+
+              <div
+                class="detail-row"
+                *ngIf="!accessIsShort && haus?.firingType as type"
+              >
+                <p><strong>Wesentliche Energieträger:</strong></p>
+                <p>
+                  {{
+                    haus?.heatingType === "DISTRICT_HEATING"
+                      ? "Fernwärme"
+                      : firingTypeLabels[type] || "Keine Angabe"
+                  }}
+                </p>
+              </div>
+
+              <!-- ///////////// -->
+              <div class="detail-row" *ngIf="haus?.parkingSpaceType as type">
+                <p><strong>Garage/Stellplatz:</strong></p>
+                <p>
+                  {{ parkingSpaceTypeLabels[type] || "Keine Angabe" }}
+                </p>
+              </div>
+              <div class="detail-row" *ngIf="haus?.numberOfParkingSpaces">
+                <p><strong>Anzahl Garagen/Stellplätze:</strong></p>
+                <p>{{ haus.numberOfParkingSpaces }}</p>
+              </div>
+            </div>
+            <!-- ///////////// end of more infos for house -->
+
+            <!-- /////////// video of property  -->
+            <div class="property-video-section">
+              <div *ngIf="videoMedia.length > 0">
+                <div *ngFor="let video of videoMedia" class="video-box">
                   <video
-                    width="100%"
-                    height="auto"
+                    [src]="video.url"
+                    [muted]="true"
+                    autoplay
+                    loop
+                    playsinline
                     controls
-                    [poster]="()?.url"
+                    controlsList="nodownload"
+                    preload="metadata"
                     (contextmenu)="disableContextMenu($event)"
                   >
-                    <source [src]="video.url" type="video/mp4" />
-                    Ihr Browser unterstützt das Video-Tag nicht.
+                    > Dein Browser unterstützt kein HTML5-Video.
                   </video>
-                </div>                 -->
-
-                <!-- energyrating diagramm -->
-                <div
-                  class="energiewert-wrapper"
-                  *ngIf="
-                    !accessIsNormal &&
-                    isApartment &&
-                    wohnung &&
-                    wohnung.thermalCharacteristic
-                  "
-                >
-                  <div class="detail-row">
-                    <p><strong>Energiewert:</strong></p>
-                  </div>
-                  <div class="spacer-m"></div>
-                  <div
-                    class="detail-row energy-rating-type"
-                    *ngIf="wohnung?.buildingEnergyRatingType as type"
-                  >
-                    <p><strong>Ausweis-Typ:</strong></p>
-                    <p>
-                      {{
-                        buildingEnergyRatingTypeLabels[type] || "Keine Angabe"
-                      }}
-                    </p>
-                  </div>
-                  <app-energieklasse-diagramm
-                    [energyValue]="wohnung.thermalCharacteristic"
-                    [ausweistyp]="wohnung.buildingEnergyRatingType"
-                  ></app-energieklasse-diagramm>
                 </div>
-                <!-- ///////////// end of energy diagramm apartment  -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /////////// END OF MORE PROPERTY INFOS SECTION -->
 
-                <div
-                  class="energiewert-wrapper"
-                  *ngIf="
-                    !accessIsNormal &&
-                    isHouse &&
-                    haus &&
-                    haus.thermalCharacteristic
-                  "
-                >
-                  <div class="detail-row">
-                    <p><strong>Energiewert:</strong></p>
-                  </div>
-                  <div class="spacer-m"></div>
-                  <div
-                    class="detail-row"
-                    *ngIf="haus?.buildingEnergyRatingType as type"
-                  >
-                    <p><strong>Ausweis-Typ:</strong></p>
-                    <p>
-                      {{
-                        buildingEnergyRatingTypeLabels[type] || "Keine Angabe"
-                      }}
-                    </p>
-                  </div>
-                  <app-energieklasse-diagramm
-                    [energyValue]="haus.thermalCharacteristic"
-                    [ausweistyp]="haus.buildingEnergyRatingType"
-                  ></app-energieklasse-diagramm>
+        <!-- /////////// ALTERNATIVE TITLE IMAGE SECTION -->
+        <div class="alt-title-img-section page-break" *ngIf="altTitleImage">
+          <!-- image -->
+          <img
+            class="alt-title-img"
+            [src]="altTitleImage.url"
+            alt="Alternatives Titelbild"
+            (contextmenu)="disableContextMenu($event)"
+          />
+
+          <!-- short discription -->
+          <div class="short-discription-box">
+            <div class="short-textarea" *ngIf="immobilie.introNote">
+              <div [innerHTML]="immobilie.introNote | nl2br"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- /////////// WRAPPER PROPERTY DESCRIPTIONS AND SIDEBAR -->
+        <div
+          class="property-discriptions-and-sidebar-wrapper"
+          *ngIf="!accessIsShort"
+        >
+          <!-- /////////// PROPERTY DESCRIPTIONS-->
+          <div class="property-discriptions-wrapper">
+            <div class="property-discriptions-container">
+              <!-- description for arpartment -->
+              <div class="notes-wrapper" *ngIf="!accessIsShort && isApartment">
+                <div class="note-textarea" *ngIf="wohnung.descriptionNote">
+                  <p><strong>Objektbeschreibung:</strong></p>
+                  <div [innerHTML]="wohnung.descriptionNote | nl2br"></div>
                 </div>
-                <!-- ///////////// end of energy diagramm apartment  -->
 
-                <!-- financing example -->
-                <div class="financing-example" *ngIf="!accessIsNormal">
-                  <h3>Finanzierungsvorschlag</h3>
-                  <p>
-                    <strong>Berechnung der groben Kreditkosten:*</strong>
+                <div class="note-textarea" *ngIf="wohnung.furnishingNote">
+                  <p><strong>Ausstattung:</strong></p>
+                  <div [innerHTML]="wohnung.furnishingNote | nl2br"></div>
+                </div>
+
+                <div class="note-textarea" *ngIf="wohnung.locationNote">
+                  <p><strong>Lage:</strong></p>
+                  <div [innerHTML]="wohnung.locationNote | nl2br"></div>
+                </div>
+
+                <div class="note-textarea" *ngIf="wohnung.otherNote">
+                  <p><strong>Sonstiges:</strong></p>
+                  <div [innerHTML]="wohnung.otherNote | nl2br"></div>
+                </div>
+              </div>
+
+              <!-- description for house -->
+              <div class="notes-wrapper" *ngIf="!accessIsShort && isHouse">
+                <div class="note-textarea" *ngIf="haus.descriptionNote">
+                  <p><strong>Objektbeschreibung:</strong></p>
+                  <div [innerHTML]="haus.descriptionNote | nl2br"></div>
+                </div>
+                <div class="note-textarea" *ngIf="haus.furnishingNote">
+                  <p><strong>Ausstattung:</strong></p>
+                  <div [innerHTML]="haus.furnishingNote | nl2br"></div>
+                </div>
+                <div class="note-textarea" *ngIf="haus.locationNote">
+                  <p><strong>Lage:</strong></p>
+                  <div [innerHTML]="haus.locationNote | nl2br"></div>
+                </div>
+
+                <div class="note-textarea" *ngIf="haus.otherNote">
+                  <p><strong>Sonstiges:</strong></p>
+                  <div [innerHTML]="haus.otherNote | nl2br"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /////////// SIDEBAR CONTENT WRAPPER-->
+          <div class="sidebar-content-wrapper">
+            <!-- energyrating diagramm for apartment -->
+            <div
+              class="energiewert-wrapper"
+              *ngIf="
+                !accessIsShort &&
+                isApartment &&
+                wohnung &&
+                wohnung.thermalCharacteristic
+              "
+            >
+              <div class="detail-row">
+                <p><strong>Energiewert:</strong></p>
+              </div>
+              <div class="spacer-m"></div>
+              <div
+                class="detail-row energy-rating-type"
+                *ngIf="wohnung?.buildingEnergyRatingType as type"
+              >
+                <p><strong>Ausweis-Typ:</strong></p>
+                <p>
+                  {{ buildingEnergyRatingTypeLabels[type] || "Keine Angabe" }}
+                </p>
+              </div>
+              <app-energieklasse-diagramm
+                [energyValue]="wohnung.thermalCharacteristic"
+                [ausweistyp]="wohnung.buildingEnergyRatingType"
+              ></app-energieklasse-diagramm>
+            </div>
+
+            <!-- energyrating diagramm for house -->
+            <div
+              class="energiewert-wrapper"
+              *ngIf="
+                !accessIsShort && isHouse && haus && haus.thermalCharacteristic
+              "
+            >
+              <div class="detail-row">
+                <p><strong>Energiewert:</strong></p>
+              </div>
+              <div class="spacer-m"></div>
+              <div
+                class="detail-row"
+                *ngIf="haus?.buildingEnergyRatingType as type"
+              >
+                <p><strong>Ausweis-Typ:</strong></p>
+                <p>
+                  {{ buildingEnergyRatingTypeLabels[type] || "Keine Angabe" }}
+                </p>
+              </div>
+              <app-energieklasse-diagramm
+                [energyValue]="haus.thermalCharacteristic"
+                [ausweistyp]="haus.buildingEnergyRatingType"
+              ></app-energieklasse-diagramm>
+            </div>
+
+            <!-- financing example -->
+            <div class="financing-example" *ngIf="!accessIsShort">
+              <h3>Finanzierungsvorschlag</h3>
+              <p>
+                <strong>Berechnung der groben Kreditkosten:*</strong>
+              </p>
+
+              <div class="condition-box">
+                <div class="line-row">
+                  <p class="label">Sollzins / Effektiver Jahreszins:</p>
+                  <p class="wert">
+                    {{ immobilie.debitInterest | number : "1.2-2" : "de" }}
+                    % /
+                    {{
+                      immobilie.effectiveInterestRate | number : "1.2-2" : "de"
+                    }}
+                    %
                   </p>
+                </div>
+                <div class="line-row">
+                  <p class="label">Zinsbindung:</p>
+                  <p class="wert">{{ immobilie.fixedInterestRates }} Jahre</p>
+                </div>
+              </div>
 
-                  <div class="condition-box">
-                    <div class="line-row">
-                      <p class="label">Sollzins / Effektiver Jahreszins:</p>
-                      <p class="wert">
-                        {{ immobilie.debitInterest | number : "1.2-2" : "de" }}
-                        % /
-                        {{
-                          immobilie.effectiveInterestRate
-                            | number : "1.2-2" : "de"
-                        }}
-                        %
-                      </p>
-                    </div>
-                    <div class="line-row">
-                      <p class="label">Zinsbindung:</p>
-                      <p class="wert">
-                        {{ immobilie.fixedInterestRates }} Jahre
-                      </p>
-                    </div>
+              <div class="costs-overview-wrapper">
+                <div class="costs-overview-box">
+                  <p><strong>Voraussichtliche Kosten:</strong></p>
+
+                  <div class="line-row">
+                    <p>Kaufpreis:</p>
+                    <p>{{ kaufpreis | number : "1.0-0" : "de" }} €</p>
                   </div>
 
-                  <div class="costs-overview-wrapper">
-                    <div class="costs-overview-box">
-                      <p><strong>Voraussichtliche Kosten:</strong></p>
-
-                      <div class="line-row">
-                        <p>Kaufpreis:</p>
-                        <p>{{ kaufpreis | number : "1.0-0" : "de" }} €</p>
-                      </div>
-
-                      <div class="line-row">
-                        <p>
-                          Grunderwerbsteuer ({{ immobilie.transferTax }} %):
-                        </p>
-                        <p>
-                          {{ grunderwerbsteuer | number : "1.0-0" : "de" }}
-                          €
-                        </p>
-                      </div>
-
-                      <div class="line-row">
-                        <p>Notargebühr ({{ immobilie.notaryFee }} %):</p>
-                        <p>{{ notargebuehr | number : "1.0-0" : "de" }} €</p>
-                      </div>
-
-                      <div class="line-row">
-                        <p>Maklergebühr ({{ immobilie.courtageNumber }} %):</p>
-                        <p>{{ maklergebuehr | number : "1.0-0" : "de" }} €</p>
-                      </div>
-                      <div class="line-row">
-                        <p><strong>Gesamtkosten: </strong></p>
-                        <p>
-                          <strong
-                            >{{ gesamtkosten | number : "1.0-0" : "de" }} €
-                          </strong>
-                        </p>
-                      </div>
-                    </div>
-                    <div class="costs-overview-box">
-                      <p><strong>Ihr eingesetztes Kapital</strong></p>
-
-                      <div class="line-row">
-                        <p>Bank- und Sparguthaben:</p>
-                        <p>
-                          {{
-                            immobilie.capitalEmployed | number : "1.0-0" : "de"
-                          }}
-                          €
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="credit-box">
-                    <div class="line-row">
-                      <p><strong>Ihr benötigtes Darlehen: </strong></p>
-                      <p>
-                        <strong>
-                          {{ benoetigtesDarlehen | number : "1.0-0" : "de" }}
-                          €
-                        </strong>
-                      </p>
-                    </div>
-
-                    <div class="line-row">
-                      <p><strong>Ihre monatliche Zinsrate: </strong></p>
-                      <p>
-                        <strong>
-                          {{ monatlicheZinsen | number : "1.0-0" : "de" }}
-                          €
-                        </strong>
-                      </p>
-                    </div>
-
-                    <div class="line-row">
-                      <p><strong>Ihr monatliche Tilgungsrate: </strong></p>
-                      <p>
-                        <strong>
-                          {{ monatlicheTilgung | number : "1.0-0" : "de" }}
-                          €
-                        </strong>
-                      </p>
-                    </div>
-
-                    <div class="line-row">
-                      <p>
-                        <strong>Ihre monatliche Gesamtbelastung: </strong>
-                      </p>
-                      <p>
-                        <strong>
-                          {{ gesamtBelastung | number : "1.0-0" : "de" }}
-                          €
-                        </strong>
-                      </p>
-                    </div>
-                  </div>
-
-                  <div class="financing-example-note">
+                  <div class="line-row">
+                    <p>Grunderwerbsteuer ({{ immobilie.transferTax }} %):</p>
                     <p>
-                      Ggf. ist eine Finanzierung auch ohne Eigenkpaital möglich.
+                      {{ grunderwerbsteuer | number : "1.0-0" : "de" }}
+                      €
                     </p>
+                  </div>
+
+                  <div class="line-row">
+                    <p>Notargebühr ({{ immobilie.notaryFee }} %):</p>
+                    <p>{{ notargebuehr | number : "1.0-0" : "de" }} €</p>
+                  </div>
+
+                  <div class="line-row">
+                    <p>Maklergebühr ({{ immobilie.courtageNumber }} %):</p>
+                    <p>{{ maklergebuehr | number : "1.0-0" : "de" }} €</p>
+                  </div>
+                  <div class="line-row">
+                    <p><strong>Gesamtkosten: </strong></p>
                     <p>
-                      *Die Informationen wurden bereitgestellt von FSK
-                      BAUFINANZIERUNG - unserem Partner für Finanzierungsfragen.
+                      <strong
+                        >{{ gesamtkosten | number : "1.0-0" : "de" }} €
+                      </strong>
                     </p>
-                    <div class="fincanel-expert-contact">
-                      <p>Ansprechpartner:</p>
-                      <p>
-                        Herr Andreas Böck
-                        <a class="no-link" href="tel:+4915120077474">
-                          <span>(0151 200 774 74)</span>
-                        </a>
-                      </p>
-                      <p>
-                        oder per Mail an:
-                        <a href="mailto:info@fsk-baufinanzierung.de">
-                          <span>info&#64;fsk-baufinanzierung.de</span>
-                        </a>
-                      </p>
-                    </div>
                   </div>
                 </div>
-                <!-- ///////////// -->
+                <div class="costs-overview-box">
+                  <p><strong>Ihr eingesetztes Kapital</strong></p>
 
-                <!-- ad feedback -->
-                <div class="adBox" *ngIf="accessIsNormal || accessIsShort">
-                  <h3>Wir freuen uns über Ihr Feedback!</h3>
+                  <div class="line-row">
+                    <p>Bank- und Sparguthaben:</p>
+                    <p>
+                      {{ immobilie.capitalEmployed | number : "1.0-0" : "de" }}
+                      €
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="credit-box">
+                <div class="line-row">
+                  <p><strong>Ihr benötigtes Darlehen: </strong></p>
                   <p>
-                    Mit Ihrer Bewertung helfen Sie anderen, einen Eindruck von
-                    unserer Arbeit zu gewinnen – besonders denen, die uns noch
-                    nicht kennen.
-                  </p>
-                  <p>
-                    Bewerten Sie uns hierzu einfach auf ImmoScout24. Den Link
-                    erhalten Sie in den kommenden Tagen von ImmoScout per E-Mail
-                    zugesendet.
+                    <strong>
+                      {{ benoetigtesDarlehen | number : "1.0-0" : "de" }}
+                      €
+                    </strong>
                   </p>
                 </div>
 
-                <div class="adBox" *ngIf="accessIsExtended">
-                  <h3>Ein Danke für Ihre Zeit!</h3>
+                <div class="line-row">
+                  <p><strong>Ihre monatliche Zinsrate: </strong></p>
                   <p>
-                    Wir freuen uns über Ihr Feedback! Mit Ihrer Bewertung helfen
-                    Sie anderen, einen Eindruck von unserer Arbeit zu gewinnen –
-                    besonders denen, die uns noch nicht kennen. Als kleines
-                    Dankeschön für Ihre Zeit erhalten Sie einen 10 €
-                    Shopping-Gutschein.
+                    <strong>
+                      {{ monatlicheZinsen | number : "1.0-0" : "de" }}
+                      €
+                    </strong>
+                  </p>
+                </div>
+
+                <div class="line-row">
+                  <p><strong>Ihr monatliche Tilgungsrate: </strong></p>
+                  <p>
+                    <strong>
+                      {{ monatlicheTilgung | number : "1.0-0" : "de" }}
+                      €
+                    </strong>
+                  </p>
+                </div>
+
+                <div class="line-row">
+                  <p>
+                    <strong>Ihre monatliche Gesamtbelastung: </strong>
                   </p>
                   <p>
-                    Bewerten Sie uns hierzu einfach auf Google:
+                    <strong>
+                      {{ gesamtBelastung | number : "1.0-0" : "de" }}
+                      €
+                    </strong>
+                  </p>
+                </div>
+              </div>
+
+              <div class="financing-example-note">
+                <p>
+                  Ggf. ist eine Finanzierung auch ohne Eigenkpaital möglich.
+                </p>
+                <p>
+                  *Die Informationen wurden bereitgestellt von FSK
+                  BAUFINANZIERUNG - unserem Partner für Finanzierungsfragen.
+                </p>
+                <div class="fincanel-expert-contact">
+                  <p>Ansprechpartner:</p>
+                  <p>
+                    Herr Andreas Böck
+                    <a class="no-link" href="tel:+4915120077474">
+                      <span>(0151 200 774 74)</span>
+                    </a>
+                  </p>
+                  <p>
+                    oder per Mail an:
                     <a
-                      href="https://g.page/r/CeZdl-Z9XP8YEAE/review"
-                      target="_blank"
-                      >Link zum Formular</a
+                      class="no-link"
+                      href="mailto:info@fsk-baufinanzierung.de"
                     >
+                      <span>info&#64;fsk-baufinanzierung.de</span>
+                    </a>
                   </p>
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- Grundstück -->
-          <!-- <div *ngSwitchCase="'Grundstück'">
-                <h3>Grundstückdetails</h3>
-                <p *ngIf="grundstueck?.plotArea">
-                  <strong>Grundstücksgröße:</strong>
-                  {{ grundstueck.plotArea }} m²
-                </p>
-                <p *ngIf="grundstueck?.siteDevelopmentType">
-                  <strong>Erschließung:</strong>
-                  {{ grundstueck.siteDevelopmentType }}
-                </p>
-                <p *ngIf="grundstueck?.recommendedUseTypes">
-                  <strong>Nutzung:</strong>
-                  {{ grundstueck.recommendedUseTypes }}
-                </p>
-              </div> -->
+            <!-- img viewing -->
+            <div class="image-viewing-box">
+              <img
+                class="advertise_img"
+                src="/img/services/BT_Foto.jpg"
+                alt=""
+                (contextmenu)="disableContextMenu($event)"
+              />
+            </div>
 
-          <!-- Fotogalerie mit weiteren Fotos -->
-          <div class="more-images-gallery page-break" *ngIf="!accessIsNormal">
-            <h3>Weitere Fotos</h3>
-            <div class="masonry-gallery">
-              <div class="masonry-item" *ngFor="let img of media">
-                <img
-                  class="thumbnail"
-                  [src]="img.url"
-                  [alt]="img.description || 'Bild'"
-                  (click)="openImageDialog(img.url)"
-                  (contextmenu)="disableContextMenu($event)"
-                />
-              </div>
+            <!-- ad feedback -->
+            <div class="adBox-feedback" *ngIf="!accessIsShort">
+              <h3>Wir freuen uns über Ihr Feedback!</h3>
+              <p>
+                Mit Ihrer Bewertung helfen Sie anderen, einen Eindruck von
+                unserer Arbeit zu gewinnen – besonders denen, die uns noch nicht
+                kennen.
+              </p>
+              <p>
+                Bewerten Sie uns hierzu einfach auf ImmoScout24. Den Link
+                erhalten Sie in den kommenden Tagen von ImmoScout per E-Mail
+                zugesendet.
+              </p>
+            </div>
+
+            <!-- ad feedback for money -->
+            <div class="adBox-feedback" *ngIf="accessIsExtended">
+              <h3>Ein Danke für Ihre Zeit!</h3>
+              <p>
+                Wir freuen uns über Ihr Feedback! Mit Ihrer Bewertung helfen Sie
+                anderen, einen Eindruck von unserer Arbeit zu gewinnen –
+                besonders denen, die uns noch nicht kennen. Als kleines
+                Dankeschön für Ihre Zeit erhalten Sie einen 10 €
+                Shopping-Gutschein.
+              </p>
+              <p>
+                Bewerten Sie uns hierzu einfach auf Google:
+                <a
+                  href="https://g.page/r/CeZdl-Z9XP8YEAE/review"
+                  target="_blank"
+                  >Link zum Formular</a
+                >
+              </p>
             </div>
           </div>
+        </div>
 
-          <!-- Grundrisse floor plans -->
+        <!-- /////////// PROPERTY FLOOR PLANS -->
+        <div class="floor-plans-section no-print" *ngIf="!accessIsShort">
           <div
-            class="floor-plans-slider no-print"
-            *ngIf="!accessIsNormal && mediaFloorPlans?.length"
+            class="floor-plans-slider"
+            *ngIf="!accessIsShort && mediaFloorPlans?.length"
           >
             <div class="floorplan-viewer">
               <button
@@ -992,7 +902,7 @@
                 (click)="prevFloorPlan()"
                 [disabled]="activeFloorIndex === 0"
               >
-                <span>‹</span> zurück
+                <span>‹</span>
               </button>
 
               <img
@@ -1008,99 +918,125 @@
                 (click)="nextFloorPlan()"
                 [disabled]="activeFloorIndex === mediaFloorPlans.length - 1"
               >
-                <span>›</span> vor
+                <span>›</span>
               </button>
             </div>
-            <p class="floorplan-counter">
-              {{ activeFloorIndex + 1 }} / {{ mediaFloorPlans.length }}
-            </p>
+
+            <div class="floorplan-counter">
+              <p>{{ activeFloorIndex + 1 }} / {{ mediaFloorPlans.length }}</p>
+            </div>
           </div>
 
-          <!-- Grundrisse floor plans print-mode-->
-
-          <div
-            class="floor-plans-print print-only"
-            *ngIf="!accessIsNormal && mediaFloorPlans?.length"
-          >
-            <div class="floorplan-print-wrapper">
+          <div class="sidebar-floor-plans-selection" *ngIf="!accessIsShort">
+            <div
+              class="floorplan-thumb"
+              *ngFor="let plan of mediaFloorPlans; let i = index"
+              (click)="activeFloorIndex = i"
+              [class.active]="i === activeFloorIndex"
+            >
               <img
-                *ngFor="let img of mediaFloorPlans"
-                [src]="img.url"
-                [alt]="img.description || 'Grundriss'"
+                [src]="plan.url"
+                [alt]="plan.description || 'Grundriss'"
                 (contextmenu)="disableContextMenu($event)"
               />
             </div>
           </div>
+        </div>
 
-          <div class="spacer-m"></div>
-          <div class="spacer-m"></div>
-
-          <div class="bottom-container">
-            <h3>Interesse geweckt?</h3>
-            <p *ngIf="accessIsNormal">
-              Gerne stehen wir Ihnen jederzeit zur Verfügung und helfen Ihnen,
-              wo wir nur können, um Ihnen die angebotene Immobilie so
-              transparent und umfassend wie möglich zu präsentieren. Bei
-              bestehendem Interesse können wir Ihnen gerne weitere Inhalte wie
-              weitere Fotos und weitere Informationen freischalten.
-            </p>
-
-            <p *ngIf="accessIsShort">
-              Gerne stehen wir Ihnen jederzeit zur Verfügung und helfen Ihnen,
-              wo wir nur können, um Ihnen die angebotene Immobilie so
-              transparent und umfassend wie möglich zu präsentieren. Bei
-              bestehendem Interesse können wir gerne einen Besichtigungstermin
-              vereinbaren. Rufen Sie uns hierzu einfach an. Weitere Unterlagen
-              wie Abrechnungen, Kosten-/Einnahmenübersichten, Grundbuchauszug
-              etc. erhalten Sie im Anschluss.
-            </p>
-
-            <p *ngIf="accessIsExtended">
-              Gerne stehen wir Ihnen jederzeit zur Verfügung und helfen Ihnen,
-              wo wir nur können, um Ihnen die angebotene Immobilie so
-              transparent und umfassend wie möglich zu präsentieren. Sollten Sie
-              noch weitere Unterlagen oder eine Zweitbesichtigung wünschen,
-              sprechen Sie uns einfach an.
-            </p>
-
-            <div class="spacer-m"></div>
-            <div class="spacer-m"></div>
+        <!-- Grundrisse floor plans print-mode-->
+        <div
+          class="floor-plans-print print-only page-break"
+          *ngIf="!accessIsShort && mediaFloorPlans?.length"
+        >
+          <div class="floorplan-print-wrapper">
+            <img
+              *ngFor="let img of mediaFloorPlans"
+              [src]="img.url"
+              [alt]="img.description || 'Grundriss'"
+              (contextmenu)="disableContextMenu($event)"
+            />
           </div>
+        </div>
 
-          <div class="disclaimer-container page-break">
-            <h3>Hinweis:</h3>
-            <p>
-              Wir übernehmen keine Haftung für die Richtigkeit der Angaben in
-              diesem Exposé. Für die Prüfung der Informationen sind sowohl Sie
-              als Interessent(in) als auch der/die Eigentümer(in)
-              verantwortlich. Bitte beachten Sie unbedingt die
-              Originalunterlagen zur Immobilie, die Sie bereits erhalten haben
-              oder noch von uns erhalten werden.
-            </p>
-
-            <p *ngIf="!accessIsNormal">
-              Die oben genannten Angaben sind vertraulich und dementsprechend
-              vertraulich zu behandeln. Eine Weitergabe an Dritte ist nur mit
-              unserer ausdrücklichen schriftlichen Genehmigung zulässig. Es
-              gelten die besonderen Bedingungen gemäß unseren rechtlichen
-              Hinweisen in den AGB unter www.hilgert-immobilien.de/impressum.
-            </p>
-            <div class="spacer-m"></div>
-            <p>
-              Zuletzt aktualisiert:
-              {{ immobilie.lastModificationDate | date : "dd.MM.yyyy" }}
-            </p>
+        <!-- /////////// PROPERTY PHOTO GALLERY -->
+        <div class="images-gallery" *ngIf="!accessIsShort">
+          <h3>Weitere Fotos</h3>
+          <div class="masonry-gallery">
+            <div class="masonry-item" *ngFor="let img of media">
+              <img
+                class="thumbnail"
+                [src]="img.url"
+                [alt]="img.description || 'Bild'"
+                (click)="openImageDialog(img.url)"
+                (contextmenu)="disableContextMenu($event)"
+              />
+            </div>
           </div>
+        </div>
 
-          <div class="spacer-m no-print"></div>
-          <div class="spacer-m no-print"></div>
-          <div class="spacer-m no-print"></div>
-          <div class="spacer-m no-print"></div>
+        <!-- /////////// PROPERTY INTEREST TEXT -->
+        <div class="interest-text-section page-break">
+          <h3>Interesse geweckt?</h3>
+          <p *ngIf="accessIsShort">
+            Gerne stehen wir Ihnen jederzeit zur Verfügung und helfen Ihnen, wo
+            wir nur können, um Ihnen die angebotene Immobilie so transparent und
+            umfassend wie möglich zu präsentieren. Bei bestehendem Interesse
+            können wir Ihnen gerne weitere Inhalte wie weitere Fotos und weitere
+            Informationen freischalten.
+          </p>
 
-          <div class="double-divider-line no-print"></div>
-          <div class="double-divider-line no-print"></div>
+          <p *ngIf="accessIsNormal">
+            Gerne stehen wir Ihnen jederzeit zur Verfügung und helfen Ihnen, wo
+            wir nur können, um Ihnen die angebotene Immobilie so transparent und
+            umfassend wie möglich zu präsentieren. Bei bestehendem Interesse
+            können wir gerne einen Besichtigungstermin vereinbaren. Rufen Sie
+            uns hierzu einfach an. Weitere Unterlagen wie Abrechnungen,
+            Kosten-/Einnahmenübersichten, Grundbuchauszug etc. erhalten Sie im
+            Anschluss.
+          </p>
 
-          <div class="contact-container print-settings">
+          <p *ngIf="accessIsExtended">
+            Gerne stehen wir Ihnen jederzeit zur Verfügung und helfen Ihnen, wo
+            wir nur können, um Ihnen die angebotene Immobilie so transparent und
+            umfassend wie möglich zu präsentieren. Sollten Sie noch weitere
+            Unterlagen oder eine Zweitbesichtigung wünschen, sprechen Sie uns
+            einfach an.
+          </p>
+        </div>
+
+        <!-- /////////// PROPERTY DISCLAIMER TEXT -->
+        <div class="disclaimer-text-section">
+          <h3>Hinweis:</h3>
+          <p>
+            Wir übernehmen keine Haftung für die Richtigkeit der Angaben in
+            diesem Exposé. Für die Prüfung der Informationen sind sowohl Sie als
+            Interessent(in) als auch der/die Eigentümer(in) verantwortlich.
+            Bitte beachten Sie unbedingt die Originalunterlagen zur Immobilie,
+            die Sie bereits erhalten haben oder noch von uns erhalten werden.
+          </p>
+          <p>
+            Die oben genannten Angaben sind vertraulich und dementsprechend
+            vertraulich zu behandeln. Eine Weitergabe an Dritte ist nur mit
+            unserer ausdrücklichen schriftlichen Genehmigung zulässig. Es gelten
+            die besonderen Bedingungen gemäß unseren rechtlichen Hinweisen in
+            den AGB unter www.hilgert-immobilien.de/impressum.
+          </p>
+        </div>
+
+        <!-- /////////// PROPERTY LAST UPDATE SECTION -->
+        <div class="last-update-section">
+          <p>
+            Zuletzt aktualisiert:
+            {{ immobilie.lastModificationDate | date : "dd.MM.yyyy" }}
+          </p>
+        </div>
+
+        <div class="double-divider-line no-print"></div>
+        <div class="double-divider-line no-print"></div>
+
+        <!-- /////////// PROPERTY CONTACT PERSON SECTION -->
+        <div class="contact-person-section page-break">
+          <div class="contact-person-container">
             <h3>Ihr Ansprechpartner</h3>
 
             <div class="contact-wrapper">
@@ -1144,12 +1080,21 @@
                     <span>wwww.hilgert-immobilien.de</span>
                   </a>
                 </div>
+
+                <div class="content-col">
+                  <a
+                    class="standard-btn-reverse"
+                    href="/kontakt"
+                    target="_blank"
+                    >Zum Kontaktformular</a
+                  >
+                </div>
               </div>
 
               <div class="v-card-box">
                 <p>vCard:</p>
                 <img
-                  src="./img/e-card.png"
+                  src="/img/e-card.png"
                   alt="vCard-Immobilienmakler-Samuel-Hilgert"
                 />
               </div>
@@ -1157,8 +1102,20 @@
           </div>
         </div>
 
+        <button
+          *ngIf="showScrollToTop"
+          mat-fab
+          class="scroll-to-top"
+          color="primary"
+          (click)="scrollToTop()"
+          aria-label="Nach oben scrollen"
+        >
+          <mat-icon>arrow_upward</mat-icon>
+        </button>
 
+        <!-- end print content  -->
       </div>
+      <!-- end print content  -->
     </ng-container>
 
     <ng-template #loading>

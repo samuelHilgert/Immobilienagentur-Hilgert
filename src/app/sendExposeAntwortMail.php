@@ -35,7 +35,8 @@ if (
   !isset($data['email']) ||
   !isset($data['externalId']) ||
   !isset($data['lastName']) ||
-  !isset($data['salutation'])
+  !isset($data['salutation']) ||
+  !isset($data['exposeUrl']) // << Exposé-Link ist jetzt erforderlich
 ) {
   http_response_code(400);
   echo json_encode(['success' => false, 'message' => 'Fehlende Felder']);
@@ -51,13 +52,12 @@ $numberOfRooms = $data['numberOfRooms'] ?? '';
 $propertyType = $data['immobilienTyp'] ?? '';
 $city = $data['city'] ?? '';
 $value = $data['value'] ?? '';
-$pdfUrl = $data['exposePdfUrl'] ?? null;
+$exposeUrl = $data['exposeUrl']; // ✅ kommt jetzt aus Angular statt pdfUrl
 
-// 📄 Nachrichtentext
 $subject = "Exposé für Objekt: $externalId";
 $from = "info@hilgert-immobilien.de";
 
-// 🧾 HTML-Nachricht
+// 🧾 HTML-Nachricht mit neuem Link
 $htmlMessage = "
 <html><body>
 <p>{$salutation} {$lastName},</p>
@@ -67,8 +67,8 @@ $htmlMessage = "
 <p><strong>{$propertyType} mit {$numberOfRooms} Zimmern zum Kauf in {$city} für {$value} €</strong></p>
 
 <p>
-  Anbei erhalten Sie wie gewünscht, das erweiterte Exposé zur Immobilie:<br>
-  <a href='{$pdfUrl}' target='_blank'>{$pdfUrl}</a>
+  Anbei erhalten Sie wie gewünscht, den Link zu Ihrem persönlichen Online-Exposé:<br>
+  <a href='{$exposeUrl}' target='_blank'>{$exposeUrl}</a>
 </p>
 
 <p>Wenn weiterhin Interesse besteht, bitte ich um eine kurze Rückmeldung.</p>
@@ -98,7 +98,7 @@ $htmlMessage = "
 </body></html>
 ";
 
-// Header (nur HTML)
+// Header
 $headers  = "MIME-Version: 1.0\r\n";
 $headers .= "Content-type: text/html; charset=UTF-8\r\n";
 $headers .= "From: Hilgert Immobilien <{$from}>\r\n";
@@ -116,7 +116,6 @@ if (!$success) {
   ]);
   exit;
 }
-// Antwort zurück
-echo json_encode(['success' => true]);
 
+echo json_encode(['success' => true]);
 ?>

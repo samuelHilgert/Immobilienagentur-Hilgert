@@ -53,6 +53,7 @@ export class ExposeAnfrageService {
   
       if (immobilie?.autoExposeSend) {
         await this.sendExposeAndUpdateProcess(anfrage, immobilie, processRef);
+
       } else {
         console.log('✋ Automatischer Exposé-Versand deaktiviert für diese Immobilie.');
       }
@@ -81,7 +82,10 @@ export class ExposeAnfrageService {
   ): Promise<void> {
     const mailPayload = createExposeAnswerMailPayload(anfrage, immobilie);
     console.log('[Auto-Versand] Payload:', mailPayload);
-  
+
+    console.log('[DEBUG] Expose-Mail-Payload:', mailPayload);
+    console.log('[DEBUG] Exposé-Link:', mailPayload.exposeUrl);
+
     try {
       await this.http.post('https://hilgert-immobilien.de/sendExposeAntwortMail.php', mailPayload).toPromise();
   
