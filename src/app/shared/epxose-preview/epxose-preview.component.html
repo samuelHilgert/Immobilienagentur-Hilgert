@@ -14,22 +14,19 @@
 
   <div class="wrapper" id="printContent">
     <ng-container *ngIf="immobilie; else loading">
-      <div>
+      <div class="content-wrapper">
         <!-- //// DOC HEADLINE -->
         <div class="doc-headline">
           <h2>
-            <strong>Exposé </strong>
-
-            <!-- <strong
-              >Exposé ({{
-                exposeLevel === "normal"
-                  ? "gekürzte Version"
-                  : exposeLevel === "gekürzt"
-                  ? "Kurzvorschau"
-                  : exposeLevel === "erweitert"
-                  ? "erweiterte Version"
-                  : ""
-              }})</strong> -->
+            <strong>{{
+              exposeLevel === "normal"
+                ? "Erweitertes Exposé"
+                : exposeLevel === "gekürzt"
+                ? "Kurzvorschau"
+                : exposeLevel === "erweitert"
+                ? "Exklusives Exposé"
+                : ""
+            }}</strong>
           </h2>
         </div>
 
@@ -132,10 +129,14 @@
               <p><strong>Wohnfläche:</strong></p>
               <p>{{ immobilie.livingSpace }} m²</p>
             </div>
-            <div class="spacer-m no-print"></div>
+            <div class="spacer-m"></div>
             <div class="detail-row">
               <p><strong>Kaufpreis:</strong></p>
               <p>{{ immobilie.value | number : "1.0-0" }} €</p>
+            </div>
+            <div class="detail-row">
+              <p><strong>Provision:</strong></p>
+              <p>{{ immobilie.courtage }}</p>
             </div>
           </div>
 
@@ -154,19 +155,6 @@
                 Besichtigungstermin!
               </p>
             </div>
-            <div class="spacer-m no-print"></div>
-            <div class="detail-row no-print">
-              <p>
-                <strong>Provision:</strong><br />
-                {{ immobilie.courtage }}
-              </p>
-            </div>
-
-            <div class="detail-row display-if-print">
-              <p><strong>Provision:</strong><br /></p>
-              <p>{{ immobilie.courtage }}</p>
-            </div>
-            <div class="spacer-m no-print"></div>
             <div class="detail-row">
               <p>
                 <strong>Provisionshinweis:</strong><br />{{
@@ -185,61 +173,53 @@
           <img
             class="advertise_img"
             src="/img/services/ZG_Foto.jpg"
-            alt=""
+            alt="Werbung Eigentümer"
             (contextmenu)="disableContextMenu($event)"
           />
-          <!-- advertisment -->
+
           <div class="adBox-new-owner">
             <div class="adBox-container">
               <h3>Sie überlegen zu verkaufen?</h3>
               <p>
-                Sie möchten wissen was Ihre Immobilie wert ist? Gerne erstellen
-                wir für Sie eine kostenfreie und unverbindliche
-                Immobilienbewertung, um den aktuellen Wert Ihrer Immobilie zu
-                ermitteln. Einen Maklervertrag unterschreiben Sie bei uns erst,
-                wenn Sie sich bereit dafür fühlen.
+                Sie möchten wissen, was Ihre Immobilie wert ist? Gerne erstellen
+                wir für Sie eine kostenfreie und unverbindliche Bewertung. Einen
+                Maklervertrag unterschreiben Sie bei uns erst, wenn Sie sich
+                bereit dafür fühlen.
               </p>
+              <a
+                class="no-link standard-btn-reverse width-100"
+                href="/kontakt"
+                target="_blank"
+              >
+                Zum Kontaktformular
+              </a>
             </div>
-            <a
-              class="no-link standard-btn-reverse width-100"
-              href="/kontakt"
-              target="_blank"
-              >Zum Kontaktformular</a
-            >
-            <!-- <a href="tel:+4917644476237" target="_blank"
-              >Jetzt Termin vereinbaren!</a
-            > -->
           </div>
 
-          <!-- ad earning -->
           <div class="adBox-earning">
             <div class="adBox-container">
               <h3>Sie wissen von einem Verkauf?</h3>
               <p>
                 Sie kennen jemanden, der/die eine Immobilie verkaufen möchte?
-                Großartig! Stellen Sie den Kontakt zu uns her – bei
-                erfolgreichem Vermittlungsabschluss erhalten Sie einen Teil
+                Großartig! Bei erfolgreicher Vermittlung erhalten Sie einen Teil
                 unserer Provision.
               </p>
+              <a
+                class="no-link standard-btn-reverse width-100"
+                href="/kontakt"
+                target="_blank"
+              >
+                Zum Kontaktformular
+              </a>
             </div>
-            <a
-              class="no-link standard-btn-reverse width-100"
-              href="/kontakt"
-              target="_blank"
-              >Zum Kontaktformular</a
-            >
-            <!-- <a href="tel:+4917644476237" target="_blank"
-              >Jetzt mehr erfahren!</a
-            > -->
           </div>
-          <!-- ///////////// -->
         </div>
 
         <div class="double-divider-line no-print"></div>
         <div class="double-divider-line no-print"></div>
 
         <!-- /////////// MORE PROPERTY INFOS SECTION -->
-        <div class="more-property-infos-wrapper">
+        <div class="more-property-infos-wrapper page-break">
           <h3 class="">Weitere Angaben</h3>
 
           <div class="more-property-infos">
@@ -570,7 +550,7 @@
         <!-- /////////// END OF MORE PROPERTY INFOS SECTION -->
 
         <!-- /////////// ALTERNATIVE TITLE IMAGE SECTION -->
-        <div class="alt-title-img-section page-break" *ngIf="altTitleImage">
+        <div class="alt-title-img-section" *ngIf="altTitleImage">
           <!-- image -->
           <img
             class="alt-title-img"
@@ -589,7 +569,7 @@
 
         <!-- /////////// WRAPPER PROPERTY DESCRIPTIONS AND SIDEBAR -->
         <div
-          class="property-discriptions-and-sidebar-wrapper"
+          class="property-discriptions-and-sidebar-wrapper page-break"
           *ngIf="!accessIsShort"
         >
           <!-- /////////// PROPERTY DESCRIPTIONS-->
@@ -822,7 +802,7 @@
                   *Die Informationen wurden bereitgestellt von FSK
                   BAUFINANZIERUNG - unserem Partner für Finanzierungsfragen.
                 </p>
-                <div class="fincanel-expert-contact">
+                <!-- <div class="fincanel-expert-contact">
                   <p>Ansprechpartner:</p>
                   <p>
                     Herr Andreas Böck
@@ -839,7 +819,7 @@
                       <span>info&#64;fsk-baufinanzierung.de</span>
                     </a>
                   </p>
-                </div>
+                </div> -->
               </div>
             </div>
 
@@ -959,7 +939,7 @@
         </div>
 
         <!-- /////////// PROPERTY PHOTO GALLERY -->
-        <div class="images-gallery" *ngIf="!accessIsShort">
+        <div class="images-gallery page-break" *ngIf="!accessIsShort">
           <h3>Weitere Fotos</h3>
           <div class="masonry-gallery">
             <div class="masonry-item" *ngFor="let img of media">
@@ -1053,14 +1033,14 @@
                   <p><strong>Hilgert Immobilien</strong></p>
                   <p class="contact-slogan">
                     <strong
-                      >Immobilienverkauf mit Leidenschaft seit 1993</strong
+                      >Spezialisiert auf den Immobilienverkauf – seit
+                      1993</strong
                     >
                   </p>
                   <div class="spacer-m"></div>
 
                   <p><strong>Samuel Hilgert</strong></p>
                   <p>Immobilienberater & Vermittler</p>
-                  <div class="spacer-m"></div>
                   <div class="spacer-m"></div>
 
                   <a href="tel:+4962049803080">
@@ -1080,8 +1060,10 @@
                     <span>wwww.hilgert-immobilien.de</span>
                   </a>
                 </div>
+              </div>
 
-                <div class="content-col">
+              <div class="contact-person-container-bottom">
+                <div class="contactform-link">
                   <a
                     class="standard-btn-reverse"
                     href="/kontakt"
@@ -1089,14 +1071,14 @@
                     >Zum Kontaktformular</a
                   >
                 </div>
-              </div>
 
-              <div class="v-card-box">
-                <p>vCard:</p>
-                <img
-                  src="/img/e-card.png"
-                  alt="vCard-Immobilienmakler-Samuel-Hilgert"
-                />
+                <div class="v-card-box">
+                  <p>vCard:</p>
+                  <img
+                    src="/img/e-card.png"
+                    alt="vCard-Immobilienmakler-Samuel-Hilgert"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -1127,7 +1109,7 @@
 <!-- Beispiel für Haus
 http://localhost:4200/expose-preview/MIManXoQi6i9QtJNAYiw_42865 -->
 
-<!-- Beispiel für Erweitert
+<!-- Beispiel für gekürzt
    http://localhost:4200/expose-preview/YOtYKPd736tYM1HGan4W_23523 -->
 
 <!-- Beispiel für Normal

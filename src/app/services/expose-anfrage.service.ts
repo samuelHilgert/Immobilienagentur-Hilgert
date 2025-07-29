@@ -49,6 +49,7 @@ export class ExposeAnfrageService {
       await this.http.post('https://hilgert-immobilien.de/sendExposeAnfrageMail.php', {
         ...anfrage,
         autoExposeSend: immobilie?.autoExposeSend || false,
+        propertyTitle: immobilie?.title || '',
       }).toPromise();
   
       if (immobilie?.autoExposeSend) {
@@ -227,8 +228,11 @@ export class ExposeAnfrageService {
   //     return { success: false, error };
   //   }
   // }
+// 
+//
 
   // 🔐 Nur Admins können alle Anfragen zu einer Immobilie einsehen
+  
   async getAnfragenByImmobilienId(
     immobilienId: string
   ): Promise<ExposeAnfrageDto[]> {

@@ -22,9 +22,10 @@ switch ($_SERVER['REQUEST_METHOD']) {
         $params = json_decode($json);
 
         $email = $params->email ?? '';
+        $salutation = $params->salutation ?? '';
         $firstName = $params->firstName ?? '';
         $lastName = $params->lastName ?? '';
-        $name = trim($firstName . ' ' . $lastName);
+        $name = trim(($salutation ? $salutation . ' ' : '') . $firstName . ' ' . $lastName);
         $messageText = $params->message ?? '';
         $company = $params->company ?? '-';
         $phone = $params->phone ?? '';
@@ -35,11 +36,14 @@ switch ($_SERVER['REQUEST_METHOD']) {
         $requestPropertyId = $params->requestPropertyId ?? '';
         $propertyType = $params->propertyType ?? '';
         $autoExposeSend = isset($params->autoExposeSend) && $params->autoExposeSend ? 'Ja' : 'Nein';
-
+        $propertyTitle = $params->propertyTitle ?? '';
         $acceptedTerms = $params->acceptedTerms ? 'Ja' : 'Nein';
         $acceptedWithdrawal = $params->acceptedWithdrawal ? 'Ja' : 'Nein';
         $acceptedPrivacy = $params->acceptedPrivacy ? 'Ja' : 'Nein';
-
+        $propertyDisplay = $propertyTitle 
+        ? "$propertyTitle (ID: $requestPropertyId)" 
+        : "ID: $requestPropertyId";
+        
         $recipient = 'info@hilgert-immobilien.de';
         $subject = "Neue Exposé-Anfrage von <$email>";
 
@@ -52,7 +56,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
             $street $houseNumber<br>
             $zip $city<br><br>
             <strong>Immobilie:</strong><br>
-            $propertyType (ID: $requestPropertyId)<br><br>
+            $propertyDisplay<br><br>
             <strong>Automatischer Exposé-Versand aktiviert:</strong> $autoExposeSend<br><br>
             <strong>Einverständniserklärungen:</strong><br>
             Ich akzeptiere die allgemeinen Geschäftsbedingungen: $acceptedTerms<br>

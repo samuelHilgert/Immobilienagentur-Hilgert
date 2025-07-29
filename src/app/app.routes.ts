@@ -193,11 +193,10 @@ export const routes: Routes = [
   { 
     path: 'expose-anfordern', 
     component: ExposeAnfordernComponent },
-  {
-    path: 'expose-preview/:inquiryProcessId',
-    component: EpxosePreviewComponent,
-  },
-
+    {
+      path: 'expose-preview/:inquiryProcessId',
+      component: EpxosePreviewComponent,
+    },  
   {
     path: 'kontakt',
     component: KontaktComponent,

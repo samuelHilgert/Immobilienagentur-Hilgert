@@ -18,6 +18,8 @@ import {
 import { PropertyInquiryProcess } from '../../../../../models/property-inquiry-process.model';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { Firestore } from '@angular/fire/firestore';
+import { createExposeAnswerMailPayload } from '../../../../../factories/expose-mail.factory';
+import { ExposeAnfrageDto } from '../../../../../models/expose-anfrage.model';
 
 @Component({
   selector: 'app-property-expose-sets',
@@ -26,6 +28,7 @@ import { Firestore } from '@angular/fire/firestore';
   templateUrl: './property-expose-sets.component.html',
   styleUrl: './property-expose-sets.component.scss',
 })
+
 export class PropertyExposeSetsComponent implements OnInit {
   @Input() immobilienId!: string;
   immobilie?: Immobilie;
@@ -45,6 +48,10 @@ export class PropertyExposeSetsComponent implements OnInit {
     private firestore: Firestore
   ) {}
 
+  /**
+   * Initializes the component by loading the property,
+   * apartment details, expose URL and all customers.
+   */
   async ngOnInit() {
     this.immobilienId = this.route.snapshot.paramMap.get('externalId') || '';
     if (!this.immobilienId) return;
@@ -60,10 +67,14 @@ export class PropertyExposeSetsComponent implements OnInit {
     // console.log('Expose URL:', this.exposePdfUrl); // 👉 hier wird die URL ausgegeben
     // console.log('Extended Exposé verfügbar:', this.immobilie.extendedExposeAvailable); // zusätzlich nützlich
     // console.log('Speichere autoExposeSend:', this.immobilie.autoExposeSend);
-    
+
     this.allCustomers = await this.customerService.getAllCustomers();
   }
 
+  /**
+   * Uploads a new expose PDF to Firebase Storage and updates the property metadata.
+   * @param event File input change event
+   */
   async uploadExposePdf(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length || !this.immobilie?.externalId) return;
@@ -79,14 +90,17 @@ export class PropertyExposeSetsComponent implements OnInit {
       this.immobilie.exposePdfUrl = result.url;
       this.immobilie.extendedExposeAvailable = true;
 
-  await this.immobilienService.updateProperty(this.immobilie.externalId, {
-    exposePdfUrl: result.url,
-    extendedExposeAvailable: true,
-  });
+      await this.immobilienService.updateProperty(this.immobilie.externalId, {
+        exposePdfUrl: result.url,
+        extendedExposeAvailable: true,
+      });
       this.cdr.detectChanges();
     }
   }
 
+  /**
+   * Deletes the uploaded exposé PDF from Firebase Storage and updates the property metadata.
+   */
   async deleteExposePdf(): Promise<void> {
     if (!this.exposePdfUrl || !this.immobilie?.externalId) return;
     if (!confirm('Möchtest du das Exposé wirklich löschen?')) return;
@@ -106,6 +120,9 @@ export class PropertyExposeSetsComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
+  /**
+   * Filters the customer list based on the current search input.
+   */
   filterCustomers(): void {
     const term = this.customerSearch.toLowerCase();
     this.filteredCustomers = this.allCustomers.filter(
@@ -116,42 +133,52 @@ export class PropertyExposeSetsComponent implements OnInit {
     );
   }
 
+  /**
+   * Selects a customer and populates the search input with their name.
+   * @param customer The customer that was clicked
+   */
   selectCustomer(customer: Customer): void {
     this.selectedCustomer = customer;
     this.customerSearch = `${customer.firstName} ${customer.lastName}`;
     this.filteredCustomers = [];
   }
 
+  /**
+   * Sends the extended property expose manually to the selected customer via email.
+   *
+   * This method builds the appropriate expose payload based on the selected customer
+   * and the current property, then sends it to the backend email endpoint.
+   *
+   * It also updates the associated property inquiry process in Firestore,
+   * including status, timestamps, and logging entries.
+   *
+   * @returns A Promise that resolves once the expose has been sent and the process updated.
+   */
   async sendExposeToCustomer(): Promise<void> {
     if (!this.selectedCustomer || !this.immobilie) {
       alert('Bitte einen Kunden und eine Immobilie auswählen.');
       return;
     }
 
-    const payload = {
-      email: this.selectedCustomer.email,
-      externalId: this.immobilie.externalId,
-      lastName: this.selectedCustomer.lastName,
-      salutation: this.selectedCustomer.salutation,
-      numberOfRooms: this.immobilie?.numberOfRooms || '',
-      city: this.immobilie?.city || '',
-      value: this.immobilie?.value || 0,
-      marketingType: this.mapMarketingType(this.immobilie?.marketingType || ''),
-      immobilienTyp: this.immobilie?.propertyType || '',
-      exposePdfUrl: this.exposePdfUrl || '',
-    };
+    const anfrageMock = this.mapCustomerToExposeAnfrageDto(
+      this.selectedCustomer,
+      this.immobilie.externalId!
+    );
+    const mailPayload = createExposeAnswerMailPayload(
+      anfrageMock,
+      this.immobilie
+    );
 
     try {
       await this.http
         .post(
           'https://hilgert-immobilien.de/sendExposeAntwortMail.php',
-          payload
+          mailPayload
         )
         .toPromise();
 
       alert(`Exposé wurde an ${this.selectedCustomer.firstName} gesendet ✅`);
 
-      // 🔐 Prozess-ID auf Basis von customerId und propertyId
       const processId = `${this.selectedCustomer.customerId}_${this.immobilie.externalId}`;
       const processRef = doc(
         this.firestore,
@@ -163,11 +190,8 @@ export class PropertyExposeSetsComponent implements OnInit {
       if (processSnap.exists()) {
         const process = processSnap.data() as PropertyInquiryProcess;
 
-        // 📌 Exposé-Versanddatum aktualisieren
         process.exposeSent = new Date();
-        // 📌 Protocoll-Customer-Status aktualisieren
         process.inquiryProcessStatus = 'Exposé';
-        // 📌 Protocoll-Customer-Last-Update aktualisieren
         process.lastUpdateDate = new Date();
 
         addLogEntryToProcess(
@@ -186,7 +210,7 @@ export class PropertyExposeSetsComponent implements OnInit {
             `${this.selectedCustomer.firstName} ${this.selectedCustomer.lastName}`,
             'Status nach Exposé-Versand automatisch zu "Exposé" geändert.'
           )
-        );  
+        );
 
         await setDoc(processRef, process, { merge: true });
       }
@@ -196,19 +220,64 @@ export class PropertyExposeSetsComponent implements OnInit {
     }
   }
 
-  private mapMarketingType(code: string): string {
-    switch (code.toUpperCase()) {
-      case 'PURCHASE':
-        return 'Kauf';
-      case 'RENT':
-        return 'Miete';
-      case 'LEASEHOLD':
-        return 'Erbpacht';
-      default:
-        return 'Unbekannt';
-    }
+  /**
+   * Maps a customer and property ID to a valid ExposeAnfrageDto object,
+   * which is used to trigger email payload creation.
+   *
+   * This method ensures all required fields of the DTO are populated,
+   * including default values for optional fields if necessary.
+   *
+   * @param customer The customer to whom the expose will be sent.
+   * @param propertyId The external ID of the property the expose refers to.
+   * @returns A fully populated ExposeAnfrageDto object.
+   */
+  private mapCustomerToExposeAnfrageDto(
+    customer: Customer,
+    propertyId: string
+  ): ExposeAnfrageDto {
+    return {
+      requestCustomerId: customer.customerId,
+      salutation: customer.salutation,
+      company: customer.company || '',
+
+      firstName: customer.firstName,
+      lastName: customer.lastName,
+      street: customer.street || '',
+      houseNumber: customer.houseNumber || '',
+      zip: customer.zip || '',
+      city: customer.city || '',
+
+      email: customer.email,
+      phone: customer.phone || '',
+
+      message: 'Exposé-Versand durch manuelle Auswahl im Backend',
+
+      acceptedTerms: true,
+      acceptedWithdrawal: true,
+      acceptedPrivacy: true,
+
+      requestPropertyId: propertyId,
+      creationDate: new Date().toISOString(),
+    };
   }
 
+  // private mapMarketingType(code: string): string {
+  //   switch (code.toUpperCase()) {
+  //     case 'PURCHASE':
+  //       return 'Kauf';
+  //     case 'RENT':
+  //       return 'Miete';
+  //     case 'LEASEHOLD':
+  //       return 'Erbpacht';
+  //     default:
+  //       return 'Unbekannt';
+  //   }
+  // }
+
+  /**
+   * Toggles the auto-send option on the current property.
+   * Called when the auto-send checkbox is changed.
+   */
   async toggleAutoExposeSend(): Promise<void> {
     if (!this.immobilie?.externalId) return;
 
@@ -220,7 +289,6 @@ export class PropertyExposeSetsComponent implements OnInit {
     // console.log('Speichere autoExposeSend:', this.immobilie.autoExposeSend);
 
     if (!result.success) {
-      
       alert('Änderung konnte nicht gespeichert werden.');
     }
   }
