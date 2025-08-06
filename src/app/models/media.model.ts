@@ -8,4 +8,5 @@ export interface MediaAttachment {
   isAltTitleImage?: boolean;
   description?: string;
   uploadDate?: string;
+  sortOrder?: number;
 }

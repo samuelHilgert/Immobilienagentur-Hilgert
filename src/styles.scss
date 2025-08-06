@@ -245,38 +245,36 @@ body {
 }
 
 @media print {
+  // Seitenränder
   @page {
-    margin-top: 2cm;
-    margin-bottom: 2cm;
-    width: 100% !important;
-    box-sizing: border-box !important;
+    padding-top: 600px !important;
+    padding-bottom: 600px !important;
   }
 
+  // Sichtbarkeitsregeln
   .no-print {
     display: none !important;
   }
 
-  @media print {
-    .page-break {
-      break-before: page;
-      page-break-before: always;
-    }
-  }
-
-  // Für große Container 
-  @media print {
-    .no-break-inside {
-      break-inside: avoid;
-      page-break-inside: avoid;
-    }
-  }
-
-  button {
-    display: none;
-  }
-
+  .print-only,
   .display-if-print {
-    display: flex !important;
+    display: block !important;
+  }
+
+  // Sichere Seitenumbrüche
+  .page-break {
+    break-before: page;
+    page-break-before: always;
+  }
+
+  .no-break-inside {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  // Buttons nicht drucken
+  button {
+    display: none !important;
   }
 }
 

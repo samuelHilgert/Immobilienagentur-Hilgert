@@ -23,12 +23,15 @@ import {
 import { initializeApp } from 'firebase/app';
 import { environment } from '../../environments/environments';
 import { MediaAttachment } from '../models/media.model';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({ providedIn: 'root' })
 export class MediaService {
   private app = initializeApp(environment.firebase);
   private db = getFirestore(this.app);
   private storage = getStorage(this.app);
+
+  constructor(private http: HttpClient) {}
 
   async getMediaForProperty(externalId: string): Promise<MediaAttachment[]> {
     const mediaCollection = collection(this.db, 'media');
@@ -218,5 +221,21 @@ export class MediaService {
     }
 
     return null;
+  }
+
+  /**
+   * Updates the sort order of multiple media documents in Firestore.
+   * @param externalId ID of the related property
+   * @param sortedList List of media items with new sort order
+   */
+  async updateMediaSortOrder(
+    externalId: string,
+    sortedList: { id: string; sortOrder: number }[]
+  ): Promise<void> {
+    const batchUpdates = sortedList.map(({ id, sortOrder }) =>
+      updateDoc(doc(this.db, 'media', id), { sortOrder })
+    );
+
+    await Promise.all(batchUpdates);
   }
 }

@@ -12,24 +12,91 @@
     </a>
   </div>
 
+  <!-- IMAGES -->
   <h2>Bilder verwalten</h2>
-  <p>
-    Achte darauf, dass die Bilder komprimiert hochgeladen werden, um Speicher zu
-    reduzieren und sie nicht für andere Zwecke missbraucht werden
-  </p>
+  <div
+  class="media-grid"
+>
+  <div
+    class="media-card"
+    *ngFor="let item of media"
+  >
+    <!-- Placeholder MUSS direkt hier rein -->
+    <ng-template>
+      <div class="media-card placeholder-card"></div>
+    </ng-template>
 
-  <div *ngIf="media?.length === 0">Keine Bilder vorhanden.</div>
+    <div class="image-wrapper" (click)="openDialog(item)">
+      <img [src]="item.url" [alt]="item.description || 'Immobilienbild'" />
+      <span class="title-badge" *ngIf="item.isTitleImage">Titelbild</span>
+      <span class="title-badge alt-title-badge" *ngIf="item.isAltTitleImage">
+        Alternatives Titelbild
+      </span>
+    </div>
+
+    <mat-form-field appearance="outline" class="description-field">
+      <mat-label>Bildbeschreibung</mat-label>
+      <input
+        matInput
+        #descInput
+        [value]="item.description"
+        (blur)="updateDescription(item.id!, descInput.value)"
+      />
+    </mat-form-field>
+
+    <div class="button-group">
+      <button
+        mat-button
+        color="primary"
+        (click)="markAsTitleImage(item.id!)"
+        *ngIf="!item.isTitleImage"
+      >
+        Titelbild setzen
+      </button>
+      <button
+        mat-button
+        color="accent"
+        (click)="markAsAltTitleImage(item.id!)"
+        *ngIf="!item.isAltTitleImage"
+      >
+        Zweites Titelbild setzen
+      </button>
+      <button mat-button color="warn" (click)="deleteImage(item.id!)">
+        Löschen
+      </button>
+    </div>
+    <mat-form-field appearance="outline" class="sort-order-field">
+      <mat-label>Position</mat-label>
+      <input
+      type="number"
+      matInput
+      [value]="item.sortOrder ?? 0"
+      (blur)="onSortOrderChange(item, $event)"
+    />
+    </mat-form-field>
+    
+  </div>
+</div>
+
+  
+
+  <h2>Videos verwalten</h2>
+  <p>Hier kannst du die Videos ansehen oder löschen.</p>
+
+  <div *ngIf="mediaVideos?.length === 0">Keine Videos vorhanden.</div>
 
   <div class="media-grid">
-    <div class="media-card" *ngFor="let item of media">
-      <div class="image-wrapper" (click)="openDialog(item)">
-        <img [src]="item.url" [alt]="item.description || 'Immobilienbild'" />
-        <span class="title-badge" *ngIf="item.isTitleImage">Titelbild</span>
-        <span class="title-badge alt-title-badge" *ngIf="item.isAltTitleImage">Alternatives Titelbild</span>
+    <div class="media-card" *ngFor="let item of mediaVideos">
+      <div class="video-wrapper">
+        <video
+          [src]="item.url"
+          controls
+          style="width: 100%; border-radius: 8px"
+        ></video>
       </div>
 
       <mat-form-field appearance="outline" class="description-field">
-        <mat-label>Bildbeschreibung</mat-label>
+        <mat-label>Videobeschreibung</mat-label>
         <input
           matInput
           #descInput
@@ -39,21 +106,6 @@
       </mat-form-field>
 
       <div class="button-group">
-        <button
-          mat-button
-          color="primary"
-          (click)="markAsTitleImage(item.id!)"
-          *ngIf="!item.isTitleImage"
-        >Titelbild setzen
-        </button>
-        <button
-        mat-button
-        color="accent"
-        (click)="markAsAltTitleImage(item.id!)"
-        *ngIf="!item.isAltTitleImage"
-      >
-      Zweites Titelbild setzen
-      </button>
         <button mat-button color="warn" (click)="deleteImage(item.id!)">
           Löschen
         </button>
@@ -100,6 +152,16 @@
           Löschen
         </button>
       </div>
+      <mat-form-field appearance="outline" class="sort-order-field">
+        <mat-label>Position</mat-label>
+        <input
+          type="number"
+          matInput
+          [value]="item.sortOrder ?? 0"
+          (blur)="onFloorPlanSortOrderChange(item, $event)"
+        />
+      </mat-form-field>
+      
     </div>
   </div>
 

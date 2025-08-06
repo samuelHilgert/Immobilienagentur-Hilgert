@@ -526,7 +526,7 @@
             <!-- ///////////// end of more infos for house -->
 
             <!-- /////////// video of property  -->
-            <div class="property-video-section">
+            <div class="property-video-section"  *ngIf="!accessIsShort">
               <div *ngIf="videoMedia.length > 0">
                 <div *ngFor="let video of videoMedia" class="video-box">
                   <video
@@ -939,7 +939,7 @@
         </div>
 
         <!-- /////////// PROPERTY PHOTO GALLERY -->
-        <div class="images-gallery page-break" *ngIf="!accessIsShort">
+        <div class="images-gallery page-break no-break-inside" *ngIf="!accessIsShort">
           <h3>Weitere Fotos</h3>
           <div class="masonry-gallery">
             <div class="masonry-item" *ngFor="let img of media">
@@ -1015,7 +1015,7 @@
         <div class="double-divider-line no-print"></div>
 
         <!-- /////////// PROPERTY CONTACT PERSON SECTION -->
-        <div class="contact-person-section page-break">
+        <div class="contact-person-section page-break no-break-inside">
           <div class="contact-person-container">
             <h3>Ihr Ansprechpartner</h3>
 

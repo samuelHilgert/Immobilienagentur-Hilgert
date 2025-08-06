@@ -89,6 +89,7 @@ export class EpxosePreviewComponent implements OnInit {
         this.mediaService.getMediaForProperty(propertyExternalId),
         this.mediaService.getVideosForProperty(propertyExternalId),
       ]);
+      
 
       this.videoMedia = videoList;
 
@@ -96,13 +97,13 @@ export class EpxosePreviewComponent implements OnInit {
       const fallbackImage = mediaList[0];
       const imageToUse = titleImage || fallbackImage;
 
-      this.media = mediaList.filter(
-        (m) => m.category !== 'FLOOR_PLAN' && m.type === 'image'
-      );
+      this.media = mediaList
+      .filter((m) => m.category !== 'FLOOR_PLAN' && m.type === 'image')
+      .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));    
 
-      this.mediaFloorPlans = mediaList.filter(
-        (m) => m.category === 'FLOOR_PLAN'
-      );
+      this.mediaFloorPlans = mediaList
+      .filter((m) => m.category === 'FLOOR_PLAN')
+      .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));    
 
       this.immobilie = immobilie;
       this.loadDetails();
