@@ -1,71 +1,61 @@
-// src/app/services/expose-preview.service.ts
 import { Injectable } from '@angular/core';
-import {
-  doc,
-  getDoc,
-  setDoc,
-  updateDoc,
-  arrayUnion,
-  arrayRemove,
-  getFirestore,
-} from 'firebase/firestore';
-import { FirebaseService } from './firebase.service';
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { ExposePreview } from '../models/expose-preview.model';
-
-@Injectable({
-  providedIn: 'root',
-})
+import { Firestore } from '@angular/fire/firestore';
+import { FirebaseApp } from '@angular/fire/app';
+ 
+@Injectable({ providedIn: 'root' })
 export class ExposePreviewService {
-  private db = getFirestore();
-
-  constructor(private firebaseService: FirebaseService) {}
-
-  private getDocRef(propertyExternalId: string) {
-    return doc(this.db, 'expose-previews', propertyExternalId);
-  }
-
-  async getExposePreview(propertyExternalId: string): Promise<ExposePreview> {
-    const ref = this.getDocRef(propertyExternalId);
-    const snap = await getDoc(ref);
-    return snap.exists()
-      ? (snap.data() as ExposePreview)
-      : { shortExposeAccess: [], extendedExposeAccess: [] };
-  }
-
-  async setExposePreview(propertyExternalId: string, preview: ExposePreview) {
-    const ref = this.getDocRef(propertyExternalId);
-    await setDoc(ref, preview, { merge: true });
-  }
-
-  async addInquiryAccess(
-    propertyExternalId: string,
-    inquiryProcessId: string,
-    level: 'normal' | 'gekürzt' | 'erweitert'
-  ) {
-    const ref = this.getDocRef(propertyExternalId);
-  
-    // 🛠️ Sicherstellen, dass das Dokument existiert
-    const docSnap = await getDoc(ref);
-    if (!docSnap.exists()) {
-      await setDoc(ref, { shortExposeAccess: [], extendedExposeAccess: [] }, { merge: true });
-    }
-  
-    // Entfernen aus beiden Arrays
-    await updateDoc(ref, {
-      shortExposeAccess: arrayRemove(inquiryProcessId),
-      extendedExposeAccess: arrayRemove(inquiryProcessId),
+  constructor(private firestore: Firestore, private app: FirebaseApp) {
+    const opts = this.app.options as any;
+    console.log('[ExposePreviewService] FirebaseApp', {
+      projectId: opts?.projectId,
+      appId: opts?.appId,
+      apiKey: String(opts?.apiKey || '').slice(0, 6) + '…',
     });
-  
-    // Hinzufügen je nach Level
-    if (level === 'gekürzt') {
-      await updateDoc(ref, {
-        shortExposeAccess: arrayUnion(inquiryProcessId),
-      });
-    } else if (level === 'erweitert') {
-      await updateDoc(ref, {
-        extendedExposeAccess: arrayUnion(inquiryProcessId),
-      });
-    }
   }
-  
+
+  private getDocRef(inquiryProcessId: string) {
+    const ref = doc(this.firestore, 'expose-previews', inquiryProcessId);
+    console.log('[ExposePreviewService] doc path:', ref.path);
+    return ref;
+  }
+
+  async getExposePreview(inquiryProcessId: string): Promise<ExposePreview> {
+    console.group('[ExposePreviewService] getExposePreview');
+    console.log('inquiryProcessId:', inquiryProcessId);
+
+    const ref = this.getDocRef(inquiryProcessId);
+    const snap = await getDoc(ref);
+
+    console.log('exists():', snap.exists());
+    if (!snap.exists()) {
+      console.warn('⚠️ Kein Dokument unter:', ref.path);
+      console.groupEnd();
+      return {};
+    }
+
+    const data = snap.data() as ExposePreview;
+    console.log('data:', data);
+    console.groupEnd();
+    return data;
+  }
+
+  async setExposePreview(inquiryProcessId: string, preview: ExposePreview) {
+    console.group('[ExposePreviewService] setExposePreview');
+    console.log('inquiryProcessId:', inquiryProcessId, 'preview:', preview);
+    const ref = this.getDocRef(inquiryProcessId);
+    await setDoc(ref, preview, { merge: true });
+    console.log('✅ setDoc merge OK');
+    console.groupEnd();
+  }
+
+  async updateAccessLevel(inquiryProcessId: string, newLevel: string): Promise<void> {
+    console.group('[ExposePreviewService] updateAccessLevel');
+    console.log('inquiryProcessId:', inquiryProcessId, 'newLevel:', newLevel);
+    const ref = this.getDocRef(inquiryProcessId);
+    await updateDoc(ref, { exposeAccessLevel: newLevel });
+    console.log('✅ updateDoc OK');
+    console.groupEnd();
+  }
 }

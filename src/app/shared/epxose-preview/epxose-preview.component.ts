@@ -74,54 +74,57 @@ export class EpxosePreviewComponent implements OnInit {
     private mediaService: MediaService,
     private dialog: MatDialog
   ) {}
-
+  
   async ngOnInit() {
-    const inquiryProcessId =
-      this.route.snapshot.paramMap.get('inquiryProcessId');
-    if (!inquiryProcessId || !inquiryProcessId.includes('_')) return;
-
-    const [customerId, propertyExternalId] = inquiryProcessId.split('_');
-
+    console.group('[Preview] ngOnInit');
+  
+    const inquiryProcessId = this.route.snapshot.paramMap.get('inquiryProcessId');
+    console.log('Id ermittelt (aus URL):', inquiryProcessId);
+  
+    if (!inquiryProcessId || !inquiryProcessId.includes('_')) {
+      console.warn('❌ Ungültiges inquiryProcessId-Format. Expect <customerId>_<propertyExternalId>');
+      console.groupEnd();
+      // Falls du auch ohne gültiges Format rendern willst, entferne den Redirect:
+      this.router.navigate(['/expose-access-denied']);
+      return;
+    }
+  
+    const [, propertyExternalId] = inquiryProcessId.split('_');
+    console.log('propertyExternalId:', propertyExternalId);
+  
     try {
-      const [immobilie, preview, mediaList, videoList] = await Promise.all([
+      console.time('[Preview] parallel fetches');
+      const [immobilie, mediaList, videoList] = await Promise.all([
         this.immobilienService.getProperty(propertyExternalId),
-        this.exposePreviewService.getExposePreview(propertyExternalId),
         this.mediaService.getMediaForProperty(propertyExternalId),
         this.mediaService.getVideosForProperty(propertyExternalId),
       ]);
-      
-
-      this.videoMedia = videoList;
-
-      const titleImage = mediaList.find((m) => m.isTitleImage);
-      const fallbackImage = mediaList[0];
-      const imageToUse = titleImage || fallbackImage;
-
-      this.media = mediaList
-      .filter((m) => m.category !== 'FLOOR_PLAN' && m.type === 'image')
-      .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));    
-
-      this.mediaFloorPlans = mediaList
-      .filter((m) => m.category === 'FLOOR_PLAN')
-      .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));    
-
+      console.timeEnd('[Preview] parallel fetches');
+  
+      // 👉 Ohne Firestore-Freigabe: Standardmäßig anzeigen
+      this.exposeLevel = 'normal';
       this.immobilie = immobilie;
+      this.videoMedia = videoList;
+  
+      this.media = mediaList
+        .filter(m => m.category !== 'FLOOR_PLAN' && m.type === 'image')
+        .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+  
+      this.mediaFloorPlans = mediaList
+        .filter(m => m.category === 'FLOOR_PLAN')
+        .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+  
+      console.groupEnd();
       this.loadDetails();
-
-      if (preview.extendedExposeAccess?.includes(inquiryProcessId)) {
-        this.exposeLevel = 'erweitert';
-      } else if (preview.shortExposeAccess?.includes(inquiryProcessId)) {
-        this.exposeLevel = 'gekürzt';
-      } else {
-        this.exposeLevel = 'normal';
-      }
-
-      // console.log('Exposé-Level:', this.exposeLevel);
-      // console.log('Geladene Medien:', this.media);
-    } catch (error) {
-      console.error('Fehler beim Laden des Exposés:', error);
+    } catch (error: any) {
+      console.error('❌ Fehler beim Laden des Exposés:', error?.code || error?.message || error, error);
+      console.groupEnd();
+      // Optional: Fehlerseite oder Snackbar
+      this.router.navigate(['/expose-access-denied']);
     }
   }
+  
+  
 
   // get title and second title images
   getPrimaryTitleImage(): MediaAttachment | undefined {
@@ -133,23 +136,32 @@ export class EpxosePreviewComponent implements OnInit {
   }
 
   async loadDetails(): Promise<void> {
+    console.group('[Preview] loadDetails');
     const id = this.immobilie?.externalId;
     const type = this.immobilie?.propertyType;
-
-    if (!id) return;
-
+    console.log('externalId:', id, 'propertyType:', type);
+    if (!id) { console.warn('Kein externalId → abbrechen'); console.groupEnd(); return; }
+  
     try {
       const fullData = await this.immobilienService.getProperty(id);
-
+      console.log('fullData geladen:', !!fullData);
+  
       if (type === 'Wohnung') {
         this.wohnungDetails = fullData.apartmentDetails;
+        console.log('wohnungDetails gesetzt:', !!this.wohnungDetails);
       } else if (type === 'Haus') {
         this.hausDetails = fullData.houseDetails;
+        console.log('hausDetails gesetzt:', !!this.hausDetails);
       } else if (type === 'Grundstück') {
         this.grundstueckDetails = fullData.landDetails;
+        console.log('grundstueckDetails gesetzt:', !!this.grundstueckDetails);
+      } else {
+        console.warn('Unbekannter propertyType:', type);
       }
     } catch (error) {
       console.error('Fehler beim Laden der Detaildaten:', error);
+    } finally {
+      console.groupEnd();
     }
   }
 
@@ -337,6 +349,6 @@ export class EpxosePreviewComponent implements OnInit {
 
   // searching for video
   getVideoMedia(): MediaAttachment | undefined {
-    return this.media.find((m) => m.type === 'video');
+    return this.videoMedia[0];
   }
 }

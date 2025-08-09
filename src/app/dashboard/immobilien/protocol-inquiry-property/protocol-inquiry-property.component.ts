@@ -145,7 +145,7 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
     return this.form.get('purchaseOffers') as FormArray;
   }
 
-  addPurchaseOffer() {
+  addPurchaseOffer() { 
     const offerGroup = this.fb.group({
       offerDate: [new Date()],
       offerMedium: ['mail'],
@@ -285,11 +285,7 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
     const newLevel = updatedFields.exposeAccessLevel;
 
     if (oldLevel !== newLevel) {
-      await this.exposePreviewService.addInquiryAccess(
-        this.immobilie.externalId!,
-        processId,
-        newLevel
-      );
+      await this.exposePreviewService.updateAccessLevel(processId, newLevel);
 
       await this.logEntriesService.logProcessEntry(
         processId,

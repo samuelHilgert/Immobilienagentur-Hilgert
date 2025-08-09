@@ -1,5 +1,8 @@
 export interface ExposePreview {
-    shortExposeAccess?: string[];    
-    extendedExposeAccess?: string[];
-  }
-  
+  exposeAccessLevel?: 'normal' | 'gekürzt' | 'erweitert';
+  customerId?: string;
+  propertyExternalId?: string;
+  salutation?: string;
+  firstName?: string;
+  lastName?: string;
+}

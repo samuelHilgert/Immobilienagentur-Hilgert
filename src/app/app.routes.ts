@@ -51,6 +51,7 @@ import { PropertyExposeSetsComponent } from './dashboard/immobilien/immobilien-d
 import { ProtocolInquiryPropertyComponent } from './dashboard/immobilien/protocol-inquiry-property/protocol-inquiry-property.component';
 import { EpxosePreviewComponent } from './shared/epxose-preview/epxose-preview.component';
 import { DashStartComponent } from './dashboard/dash-start/dash-start.component';
+import { ExposeAccessDeniedComponent } from './shared/expose-access-denied/expose-access-denied.component';
 
 export const routes: Routes = [
   {
@@ -190,13 +191,18 @@ export const routes: Routes = [
     path: 'immobilienbewertung',
     component: ImmobilienbewertungComponent,
   },
-  { 
-    path: 'expose-anfordern', 
-    component: ExposeAnfordernComponent },
-    {
-      path: 'expose-preview/:inquiryProcessId',
-      component: EpxosePreviewComponent,
-    },  
+  {
+    path: 'expose-anfordern',
+    component: ExposeAnfordernComponent,
+  },
+  {
+    path: 'expose-preview/:inquiryProcessId',
+    component: EpxosePreviewComponent,
+  },
+  {
+    path: 'expose-access-denied',
+    component: ExposeAccessDeniedComponent,
+  },
   {
     path: 'kontakt',
     component: KontaktComponent,
