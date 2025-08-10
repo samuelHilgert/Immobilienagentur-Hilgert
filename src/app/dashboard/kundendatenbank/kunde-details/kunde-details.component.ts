@@ -366,18 +366,23 @@ export class KundeDetailsComponent implements OnInit {
   //   return new Date(val).toLocaleString();
   // }
 
+  // Button zum Löschen des Kudnen
   async onDelete(): Promise<void> {
-    const confirmed = confirm('Möchtest du diesen Kunden wirklich löschen?');
+    const confirmed = confirm(
+      'Kunden wirklich löschen? Zugehörige Exposé-Zugänge (falls vorhanden) werden ebenfalls entfernt.'
+    );
     if (!confirmed) return;
-
-    const result = await this.customerService.deleteCustomer(this.customerId);
-
-    if (result.success) {
-      alert('Kunde wurde gelöscht.');
-      this.goBack(); // 🎯 auch hier zurück zur Ursprungskomponente
+  
+    const res = await this.customerService.deleteCustomerAndPreviews(this.customerId);
+  
+    if (res.success) {
+      const info = res.deletedPreviews > 0
+        ? `Gelöschte Exposé-Previews: ${res.deletedPreviews}`
+        : 'Keine Exposé-Previews vorhanden (nichts zu löschen).';
+      alert(`Kunde wurde gelöscht. ${info}`);
+      this.goBack();
     } else {
-      alert('Fehler beim Löschen des Kunden');
-      console.error(result.error);
+      alert('Fehler beim Löschen des Kunden. Details in der Konsole.');
     }
   }
 

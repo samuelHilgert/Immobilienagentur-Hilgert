@@ -65,7 +65,7 @@ export class ExposeAnfordernComponent implements OnInit{
 
     this.route.queryParams.subscribe((params) => {
       const id = params['id'];
-      console.log('Query-Parameter-ID:', id);
+      // console.log('Query-Parameter-ID:', id);
       if (id) {
         this.loadImmobilie(id);
         this.loadMedia(id);
@@ -75,7 +75,7 @@ export class ExposeAnfordernComponent implements OnInit{
 
   ngOnInit(): void {
     const user = getAuth().currentUser;
-    console.log('👤 Aktueller User:', user?.uid, 'anonym:', user?.isAnonymous);
+    // console.log('👤 Aktueller User:', user?.uid, 'anonym:', user?.isAnonymous);
   }
 
   get firstNameControl() {

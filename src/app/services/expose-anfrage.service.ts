@@ -30,76 +30,74 @@ export class ExposeAnfrageService {
     sharedId: string
   ): Promise<{ success: boolean; id?: string; error?: any }> {
     console.group('[ExposeAnfrageService] submitExposeAnfrage');
-    try {
-      // 1) Grund-Refs
-      const exposeRef   = doc(this.firestore, 'expose-anfragen', sharedId);
-      const customerRef = doc(this.firestore, 'customers',        sharedId);
   
-      // 2) Anfrage speichern
+    try {
+      // 1) Anfrage-Dokument anlegen
+      const exposeRef   = doc(this.firestore, 'expose-anfragen', sharedId);
+      const customerRef = doc(this.firestore, 'customers', sharedId);
+  
       await setDoc(exposeRef, {
         ...anfrage,
         requestCustomerId: sharedId,
         creationDate: new Date().toISOString(),
       });
-      console.log('✅ expose-anfragen setDoc OK');
+      console.log('✅ expose-anfragen gespeichert');
   
-      // 3) Customer + Process vorbereiten
-      const customer = createCustomerFromExposeAnfrage(anfrage, sharedId);
-      const cleanPropertyId = String(anfrage.requestPropertyId).trim();
+      // 2) Customer + Process + Preview vorbereiten
+      const customer         = createCustomerFromExposeAnfrage(anfrage, sharedId);
+      const cleanPropertyId  = String(anfrage.requestPropertyId).trim();
       const inquiryProcessId = `${sharedId}_${cleanPropertyId}`;
-      console.log('sharedId:', sharedId);
-      console.log('requestPropertyId (raw):', anfrage.requestPropertyId, 'typeof:', typeof anfrage.requestPropertyId);
-      console.log('cleanPropertyId:', cleanPropertyId);
-      console.log('inquiryProcessId (Doc-ID):', inquiryProcessId);
+      console.log('inquiryProcessId:', inquiryProcessId);
   
-      const process = createInitialInquiryProcess(anfrage, inquiryProcessId);
+      const process    = createInitialInquiryProcess(anfrage, inquiryProcessId);
       const processRef = doc(this.firestore, 'property-inquiry-processes', inquiryProcessId);
   
-      // 4) Expose-Preview schreiben (entscheidend für dein Preview)
       const exposePreviewRef = doc(this.firestore, 'expose-previews', inquiryProcessId);
-      console.log('exposePreviewRef.path:', exposePreviewRef.path);
   
-      // parallel speichern
+      // 3) Alles parallel speichern
       await Promise.all([
         setDoc(processRef, process),
         setDoc(customerRef, customer, { merge: true }),
-        setDoc(exposePreviewRef, {
-          exposeAccessLevel: 'normal',
-          customerId: sharedId,
-          propertyExternalId: cleanPropertyId,
-          salutation: anfrage.salutation,
-          firstName: anfrage.firstName,
-          lastName: anfrage.lastName,
-        }, { merge: true }),
+        setDoc(
+          exposePreviewRef,
+          {
+            exposeAccessLevel: 'normal', // Start-Level
+            customerId: sharedId,
+            propertyExternalId: cleanPropertyId,
+            salutation: anfrage.salutation,
+            firstName: anfrage.firstName,
+            lastName: anfrage.lastName,
+          },
+          { merge: true }
+        ),
       ]);
+      console.log('✅ process, customer und expose-preview gespeichert');
   
-      console.log('✅ process/customer/preview setDoc OK');
-  
-      // 5) Sofort: Preview-Dokument verifizieren
+      // 4) Preview-Dokument verifizieren
       const verifySnap = await getDoc(exposePreviewRef);
       console.log('verify exists():', verifySnap.exists(), 'data:', verifySnap.data());
-      if (!verifySnap.exists()) {
-        throw new Error('Expose-Preview konnte nicht verifiziert werden (exists=false).');
-      }
   
-      // 6) Immobilie laden (für Mailpayload etc.)
+      // 5) Immobilie laden (für Mail)
       const immobilie = await this.immobilienService.getProperty(cleanPropertyId);
   
-      // 7) Interne Mail (unverändert)
-      await this.http.post('https://hilgert-immobilien.de/sendExposeAnfrageMail.php', {
-        ...anfrage,
-        autoExposeSend: immobilie?.autoExposeSend || false,
-        propertyTitle: immobilie?.title || '',
-      }).toPromise();
+      // 6) Interne Mail senden
+      await this.http.post(
+        'https://hilgert-immobilien.de/sendExposeAnfrageMail.php',
+        {
+          ...anfrage,
+          autoExposeSend: immobilie?.autoExposeSend || false,
+          propertyTitle: immobilie?.title || '',
+        }
+      ).toPromise();
   
-      // 8) Optional: Auto-Expose-Mail
+      // 7) Auto-Expose-Versand (falls aktiviert)
       if (immobilie?.autoExposeSend) {
         await this.sendExposeAndUpdateProcess(anfrage, immobilie, processRef);
       } else {
-        console.log('✋ Automatischer Exposé-Versand deaktiviert für diese Immobilie.');
+        console.log('✋ Auto-Expose-Versand deaktiviert');
       }
   
-      // 9) Cleanup: Anfrage nach 20s löschen (kann so bleiben)
+      // 8) Anfrage-Dokument nach 20s löschen
       setTimeout(async () => {
         try {
           console.log('🧹 Lösche expose-anfragen Doc:', sharedId);
@@ -118,6 +116,7 @@ export class ExposeAnfrageService {
       return { success: false, error };
     }
   }
+  
   
 
   private async sendExposeAndUpdateProcess(

@@ -18,15 +18,21 @@
         <!-- //// DOC HEADLINE -->
         <div class="doc-headline">
           <h2>
-            <strong>{{
-              exposeLevel === "normal"
-                ? "Erweitertes Exposé"
-                : exposeLevel === "gekürzt"
-                ? "Kurzvorschau"
-                : exposeLevel === "erweitert"
-                ? "Exklusives Exposé"
-                : ""
-            }}</strong>
+            <strong
+              >{{
+                exposeLevel === "normal"
+                  ? "Erweitertes Exposé"
+                  : exposeLevel === "gekürzt"
+                  ? "Kurzvorschau"
+                  : exposeLevel === "erweitert"
+                  ? "Exklusives Exposé"
+                  : ""
+              }}
+              FÜR
+              <!-- {{ customerSalutation || "" }} -->
+              {{ customerFirstName || "" }}
+              {{ customerLastName || "" }}
+            </strong>
           </h2>
         </div>
 
@@ -526,7 +532,7 @@
             <!-- ///////////// end of more infos for house -->
 
             <!-- /////////// video of property  -->
-            <div class="property-video-section"  *ngIf="!accessIsShort">
+            <div class="property-video-section" *ngIf="!accessIsShort">
               <div *ngIf="videoMedia.length > 0">
                 <div *ngFor="let video of videoMedia" class="video-box">
                   <video
@@ -939,7 +945,10 @@
         </div>
 
         <!-- /////////// PROPERTY PHOTO GALLERY -->
-        <div class="images-gallery page-break no-break-inside" *ngIf="!accessIsShort">
+        <div
+          class="images-gallery page-break no-break-inside"
+          *ngIf="!accessIsShort"
+        >
           <h3>Weitere Fotos</h3>
           <div class="masonry-gallery">
             <div class="masonry-item" *ngFor="let img of media">
@@ -1113,7 +1122,7 @@ http://localhost:4200/expose-preview/MIManXoQi6i9QtJNAYiw_42865 -->
    http://localhost:4200/expose-preview/YOtYKPd736tYM1HGan4W_23523 -->
 
 <!-- Beispiel für Normal
-http://localhost:4200/expose-preview/g90pHbLtRYD5rQo2wH1v_23523 -->
+http://localhost:4200/expose-preview/UehFBUYMZg3Un7lEMfUe_23523 -->
 
 <!-- Beispiel für Erweitert
 http://localhost:4200/expose-preview/ltltV5z7zYD3wcomDGd8_23523 -->

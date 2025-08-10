@@ -29,6 +29,7 @@ import { Nl2brPipe } from '../pipes/nl2br.pipe';
 import { EnergieklasseDiagrammComponent } from '../energieklasse-diagramm/energieklasse-diagramm.component';
 import { MediaService } from '../../services/media.service';
 import { ImageDialogComponent } from '../image-dialog/image-dialog.component';
+import { PropertyInquiryService } from '../../services/property-inquiry.service';
 
 declare var html2pdf: any;
 
@@ -65,6 +66,9 @@ export class EpxosePreviewComponent implements OnInit {
   parkingSpaceTypeLabels = parkingSpaceTypeLabels;
   buildingEnergyRatingTypeLabels = buildingEnergyRatingTypeLabels;
   videoMedia: MediaAttachment[] = [];
+  customerSalutation?: string;
+  customerFirstName?: string;
+  customerLastName?: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -72,59 +76,126 @@ export class EpxosePreviewComponent implements OnInit {
     private immobilienService: ImmobilienService,
     private router: Router,
     private mediaService: MediaService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private inquiryService: PropertyInquiryService
   ) {}
-  
+
   async ngOnInit() {
-    console.group('[Preview] ngOnInit');
-  
-    const inquiryProcessId = this.route.snapshot.paramMap.get('inquiryProcessId');
-    console.log('Id ermittelt (aus URL):', inquiryProcessId);
-  
+    // console.group('[Preview] ngOnInit');
+
+    const inquiryProcessId =
+      this.route.snapshot.paramMap.get('inquiryProcessId');
+    // console.log('Id ermittelt (aus URL):', inquiryProcessId);
+
     if (!inquiryProcessId || !inquiryProcessId.includes('_')) {
-      console.warn('❌ Ungültiges inquiryProcessId-Format. Expect <customerId>_<propertyExternalId>');
-      console.groupEnd();
-      // Falls du auch ohne gültiges Format rendern willst, entferne den Redirect:
+      // console.warn(
+      //   '❌ Ungültiges inquiryProcessId-Format. Erwartet: <customerId>_<propertyExternalId>'
+      // );
+      // console.groupEnd();
       this.router.navigate(['/expose-access-denied']);
       return;
     }
-  
-    const [, propertyExternalId] = inquiryProcessId.split('_');
-    console.log('propertyExternalId:', propertyExternalId);
-  
+
+    // Hier beide Teile extrahieren
+    const [customerId, propertyExternalId] = inquiryProcessId.split('_');
+
+    // ✅ 1. Firestore prüfen
     try {
-      console.time('[Preview] parallel fetches');
+      const previewSnap = await this.exposePreviewService.getExposePreview(
+        inquiryProcessId
+      );
+
+      // 1a) Existenz + Access-Level prüfen
+      if (!previewSnap || !previewSnap.exposeAccessLevel) {
+        // console.warn(
+        //   '❌ Kein gültiger Preview-Eintrag gefunden für',
+        //   inquiryProcessId
+        // );
+        // console.groupEnd();
+        this.router.navigate(['/expose-access-denied']);
+        return;
+      }
+
+      // 1b) Konsistenz der IDs prüfen (Manipulation ausschließen)
+      if (
+        previewSnap.customerId !== customerId ||
+        previewSnap.propertyExternalId !== propertyExternalId
+      ) {
+        // console.warn('❌ Preview passt nicht zu URL-IDs → redirect', {
+        //   expected: { customerId, propertyExternalId },
+        //   got: {
+        //     customerId: previewSnap.customerId,
+        //     propertyExternalId: previewSnap.propertyExternalId,
+        //   },
+        // });
+        // console.groupEnd();
+        this.router.navigate(['/expose-access-denied']);
+        return;
+      }
+
+      // 1c) Access-Level übernehmen
+      this.exposeLevel = previewSnap.exposeAccessLevel;
+      // console.log('✅ Access Level:', this.exposeLevel);
+
+      // ❗ Prozess-Status prüfen, bevor Medien geladen werden
+      const process = await this.inquiryService.getProcessByCustomerAndProperty(
+        customerId,
+        propertyExternalId
+      );
+      if (process?.inquiryProcessStatus === 'Ausgeschieden') {
+        this.router.navigate(['/expose-access-denied']);
+        return;
+      }
+
+      // ➕ Name/Anrede für das Template setzen
+      this.customerSalutation = previewSnap.salutation || '';
+      this.customerFirstName = previewSnap.firstName || '';
+      this.customerLastName = previewSnap.lastName || '';
+
+      // console.log(
+      //   '✅ Access Level:',
+      //   this.exposeLevel,
+      //   '👤',
+      //   this.customerSalutation,
+      //   this.customerFirstName,
+      //   this.customerLastName
+      // );
+    } catch (err) {
+      // console.error('Fehler beim Laden aus expose-previews:', err);
+      // console.groupEnd();
+      this.router.navigate(['/expose-access-denied']);
+      return;
+    }
+
+    // ✅ 2. Falls vorhanden, Immobilie + Medien laden
+    try {
+      // console.time('[Preview] parallel fetches');
       const [immobilie, mediaList, videoList] = await Promise.all([
         this.immobilienService.getProperty(propertyExternalId),
         this.mediaService.getMediaForProperty(propertyExternalId),
         this.mediaService.getVideosForProperty(propertyExternalId),
       ]);
-      console.timeEnd('[Preview] parallel fetches');
-  
-      // 👉 Ohne Firestore-Freigabe: Standardmäßig anzeigen
-      this.exposeLevel = 'normal';
+      // console.timeEnd('[Preview] parallel fetches');
+
       this.immobilie = immobilie;
       this.videoMedia = videoList;
-  
+
       this.media = mediaList
-        .filter(m => m.category !== 'FLOOR_PLAN' && m.type === 'image')
+        .filter((m) => m.category !== 'FLOOR_PLAN' && m.type === 'image')
         .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
-  
+
       this.mediaFloorPlans = mediaList
-        .filter(m => m.category === 'FLOOR_PLAN')
+        .filter((m) => m.category === 'FLOOR_PLAN')
         .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
-  
-      console.groupEnd();
+
       this.loadDetails();
-    } catch (error: any) {
-      console.error('❌ Fehler beim Laden des Exposés:', error?.code || error?.message || error, error);
-      console.groupEnd();
-      // Optional: Fehlerseite oder Snackbar
+      // console.groupEnd();
+    } catch (error) {
+      // console.error('❌ Fehler beim Laden des Exposés:', error);
+      // console.groupEnd();
       this.router.navigate(['/expose-access-denied']);
     }
   }
-  
-  
 
   // get title and second title images
   getPrimaryTitleImage(): MediaAttachment | undefined {
@@ -136,32 +207,36 @@ export class EpxosePreviewComponent implements OnInit {
   }
 
   async loadDetails(): Promise<void> {
-    console.group('[Preview] loadDetails');
+    // console.group('[Preview] loadDetails');
     const id = this.immobilie?.externalId;
     const type = this.immobilie?.propertyType;
-    console.log('externalId:', id, 'propertyType:', type);
-    if (!id) { console.warn('Kein externalId → abbrechen'); console.groupEnd(); return; }
-  
+    // console.log('externalId:', id, 'propertyType:', type);
+    if (!id) {
+      // console.warn('Kein externalId → abbrechen');
+      // console.groupEnd();
+      return;
+    }
+
     try {
       const fullData = await this.immobilienService.getProperty(id);
-      console.log('fullData geladen:', !!fullData);
-  
+      // console.log('fullData geladen:', !!fullData);
+
       if (type === 'Wohnung') {
         this.wohnungDetails = fullData.apartmentDetails;
-        console.log('wohnungDetails gesetzt:', !!this.wohnungDetails);
+        // console.log('wohnungDetails gesetzt:', !!this.wohnungDetails);
       } else if (type === 'Haus') {
         this.hausDetails = fullData.houseDetails;
-        console.log('hausDetails gesetzt:', !!this.hausDetails);
+        // console.log('hausDetails gesetzt:', !!this.hausDetails);
       } else if (type === 'Grundstück') {
         this.grundstueckDetails = fullData.landDetails;
-        console.log('grundstueckDetails gesetzt:', !!this.grundstueckDetails);
+        // console.log('grundstueckDetails gesetzt:', !!this.grundstueckDetails);
       } else {
-        console.warn('Unbekannter propertyType:', type);
+        // console.warn('Unbekannter propertyType:', type);
       }
     } catch (error) {
-      console.error('Fehler beim Laden der Detaildaten:', error);
+      // console.error('Fehler beim Laden der Detaildaten:', error);
     } finally {
-      console.groupEnd();
+      // console.groupEnd();
     }
   }
 
@@ -206,16 +281,16 @@ export class EpxosePreviewComponent implements OnInit {
   }
 
   downloadAsPDF() {
-    console.log('Download starten...');
+    // console.log('Download starten...');
 
     const element = document.getElementById('printContent');
     if (!element) {
-      console.warn('Druckbereich nicht gefunden!');
+      // console.warn('Druckbereich nicht gefunden!');
       return;
     }
 
     if (typeof html2pdf === 'undefined') {
-      console.error('html2pdf ist nicht verfügbar!');
+      // console.error('html2pdf ist nicht verfügbar!');
       return;
     }
 
@@ -229,7 +304,7 @@ export class EpxosePreviewComponent implements OnInit {
       jsPDF: { unit: 'cm', format: 'a4', orientation: 'portrait' },
     };
 
-    console.log('Optionen gesetzt, starte PDF-Erstellung...');
+    // console.log('Optionen gesetzt, starte PDF-Erstellung...');
     html2pdf().from(element).set(opt).save();
   }
 
