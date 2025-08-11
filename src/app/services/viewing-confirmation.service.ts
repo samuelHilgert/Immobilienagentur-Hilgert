@@ -1,7 +1,21 @@
+// viewing-confirmation.service.ts
 import { Injectable } from '@angular/core';
-import { Firestore, doc, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
-import { Timestamp } from 'firebase/firestore';
 import { ViewingConfirmation } from '../models/viewing-confirmation.model';
+import {
+  PropertyInquiryProcess,
+  ViewingAppointment,
+} from '../models/property-inquiry-process.model';
+import { Customer } from '../models/customer.model';
+import { Immobilie } from '../models/immobilie.model';
+import {
+  Firestore,
+  doc,
+  setDoc,
+  deleteDoc,
+  getDoc,
+  updateDoc,
+  Timestamp,
+} from '@angular/fire/firestore';
 
 @Injectable({ providedIn: 'root' })
 export class ViewingConfirmationService {
@@ -11,42 +25,137 @@ export class ViewingConfirmationService {
     return doc(this.firestore, 'viewing-confirmations', id);
   }
 
+  private buildId(
+    customerId: string,
+    propertyExternalId: string,
+    viewingDate: Date
+  ) {
+    return `${customerId}_${propertyExternalId}_${viewingDate.getTime()}`;
+  }
+
+  /**
+   * Upsert für GENAU EINEN Termin.
+   * - Erstellt bei Bedarf ein neues VC-Dokument (inkl. ID-Generierung),
+   * - aktualisiert es sonst,
+   * - verschiebt (rename) bei Datumsänderung (altes löschen, neues anlegen).
+   * Gibt immer die gültige viewingConfirmationId zurück (neu oder unverändert).
+   */
+  async upsertForAppointment(
+    process: PropertyInquiryProcess,
+    customer: Customer,
+    immobilie: Immobilie,
+    appt: ViewingAppointment
+  ): Promise<string | null> {
+    if (!appt.viewingDate) return null;
+  
+    const newId = this.buildId(
+      process.customerId,
+      process.propertyExternalId,
+      new Date(appt.viewingDate)
+    );
+  
+    const payloadBase = {
+      viewingConfirmationId: newId,
+      inquiryProcessId: process.inquiryProcessId,
+      customerId: process.customerId,
+      propertyExternalId: process.propertyExternalId,
+  
+      salutation: customer.salutation,
+      firstName: customer.firstName,
+      lastName: customer.lastName,
+  
+      viewingType: appt.viewingType,
+      viewingDate: Timestamp.fromDate(new Date(appt.viewingDate)) as any,
+  
+      title: immobilie.title ?? '',
+      street: immobilie.street ?? '',
+      houseNumber: immobilie.houseNumber ?? '',
+      postcode: immobilie.postcode ?? '',
+      city: immobilie.city ?? '',
+  
+      blocked: process.inquiryProcessStatus === 'Ausgeschieden',
+      creationDate: new Date().toISOString(),
+    };
+  
+    if (appt.viewingConfirmationId) {
+      const oldId = appt.viewingConfirmationId;
+  
+      if (oldId !== newId) {
+        // 1) Alte Daten holen, um Kundenfelder zu bewahren
+        const oldSnap = await getDoc(this.ref(oldId));
+        const preserved = oldSnap.exists()
+          ? {
+              acceptedConditions: oldSnap.data()['acceptedConditions'] ?? false,
+              confirmedAt: oldSnap.data()['confirmedAt'] ?? null,
+              confirmUa: oldSnap.data()['confirmUa'] ?? null,
+              note: oldSnap.data()['note'] ?? null,
+              sentMailConfirmation: oldSnap.data()['sentMailConfirmation'] ?? null,
+            }
+          : {
+              acceptedConditions: false,
+              confirmedAt: null,
+              confirmUa: null,
+              note: null,
+              sentMailConfirmation: null,
+            };
+  
+        // 2) Neues Doc schreiben (sauberer Neuaufbau)
+        await setDoc(this.ref(newId), { ...payloadBase, ...preserved }, { merge: false });
+  
+        // 3) Altes löschen
+        await deleteDoc(this.ref(oldId));
+  
+        return newId;
+      } else {
+        // Update: Kundenfelder NICHT überschreiben
+        await setDoc(this.ref(newId), payloadBase, { merge: true });
+        return newId;
+      }
+    }
+  
+    // NEU-Anlage
+    await setDoc(
+      this.ref(newId),
+      {
+        ...payloadBase,
+        acceptedConditions: false,
+        confirmedAt: null,
+        confirmUa: null,
+        note: null,
+        sentMailConfirmation: null,
+      },
+      { merge: false }
+    );
+  
+    return newId;
+  }
+  
+
+  /** Löscht das VC-Dokument zu einem Termin (falls ID vorhanden). */
+  async deleteForAppointment(appt: ViewingAppointment): Promise<void> {
+    if (!appt.viewingConfirmationId) return;
+    await deleteDoc(this.ref(appt.viewingConfirmationId));
+  }
+
+  // ⬇️ Für die öffentliche Seite:
   async get(id: string): Promise<ViewingConfirmation | null> {
     const snap = await getDoc(this.ref(id));
     return snap.exists() ? (snap.data() as ViewingConfirmation) : null;
   }
 
-  // Beim Versenden der Mail (intern) anlegen/überschreiben
-  async upsertLink(payload: {
-    inquiryProcessId: string;
-    customerId: string;
-    propertyExternalId: string;
-    appointmentDate?: Date;
-    addressLine?: string;
-    zip?: string;
-    city?: string;
-  }): Promise<void> {
-    const data: ViewingConfirmation = {
-      inquiryProcessId: payload.inquiryProcessId,
-      customerId: payload.customerId,
-      propertyExternalId: payload.propertyExternalId,
-      appointmentDate: payload.appointmentDate ? Timestamp.fromDate(payload.appointmentDate) : null,
-      addressLine: payload.addressLine ?? '',
-      zip: payload.zip ?? '',
-      city: payload.city ?? '',
-      blocked: false,
-      createdAt: Timestamp.now(),
-    };
-    await setDoc(this.ref(payload.inquiryProcessId), data, { merge: true });
+  // ⬇️ Bestätigung durch den Kunden (per ViewingConfirmationId!)
+  async confirm(viewingConfirmationId: string, note?: string) {
+    await updateDoc(this.ref(viewingConfirmationId), {
+      acceptedConditions: true,
+      confirmedAt: Timestamp.now(),
+      confirmUa: typeof navigator !== 'undefined' ? navigator.userAgent : null,
+      note: note ?? null,
+    });
   }
 
-  // Auf öffentlicher Seite speichern
-  async confirm(inquiryProcessId: string, note?: string) {
-    await updateDoc(this.ref(inquiryProcessId), {
-      acceptedGuidelines: true,
-      confirmedAt: Timestamp.now(),
-      confirmUa: navigator.userAgent,
-      note: note ?? null,
+  async markMailSent(viewingConfirmationId: string, sentAt: Date = new Date()) {
+    await updateDoc(this.ref(viewingConfirmationId), {
+      sentMailConfirmation: Timestamp.fromDate(sentAt),
     });
   }
 }

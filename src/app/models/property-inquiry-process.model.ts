@@ -8,12 +8,12 @@ export interface PropertyInquiryProcess {
 
   // Die drei Ids bilden zusamemn den sicheren Token, um das individuelle Exposé für den Kunden anzuzeigen (weil ja jedes unterschiedlich weit freigeschaltet sein wird)
 
-  exposeAccessLevel: 'normal' | 'gekürzt' | 'erweitert'; 
-// die Online Version in ImmoScout und HP ist normal, d.h. ganz kurz
-// gekürzt, wenn Kunde die Richtlinien bestätigt hat
-// erweitert wird sein, wenn der Kunde bereits besichtigt hat, dann erhält er Links zu Unterlagen und mehrere Fotos usw.
+  exposeAccessLevel: 'normal' | 'gekürzt' | 'erweitert';
+  // die Online Version in ImmoScout und HP ist normal, d.h. ganz kurz
+  // gekürzt, wenn Kunde die Richtlinien bestätigt hat
+  // erweitert wird sein, wenn der Kunde bereits besichtigt hat, dann erhält er Links zu Unterlagen und mehrere Fotos usw.
 
-  inquiryProcessStatus: InquiryProcessStatus; // ausgelagert als enum type 
+  inquiryProcessStatus: InquiryProcessStatus; // ausgelagert als enum type
   protocolNotes?: string; // wichtig, z.B. Grund falls Interessent kein Interesse mehr hat oder wenn Interessent Fragen hat zur Immobilie
 
   // relevant für Exposes.
@@ -62,7 +62,7 @@ export interface PropertyInquiryProcess {
 
   creationDate?: Date; // Wann wurde die Anfrage des Interessenten gestellt
   lastUpdateDate?: Date;
-  historyLog?: LogEntry[]; // logbuch um nachzuverfolgen was zuletzt passiert ist 
+  historyLog?: LogEntry[]; // logbuch um nachzuverfolgen was zuletzt passiert ist
 }
 
 export type InquiryProcessStatus =
@@ -78,8 +78,7 @@ export type InquiryProcessStatus =
   | 'Übergabe'
   | 'Abgeschlossen';
 
-
-  export interface ViewingAppointment {
+export interface ViewingAppointment {
   viewingType:
     | 'Erstbesichtigung'
     | 'Zweitbesichtigung'
@@ -91,6 +90,7 @@ export type InquiryProcessStatus =
   canceled: boolean;
   cancellationReason?: string;
   notes?: string;
+  viewingConfirmationId?: string;
 }
 
 export interface PurchaseOffer {
@@ -107,9 +107,8 @@ export interface PurchaseOffer {
 
 // Für bessere Übersicht, was zuletzt passiert ist eiin Logeintrag Interface
 export interface LogEntry {
-    date: Date;       // Wann die Aktion passiert ist
-    user: string;     // Wer sie ausgelöst hat (z. B. Admin-Mail, ID oder "System")
-    action: string;   // Was gemacht wurde, z. B. "Besichtigung bestätigt"
-    comment?: string; // Optionale Anmerkung, z. B. "Kunde hat telefonisch zugesagt"
-  }
-  
+  date: Date; // Wann die Aktion passiert ist
+  user: string; // Wer sie ausgelöst hat (z. B. Admin-Mail, ID oder "System")
+  action: string; // Was gemacht wurde, z. B. "Besichtigung bestätigt"
+  comment?: string; // Optionale Anmerkung, z. B. "Kunde hat telefonisch zugesagt"
+}

@@ -3,3 +3,12 @@
 @use "./../../../assets/colors.scss" as c;
 @use "./../../../assets/elements.scss" as e;
 
+section {
+    @include s.f_c_fs_fs;
+    gap:48px;
+    height: auto;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top:140px; 
+    padding:120px 64px;
+}

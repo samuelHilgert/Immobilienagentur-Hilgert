@@ -12,6 +12,7 @@ import { ViewingConfirmation } from '../../models/viewing-confirmation.model';
   templateUrl: './viewing-confirmation.component.html',
   styleUrl: './viewing-confirmation.component.scss'
 })
+
 export class ViewingConfirmationComponent implements OnInit {
   loading = true;
   error = '';
@@ -29,13 +30,13 @@ export class ViewingConfirmationComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('inquiryProcessId') || '';
+    const id = this.route.snapshot.paramMap.get('viewingConfirmationId') || ''; // 👈
     if (!id.includes('_')) { this.error = 'Ungültiger Link.'; this.loading = false; return; }
-
+  
     try {
       this.confirm = await this.svc.get(id);
       if (!this.confirm || this.confirm.blocked) {
-        this.router.navigate(['/expose-access-denied']); // oder eigene "access denied"
+        this.router.navigate(['/expose-access-denied']);
         return;
       }
     } catch {
@@ -44,14 +45,15 @@ export class ViewingConfirmationComponent implements OnInit {
       this.loading = false;
     }
   }
-
+  
   async onConfirm() {
     if (!this.confirm || !this.acceptedGuidelines) return;
     try {
-      await this.svc.confirm(this.confirm.inquiryProcessId, this.note);
+      await this.svc.confirm(this.confirm.viewingConfirmationId, this.note); // 👈
       this.saved = true;
     } catch {
       this.error = 'Bestätigung konnte nicht gespeichert werden.';
     }
   }
+  
 }

@@ -6,7 +6,7 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PropertyInquiryService } from '../../../services/property-inquiry.service';
 import { CustomerService } from '../../../services/customer.service';
 import { ImmobilienService } from '../../../services/immobilien.service';
-import { PropertyInquiryProcess } from '../../../models/property-inquiry-process.model';
+import { PropertyInquiryProcess, ViewingAppointment } from '../../../models/property-inquiry-process.model';
 import { Customer } from '../../../models/customer.model';
 import { Immobilie } from '../../../models/immobilie.model';
 import { MATERIAL_MODULES } from '../../../shared/material-imports';
@@ -215,98 +215,144 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
     });
 
     this.viewingAppointments.push(appointmentGroup);
-
-    const index = this.viewingAppointments.length - 1;
-    const selectedType = appointmentGroup.get('viewingType')?.value;
+    // kein sofortiges Save hier – der Nutzer speichert i.d.R. explizit
   }
 
-  deleteAppointment(index: number) {
+  async deleteAppointment(index: number) {
+    if (!this.process || !this.customer || !this.immobilie) return;
+  
+    const removed: ViewingAppointment | undefined = this.viewingAppointments.at(index)?.value;
+  
+    // Optimistisch aus UI entfernen
     this.viewingAppointments.removeAt(index);
+  
+    // Prozess-Array + Zeitstempel
+    const newList = this.viewingAppointments.value as ViewingAppointment[];
+    this.process.viewingAppointments = newList;
+    this.process.lastUpdateDate = new Date();
+  
+    try {
+      await this.inquiryService.updateProcess(this.process.inquiryProcessId, {
+        viewingAppointments: newList,
+        lastUpdateDate: this.process.lastUpdateDate,
+      });
+  
+      // VC-Datensatz löschen (falls vorhanden)
+      if (removed) await this.viewingConfirmSvc.deleteForAppointment(removed);
+  
+      await this.logEntriesService.logProcessEntry(
+        this.process.inquiryProcessId,
+        `${this.customer.firstName ?? ''} ${this.customer.lastName ?? ''}`.trim(),
+        'Besichtigungstermin gelöscht',
+        removed ? `Typ: ${removed.viewingType || '-'}, Zeit: ${removed.viewingDate || '-'}` : `Index: ${index}`
+      );
+    } catch (e) {
+      console.error('Löschen fehlgeschlagen, rolle lokal zurück:', e);
+      // Rollback im UI (optional)
+      this.viewingAppointments.insert(index, this.fb.group({
+        viewingType: [removed?.viewingType ?? 'Erstbesichtigung'],
+        viewingDate: [removed?.viewingDate ?? null],
+        confirmationSent: [removed?.confirmationSent ?? null],
+        confirmed: [removed?.confirmed ?? false],
+        canceled: [removed?.canceled ?? false],
+        cancellationReason: [removed?.cancellationReason ?? ''],
+        notes: [removed?.notes ?? ''],
+        viewingConfirmationId: [removed?.viewingConfirmationId ?? null],
+      }));
+      alert('Termin konnte nicht gelöscht werden.');
+    }
   }
+  
 
   async saveSingleAppointment(index: number) {
-    if (!this.process || !this.immobilie) return;
-
-    const appointment = this.viewingAppointments.at(index).value;
-
-    // Sicherstellen, dass viewingAppointments existiert
-    if (!this.process.viewingAppointments) {
-      this.process.viewingAppointments = [];
-    }
-
-    // Termin an richtiger Stelle ersetzen oder anhängen
-    this.process.viewingAppointments[index] = appointment;
-
-    // Zeitstempel für letzte Änderung
+    if (!this.process || !this.immobilie || !this.customer) return;
+  
+    const appt: ViewingAppointment = this.viewingAppointments.at(index).value;
+  
+    // 1) Prozess aktualisieren (wie bisher)
+    if (!this.process.viewingAppointments) this.process.viewingAppointments = [];
+    this.process.viewingAppointments[index] = appt;
     this.process.lastUpdateDate = new Date();
-
-    // 🔁 Firestore-Update
+  
     await this.inquiryService.updateProcess(this.process.inquiryProcessId, {
       viewingAppointments: this.process.viewingAppointments,
       lastUpdateDate: this.process.lastUpdateDate,
     });
-
-    // Log-Eintrag
+  
+    // 2) VC für diesen Termin upserten
+    const vcId = await this.viewingConfirmSvc.upsertForAppointment(
+      this.process, this.customer, this.immobilie, appt
+    );
+  
+    // 3) VC-ID im Termin speichern (falls neu oder geändert)
+    if (vcId && appt.viewingConfirmationId !== vcId) {
+      appt.viewingConfirmationId = vcId;
+      this.process.viewingAppointments[index] = appt;
+      await this.inquiryService.updateProcess(this.process.inquiryProcessId, {
+        viewingAppointments: this.process.viewingAppointments,
+        lastUpdateDate: new Date(),
+      });
+    }
+  
     await this.logEntriesService.logProcessEntry(
       this.process.inquiryProcessId,
-      `${this.customer?.firstName ?? ''} ${
-        this.customer?.lastName ?? ''
-      }`.trim(),
+      `${this.customer?.firstName ?? ''} ${this.customer?.lastName ?? ''}`.trim(),
       'Besichtigungstermin gespeichert',
-      `Typ: ${appointment.viewingType}, Zeit: ${appointment.viewingDate}`
+      `Typ: ${appt.viewingType}, Zeit: ${appt.viewingDate}`
     );
   }
-
+  
   ////////////////////////////////////////////////////////////////////////////////
 
   async save() {
-    if (!this.process || !this.form.valid || !this.immobilie) return;
+    // Guard Clauses
+    if (!this.process || !this.form?.valid || !this.customer || !this.immobilie)
+      return;
 
-    const updatedFields = this.form.value;
     const processId = this.process.inquiryProcessId;
-    const user = `${this.customer?.firstName ?? ''} ${
-      this.customer?.lastName ?? ''
+    const userLabel = `${this.customer.firstName ?? ''} ${
+      this.customer.lastName ?? ''
     }`.trim();
 
-    // 🔁 Änderungszeitpunkt
+    // Werte aus dem Formular
+    const updatedFields = { ...this.form.value };
+
+    // Timestamps / Pflichtfelder setzen
     updatedFields.lastUpdateDate = new Date();
 
-    // 📌 Statusänderung loggen
+    // -------------------------------
+    // Statuswechsel behandeln (+ Preview sperren/entsperren)
+    // -------------------------------
     const oldStatus = this.process.inquiryProcessStatus;
     const newStatus = updatedFields.inquiryProcessStatus;
 
-    // Preview sperren/entsperren:
-    await this.exposePreviewService.setExposePreview(
-      this.process.inquiryProcessId,
-      { blocked: newStatus === 'Ausgeschieden' }
-    );
-
     if (oldStatus !== newStatus) {
-      await this.logEntriesService.logProcessEntry(
-        processId,
-        user,
-        'Status geändert',
-        `von "${oldStatus}" auf "${newStatus}"`
-      );
-
-      // 👇 HINZU: Preview sperren/entsperren
+      // Preview blocken, wenn ausgeschieden
       try {
-        await this.exposePreviewService.setExposePreview(
-          this.process.inquiryProcessId,
-          { blocked: newStatus === 'Ausgeschieden' } // true = gesperrt
-        );
+        await this.exposePreviewService.setExposePreview(processId, {
+          blocked: newStatus === 'Ausgeschieden',
+        });
       } catch (e) {
         console.warn('Konnte blocked-Flag nicht updaten:', e);
       }
 
-      // 🧠 jetzt erst den neuen Wert setzen
+      await this.logEntriesService.logProcessEntry(
+        processId,
+        userLabel,
+        'Status geändert',
+        `von "${oldStatus}" auf "${newStatus}"`
+      );
+
+      // lokalen Prozess updaten (damit sync die korrekten Daten sieht)
       this.process.inquiryProcessStatus = newStatus;
     }
 
-    // 👇 Immer setzen – auch wenn gleich
+    // Stelle sicher, dass das Feld gesetzt bleibt
     updatedFields.inquiryProcessStatus = this.process.inquiryProcessStatus;
 
-    // 📄 Exposé-Level geändert
+    // -------------------------------
+    // Exposé-Level Änderung behandeln
+    // -------------------------------
     const oldLevel = this.process.exposeAccessLevel;
     const newLevel = updatedFields.exposeAccessLevel;
 
@@ -315,7 +361,7 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
 
       await this.logEntriesService.logProcessEntry(
         processId,
-        user,
+        userLabel,
         'Exposé-Level geändert',
         `von "${oldLevel}" auf "${newLevel}"`
       );
@@ -324,19 +370,31 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
       updatedFields.exposeAccessLevel = newLevel;
     }
 
+    // -------------------------------
+    // Form-Arrays zurück in den Prozess (damit Firestore & Sync konsistent sind)
+    // -------------------------------
     updatedFields.purchaseOffers = this.purchaseOffers.value;
     updatedFields.viewingAppointments = this.viewingAppointments.value;
 
-    // 🔁 History mitgeben
-    updatedFields.historyLog = this.process.historyLog;
+    // History und evtl. weitere Felder mitgeben
+    updatedFields.historyLog = this.process.historyLog ?? [];
     updatedFields.exposeAccessLevel = this.process.exposeAccessLevel;
 
-    // ✅ Gesamtspeicherung
+    // -------------------------------
+    // Firestore-Update des Prozesses
+    // -------------------------------
     await this.inquiryService.updateProcess(processId, updatedFields);
 
+    // Lokales Modell sofort aktualisieren (wichtig für den nachfolgenden Sync)
+    this.process = {
+      ...this.process,
+      ...updatedFields,
+    };
+
+    // Log
     await this.logEntriesService.logProcessEntry(
       processId,
-      user,
+      userLabel,
       'Änderungen gespeichert',
       'Allgemeine Änderungen wurden aktualisiert.'
     );
@@ -423,55 +481,82 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
     if (!this.process || !this.customer || !this.immobilie) return;
   
     const pick = this.pickConfirmableAppointment();
-    if (!pick) { alert('Kein gültiger Besichtigungstermin vorhanden.'); return; }
+    if (!pick) {
+      alert('Kein gültiger Besichtigungstermin vorhanden.');
+      return;
+    }
   
-    // ✅ lokal narrowen — ab hier sind das reine strings
-    const externalId = this.immobilie.externalId;
-    if (!externalId) { alert('Fehlende Objekt-ID (externalId).'); return; }
+    const appt = pick.appt as ViewingAppointment;
+  
+    // 1) Sicherstellen, dass ein VC existiert und wir eine ID haben
+    let vcId = appt.viewingConfirmationId ?? null;
+    if (!vcId) {
+      vcId = await this.viewingConfirmSvc.upsertForAppointment(
+        this.process, this.customer, this.immobilie, appt
+      );
+      if (vcId) {
+        appt.viewingConfirmationId = vcId;
+        this.process.viewingAppointments![pick.index] = appt;
+        await this.inquiryService.updateProcess(this.process.inquiryProcessId, {
+          viewingAppointments: this.process.viewingAppointments,
+          lastUpdateDate: new Date(),
+        });
+      }
+    }
+    if (!vcId) {
+      alert('Konnte keine Bestätigungs-ID erzeugen.');
+      return;
+    }
+  
+    // 2) Maildaten vorbereiten
+    const dt = new Date(appt.viewingDate!);
+    const weekday = dt.toLocaleDateString('de-DE', { weekday: 'long' });
+    const day = dt.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    const time = dt.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
   
     const street = this.immobilie.street ?? '';
     const houseNumber = this.immobilie.houseNumber ?? '';
     const postcode = this.immobilie.postcode ?? '';
     const city = this.immobilie.city ?? '';
+    const externalId = this.immobilie.externalId ?? '';
+  
+    const baseUrl = location.origin;
+    const confirmUrl = `${baseUrl}/viewing-confirmation/${vcId}`;
+  
+    const payload = {
+      email: this.customer.email,
+      lastName: this.customer.lastName,
+      salutation: this.customer.salutation,
+      propertyExternalId: externalId,
+      propertyAddress: `${street} ${houseNumber}`,
+      zip: postcode,
+      city,
+      date: day,
+      weekday,
+      time,
+      confirmUrl,
+    };
   
     try {
       this.sendingAppointment = true;
   
-      await this.viewingConfirmSvc.upsertLink({
-        inquiryProcessId: this.process.inquiryProcessId,
-        customerId: this.customer.customerId,
-        propertyExternalId: externalId, // 👈 jetzt sicher string
-        appointmentDate: new Date(pick.appt.viewingDate),
-        addressLine: `${street} ${houseNumber}`,
-        zip: postcode,
-        city,
+      // 3) Mail versenden
+      await this.http
+        .post('https://hilgert-immobilien.de/sendAppointmentConfirmation.php', payload)
+        .toPromise();
+  
+      // 4) VC: Versandzeitpunkt speichern (NICHT creationDate)
+      await this.viewingConfirmSvc.markMailSent(vcId, new Date());
+  
+      // 5) Optional: im Prozess den einzelnen Termin mit "confirmationSent" markieren
+      appt.confirmationSent = new Date();
+      this.process.viewingAppointments![pick.index] = appt;
+      await this.inquiryService.updateProcess(this.process.inquiryProcessId, {
+        viewingAppointments: this.process.viewingAppointments,
+        lastUpdateDate: new Date(),
       });
   
-      const baseUrl = location.origin;
-      const confirmUrl = `${baseUrl}/viewing-confirmation/${this.process.inquiryProcessId}`;
-  
-      const dt = new Date(pick.appt.viewingDate);
-      const weekday = dt.toLocaleDateString('de-DE', { weekday: 'long' });
-      const day     = dt.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
-      const time    = dt.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-  
-      const payload = {
-        email: this.customer.email,
-        lastName: this.customer.lastName,
-        salutation: this.customer.salutation,
-        propertyExternalId: externalId, // 👈 hier auch
-        propertyAddress: `${street} ${houseNumber}`,
-        zip: postcode,
-        city,
-        date: day,
-        weekday,
-        time,
-        confirmUrl,
-      };
-  
-      await this.http.post('https://hilgert-immobilien.de/sendAppointmentConfirmation.php', payload).toPromise();
-  
-      // … Rest unverändert
+      alert('Terminbestätigung wurde versendet.');
     } catch (e) {
       console.error('Fehler beim Senden der Terminbestätigung:', e);
       alert('Fehler beim Senden der E-Mail ❌');
@@ -479,7 +564,6 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
       this.sendingAppointment = false;
     }
   }
-  
 
   // back button
   navigateToProtocol(externalId: string) {

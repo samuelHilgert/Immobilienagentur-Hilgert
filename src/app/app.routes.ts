@@ -202,7 +202,7 @@ export const routes: Routes = [
     component: EpxosePreviewComponent,
   },
   {
-    path: 'viewing-confirmation/:inquiryProcessId',
+    path: 'viewing-confirmation/:viewingConfirmationId',
     component: ViewingConfirmationComponent,
   },
   {
