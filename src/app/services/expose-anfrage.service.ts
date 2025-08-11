@@ -10,6 +10,8 @@ import { mapMarketingType } from '../factories/marketing-type.util';
 import { createExposeAnswerMailPayload } from '../factories/expose-mail.factory';
 import { PropertyInquiryProcess } from '../models/property-inquiry-process.model';
 import { Timestamp } from 'firebase/firestore';
+import { Customer } from '../models/customer.model';
+import { Immobilie } from '../models/immobilie.model';
 
 @Injectable({
   providedIn: 'root',
@@ -67,6 +69,7 @@ export class ExposeAnfrageService {
             salutation: anfrage.salutation,
             firstName: anfrage.firstName,
             lastName: anfrage.lastName,
+            blocked: false,
           },
           { merge: true }
         ),
@@ -174,6 +177,50 @@ export class ExposeAnfrageService {
       );
     }
   }
+
+   /** Manuelles Versenden des Exposé-Links an den Kunden für diesen Prozess */
+   async sendExposeManual(
+    process: PropertyInquiryProcess,
+    customer: Customer,
+    immobilie: Immobilie
+  ): Promise<void> {
+    if (!process?.inquiryProcessId) throw new Error('processId fehlt');
+    if (!customer?.email) throw new Error('E-Mail des Kunden fehlt');
+    if (!immobilie?.externalId) throw new Error('externalId der Immobilie fehlt');
+
+    // Minimaler „Anfrage“-Stub für die bestehende Payload-Factory
+    const anfrageStub = {
+      salutation: customer.salutation,
+      firstName: customer.firstName,
+      lastName: customer.lastName,
+      email: customer.email,
+      phone: customer.mobile || customer.phone || '',
+      message: process.requestMessage || '',
+      requestCustomerId: process.customerId,
+      requestPropertyId: process.propertyExternalId,
+    } as ExposeAnfrageDto;
+
+    const payload = createExposeAnswerMailPayload(anfrageStub, immobilie);
+
+    // Mail rausschicken
+    await this.http
+      .post('https://hilgert-immobilien.de/sendExposeAntwortMail.php', payload)
+      .toPromise();
+
+    // Prozess updaten (wie beim Auto-Versand)
+    const now = Timestamp.now();
+    const processRef = doc(this.firestore, 'property-inquiry-processes', process.inquiryProcessId);
+    await setDoc(
+      processRef,
+      {
+        exposeSent: now,
+        inquiryProcessStatus: 'Exposé',
+        lastUpdateDate: now,
+      },
+      { merge: true }
+    );
+  }
+  
 
   // async submitExposeAnfrage(
   //   anfrage: ExposeAnfrageDto,

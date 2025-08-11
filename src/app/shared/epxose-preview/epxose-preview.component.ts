@@ -77,7 +77,7 @@ export class EpxosePreviewComponent implements OnInit {
     private router: Router,
     private mediaService: MediaService,
     private dialog: MatDialog,
-    private inquiryService: PropertyInquiryService
+    private inquiryService: PropertyInquiryService,
   ) {}
 
   async ngOnInit() {
@@ -94,16 +94,32 @@ export class EpxosePreviewComponent implements OnInit {
         preview.propertyExternalId !== propertyExternalId) {
       this.router.navigate(['/expose-access-denied']); return;
     }
+    
+    // 👇 HIER das neue Flag auswerten:
+    if (preview.blocked) {
+      this.router.navigate(['/expose-access-denied']); return;
+    }
+    
     this.exposeLevel = preview.exposeAccessLevel;
     this.customerSalutation = preview.salutation || '';
     this.customerFirstName  = preview.firstName  || '';
     this.customerLastName   = preview.lastName   || '';
-  
+
+
     // 2) Prozess-Status prüfen
-    const process = await this.inquiryService.getProcessByCustomerAndProperty(customerId, propertyExternalId);
-    if (process?.inquiryProcessStatus === 'Ausgeschieden') {
-      this.router.navigate(['/expose-access-denied']); return;
-    }
+
+    // try {
+    //   const process = await this.inquiryService.getProcessByCustomerAndProperty(customerId, propertyExternalId);
+    //   if (process?.inquiryProcessStatus === 'Ausgeschieden') {
+    //     this.router.navigate(['/expose-access-denied']);
+    //     return;
+    //   }
+    // } catch (e) {
+    //   console.error('[Preview] Prozess-Check fehlgeschlagen:', e);
+    //   this.router.navigate(['/expose-access-denied']);
+    //   return;
+    // }
+    
   
     // 3) Immobilie laden + Status prüfen
     const immobilie = await this.immobilienService.getProperty(propertyExternalId) as Immobilie | null;

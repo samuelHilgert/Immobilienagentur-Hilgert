@@ -44,23 +44,18 @@ async getExposePreview(inquiryProcessId: string): Promise<ExposePreview | null> 
 }
 
 
-  async setExposePreview(inquiryProcessId: string, preview: ExposePreview) {
-    console.group('[ExposePreviewService] setExposePreview');
-    console.log('inquiryProcessId:', inquiryProcessId, 'preview:', preview);
-    const ref = this.getDocRef(inquiryProcessId);
-    await setDoc(ref, preview, { merge: true });
-    console.log('✅ setDoc merge OK');
-    console.groupEnd();
-  }
-
-  async updateAccessLevel(inquiryProcessId: string, newLevel: string): Promise<void> {
-    // console.group('[ExposePreviewService] updateAccessLevel');
-    // console.log('inquiryProcessId:', inquiryProcessId, 'newLevel:', newLevel);
-    const ref = this.getDocRef(inquiryProcessId);
-    await updateDoc(ref, { exposeAccessLevel: newLevel });
-    // console.log('✅ updateDoc OK');
-    // console.groupEnd();
-  }
-
-  
+async setExposePreview(inquiryProcessId: string, preview: Partial<ExposePreview>) {
+  const ref = this.getDocRef(inquiryProcessId);
+  await setDoc(ref, preview, { merge: true });
 }
+
+async updateAccessLevel(
+  inquiryProcessId: string,
+  newLevel: 'normal' | 'gekürzt' | 'erweitert'
+): Promise<void> {
+  const ref = this.getDocRef(inquiryProcessId);
+  await updateDoc(ref, { exposeAccessLevel: newLevel });
+}
+
+}
+

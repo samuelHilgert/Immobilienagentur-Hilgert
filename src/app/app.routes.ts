@@ -7,7 +7,6 @@ import { ImmobilieAnlegenComponent } from './dashboard/immobilien/immobilie-anle
 import { ImmobilienComponent } from './dashboard/immobilien/immobilien.component';
 import { KundendatenbankComponent } from './dashboard/kundendatenbank/kundendatenbank.component';
 import { SuchauftraegeComponent } from './dashboard/suchauftraege/suchauftraege.component';
-import { BewertungenComponent } from './dashboard/bewertungen/bewertungen.component';
 import { NewsletterComponent } from './dashboard/newsletter/newsletter.component';
 import { PartnerAnlegenComponent } from './dashboard/partner/partner-anlegen/partner-anlegen.component';
 import { SocialMediaComponent } from './dashboard/social-media/social-media.component';
@@ -16,7 +15,7 @@ import { AblageComponent } from './dashboard/ablage/ablage.component';
 import { PartnerComponent } from './dashboard/partner/partner.component';
 import { KundeAnlegenComponent } from './dashboard/kundendatenbank/kunde-anlegen/kunde-anlegen.component';
 import { SuchauftragAnlegenComponent } from './dashboard/suchauftraege/suchauftrag-anlegen/suchauftrag-anlegen.component';
-import { BewertungAnlegenComponent } from './dashboard/bewertungen/bewertung-anlegen/bewertung-anlegen.component';
+import { BewertungAnlegenComponent } from './dashboard/dash-feedbacks/bewertung-anlegen/bewertung-anlegen.component';
 import { LeistungenComponent } from './leistungen/leistungen.component';
 import { ReferenzenComponent } from './referenzen/referenzen.component';
 import { ImmobilienbewertungComponent } from './immobilienbewertung/immobilienbewertung.component';
@@ -52,6 +51,9 @@ import { ProtocolInquiryPropertyComponent } from './dashboard/immobilien/protoco
 import { EpxosePreviewComponent } from './shared/epxose-preview/epxose-preview.component';
 import { DashStartComponent } from './dashboard/dash-start/dash-start.component';
 import { ExposeAccessDeniedComponent } from './shared/expose-access-denied/expose-access-denied.component';
+import { DashFeedbacksComponent } from './dashboard/dash-feedbacks/dash-feedbacks.component';
+import { DashAddFeedbackComponent } from './dashboard/dash-feedbacks/dash-add-feedback/dash-add-feedback.component';
+import { ViewingConfirmationComponent } from './shared/viewing-confirmation/viewing-confirmation.component';
 
 export const routes: Routes = [
   {
@@ -156,10 +158,10 @@ export const routes: Routes = [
         component: KundeDetailsComponent,
       },
       {
-        path: 'bewertungen',
-        component: BewertungenComponent,
+        path: 'dash-feedback',
+        component: DashFeedbacksComponent,
         children: [
-          { path: 'bewertung-anlegen', component: BewertungAnlegenComponent },
+          { path: 'dash-add-feedback', component: DashAddFeedbackComponent },
         ],
       },
       { path: 'newsletter', component: NewsletterComponent },
@@ -198,6 +200,10 @@ export const routes: Routes = [
   {
     path: 'expose-preview/:inquiryProcessId',
     component: EpxosePreviewComponent,
+  },
+  {
+    path: 'viewing-confirmation/:inquiryProcessId',
+    component: ViewingConfirmationComponent,
   },
   {
     path: 'expose-access-denied',

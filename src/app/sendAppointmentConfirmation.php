@@ -40,7 +40,8 @@ if (
     !isset($data['city']) ||
     !isset($data['date']) ||
     !isset($data['weekday']) ||
-    !isset($data['time'])
+    !isset($data['time']) ||
+    !isset($data['confirmUrl'])
 ) {
     http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'Fehlende Felder']);
@@ -59,6 +60,7 @@ $address     = $data['propertyAddress'];
 $zip         = $data['zip'];
 $city        = $data['city'];
 $downloadUrl = $data['formUrl'] ?? '';
+$confirmUrl = $data['confirmUrl'] ?? ''; 
 
 // 👉 E-Mail aufbauen
 $subject = "Terminbestätigung zur Besichtigung für die Immobilie ({$propertyExternalId}) - Bitte um kurze Antwort zur Bestätigung!";
@@ -69,17 +71,15 @@ $htmlMessage = "<html><body>
 
 <p>vielen Dank für Ihr Interesse an der Immobilie ({$propertyExternalId}) in {$city}.</p>
 
-<p>Hiermit erhalten Sie die Terminbestätigung für unsere Besichtigung am <strong>{$weekday}, den {$date} um {$time} Uhr</strong>.</p>
+<p>Hiermit erhalten Sie die Terminbestätigung für unsere vereinbarte Besichtigung am <strong>{$weekday}, den {$date} um {$time} Uhr</strong>.</p>
 
 <p>Die Adresse lautet: <strong>{$address}, {$zip} {$city}</strong>.</p>
 
-<p>
-Hier geht es zum Objektnachweis:<br>
-<a href='{$downloadUrl}' target='_blank'>{$downloadUrl}</a><br>
-Bitte senden Sie diesen unterschrieben zurück oder bringen ihn zur Besichtigung mit.
+<p><strong>Bitte bestätigen Sie unbedingt diesen Termin über folgenden Link und bestätigen Sie die Richtlinien für unsere Besichtigung:</strong>.
+<a href='{$confirmUrl}' target='_blank'>{$confirmUrl}</a>.</p>
+<p><strong>Ohne diese Bestätigung können wir leider keine Besichtigung gemeinsam durchführen.</strong>.
 </p>
 
-<p>Ohne diesen Nachweis kann leider keine Besichtigung stattfinden.</p>
 
 <p>Mit freundlichen Grüßen</p>
 <p><strong>Samuel Hilgert</strong><br>Immobilienberater & Vermittler</p>

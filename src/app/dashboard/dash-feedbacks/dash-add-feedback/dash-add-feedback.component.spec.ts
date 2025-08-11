@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { BewertungenComponent } from './bewertungen.component';
+import { DashAddFeedbackComponent } from './dash-add-feedback.component';
 
-describe('BewertungenComponent', () => {
-  let component: BewertungenComponent;
-  let fixture: ComponentFixture<BewertungenComponent>;
+describe('DashAddFeedbackComponent', () => {
+  let component: DashAddFeedbackComponent;
+  let fixture: ComponentFixture<DashAddFeedbackComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BewertungenComponent]
+      imports: [DashAddFeedbackComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(BewertungenComponent);
+    fixture = TestBed.createComponent(DashAddFeedbackComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

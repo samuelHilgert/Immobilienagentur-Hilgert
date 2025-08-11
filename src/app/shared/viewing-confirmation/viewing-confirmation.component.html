@@ -1,0 +1,49 @@
+<section *ngIf="!loading; else loadTpl">
+    <mat-card *ngIf="!saved && confirm; else successTpl">
+      <mat-card-title>Termin bestätigen</mat-card-title>
+      <mat-card-content>
+        <p *ngIf="confirm?.appointmentDate">
+          Termin: <strong>{{ confirm.appointmentDate.toDate() | date:'fullDate' }} {{ confirm.appointmentDate.toDate() | date:'shortTime' }}</strong><br>
+          Ort: {{ confirm.addressLine }}, {{ confirm.zip }} {{ confirm.city }}
+        </p>
+  
+        <h3>Richtlinien für die Besichtigung</h3>
+        <ul>
+          <li>Bitte pünktlich erscheinen.</li>
+          <li>Besichtigung nur in Begleitung.</li>
+          <li>Foto/Video nur nach Absprache.</li>
+          <li>Haustiere nicht mitbringen.</li>
+          <li>… (dein Text hier) …</li>
+        </ul>
+  
+        <mat-checkbox [(ngModel)]="acceptedGuidelines">
+          Ich habe die Richtlinien gelesen und bestätige den Termin.
+        </mat-checkbox>
+  
+        <mat-form-field appearance="fill" style="display:block; margin-top:8px;">
+          <mat-label>Hinweis (optional)</mat-label>
+          <textarea matInput [(ngModel)]="note"></textarea>
+        </mat-form-field>
+  
+        <div *ngIf="error" style="color:#c00">{{ error }}</div>
+  
+        <button mat-raised-button color="primary"
+                [disabled]="!acceptedGuidelines"
+                (click)="onConfirm()">
+          Bestätigen
+        </button>
+      </mat-card-content>
+    </mat-card>
+  
+    <ng-template #successTpl>
+      <mat-card>
+        <mat-card-title>Vielen Dank! ✅</mat-card-title>
+        <mat-card-content>
+          <p>Ihre Terminbestätigung wurde gespeichert.</p>
+        </mat-card-content>
+      </mat-card>
+    </ng-template>
+  </section>
+  
+  <ng-template #loadTpl><p>Lade…</p></ng-template>
+  

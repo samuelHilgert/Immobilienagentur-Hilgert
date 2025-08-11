@@ -80,7 +80,6 @@
           ></textarea>
         </mat-form-field>
       </div>
-      
     </mat-card>
 
     <!-- Zustimmung & Exposé -->
@@ -133,11 +132,31 @@
         <ng-template #noExpose>
           <p>Noch kein Exposé erhalten.</p>
         </ng-template>
+
+        <button
+          mat-raised-button
+          color="primary"
+          style="margin-top: 12px"
+          (click)="onSendExpose()"
+          [disabled]="
+            sending ||
+            !process ||
+            !customer ||
+            !immobilie ||
+            form.get('inquiryProcessStatus')?.value === 'Ausgeschieden' ||
+            immobilie.propertyStatus === 'Referenz'
+          "
+        >
+          {{ process.exposeSent ? "Exposé senden" : "Exposé senden" }}
+        </button>
+        <span *ngIf="sending" style="margin-left: 8px"
+          >Exposé wird zugestellt...</span
+        >
       </mat-card-content>
     </mat-card>
-    
 
     <!-- Besichtigungen -->
+
     <mat-card>
       <mat-card-title>Besichtigungen</mat-card-title>
       <mat-card-content>
@@ -216,73 +235,93 @@
         </div>
 
         <button mat-button (click)="addAppointment()">+ Neuer Termin</button>
+
+        <button
+          mat-raised-button
+          color="primary"
+          style="margin-left: 12px"
+          (click)="onSendAppointmentConfirmation()"
+          [disabled]="!canSendAppointmentConfirmation"
+        >
+          {{ sendingAppointment ? "Sende…" : "Terminbestätigung senden" }}
+        </button>
       </mat-card-content>
     </mat-card>
+
     <!-- //////////  -->
 
-      <!-- Kaufangebot -->
-      <mat-card>
-        <mat-card-title>Kaufangebot</mat-card-title>
-        <div formArrayName="purchaseOffers">
-          <div
-            *ngFor="let offer of purchaseOffers.controls; let i = index"
-            [formGroupName]="i"
-          >
-            <mat-form-field>
-              <mat-label>Datum</mat-label>
-              <input matInput type="datetime-local" formControlName="offerDate" />
-            </mat-form-field>
-        
-            <mat-form-field>
-              <mat-label>Medium</mat-label>
-              <mat-select formControlName="offerMedium">
-                <mat-option value="mail">Mail</mat-option>
-                <mat-option value="telefonisch">Telefonisch</mat-option>
-                <mat-option value="mündlich/persönlich">Persönlich</mat-option>
-                <mat-option value="postalisch">Post</mat-option>
-              </mat-select>
-            </mat-form-field>
-        
-            <mat-form-field>
-              <mat-label>Summe (€)</mat-label>
-              <input matInput type="number" formControlName="offerSum" />
-            </mat-form-field>
-        
-            <mat-form-field>
-              <mat-label>Text</mat-label>
-              <textarea matInput formControlName="offerText"></textarea>
-            </mat-form-field>
-        
-            <mat-checkbox formControlName="confirmed">Bestätigt</mat-checkbox>
-            <mat-checkbox formControlName="accepted">Angenommen</mat-checkbox>
-            <mat-checkbox formControlName="canceled">Zurückgezogen</mat-checkbox>
-        
-            <mat-form-field>
-              <mat-label>Rückzugsgrund</mat-label>
-              <input matInput formControlName="cancellationReason" />
-            </mat-form-field>
-        
-            <mat-form-field>
-              <mat-label>Weitergeleitet am</mat-label>
-              <input matInput type="datetime-local" formControlName="forwarded" />
-            </mat-form-field>
-        
-            <div class="btn-row">
-              <button mat-icon-button color="warn" (click)="purchaseOffers.removeAt(i)">
-                <mat-icon>delete</mat-icon>
-              </button>
-              <button mat-stroked-button color="primary" (click)="savePurchaseOffer(i)">
-                Speichern
-              </button>
-            </div>
-        
-            <mat-divider></mat-divider>
+    <!-- Kaufangebot -->
+    <mat-card>
+      <mat-card-title>Kaufangebot</mat-card-title>
+      <div formArrayName="purchaseOffers">
+        <div
+          *ngFor="let offer of purchaseOffers.controls; let i = index"
+          [formGroupName]="i"
+        >
+          <mat-form-field>
+            <mat-label>Datum</mat-label>
+            <input matInput type="datetime-local" formControlName="offerDate" />
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Medium</mat-label>
+            <mat-select formControlName="offerMedium">
+              <mat-option value="mail">Mail</mat-option>
+              <mat-option value="telefonisch">Telefonisch</mat-option>
+              <mat-option value="mündlich/persönlich">Persönlich</mat-option>
+              <mat-option value="postalisch">Post</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Summe (€)</mat-label>
+            <input matInput type="number" formControlName="offerSum" />
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Text</mat-label>
+            <textarea matInput formControlName="offerText"></textarea>
+          </mat-form-field>
+
+          <mat-checkbox formControlName="confirmed">Bestätigt</mat-checkbox>
+          <mat-checkbox formControlName="accepted">Angenommen</mat-checkbox>
+          <mat-checkbox formControlName="canceled">Zurückgezogen</mat-checkbox>
+
+          <mat-form-field>
+            <mat-label>Rückzugsgrund</mat-label>
+            <input matInput formControlName="cancellationReason" />
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Weitergeleitet am</mat-label>
+            <input matInput type="datetime-local" formControlName="forwarded" />
+          </mat-form-field>
+
+          <div class="btn-row">
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="purchaseOffers.removeAt(i)"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+            <button
+              mat-stroked-button
+              color="primary"
+              (click)="savePurchaseOffer(i)"
+            >
+              Speichern
+            </button>
           </div>
+
+          <mat-divider></mat-divider>
         </div>
-        
-        <button mat-button (click)="addPurchaseOffer()">+ Neues Kaufangebot</button>
-        
-      </mat-card>
+      </div>
+
+      <button mat-button (click)="addPurchaseOffer()">
+        + Neues Kaufangebot
+      </button>
+    </mat-card>
 
     <!-- Finanzierung -->
     <mat-card>

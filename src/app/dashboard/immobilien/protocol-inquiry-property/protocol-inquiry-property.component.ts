@@ -13,6 +13,9 @@ import { MATERIAL_MODULES } from '../../../shared/material-imports';
 import { convertTimestampsToDates } from '../../../utils/convert-timestamps.util';
 import { ExposePreviewService } from '../../../services/expose-preview.service';
 import { LogEntriesService } from '../../../services/logEntries.service';
+import { ExposeAnfrageService } from '../../../services/expose-anfrage.service';
+import { HttpClient } from '@angular/common/http';
+import { ViewingConfirmationService } from '../../../services/viewing-confirmation.service';
 
 @Component({
   selector: 'app-protocol-inquiry-property',
@@ -27,6 +30,8 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
   immobilie: Immobilie | null = null;
   form!: FormGroup;
   loading = true;
+  sending = false;
+  sendingAppointment = false;
 
   statuses = [
     'Ausgeschieden',
@@ -51,8 +56,11 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
     private customerService: CustomerService,
     private immobilienService: ImmobilienService,
     private exposePreviewService: ExposePreviewService,
+    private exposeAnfrageService: ExposeAnfrageService,
     private fb: FormBuilder,
-    private logEntriesService: LogEntriesService
+    private logEntriesService: LogEntriesService,
+    private viewingConfirmSvc: ViewingConfirmationService,
+    private http: HttpClient
   ) {}
 
   async ngOnInit() {
@@ -145,7 +153,7 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
     return this.form.get('purchaseOffers') as FormArray;
   }
 
-  addPurchaseOffer() { 
+  addPurchaseOffer() {
     const offerGroup = this.fb.group({
       offerDate: [new Date()],
       offerMedium: ['mail'],
@@ -157,35 +165,37 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
       forwarded: [null],
       accepted: [false],
     });
-  
+
     this.purchaseOffers.push(offerGroup);
-  }  
+  }
 
   async savePurchaseOffer(index: number) {
     if (!this.process) return;
-  
+
     const offer = this.purchaseOffers.at(index).value;
-  
+
     if (!this.process.purchaseOffers) {
       this.process.purchaseOffers = [];
     }
-  
+
     this.process.purchaseOffers[index] = offer;
     this.process.lastUpdateDate = new Date();
-  
+
     await this.inquiryService.updateProcess(this.process.inquiryProcessId, {
       purchaseOffers: this.process.purchaseOffers,
       lastUpdateDate: this.process.lastUpdateDate,
     });
-  
+
     await this.logEntriesService.logProcessEntry(
       this.process.inquiryProcessId,
-      `${this.customer?.firstName ?? ''} ${this.customer?.lastName ?? ''}`.trim(),
+      `${this.customer?.firstName ?? ''} ${
+        this.customer?.lastName ?? ''
+      }`.trim(),
       'Kaufangebot gespeichert',
       `Summe: ${offer.offerSum} €`
     );
   }
-  
+
   /////////////////////////////////////////
 
   ////////////////// Für die Besichtigungstermine ////////////////////////
@@ -265,6 +275,12 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
     const oldStatus = this.process.inquiryProcessStatus;
     const newStatus = updatedFields.inquiryProcessStatus;
 
+    // Preview sperren/entsperren:
+    await this.exposePreviewService.setExposePreview(
+      this.process.inquiryProcessId,
+      { blocked: newStatus === 'Ausgeschieden' }
+    );
+
     if (oldStatus !== newStatus) {
       await this.logEntriesService.logProcessEntry(
         processId,
@@ -272,6 +288,16 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
         'Status geändert',
         `von "${oldStatus}" auf "${newStatus}"`
       );
+
+      // 👇 HINZU: Preview sperren/entsperren
+      try {
+        await this.exposePreviewService.setExposePreview(
+          this.process.inquiryProcessId,
+          { blocked: newStatus === 'Ausgeschieden' } // true = gesperrt
+        );
+      } catch (e) {
+        console.warn('Konnte blocked-Flag nicht updaten:', e);
+      }
 
       // 🧠 jetzt erst den neuen Wert setzen
       this.process.inquiryProcessStatus = newStatus;
@@ -305,7 +331,6 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
     updatedFields.historyLog = this.process.historyLog;
     updatedFields.exposeAccessLevel = this.process.exposeAccessLevel;
 
-
     // ✅ Gesamtspeicherung
     await this.inquiryService.updateProcess(processId, updatedFields);
 
@@ -318,6 +343,143 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
 
     alert('Änderungen gespeichert.');
   }
+
+  async onSendExpose() {
+    if (!this.process || !this.customer || !this.immobilie) return;
+    try {
+      this.sending = true;
+
+      await this.exposeAnfrageService.sendExposeManual(
+        this.process,
+        this.customer,
+        this.immobilie
+      );
+
+      // UI sofort aktualisieren
+      this.process.exposeSent = new Date();
+      this.process.inquiryProcessStatus = 'Exposé';
+
+      // optional loggen
+      await this.logEntriesService.logProcessEntry(
+        this.process.inquiryProcessId,
+        `${this.customer.firstName} ${this.customer.lastName}`.trim(),
+        'Exposé per E-Mail versendet',
+        `Objekt ${this.immobilie.externalId}`
+      );
+
+      alert('Exposé wurde versendet.');
+    } catch (e: any) {
+      console.error(e);
+      alert('Exposé konnte nicht versendet werden: ' + (e?.message || e));
+    } finally {
+      this.sending = false;
+    }
+  }
+
+  // Nimmt den spätesten zukünftigen Termin (weit in der Zukunft).
+  // Optionaler Fallback: wenn kein zukünftiger, nimm den zuletzt vergangenen.
+  private pickConfirmableAppointment(): { index: number; appt: any } | null {
+    const arr = (this.viewingAppointments?.value ?? []) as any[];
+    if (!arr.length) return null;
+
+    const now = new Date();
+
+    const withDate = arr
+      .map((a, i) => ({
+        i,
+        a,
+        d: a?.viewingDate ? new Date(a.viewingDate) : null,
+      }))
+      .filter((x) => !!x.d && !x.a?.canceled); // nur mit Datum & nicht abgesagt
+
+    // ▶ zukünftige Termine
+    const future = withDate.filter((x) => x.d! >= now);
+    if (future.length) {
+      // spätester zukünftiger Termin
+      const pick = future.reduce((max, cur) => (cur.d! > max.d! ? cur : max));
+      return { index: pick.i, appt: pick.a };
+    }
+
+    // (optional) ▶ falls keine Zukunft: letzter vergangener Termin
+    const past = withDate.filter((x) => x.d! < now);
+    if (past.length) {
+      past.sort((a, b) => b.d!.getTime() - a.d!.getTime()); // jüngster vergangener zuerst
+      return { index: past[0].i, appt: past[0].a };
+    }
+
+    return null;
+  }
+
+  get canSendAppointmentConfirmation(): boolean {
+    if (this.sendingAppointment || !this.customer?.email || !this.immobilie)
+      return false;
+    if (this.form.get('inquiryProcessStatus')?.value === 'Ausgeschieden')
+      return false;
+    if (this.immobilie.propertyStatus === 'Referenz') return false;
+    return !!this.pickConfirmableAppointment();
+  }
+
+  async onSendAppointmentConfirmation() {
+    if (!this.process || !this.customer || !this.immobilie) return;
+  
+    const pick = this.pickConfirmableAppointment();
+    if (!pick) { alert('Kein gültiger Besichtigungstermin vorhanden.'); return; }
+  
+    // ✅ lokal narrowen — ab hier sind das reine strings
+    const externalId = this.immobilie.externalId;
+    if (!externalId) { alert('Fehlende Objekt-ID (externalId).'); return; }
+  
+    const street = this.immobilie.street ?? '';
+    const houseNumber = this.immobilie.houseNumber ?? '';
+    const postcode = this.immobilie.postcode ?? '';
+    const city = this.immobilie.city ?? '';
+  
+    try {
+      this.sendingAppointment = true;
+  
+      await this.viewingConfirmSvc.upsertLink({
+        inquiryProcessId: this.process.inquiryProcessId,
+        customerId: this.customer.customerId,
+        propertyExternalId: externalId, // 👈 jetzt sicher string
+        appointmentDate: new Date(pick.appt.viewingDate),
+        addressLine: `${street} ${houseNumber}`,
+        zip: postcode,
+        city,
+      });
+  
+      const baseUrl = location.origin;
+      const confirmUrl = `${baseUrl}/viewing-confirmation/${this.process.inquiryProcessId}`;
+  
+      const dt = new Date(pick.appt.viewingDate);
+      const weekday = dt.toLocaleDateString('de-DE', { weekday: 'long' });
+      const day     = dt.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      const time    = dt.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+  
+      const payload = {
+        email: this.customer.email,
+        lastName: this.customer.lastName,
+        salutation: this.customer.salutation,
+        propertyExternalId: externalId, // 👈 hier auch
+        propertyAddress: `${street} ${houseNumber}`,
+        zip: postcode,
+        city,
+        date: day,
+        weekday,
+        time,
+        confirmUrl,
+      };
+  
+      await this.http.post('https://hilgert-immobilien.de/sendAppointmentConfirmation.php', payload).toPromise();
+  
+      // … Rest unverändert
+    } catch (e) {
+      console.error('Fehler beim Senden der Terminbestätigung:', e);
+      alert('Fehler beim Senden der E-Mail ❌');
+    } finally {
+      this.sendingAppointment = false;
+    }
+  }
+  
 
   // back button
   navigateToProtocol(externalId: string) {
