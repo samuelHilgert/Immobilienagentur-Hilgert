@@ -519,6 +519,7 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
     const postcode = this.immobilie.postcode ?? '';
     const city = this.immobilie.city ?? '';
     const externalId = this.immobilie.externalId ?? '';
+    const courtage = this.immobilie.courtage ?? '';
   
     const baseUrl = location.origin;
     const confirmUrl = `${baseUrl}/viewing-confirmation/${vcId}`;
@@ -531,6 +532,7 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
       propertyAddress: `${street} ${houseNumber}`,
       zip: postcode,
       city,
+      courtage,
       date: day,
       weekday,
       time,

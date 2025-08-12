@@ -20,6 +20,8 @@ export interface ViewingConfirmation {
   postcode: string;
   city: string;
 
+  courtage?: string;
+
   // Link sperren (falls nötig)
   blocked?: boolean;
 

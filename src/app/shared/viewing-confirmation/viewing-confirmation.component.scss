@@ -5,10 +5,87 @@
 
 section {
     @include s.f_c_fs_fs;
-    gap:48px;
+    gap: 48px;
     height: auto;
     width: 100%;
     box-sizing: border-box;
-    margin-top:140px; 
-    padding:120px 64px;
+    margin-top: 140px;
+    padding: 120px 64px;
+}
+
+mat-card-header {
+    @include s.f_c_fs_fs;
+    gap: 12px;
+    padding: 24px 48px;
+    width: 100%;
+    box-sizing: border-box;
+
+    font-size: 1.15rem;
+
+    .header-info {
+        @include s.f_c_fs_fs;
+        gap: 4px;
+        width: 100%;
+        box-sizing: border-box;
+
+        .header-info-row {
+            @include s.f_r_fs_fs;
+            gap: 4px;
+            width: 100%;
+            box-sizing: border-box;
+
+            >p:first-of-type {
+                font-weight: 400;
+            }
+
+        }
+    }
+}
+
+mat-card-content {
+    @include s.f_c_fs_fs;
+    gap: 12px;
+    padding: 24px 48px;
+    width: 100%;
+    box-sizing: border-box;
+
+    .conditions {
+        @include s.f_c_fs_fs;
+        gap: 16px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .condition-area {
+        @include s.f_c_fs_fs;
+        gap: 8px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+.success-box,
+mat-card {
+    @include s.f_c_fs_fs;
+    gap: 12px;
+    padding: 24px 48px;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: rgba(54, 105, 54, 0.1);
+
+    mat-card-title {
+        @include s.f_c_fs_fs;
+        gap: 12px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    mat-card-content {
+        @include s.f_c_fs_fs;
+        gap: 12px;
+        width: 100%;
+        padding:0;
+        box-sizing: border-box;
+        font-size:1.25rem;
+    }
 }

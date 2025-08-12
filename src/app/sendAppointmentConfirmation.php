@@ -75,7 +75,7 @@ $htmlMessage = "<html><body>
 
 <p>Die Adresse lautet: <strong>{$address}, {$zip} {$city}</strong>.</p>
 
-<p><strong>Bitte bestätigen Sie unbedingt diesen Termin über folgenden Link und bestätigen Sie die Richtlinien für unsere Besichtigung:</strong>.
+<p><strong>Bitte bestätigen Sie unbedingt diesen Termin über folgenden Link und bestätigen Sie die Richtlinien für unsere Besichtigung:</strong>
 <a href='{$confirmUrl}' target='_blank'>{$confirmUrl}</a>.</p>
 <p><strong>Ohne diese Bestätigung können wir leider keine Besichtigung gemeinsam durchführen.</strong>.
 </p>

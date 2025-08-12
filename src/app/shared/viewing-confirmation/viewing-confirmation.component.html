@@ -1,25 +1,205 @@
 <section *ngIf="!loading; else loadTpl">
-  <mat-card *ngIf="!saved && confirm; else successTpl">
-    <mat-card-title>Termin bestätigen</mat-card-title>
+  <mat-card *ngIf="confirm && !saved; else successTpl" class="vc-card">
+    <mat-card-header>
+      <mat-card-title>Terminbestätigung und Provisionsnachweis</mat-card-title>
+      <div class="header-info">
+        <div
+          class="header-info-row"
+          *ngIf="confirm?.salutation && confirm?.firstName && confirm?.lastName"
+        >
+          <p>Interessent:</p>
+          <p>
+            {{ confirm.salutation || "" }}
+            {{ confirm.firstName || "" }}
+            {{ confirm.lastName || "" }}
+          </p>
+        </div>
+
+        <div class="header-info-row" *ngIf="confirm?.viewingDate as d">
+          <p>Besichtigungstermin:</p>
+          <p>
+            {{ ($any(d)?.toDate ? $any(d).toDate() : d) | date : "fullDate" }}
+            um
+            {{ ($any(d)?.toDate ? $any(d).toDate() : d) | date : "shortTime" }}
+            Uhr
+          </p>
+        </div>
+
+        <div class="header-info-row" *ngIf="confirm?.propertyExternalId">
+          <p>Immobilie:</p>
+          <p>
+            {{ confirm.title }} (Objekt-ID: {{ confirm.propertyExternalId }})
+          </p>
+        </div>
+
+        <div class="header-info-row" *ngIf="confirm?.street && confirm?.city">
+          <p>Anschrift:</p>
+          <p>
+            {{ confirm.street }} {{ confirm.houseNumber }},
+            {{ confirm.postcode }} {{ confirm.city }}
+          </p>
+        </div>
+      </div>
+    </mat-card-header>
+
+    <mat-divider></mat-divider>
+
     <mat-card-content>
+      <div class="conditions">
+        <h3>Richtlinien</h3>
+        <div class="condition-area">
+          <h4>Allgemeines</h4>
+          <p>
+            Wir bieten Ihnen die Besichtigung nur an, wenn Sie ein ernsthaftes
+            Interesse an der Immobilie haben. Mit der Bestätigung des Termins
+            bestätigen Sie somit auch, dass Sie für die o.g. Immobilie ein
+            ernsthaftes Interesse entgegenbringen. Mit Ihrer Bestätigung
+            bestätigen Sie außerdem:
+          </p>
+          <ul>
+            <li>
+              dass Sie von Hilgert Immobilien, Samuel Hilgert, Eichendorffstraße
+              22, 68519 Viernheim das Exposé zur o.g. Immobilie erhalten und
+              gelesen haben,
+            </li>
+            <li>
+              dass Ihnen die Immobilie in dieser Form und zu den genannten
+              Konditionen bisher nicht bekannt war,
+            </li>
+            <li>
+              dass Sie alle im Exposé enthaltenen sowie während der Besichtigung
+              erhaltenen Informationen vertraulich behandeln und nicht an Dritte
+              weitergeben.
+            </li>
+            <li>
+              dass Sie mit der zum Angebot einhergehenden Maklerprovision in
+              Höhe von
+              {{ confirm.courtage || "" }}, ausgehend vom Kaufpreis,
+              einverstanden sind.
+            </li>
+          </ul>
+        </div>
 
+        <div class="condition-area">
+          <h4>Regeln für die Besichtigung</h4>
+          <ul>
+            <li>
+              Wir führen ausschließlich Einzeltermine durch. Eine Besichtigung
+              dauert in der Regel etwa 60 Minuten. Da wir versuchen an einem Tag
+              mehrere Besichtigungen hintereinander zu planen, bitten wir Sie
+              pünktlich zu erscheinen. Andernfalls kann es passieren, dass wir
+              Sie für diesen Tag nicht mehr berücksichtigen können.
+            </li>
+            <li>
+              Sollte sich bei Ihnen abzeichnen, dass Sie den Termin nicht
+              wahrnehmen können, bitten wir Sie uns umgehend zu informieren.
+            </li>
+            <li>
+              Pro Termin können Sie maximal 2–3 Begleitpersonen zur Begehung
+              mitnehmen, in Ausnahmefällen auch mehr. Bitte teilen Sie uns die
+              genaue Anzahl an Begleitpersonen vorher mit. Teilen Sie uns vorher
+              unbedingt mit, wenn es sich bei einer der Begleitperson nicht um
+              einen Erwerber oder Familienmitglied handelt.
+            </li>
+            <li>
+              Das Betreten des Grundstücks oder Gebäudes ist nur in unserer
+              Anwesenheit gestattet. Wir haften nicht dafür, wenn Sie ein
+              Grundstück unbefugt betreten.
+            </li>
+            <li>
+              Das Fotografieren oder Filmen in und am Haus ist nur mit unserer
+              vorherigen Erlaubnis möglich.
+            </li>
+            <li>
+              Bitte behandeln Sie die Einrichtung in der Immobilie mit Sorgfalt
+              und folgen Sie unseren Hinweisen vor Ort. Auch gelten due üblichen
+              Hygienregeln und Standards.
+            </li>
+            <li>
+              Um die Böden der Immobilie zu schonen, stellen wir Ihnen zu Beginn
+              der Besichtigung bei Bedarf Schuhüberzieher zur Verfügung.
+            </li>
+          </ul>
+        </div>
 
-      <h3>Richtlinien für die Besichtigung</h3>
-      <ul>
-        <li>Bitte pünktlich erscheinen.</li>
-        <li>Besichtigung nur in Begleitung.</li>
-        <li>Foto/Video nur nach Absprache.</li>
-        <li>Haustiere nicht mitbringen.</li>
-        <li>… (dein Text hier) …</li>
-      </ul>
+        <div class="condition-area">
+          <h4>Weitere Sorgfaltspflichten</h4>
+          <p>
+            Sie bestätigen, dass Ihnen die Immobilie aus dem Exposé bzw. dem
+            Angebot bisher nicht bzw. nicht zu den aufgeführten Konditionen
+            bekannt war und verpflichten sich für den Fall des Erwerbs bzw. dem
+            Abschluss eines gleichwertigen Rechtsgeschäftes zur Zahlung der
+            nachstehend genannten Vermittlungsprovision. Wurde Ihnen die o.g.
+            Immobilie bereits von anderer Seite angeboten, so sind Sie
+            verpflichtet, uns dies unverzüglich mitzuteilen und wenn möglich
+            nachzuweisen. Nehmen Sie Verhandlungen mit jemand Dritten auf und es
+            entsteht ein Rechtsgeschäft, sodass uns hierdurch die Provision
+            entgeht, so sind Sie in der Nachweispflicht, zu beweisen, dass wir
+            als Makler nicht für Sie hätten tätig werden dürfen. Ansonsten
+            behalten wir uns das Recht vor, unseren Provisionsanspruch gegen Sie
+            und die andere Vertragspartei geltend zu machen.
+          </p>
+        </div>
+
+        <div class="condition-area">
+          <h4>Hinweis zur Maklerprovision</h4>
+          <p>
+            Die Maklerprovision beträgt vom Kaufpreis
+            {{ confirm.courtage || "" }}. Der Anspruch entsteht, wenn es
+            aufgrund unserer Tätigkeit zu einem notariell beurkundeten
+            Kaufvertrag oder einem wirtschaftlich gleichwertigen Rechtsgeschäft
+            kommt. Die Provision wird mit Abschluss des notariellen Kaufvertrags
+            fällig und ist innerhalb von 14 Tagen zu zahlen. Falls Ihnen die
+            Immobilie bereits von anderer Seite angeboten wurde, informieren Sie
+            uns bitte sofort und, wenn möglich, mit Nachweis.
+          </p>
+        </div>
+
+        <div class="condition-area">
+          <h4>Vertraulichkeit & Weitergabe-Verbot</h4>
+          <p>
+            Alle Informationen aus dem Exposé und der Besichtigung sind
+            ausschließlich für Sie bestimmt und dürfen nicht an Dritte
+            weitergegeben werden. Dies gilt auch, wenn Sie sich später gegen
+            einen Kauf entscheiden. So schützen wir die Interessen der
+            Eigentümer und vermeiden Missbrauch sensibler Daten.
+          </p>
+        </div>
+
+        <div class="condition-area">
+          <h4>Rechtliche Hinweise</h4>
+          <p>
+            Ergänzend gelten AGB, Datenschutzerklärung und Widerrufsbelehrung.
+            Bei Verstößen gegen diese oder der hier genannten Richtlinien können
+            Schadenersatzansprüche geltend gemacht werden. Beweislast für das
+            Nichtbestehen eines Provisionsanspruchs liegt bei Ihnen, dem
+            Interessenten.
+          </p>
+        </div>
+
+        <div class="condition-area">
+          <h4>Weiteres Interesse</h4>
+          <p>
+            Bei weiterem Interesse nach der Besichtigung, stellen wir Ihnen
+            gerne weitere Unterlagen zur Immobilie zur Verfügung. Auch sind
+            Zweit- und Drittbesichtigungen möglich. Wir bieten Ihnen gerne eine
+            Reservierungsvereinbarung zur gegeben Zeit an, um die Immobilie für
+            Sie zu sichern.
+          </p>
+        </div>
+      </div>
 
       <mat-checkbox [(ngModel)]="acceptedGuidelines">
-        Ich habe die Richtlinien gelesen und bestätige den Termin.
+        Ich habe die Richtlinien gelesen und bestätige diese sowie den Termin
+        für die anstehende Besichtigung.
       </mat-checkbox>
 
-      <mat-form-field appearance="fill" style="display: block; margin-top: 8px">
-        <mat-label>Hinweis (optional)</mat-label>
-        <textarea matInput [(ngModel)]="note"></textarea>
+      <mat-form-field
+        appearance="fill"
+        style="display: block; margin-top: 8px; width: 50%"
+      >
+        <mat-label>Anmerkungen (optional)</mat-label>
+        <textarea matInput [(ngModel)]="note" style="height: 250px"></textarea>
       </mat-form-field>
 
       <div *ngIf="error" style="color: #c00">{{ error }}</div>
@@ -35,11 +215,11 @@
     </mat-card-content>
   </mat-card>
 
-  <ng-template #successTpl>
+  <ng-template #successTpl class="success-box">
     <mat-card>
-      <mat-card-title>Vielen Dank! ✅</mat-card-title>
+      <mat-card-title>Vielen Dank!</mat-card-title>
       <mat-card-content>
-        <p>Ihre Terminbestätigung wurde gespeichert.</p>
+        <p>Ihre Terminbestätigung war erfolgreich.</p>
       </mat-card-content>
     </mat-card>
   </ng-template>

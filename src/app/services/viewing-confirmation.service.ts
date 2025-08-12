@@ -72,6 +72,7 @@ export class ViewingConfirmationService {
       houseNumber: immobilie.houseNumber ?? '',
       postcode: immobilie.postcode ?? '',
       city: immobilie.city ?? '',
+      courtage: immobilie.courtage ?? '',
   
       blocked: process.inquiryProcessStatus === 'Ausgeschieden',
       creationDate: new Date().toISOString(),
@@ -145,13 +146,25 @@ export class ViewingConfirmationService {
 
   // ⬇️ Bestätigung durch den Kunden (per ViewingConfirmationId!)
   async confirm(viewingConfirmationId: string, note?: string) {
+    // 1) Sofort die Bestätigung speichern
     await updateDoc(this.ref(viewingConfirmationId), {
       acceptedConditions: true,
       confirmedAt: Timestamp.now(),
       confirmUa: typeof navigator !== 'undefined' ? navigator.userAgent : null,
       note: note ?? null,
     });
+  
+    // 2) Nach 3 Sekunden sperren
+    setTimeout(async () => {
+      try {
+        await updateDoc(this.ref(viewingConfirmationId), { blocked: true });
+      } catch (e) {
+        // optional: Logging oder Monitoring
+        console.error('Konnte nachträgliches Sperren nicht durchführen:', e);
+      }
+    }, 3000);
   }
+  
 
   async markMailSent(viewingConfirmationId: string, sentAt: Date = new Date()) {
     await updateDoc(this.ref(viewingConfirmationId), {
