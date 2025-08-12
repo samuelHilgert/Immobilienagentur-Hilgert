@@ -88,6 +88,10 @@ body {
   box-sizing: border-box;
 }
 
+.no-link {
+  text-decoration: none;
+}
+
 // -----------------------------------
 // 🧩 sections
 // -----------------------------------
@@ -245,6 +249,7 @@ body {
 }
 
 @media print {
+
   // Seitenränder
   @page {
     padding-top: 600px !important;

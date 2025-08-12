@@ -10,9 +10,8 @@ import { ViewingConfirmation } from '../../models/viewing-confirmation.model';
   standalone: true,
   imports: [CommonModule, MATERIAL_MODULES, RouterModule],
   templateUrl: './viewing-confirmation.component.html',
-  styleUrl: './viewing-confirmation.component.scss'
+  styleUrl: './viewing-confirmation.component.scss',
 })
-
 export class ViewingConfirmationComponent implements OnInit {
   loading = true;
   error = '';
@@ -31,8 +30,12 @@ export class ViewingConfirmationComponent implements OnInit {
 
   async ngOnInit() {
     const id = this.route.snapshot.paramMap.get('viewingConfirmationId') || ''; // 👈
-    if (!id.includes('_')) { this.error = 'Ungültiger Link.'; this.loading = false; return; }
-  
+    if (!id.includes('_')) {
+      this.error = 'Ungültiger Link.';
+      this.loading = false;
+      return;
+    }
+
     try {
       this.confirm = await this.svc.get(id);
       if (!this.confirm || this.confirm.blocked) {
@@ -45,15 +48,19 @@ export class ViewingConfirmationComponent implements OnInit {
       this.loading = false;
     }
   }
-  
+
   async onConfirm() {
     if (!this.confirm || !this.acceptedGuidelines) return;
     try {
-      await this.svc.confirm(this.confirm.viewingConfirmationId, this.note); // 👈
+      await this.svc.confirm(this.confirm.viewingConfirmationId, this.note);
       this.saved = true;
+
+      // ⏳ Nach 3 Sekunden automatisch zur Startseite
+      setTimeout(() => {
+        this.router.navigate(['/startseite']);
+      }, 3000);
     } catch {
       this.error = 'Bestätigung konnte nicht gespeichert werden.';
     }
   }
-  
 }
