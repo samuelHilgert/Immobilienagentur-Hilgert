@@ -147,10 +147,6 @@
               <p><strong>Kaufpreis:</strong></p>
               <p>{{ immobilie.value | number : "1.0-0" }} €</p>
             </div>
-            <div class="detail-row">
-              <p><strong>Provision:</strong></p>
-              <p>{{ immobilie.courtage }}</p>
-            </div>
           </div>
 
           <div class="basic-payments-info">
@@ -167,6 +163,10 @@
                 Bitte betreten Sie das Grundstück nicht vor unserem
                 Besichtigungstermin!
               </p>
+            </div>
+            <div class="detail-row">
+              <p><strong>Provision:</strong><br />
+              {{ immobilie.courtage }}</p>
             </div>
             <div class="detail-row">
               <p>

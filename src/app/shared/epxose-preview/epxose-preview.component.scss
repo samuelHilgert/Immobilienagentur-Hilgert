@@ -171,6 +171,7 @@ section {
   right: 24px;
   height: auto;
   width: 300px;
+  box-sizing: border-box;
   border-radius: 0px;
   background-color: white;
 
@@ -182,6 +183,8 @@ section {
   .main-info-box-content {
     padding: 16px 24px;
     padding-bottom: 28px;
+    width:100%;
+    box-sizing: border-box;
 
     // @media print {
     //   padding-bottom: 48px;
@@ -232,12 +235,6 @@ section {
   @media screen and (max-width: 1024px) {
     grid-template-columns: 1fr;
     padding: 48px 10%;
-
-    .detail-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-    }
   }
 
   // @media print {
@@ -252,6 +249,15 @@ section {
     width: 100%;
     box-sizing: border-box;
   }
+
+
+  .detail-row {
+    @include s.f_r_sb_fs;
+    gap: 12px;
+    width:100%;
+    box-sizing: border-box;
+  }
+
 }
 
 /////// double divider lines

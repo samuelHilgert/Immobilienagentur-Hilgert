@@ -3,7 +3,7 @@
 <div  class="image-dialog-container">
   <img [src]="currentImage.url" alt="Bildansicht"  (contextmenu)="disableRightClick($event)" (contextmenu)="disableContextMenu($event)"/>
 
-  <div class="noselect" style="margin-top: 10px; font-style: italic;" *ngIf="currentImage.description">
+  <div class="noselect" style="margin: 10px; font-style: italic;" *ngIf="currentImage.description">
     {{ currentImage.description }}
   </div>
 
