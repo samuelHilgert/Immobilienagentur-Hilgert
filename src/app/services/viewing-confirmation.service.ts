@@ -16,6 +16,7 @@ import {
   updateDoc,
   Timestamp,
 } from '@angular/fire/firestore';
+import { collection, getDocs, query, where } from '@angular/fire/firestore';
 
 @Injectable({ providedIn: 'root' })
 export class ViewingConfirmationService {
@@ -47,40 +48,40 @@ export class ViewingConfirmationService {
     appt: ViewingAppointment
   ): Promise<string | null> {
     if (!appt.viewingDate) return null;
-  
+
     const newId = this.buildId(
       process.customerId,
       process.propertyExternalId,
       new Date(appt.viewingDate)
     );
-  
+
     const payloadBase = {
       viewingConfirmationId: newId,
       inquiryProcessId: process.inquiryProcessId,
       customerId: process.customerId,
       propertyExternalId: process.propertyExternalId,
-  
+
       salutation: customer.salutation,
       firstName: customer.firstName,
       lastName: customer.lastName,
-  
+
       viewingType: appt.viewingType,
       viewingDate: Timestamp.fromDate(new Date(appt.viewingDate)) as any,
-  
+
       title: immobilie.title ?? '',
       street: immobilie.street ?? '',
       houseNumber: immobilie.houseNumber ?? '',
       postcode: immobilie.postcode ?? '',
       city: immobilie.city ?? '',
       courtage: immobilie.courtage ?? '',
-  
+
       blocked: process.inquiryProcessStatus === 'Ausgeschieden',
       creationDate: new Date().toISOString(),
     };
-  
+
     if (appt.viewingConfirmationId) {
       const oldId = appt.viewingConfirmationId;
-  
+
       if (oldId !== newId) {
         // 1) Alte Daten holen, um Kundenfelder zu bewahren
         const oldSnap = await getDoc(this.ref(oldId));
@@ -90,7 +91,8 @@ export class ViewingConfirmationService {
               confirmedAt: oldSnap.data()['confirmedAt'] ?? null,
               confirmUa: oldSnap.data()['confirmUa'] ?? null,
               note: oldSnap.data()['note'] ?? null,
-              sentMailConfirmation: oldSnap.data()['sentMailConfirmation'] ?? null,
+              sentMailConfirmation:
+                oldSnap.data()['sentMailConfirmation'] ?? null,
             }
           : {
               acceptedConditions: false,
@@ -99,13 +101,17 @@ export class ViewingConfirmationService {
               note: null,
               sentMailConfirmation: null,
             };
-  
+
         // 2) Neues Doc schreiben (sauberer Neuaufbau)
-        await setDoc(this.ref(newId), { ...payloadBase, ...preserved }, { merge: false });
-  
+        await setDoc(
+          this.ref(newId),
+          { ...payloadBase, ...preserved },
+          { merge: false }
+        );
+
         // 3) Altes löschen
         await deleteDoc(this.ref(oldId));
-  
+
         return newId;
       } else {
         // Update: Kundenfelder NICHT überschreiben
@@ -113,7 +119,7 @@ export class ViewingConfirmationService {
         return newId;
       }
     }
-  
+
     // NEU-Anlage
     await setDoc(
       this.ref(newId),
@@ -127,10 +133,9 @@ export class ViewingConfirmationService {
       },
       { merge: false }
     );
-  
+
     return newId;
   }
-  
 
   /** Löscht das VC-Dokument zu einem Termin (falls ID vorhanden). */
   async deleteForAppointment(appt: ViewingAppointment): Promise<void> {
@@ -153,7 +158,7 @@ export class ViewingConfirmationService {
       confirmUa: typeof navigator !== 'undefined' ? navigator.userAgent : null,
       note: note ?? null,
     });
-  
+
     // 2) Nach 3 Sekunden sperren
     setTimeout(async () => {
       try {
@@ -164,11 +169,25 @@ export class ViewingConfirmationService {
       }
     }, 3000);
   }
-  
 
   async markMailSent(viewingConfirmationId: string, sentAt: Date = new Date()) {
     await updateDoc(this.ref(viewingConfirmationId), {
       sentMailConfirmation: Timestamp.fromDate(sentAt),
     });
+  }
+
+  /** Setzt blocked für alle Viewing-Confirmations eines inquiryProcessId. */
+  async setBlockedForProcess(
+    inquiryProcessId: string,
+    blocked: boolean
+  ): Promise<void> {
+    const colRef = collection(this.firestore, 'viewing-confirmations');
+    const q = query(colRef, where('inquiryProcessId', '==', inquiryProcessId));
+    const snap = await getDocs(q);
+
+    if (snap.empty) return;
+
+    // Parallel updaten
+    await Promise.all(snap.docs.map((d) => updateDoc(d.ref, { blocked })));
   }
 }

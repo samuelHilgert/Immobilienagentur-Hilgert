@@ -36,6 +36,7 @@
         <tr>
           <th>#</th>
           <th>Status</th>
+          <th>Exposé-Level</th>
           <th>Name</th>
           <th>Anschrift</th>
           <th>Telefon/Mobil</th>
@@ -43,18 +44,47 @@
         </tr>
       </thead>
       <tbody>
-        <tr 
-        *ngFor="let a of customer; index as i"
-        class="clickable-row"
-        (click)="goToCustomerDetails(a.customerId || '')">
-        <td>{{ customer.length - i }}</td>
-        <td>{{ getStatusForCustomer(a.customerId || '') }}</td>
-        <td>{{ a.salutation }} {{ a.firstName }} {{ a.lastName }}</td>
-        <td>{{ a.street }} {{ a.houseNumber }}, {{ a.zip }} {{ a.city }}</td>
-        <td>{{ a.phone }} / {{ a.mobile }}</td>
-        <td>{{ a.email }}</td>
-      </tr>      
-      </tbody>      
+        <tr
+          *ngFor="let a of customer; index as i"
+          class="clickable-row"
+          (click)="goToCustomerDetails(a.customerId || '')"
+        >
+          <td>{{ customer.length - i }}</td>
+    
+          <!-- Status (editable) -->
+          <td (click)="$event.stopPropagation()">
+            <mat-form-field appearance="fill" class="inline-select">
+              <mat-select
+                [value]="getStatusForCustomer(a.customerId || '')"
+                [placeholder]="'—'"
+                [disabled]="!isAdmin || isSaving(getProcessIdForCustomer(a.customerId || ''))"
+                (selectionChange)="onChangeStatus(a.customerId || '', $event.value)"
+              >
+                <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </td>
+    
+          <!-- Exposé-Level (editable) -->
+          <td (click)="$event.stopPropagation()">
+            <mat-form-field appearance="fill" class="inline-select">
+              <mat-select
+                [value]="getExposeLevelForCustomer(a.customerId || '')"
+                [placeholder]="'—'"
+                [disabled]="!isAdmin || isSaving(getProcessIdForCustomer(a.customerId || ''))"
+                (selectionChange)="onChangeExposeLevel(a.customerId || '', $event.value)"
+              >
+                <mat-option *ngFor="let lv of exposeLevels" [value]="lv">{{ lv }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </td>
+    
+          <td>{{ a.salutation }} {{ a.firstName }} {{ a.lastName }}</td>
+          <td>{{ a.street }} {{ a.houseNumber }}, {{ a.zip }} {{ a.city }}</td>
+          <td>{{ a.phone }} / {{ a.mobile }}</td>
+          <td>{{ a.email }}</td>
+        </tr>
+      </tbody>    
     </table>
   </div>
 
