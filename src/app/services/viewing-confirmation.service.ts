@@ -1,5 +1,6 @@
 // viewing-confirmation.service.ts
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { ViewingConfirmation } from '../models/viewing-confirmation.model';
 import {
   PropertyInquiryProcess,
@@ -20,27 +21,32 @@ import { collection, getDocs, query, where } from '@angular/fire/firestore';
 
 @Injectable({ providedIn: 'root' })
 export class ViewingConfirmationService {
-  constructor(private firestore: Firestore) {}
+  private MAIL_ENDPOINT = 'https://hilgert-immobilien.de/sendViewingConfirmationMail.php';
+
+  constructor(private firestore: Firestore, private http: HttpClient) {}
 
   private ref(id: string) {
     return doc(this.firestore, 'viewing-confirmations', id);
   }
 
-  private buildId(
-    customerId: string,
-    propertyExternalId: string,
-    viewingDate: Date
-  ) {
+  private buildId(customerId: string, propertyExternalId: string, viewingDate: Date) {
     return `${customerId}_${propertyExternalId}_${viewingDate.getTime()}`;
   }
 
-  /**
-   * Upsert für GENAU EINEN Termin.
-   * - Erstellt bei Bedarf ein neues VC-Dokument (inkl. ID-Generierung),
-   * - aktualisiert es sonst,
-   * - verschiebt (rename) bei Datumsänderung (altes löschen, neues anlegen).
-   * Gibt immer die gültige viewingConfirmationId zurück (neu oder unverändert).
-   */
+  private roundtripDate(d: any): Date | null {
+    if (!d) return null;
+    // Firestore Timestamp?
+    if (typeof d === 'object' && 'toDate' in d) {
+      try { return (d as any).toDate(); } catch { /* noop */ }
+    }
+    try { return new Date(d); } catch { return null; }
+  }
+
+  private fmt(dt: Date | null): string {
+    // ISO für PHP (oder du nutzt de-DE hier; PHP formatiert unten erneut)
+    return dt ? dt.toISOString() : '';
+  }
+
   async upsertForAppointment(
     process: PropertyInquiryProcess,
     customer: Customer,
@@ -83,7 +89,6 @@ export class ViewingConfirmationService {
       const oldId = appt.viewingConfirmationId;
 
       if (oldId !== newId) {
-        // 1) Alte Daten holen, um Kundenfelder zu bewahren
         const oldSnap = await getDoc(this.ref(oldId));
         const preserved = oldSnap.exists()
           ? {
@@ -91,8 +96,7 @@ export class ViewingConfirmationService {
               confirmedAt: oldSnap.data()['confirmedAt'] ?? null,
               confirmUa: oldSnap.data()['confirmUa'] ?? null,
               note: oldSnap.data()['note'] ?? null,
-              sentMailConfirmation:
-                oldSnap.data()['sentMailConfirmation'] ?? null,
+              sentMailConfirmation: oldSnap.data()['sentMailConfirmation'] ?? null,
             }
           : {
               acceptedConditions: false,
@@ -102,25 +106,15 @@ export class ViewingConfirmationService {
               sentMailConfirmation: null,
             };
 
-        // 2) Neues Doc schreiben (sauberer Neuaufbau)
-        await setDoc(
-          this.ref(newId),
-          { ...payloadBase, ...preserved },
-          { merge: false }
-        );
-
-        // 3) Altes löschen
+        await setDoc(this.ref(newId), { ...payloadBase, ...preserved }, { merge: false });
         await deleteDoc(this.ref(oldId));
-
         return newId;
       } else {
-        // Update: Kundenfelder NICHT überschreiben
         await setDoc(this.ref(newId), payloadBase, { merge: true });
         return newId;
       }
     }
 
-    // NEU-Anlage
     await setDoc(
       this.ref(newId),
       {
@@ -137,21 +131,25 @@ export class ViewingConfirmationService {
     return newId;
   }
 
-  /** Löscht das VC-Dokument zu einem Termin (falls ID vorhanden). */
   async deleteForAppointment(appt: ViewingAppointment): Promise<void> {
     if (!appt.viewingConfirmationId) return;
     await deleteDoc(this.ref(appt.viewingConfirmationId));
   }
 
-  // ⬇️ Für die öffentliche Seite:
   async get(id: string): Promise<ViewingConfirmation | null> {
     const snap = await getDoc(this.ref(id));
     return snap.exists() ? (snap.data() as ViewingConfirmation) : null;
   }
 
-  // ⬇️ Bestätigung durch den Kunden (per ViewingConfirmationId!)
+  /**
+   * Kunde bestätigt:
+   * - Speichern (accepted/confirmedAt/ua/note)
+   * - Mail senden (alle Felder)
+   * - sentMailConfirmation setzen
+   * - nach 3s Link sperren
+   */
   async confirm(viewingConfirmationId: string, note?: string) {
-    // 1) Sofort die Bestätigung speichern
+    // 1) Sofort speichern
     await updateDoc(this.ref(viewingConfirmationId), {
       acceptedConditions: true,
       confirmedAt: Timestamp.now(),
@@ -159,12 +157,54 @@ export class ViewingConfirmationService {
       note: note ?? null,
     });
 
-    // 2) Nach 3 Sekunden sperren
+    // 2) Frische Daten holen (inkl. gerade gesetzter Felder)
+    let vc: ViewingConfirmation | null = null;
+    try {
+      const snap = await getDoc(this.ref(viewingConfirmationId));
+      vc = snap.exists() ? (snap.data() as ViewingConfirmation) : null;
+    } catch (e) {
+      console.error('VC konnte nach confirm() nicht gelesen werden:', e);
+    }
+
+    // 3) Mail senden (soft-fail; Bestätigung nicht blockieren)
+    if (vc) {
+      const payload = {
+        viewingConfirmationId: vc.viewingConfirmationId,
+        inquiryProcessId: vc.inquiryProcessId,
+        customerId: vc.customerId ?? '',
+        propertyExternalId: vc.propertyExternalId ?? '',
+        salutation: vc.salutation ?? '',
+        firstName: vc.firstName ?? '',
+        lastName: vc.lastName ?? '',
+        viewingType: vc.viewingType ?? '',
+        viewingDateIso: this.fmt(this.roundtripDate(vc.viewingDate as any)),
+        title: vc.title ?? '',
+        street: vc.street ?? '',
+        houseNumber: vc.houseNumber ?? '',
+        postcode: vc.postcode ?? '',
+        city: vc.city ?? '',
+        courtage: vc.courtage ?? '',
+        acceptedConditions: !!vc.acceptedConditions,
+        confirmedAtIso: this.fmt(this.roundtripDate(vc.confirmedAt as any)),
+        confirmUa: vc.confirmUa ?? '',
+        note: vc.note ?? '',
+      };
+
+      try {
+        await this.http.post(this.MAIL_ENDPOINT, payload).toPromise();
+        await updateDoc(this.ref(viewingConfirmationId), {
+          sentMailConfirmation: Timestamp.now(),
+        });
+      } catch (e) {
+        console.error('Mailversand Viewing-Confirmation fehlgeschlagen:', e);
+      }
+    }
+
+    // 4) Nach 3 Sekunden sperren
     setTimeout(async () => {
       try {
         await updateDoc(this.ref(viewingConfirmationId), { blocked: true });
       } catch (e) {
-        // optional: Logging oder Monitoring
         console.error('Konnte nachträgliches Sperren nicht durchführen:', e);
       }
     }, 3000);
@@ -176,18 +216,11 @@ export class ViewingConfirmationService {
     });
   }
 
-  /** Setzt blocked für alle Viewing-Confirmations eines inquiryProcessId. */
-  async setBlockedForProcess(
-    inquiryProcessId: string,
-    blocked: boolean
-  ): Promise<void> {
+  async setBlockedForProcess(inquiryProcessId: string, blocked: boolean): Promise<void> {
     const colRef = collection(this.firestore, 'viewing-confirmations');
     const q = query(colRef, where('inquiryProcessId', '==', inquiryProcessId));
     const snap = await getDocs(q);
-
     if (snap.empty) return;
-
-    // Parallel updaten
     await Promise.all(snap.docs.map((d) => updateDoc(d.ref, { blocked })));
   }
 }

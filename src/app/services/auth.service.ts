@@ -23,8 +23,8 @@ interface AuthResponse {
 })
 export class AuthService {
   user$: Observable<User | null>;
-  authState$: Observable<User | null>;
-  isLoggedIn$: Observable<boolean>;
+  // authState$: Observable<User | null>;
+  // isLoggedIn$: Observable<boolean>;
   isAdmin$: Observable<boolean>;
 
   // 👉 Hier deine Admin-UID eintragen (einmal zentral)
@@ -32,8 +32,8 @@ export class AuthService {
 
   constructor(private auth: Auth) {
     this.user$ = user(this.auth);
-    this.authState$ = authState(this.auth);
-    this.isLoggedIn$ = this.authState$.pipe(map(user => !!user));
+    // this.authState$ = authState(this.auth);
+    // this.isLoggedIn$ = this.authState$.pipe(map(user => !!user));
 
     // 👮‍♂️ Admin-Prüfung: Vergleiche die UID
     this.isAdmin$ = this.user$.pipe(
@@ -41,13 +41,13 @@ export class AuthService {
     );
 
     // 🔐 Automatisch anonym einloggen, wenn niemand angemeldet ist
-    this.authState$.subscribe(currentUser => {
-      if (!currentUser) {
-        signInAnonymously(this.auth)
-          .then(() => console.log('✅ Anonym angemeldet'))
-          .catch(err => console.error('❌ Anonyme Anmeldung fehlgeschlagen:', err));
-      }
-    });
+    // this.authState$.subscribe(currentUser => {
+    //   if (!currentUser) {
+    //     signInAnonymously(this.auth)
+    //       .then(() => console.log('✅ Anonym angemeldet'))
+    //       .catch(err => console.error('❌ Anonyme Anmeldung fehlgeschlagen:', err));
+    //   }
+    // });
   }
 
   async login(email: string, password: string): Promise<AuthResponse> {

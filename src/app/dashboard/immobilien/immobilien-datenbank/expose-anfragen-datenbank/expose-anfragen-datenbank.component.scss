@@ -39,6 +39,7 @@ table {
     padding: 12px;
     text-align: left;
     font-weight: 600;
+
   }
 
   tbody tr {
@@ -58,7 +59,7 @@ table {
     padding: 12px;
     border-bottom: 1px solid #ddd;
     color: #333;
-    font-size: 14px;
+    font-size: 0.85rem;
   }
 }
 
@@ -78,4 +79,23 @@ table {
   &:hover {
     background-color: #e0e0e0;
   }
+}
+
+.select-td {
+  width:100px;
+}
+
+mat-form-field {
+  padding:0;
+  margin:0;
+  width:70%;
+  box-sizing: border-box;
+}
+
+mat-select {
+  font-size: 0.85rem;
+}
+
+mat-option {
+  font-size: 0.85rem;
 }

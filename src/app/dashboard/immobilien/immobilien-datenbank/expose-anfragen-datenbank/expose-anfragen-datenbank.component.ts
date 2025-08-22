@@ -232,4 +232,23 @@ export class ExposeAnfragenDatenbankComponent implements OnInit {
       this.savingMap[processId] = false;
     }
   }
+
+    // Ruft den Expose Link über die customer.service auf
+  getExposeLinkForCustomer(customerId: string): string | null {
+    const proc = this.getProcessForCustomer(customerId);
+    if (!proc) return null;
+    try {
+      return this.customerService.getExposePreviewUrl(proc.customerId, proc.propertyExternalId);
+    } catch {
+      return null;
+    }
+  }
+    // gehört zur Expose Link dazu
+  copyToClipboard(link: string) {
+    if (link) {
+      navigator.clipboard.writeText(link).then(() => {
+        console.log('📋 Link kopiert:', link);
+      });
+    }
+  }
 }

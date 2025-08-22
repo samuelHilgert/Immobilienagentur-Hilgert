@@ -10,14 +10,15 @@ import { ViewingConfirmation } from '../../models/viewing-confirmation.model';
   standalone: true,
   imports: [CommonModule, MATERIAL_MODULES, RouterModule],
   templateUrl: './viewing-confirmation.component.html',
-  styleUrl: './viewing-confirmation.component.scss',
+  styleUrls: ['./viewing-confirmation.component.scss'], // <-- fix
 })
 export class ViewingConfirmationComponent implements OnInit {
   loading = true;
+  isSubmitting = false;          // <-- neu
   error = '';
   saved = false;
 
-  confirm!: ViewingConfirmation | null;
+  confirm: ViewingConfirmation | null = null; // (kein !, sauber initialisiert)
 
   acceptedGuidelines = false;
   note = '';
@@ -29,18 +30,30 @@ export class ViewingConfirmationComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('viewingConfirmationId') || ''; // 👈
-    if (!id.includes('_')) {
+    const id = this.route.snapshot.paramMap.get('viewingConfirmationId') ?? '';
+    if (!id || !id.includes('_')) {
       this.error = 'Ungültiger Link.';
       this.loading = false;
       return;
     }
 
     try {
-      this.confirm = await this.svc.get(id);
-      if (!this.confirm || this.confirm.blocked) {
+      const vc = await this.svc.get(id);
+      if (!vc) {
         this.router.navigate(['/expose-access-denied']);
         return;
+      }
+      if (vc.blocked) {
+        this.router.navigate(['/expose-access-denied']);
+        return;
+      }
+
+      this.confirm = vc;
+
+      // Falls bereits bestätigt, UI entsprechend darstellen
+      if (vc.acceptedConditions) {
+        this.saved = true;
+        this.acceptedGuidelines = true;
       }
     } catch {
       this.error = 'Seite konnte nicht geladen werden.';
@@ -50,9 +63,11 @@ export class ViewingConfirmationComponent implements OnInit {
   }
 
   async onConfirm() {
-    if (!this.confirm || !this.acceptedGuidelines) return;
+    if (this.isSubmitting || !this.confirm || !this.acceptedGuidelines) return;
+
+    this.isSubmitting = true;
     try {
-      await this.svc.confirm(this.confirm.viewingConfirmationId, this.note);
+      await this.svc.confirm(this.confirm.viewingConfirmationId, this.note?.trim() || undefined);
       this.saved = true;
 
       // ⏳ Nach 3 Sekunden automatisch zur Startseite
@@ -61,6 +76,8 @@ export class ViewingConfirmationComponent implements OnInit {
       }, 3000);
     } catch {
       this.error = 'Bestätigung konnte nicht gespeichert werden.';
+    } finally {
+      this.isSubmitting = false;
     }
   }
 }

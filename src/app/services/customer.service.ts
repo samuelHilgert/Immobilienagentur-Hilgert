@@ -224,4 +224,25 @@ export class CustomerService {
       return { success: false, deletedPreviews: 0, error };
     }
   }
+
+
+    /** Basis-URL für den öffentlichen Exposé-Preview */
+    private readonly EXPOSE_BASE_URL =
+    (environment as any)?.publicExposeBaseUrl ||
+    'https://hilgert-immobilien.de/expose-preview';
+
+  /**
+   * Baut die Exposé-Preview-URL nach dem Muster:
+   *   {BASE}/expose-preview/{customerId}_{propertyExternalId}
+   * - trimmt/encodet sicher
+   * - entfernt evtl. trailing slash
+   */
+  getExposePreviewUrl(customerId: string, propertyExternalId: string): string {
+    if (!customerId || !propertyExternalId) {
+      throw new Error('customerId und propertyExternalId sind erforderlich');
+    }
+    const base = String(this.EXPOSE_BASE_URL).replace(/\/$/, '');
+    const combo = `${customerId.trim()}_${propertyExternalId.trim()}`;
+    return `${base}/${encodeURIComponent(combo)}`;
+  }
 }

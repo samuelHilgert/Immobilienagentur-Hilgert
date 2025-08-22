@@ -1,13 +1,12 @@
-<section class="section-bg-v1"> 
-
+<section class="section-bg-v1">
   <div *ngIf="immobilie" class="go-back-btn-div">
-    <a 
-      class="go-back-btn" 
+    <a
+      class="go-back-btn"
       [routerLink]="[
-      '/dashboard/immobilien',
-      (immobilie.propertyType.toLowerCase() || '') + '-details-form',
-      immobilie.externalId
-    ]"
+        '/dashboard/immobilien',
+        (immobilie.propertyType.toLowerCase() || '') + '-details-form',
+        immobilie.externalId
+      ]"
     >
       Zurück
     </a>
@@ -16,27 +15,38 @@
   <h2>Exposé-Anfragen</h2>
 
   <div *ngIf="immobilie" class="object-infos">
-    <p><strong>{{ immobilie.title }}</strong></p>
+    <p>
+      <strong>{{ immobilie.title }}</strong>
+    </p>
     <p>Objekt-ID: {{ immobilie.externalId }}</p>
     <p>Objekttyp: {{ immobilie.propertyType }}</p>
-    <p>{{ immobilie.street }} {{ immobilie.houseNumber }}, {{ immobilie.postcode }} {{ immobilie.city }}</p>
-    <p>Kaufpreis: {{ immobilie.value | currency:'EUR':'symbol':'1.0-0':'de' }}</p>
+    <p>
+      {{ immobilie.street }} {{ immobilie.houseNumber }},
+      {{ immobilie.postcode }} {{ immobilie.city }}
+    </p>
+    <p>
+      Kaufpreis:
+      {{ immobilie.value | currency : "EUR" : "symbol" : "1.0-0" : "de" }}
+    </p>
   </div>
 
-<!-- 1. Ladeindikator -->
-<div *ngIf="isLoading" class="loading-indicator">
-  <p>⏳ Daten werden geladen...</p>
-</div>
-  
-<!-- 2. Tabelle nur wenn Daten da sind -->
-<div *ngIf="!isLoading && customer.length > 0">
-    <p><strong>{{ customer.length }}</strong> Exposé-Anfragen gefunden</p>
+  <!-- 1. Ladeindikator -->
+  <div *ngIf="isLoading" class="loading-indicator">
+    <p>⏳ Daten werden geladen...</p>
+  </div>
+
+  <!-- 2. Tabelle nur wenn Daten da sind -->
+  <div *ngIf="!isLoading && customer.length > 0">
+    <p>
+      <strong>{{ customer.length }}</strong> Exposé-Anfragen gefunden
+    </p>
     <table>
       <thead>
         <tr>
           <th>#</th>
           <th>Status</th>
           <th>Exposé-Level</th>
+          <th>K.Bereich</th>
           <th>Name</th>
           <th>Anschrift</th>
           <th>Telefon/Mobil</th>
@@ -50,46 +60,80 @@
           (click)="goToCustomerDetails(a.customerId || '')"
         >
           <td>{{ customer.length - i }}</td>
-    
+
           <!-- Status (editable) -->
-          <td (click)="$event.stopPropagation()">
-            <mat-form-field appearance="fill" class="inline-select">
+          <td (click)="$event.stopPropagation()" class="select-td">
+            <mat-form-field appearance="fill" >
               <mat-select
                 [value]="getStatusForCustomer(a.customerId || '')"
                 [placeholder]="'—'"
-                [disabled]="!isAdmin || isSaving(getProcessIdForCustomer(a.customerId || ''))"
-                (selectionChange)="onChangeStatus(a.customerId || '', $event.value)"
+                [disabled]="
+                  !isAdmin ||
+                  isSaving(getProcessIdForCustomer(a.customerId || ''))
+                "
+                (selectionChange)="
+                  onChangeStatus(a.customerId || '', $event.value)
+                "
               >
-                <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
+                <mat-option *ngFor="let s of statuses" [value]="s">{{
+                  s
+                }}</mat-option>
               </mat-select>
             </mat-form-field>
           </td>
-    
+
           <!-- Exposé-Level (editable) -->
-          <td (click)="$event.stopPropagation()">
-            <mat-form-field appearance="fill" class="inline-select">
+          <td (click)="$event.stopPropagation()"  class="select-td">
+            <mat-form-field appearance="fill">
               <mat-select
                 [value]="getExposeLevelForCustomer(a.customerId || '')"
                 [placeholder]="'—'"
-                [disabled]="!isAdmin || isSaving(getProcessIdForCustomer(a.customerId || ''))"
-                (selectionChange)="onChangeExposeLevel(a.customerId || '', $event.value)"
+                [disabled]="
+                  !isAdmin ||
+                  isSaving(getProcessIdForCustomer(a.customerId || ''))
+                "
+                (selectionChange)="
+                  onChangeExposeLevel(a.customerId || '', $event.value)
+                "
               >
-                <mat-option *ngFor="let lv of exposeLevels" [value]="lv">{{ lv }}</mat-option>
+                <mat-option *ngFor="let lv of exposeLevels" [value]="lv">{{
+                  lv
+                }}</mat-option>
               </mat-select>
             </mat-form-field>
           </td>
-    
+          <td (click)="$event.stopPropagation()">
+            <ng-container *ngIf="getExposeLinkForCustomer(a.customerId || ''); else noLink">
+              <a
+                [href]="getExposeLinkForCustomer(a.customerId || '')!"
+                target="_blank"
+                rel="noopener"
+                (click)="$event.stopPropagation()"
+              >
+                Öffnen
+              </a>
+              &nbsp;·&nbsp;
+              <button
+              mat-button
+              type="button"
+              (click)="$event.stopPropagation(); copyToClipboard(getExposeLinkForCustomer(a.customerId || '')!)"
+            >
+              kopieren
+            </button>
+            </ng-container>
+            <ng-template #noLink>—</ng-template>
+          </td>
           <td>{{ a.salutation }} {{ a.firstName }} {{ a.lastName }}</td>
           <td>{{ a.street }} {{ a.houseNumber }}, {{ a.zip }} {{ a.city }}</td>
           <td>{{ a.phone }} / {{ a.mobile }}</td>
           <td>{{ a.email }}</td>
         </tr>
-      </tbody>    
+      </tbody>
     </table>
   </div>
 
   <!-- 3. Kein Ergebnis -->
-<div *ngIf="!isLoading && customer.length === 0">
-  <p>Keine Anfragen gefunden.</p>
-</div>
+  <div *ngIf="!isLoading && customer.length === 0">
+    <p>Keine Anfragen gefunden.</p>
+  </div>
 </section>
