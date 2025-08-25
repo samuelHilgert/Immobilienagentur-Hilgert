@@ -1,12 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 
 import { PropertyInquiryService } from '../../../services/property-inquiry.service';
 import { CustomerService } from '../../../services/customer.service';
 import { ImmobilienService } from '../../../services/immobilien.service';
-import { PropertyInquiryProcess, ViewingAppointment } from '../../../models/property-inquiry-process.model';
+import {
+  PropertyInquiryProcess,
+  ViewingAppointment,
+} from '../../../models/property-inquiry-process.model';
 import { Customer } from '../../../models/customer.model';
 import { Immobilie } from '../../../models/immobilie.model';
 import { MATERIAL_MODULES } from '../../../shared/material-imports';
@@ -16,6 +25,10 @@ import { LogEntriesService } from '../../../services/logEntries.service';
 import { ExposeAnfrageService } from '../../../services/expose-anfrage.service';
 import { HttpClient } from '@angular/common/http';
 import { ViewingConfirmationService } from '../../../services/viewing-confirmation.service';
+import { AppUtilityService } from '../../../services/app-utility.service';
+import { ViewingConfirmation } from '../../../models/viewing-confirmation.model';
+import { Observable } from 'rxjs';
+import { Firestore } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-protocol-inquiry-property',
@@ -48,6 +61,10 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
   ];
 
   origin: 'kunden' | 'expose-anfragen' = 'kunden';
+  private vcObsCache = new Map<
+    string,
+    Observable<ViewingConfirmation | null>
+  >(); // für Methode um zu überwachen, ob der Termin bereits bestätigt wurde
 
   constructor(
     private route: ActivatedRoute,
@@ -60,7 +77,8 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
     private fb: FormBuilder,
     private logEntriesService: LogEntriesService,
     private viewingConfirmSvc: ViewingConfirmationService,
-    private http: HttpClient
+    private http: HttpClient,
+    private util: AppUtilityService
   ) {}
 
   async ngOnInit() {
@@ -220,70 +238,83 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
 
   async deleteAppointment(index: number) {
     if (!this.process || !this.customer || !this.immobilie) return;
-  
-    const removed: ViewingAppointment | undefined = this.viewingAppointments.at(index)?.value;
-  
+
+    const removed: ViewingAppointment | undefined =
+      this.viewingAppointments.at(index)?.value;
+
     // Optimistisch aus UI entfernen
     this.viewingAppointments.removeAt(index);
-  
+
     // Prozess-Array + Zeitstempel
     const newList = this.viewingAppointments.value as ViewingAppointment[];
     this.process.viewingAppointments = newList;
     this.process.lastUpdateDate = new Date();
-  
+
     try {
       await this.inquiryService.updateProcess(this.process.inquiryProcessId, {
         viewingAppointments: newList,
         lastUpdateDate: this.process.lastUpdateDate,
       });
-  
+
       // VC-Datensatz löschen (falls vorhanden)
       if (removed) await this.viewingConfirmSvc.deleteForAppointment(removed);
-  
+
       await this.logEntriesService.logProcessEntry(
         this.process.inquiryProcessId,
-        `${this.customer.firstName ?? ''} ${this.customer.lastName ?? ''}`.trim(),
+        `${this.customer.firstName ?? ''} ${
+          this.customer.lastName ?? ''
+        }`.trim(),
         'Besichtigungstermin gelöscht',
-        removed ? `Typ: ${removed.viewingType || '-'}, Zeit: ${removed.viewingDate || '-'}` : `Index: ${index}`
+        removed
+          ? `Typ: ${removed.viewingType || '-'}, Zeit: ${
+              removed.viewingDate || '-'
+            }`
+          : `Index: ${index}`
       );
     } catch (e) {
       console.error('Löschen fehlgeschlagen, rolle lokal zurück:', e);
       // Rollback im UI (optional)
-      this.viewingAppointments.insert(index, this.fb.group({
-        viewingType: [removed?.viewingType ?? 'Erstbesichtigung'],
-        viewingDate: [removed?.viewingDate ?? null],
-        confirmationSent: [removed?.confirmationSent ?? null],
-        confirmed: [removed?.confirmed ?? false],
-        canceled: [removed?.canceled ?? false],
-        cancellationReason: [removed?.cancellationReason ?? ''],
-        notes: [removed?.notes ?? ''],
-        viewingConfirmationId: [removed?.viewingConfirmationId ?? null],
-      }));
+      this.viewingAppointments.insert(
+        index,
+        this.fb.group({
+          viewingType: [removed?.viewingType ?? 'Erstbesichtigung'],
+          viewingDate: [removed?.viewingDate ?? null],
+          confirmationSent: [removed?.confirmationSent ?? null],
+          confirmed: [removed?.confirmed ?? false],
+          canceled: [removed?.canceled ?? false],
+          cancellationReason: [removed?.cancellationReason ?? ''],
+          notes: [removed?.notes ?? ''],
+          viewingConfirmationId: [removed?.viewingConfirmationId ?? null],
+        })
+      );
       alert('Termin konnte nicht gelöscht werden.');
     }
   }
-  
 
   async saveSingleAppointment(index: number) {
     if (!this.process || !this.immobilie || !this.customer) return;
-  
+
     const appt: ViewingAppointment = this.viewingAppointments.at(index).value;
-  
+
     // 1) Prozess aktualisieren (wie bisher)
-    if (!this.process.viewingAppointments) this.process.viewingAppointments = [];
+    if (!this.process.viewingAppointments)
+      this.process.viewingAppointments = [];
     this.process.viewingAppointments[index] = appt;
     this.process.lastUpdateDate = new Date();
-  
+
     await this.inquiryService.updateProcess(this.process.inquiryProcessId, {
       viewingAppointments: this.process.viewingAppointments,
       lastUpdateDate: this.process.lastUpdateDate,
     });
-  
+
     // 2) VC für diesen Termin upserten
     const vcId = await this.viewingConfirmSvc.upsertForAppointment(
-      this.process, this.customer, this.immobilie, appt
+      this.process,
+      this.customer,
+      this.immobilie,
+      appt
     );
-  
+
     // 3) VC-ID im Termin speichern (falls neu oder geändert)
     if (vcId && appt.viewingConfirmationId !== vcId) {
       appt.viewingConfirmationId = vcId;
@@ -293,15 +324,17 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
         lastUpdateDate: new Date(),
       });
     }
-  
+
     await this.logEntriesService.logProcessEntry(
       this.process.inquiryProcessId,
-      `${this.customer?.firstName ?? ''} ${this.customer?.lastName ?? ''}`.trim(),
+      `${this.customer?.firstName ?? ''} ${
+        this.customer?.lastName ?? ''
+      }`.trim(),
       'Besichtigungstermin gespeichert',
       `Typ: ${appt.viewingType}, Zeit: ${appt.viewingDate}`
     );
   }
-  
+
   ////////////////////////////////////////////////////////////////////////////////
 
   async save() {
@@ -404,6 +437,15 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
 
   async onSendExpose() {
     if (!this.process || !this.customer || !this.immobilie) return;
+
+    const ok = await this.util.confirmIfLocalhost(
+      'Exposé wirklich vom lokalen Server senden?'
+    );
+    if (!ok) {
+      alert('Versand abgebrochen.');
+      return;
+    }
+
     try {
       this.sending = true;
 
@@ -479,20 +521,32 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
 
   async onSendAppointmentConfirmation() {
     if (!this.process || !this.customer || !this.immobilie) return;
-  
+
     const pick = this.pickConfirmableAppointment();
+
+    const ok = await this.util.confirmIfLocalhost(
+      'Terminbestätigung wirklich vom lokalen Server senden?'
+    );
+    if (!ok) {
+      alert('Versand abgebrochen.');
+      return;
+    }
+
     if (!pick) {
       alert('Kein gültiger Besichtigungstermin vorhanden.');
       return;
     }
-  
+
     const appt = pick.appt as ViewingAppointment;
-  
+
     // 1) Sicherstellen, dass ein VC existiert und wir eine ID haben
     let vcId = appt.viewingConfirmationId ?? null;
     if (!vcId) {
       vcId = await this.viewingConfirmSvc.upsertForAppointment(
-        this.process, this.customer, this.immobilie, appt
+        this.process,
+        this.customer,
+        this.immobilie,
+        appt
       );
       if (vcId) {
         appt.viewingConfirmationId = vcId;
@@ -507,23 +561,30 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
       alert('Konnte keine Bestätigungs-ID erzeugen.');
       return;
     }
-  
+
     // 2) Maildaten vorbereiten
     const dt = new Date(appt.viewingDate!);
     const weekday = dt.toLocaleDateString('de-DE', { weekday: 'long' });
-    const day = dt.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
-    const time = dt.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-  
+    const day = dt.toLocaleDateString('de-DE', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+    const time = dt.toLocaleTimeString('de-DE', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+
     const street = this.immobilie.street ?? '';
     const houseNumber = this.immobilie.houseNumber ?? '';
     const postcode = this.immobilie.postcode ?? '';
     const city = this.immobilie.city ?? '';
     const externalId = this.immobilie.externalId ?? '';
     const courtage = this.immobilie.courtage ?? '';
-  
+
     const baseUrl = location.origin;
     const confirmUrl = `${baseUrl}/viewing-confirmation/${vcId}`;
-  
+
     const payload = {
       email: this.customer.email,
       lastName: this.customer.lastName,
@@ -538,18 +599,21 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
       time,
       confirmUrl,
     };
-  
+
     try {
       this.sendingAppointment = true;
-  
+
       // 3) Mail versenden
       await this.http
-        .post('https://hilgert-immobilien.de/sendAppointmentConfirmation.php', payload)
+        .post(
+          'https://hilgert-immobilien.de/sendAppointmentConfirmation.php',
+          payload
+        )
         .toPromise();
-  
+
       // 4) VC: Versandzeitpunkt speichern (NICHT creationDate)
       await this.viewingConfirmSvc.markMailSent(vcId, new Date());
-  
+
       // 5) Optional: im Prozess den einzelnen Termin mit "confirmationSent" markieren
       appt.confirmationSent = new Date();
       this.process.viewingAppointments![pick.index] = appt;
@@ -557,7 +621,7 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
         viewingAppointments: this.process.viewingAppointments,
         lastUpdateDate: new Date(),
       });
-  
+
       alert('Terminbestätigung wurde versendet.');
     } catch (e) {
       console.error('Fehler beim Senden der Terminbestätigung:', e);
@@ -598,5 +662,43 @@ export class ProtocolInquiryPropertyComponent implements OnInit {
     } else {
       this.router.navigate(['/dashboard/kundendatenbank']);
     }
+  }
+
+  /** Leitet die VC-Dokument-ID für einen Termin ab (ohne sie im Form zu halten) */
+  vcIdFor(appt: AbstractControl | null | undefined): string | null {
+    if (!this.process || !appt) return null;
+    const vd = appt.get('viewingDate')?.value;
+    if (!vd) return null;
+
+    const dt = new Date(vd);
+    if (isNaN(+dt)) return null;
+
+    // Muss exakt dem Schema entsprechen, das dein Service nutzt
+    return `${this.process.customerId}_${
+      this.process.propertyExternalId
+    }_${dt.getTime()}`;
+  }
+
+  // Methode um zu überwachen, ob der Termin bereits bestätigt wurde
+  watchVC(vcId: string | null | undefined) {
+    if (!vcId) return null;
+    if (!this.vcObsCache.has(vcId)) {
+      this.vcObsCache.set(vcId, this.viewingConfirmSvc.watch(vcId));
+    }
+    return this.vcObsCache.get(vcId)!;
+  }
+
+  // Firestore Timestamp/Date/String robust nach Date wandeln
+  toDateSafe(v: any): Date | null {
+    if (!v) return null;
+    if (typeof v === 'object' && 'toDate' in v) {
+      try {
+        return v.toDate();
+      } catch {
+        return null;
+      }
+    }
+    const d = new Date(v);
+    return isNaN(+d) ? null : d;
   }
 }

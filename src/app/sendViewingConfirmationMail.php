@@ -47,19 +47,20 @@ switch ($_SERVER['REQUEST_METHOD']) {
         $confirmUa = $p->confirmUa ?? '';
         $note      = $p->note ?? '';
 
+        // Für das Datum
+        $viewingDateMs = isset($p->viewingDateMs) ? (int)$p->viewingDateMs : 0;
+        $confirmedAtMs = isset($p->confirmedAtMs) ? (int)$p->confirmedAtMs : 0;
+
         // Datumsformat DE
-        $fmt = function($iso) {
-            if (!$iso) return '-';
-            try {
-                $dt = new DateTime($iso);
-                return $dt->format('d.m.Y H:i');
-            } catch (Exception $e) {
-                return $iso;
-            }
+        $fmtMs = function($ms) {
+            if (!$ms) return '-';
+            $tz = new DateTimeZone('Europe/Berlin');
+            $dt = (new DateTimeImmutable('@' . intval($ms / 1000)))->setTimezone($tz);
+            return $dt->format('d.m.Y H:i');
         };
 
-        $viewingDateStr = $fmt($viewingDateIso);
-        $confirmedAtStr = $fmt($confirmedAtIso);
+        $viewingDateStr = $fmtMs($viewingDateMs);
+        $confirmedAtStr = $fmtMs($confirmedAtMs);
 
         // Maildaten
         $recipient = 'info@hilgert-immobilien.de';

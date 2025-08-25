@@ -197,7 +197,24 @@
                 />
               </mat-form-field>
 
-              <mat-checkbox formControlName="confirmed">Bestätigt</mat-checkbox>
+              <!-- NEU: confirmedAt aus viewing-confirmations -->
+              <ng-container *ngIf="vcIdFor(appt) as vcId">
+                <ng-container *ngIf="watchVC(vcId) as vc$">
+                  <ng-container *ngIf="vc$ | async as vc">
+                    <div class="confirm-state" style="display:flex;align-items:center;gap:8px;">
+                      <ng-container *ngIf="toDateSafe(vc?.confirmedAt) as ca; else notConfirmed">
+                        <mat-icon>check_circle</mat-icon>
+                        <span>Bestätigt am: {{ ca | date:'short' }}</span>
+                      </ng-container>
+                      <ng-template #notConfirmed>
+                        <mat-icon>hourglass_empty</mat-icon>
+                        <span>Noch nicht bestätigt</span>
+                      </ng-template>
+                    </div>
+                  </ng-container>
+                </ng-container>
+              </ng-container>
+
               <mat-checkbox formControlName="canceled">Abgesagt</mat-checkbox>
             </div>
 
@@ -249,6 +266,11 @@
     </mat-card>
 
     <!-- //////////  -->
+
+    <!-- Weitere Unterlagen -->
+    <mat-card>
+      <mat-card-title>Weitere Unterlagen freischalten</mat-card-title>
+    </mat-card>
 
     <!-- Kaufangebot -->
     <mat-card>

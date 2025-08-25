@@ -1,4 +1,5 @@
-// viewing-confirmation.service.ts
+
+import { collection, getDocs, query, where, orderBy, limit } from '@angular/fire/firestore';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ViewingConfirmation } from '../models/viewing-confirmation.model';
@@ -16,12 +17,16 @@ import {
   getDoc,
   updateDoc,
   Timestamp,
+  docData,
+  docSnapshots,
+  collectionData,
 } from '@angular/fire/firestore';
-import { collection, getDocs, query, where } from '@angular/fire/firestore';
+import { Observable, map } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ViewingConfirmationService {
-  private MAIL_ENDPOINT = 'https://hilgert-immobilien.de/sendViewingConfirmationMail.php';
+  private MAIL_ENDPOINT =
+    'https://hilgert-immobilien.de/sendViewingConfirmationMail.php';
 
   constructor(private firestore: Firestore, private http: HttpClient) {}
 
@@ -29,7 +34,11 @@ export class ViewingConfirmationService {
     return doc(this.firestore, 'viewing-confirmations', id);
   }
 
-  private buildId(customerId: string, propertyExternalId: string, viewingDate: Date) {
+  private buildId(
+    customerId: string,
+    propertyExternalId: string,
+    viewingDate: Date
+  ) {
     return `${customerId}_${propertyExternalId}_${viewingDate.getTime()}`;
   }
 
@@ -37,9 +46,17 @@ export class ViewingConfirmationService {
     if (!d) return null;
     // Firestore Timestamp?
     if (typeof d === 'object' && 'toDate' in d) {
-      try { return (d as any).toDate(); } catch { /* noop */ }
+      try {
+        return (d as any).toDate();
+      } catch {
+        /* noop */
+      }
     }
-    try { return new Date(d); } catch { return null; }
+    try {
+      return new Date(d);
+    } catch {
+      return null;
+    }
   }
 
   private fmt(dt: Date | null): string {
@@ -96,7 +113,8 @@ export class ViewingConfirmationService {
               confirmedAt: oldSnap.data()['confirmedAt'] ?? null,
               confirmUa: oldSnap.data()['confirmUa'] ?? null,
               note: oldSnap.data()['note'] ?? null,
-              sentMailConfirmation: oldSnap.data()['sentMailConfirmation'] ?? null,
+              sentMailConfirmation:
+                oldSnap.data()['sentMailConfirmation'] ?? null,
             }
           : {
               acceptedConditions: false,
@@ -106,7 +124,11 @@ export class ViewingConfirmationService {
               sentMailConfirmation: null,
             };
 
-        await setDoc(this.ref(newId), { ...payloadBase, ...preserved }, { merge: false });
+        await setDoc(
+          this.ref(newId),
+          { ...payloadBase, ...preserved },
+          { merge: false }
+        );
         await deleteDoc(this.ref(oldId));
         return newId;
       } else {
@@ -157,17 +179,17 @@ export class ViewingConfirmationService {
       note: note ?? null,
     });
 
-    // 2) Frische Daten holen (inkl. gerade gesetzter Felder)
-    let vc: ViewingConfirmation | null = null;
-    try {
-      const snap = await getDoc(this.ref(viewingConfirmationId));
-      vc = snap.exists() ? (snap.data() as ViewingConfirmation) : null;
-    } catch (e) {
-      console.error('VC konnte nach confirm() nicht gelesen werden:', e);
-    }
+    // 2) Frische Daten holen
+    const snap = await getDoc(this.ref(viewingConfirmationId));
+    const vc = snap.exists() ? (snap.data() as ViewingConfirmation) : null;
 
-    // 3) Mail senden (soft-fail; Bestätigung nicht blockieren)
+    // 3) Mail senden (soft-fail)
     if (vc) {
+      const viewingDateMs =
+        this.roundtripDate(vc.viewingDate as any)?.getTime() ?? 0;
+      const confirmedAtMs =
+        this.roundtripDate(vc.confirmedAt as any)?.getTime() ?? 0;
+
       const payload = {
         viewingConfirmationId: vc.viewingConfirmationId,
         inquiryProcessId: vc.inquiryProcessId,
@@ -177,7 +199,8 @@ export class ViewingConfirmationService {
         firstName: vc.firstName ?? '',
         lastName: vc.lastName ?? '',
         viewingType: vc.viewingType ?? '',
-        viewingDateIso: this.fmt(this.roundtripDate(vc.viewingDate as any)),
+        viewingDateMs, // ⇦ nur ms senden
+        confirmedAtMs, // ⇦ nur ms senden
         title: vc.title ?? '',
         street: vc.street ?? '',
         houseNumber: vc.houseNumber ?? '',
@@ -185,7 +208,6 @@ export class ViewingConfirmationService {
         city: vc.city ?? '',
         courtage: vc.courtage ?? '',
         acceptedConditions: !!vc.acceptedConditions,
-        confirmedAtIso: this.fmt(this.roundtripDate(vc.confirmedAt as any)),
         confirmUa: vc.confirmUa ?? '',
         note: vc.note ?? '',
       };
@@ -216,11 +238,35 @@ export class ViewingConfirmationService {
     });
   }
 
-  async setBlockedForProcess(inquiryProcessId: string, blocked: boolean): Promise<void> {
+  async setBlockedForProcess(
+    inquiryProcessId: string,
+    blocked: boolean
+  ): Promise<void> {
     const colRef = collection(this.firestore, 'viewing-confirmations');
     const q = query(colRef, where('inquiryProcessId', '==', inquiryProcessId));
     const snap = await getDocs(q);
     if (snap.empty) return;
     await Promise.all(snap.docs.map((d) => updateDoc(d.ref, { blocked })));
+  }
+
+  // Methode um zu überwachen, ob der Termin bereits bestätigt wurde
+  watch(viewingConfirmationId: string): Observable<ViewingConfirmation | null> {
+    return docSnapshots(this.ref(viewingConfirmationId)).pipe(
+      map((s) => (s.exists() ? (s.data() as ViewingConfirmation) : null))
+    );
+  }
+
+  /** Alle offenen (nicht bestätigten) Viewing-Confirmations, aufsteigend nach viewingDate */
+  pending(limitCount = 50): Observable<ViewingConfirmation[]> {
+    const col = collection(this.firestore, 'viewing-confirmations');
+    const qy = query(
+      col,
+      where('acceptedConditions', '==', false),
+      orderBy('viewingDate', 'asc'),
+      limit(limitCount)
+    );
+    return collectionData(qy, { idField: 'viewingConfirmationId' }).pipe(
+      map(rows => rows as ViewingConfirmation[])
+    );
   }
 }

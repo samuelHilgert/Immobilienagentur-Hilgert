@@ -6,7 +6,15 @@ import { firstValueFrom } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { MediaAttachment } from '../models/media.model';
 import { getDownloadURL, listAll, ref, uploadBytes } from 'firebase/storage';
-import { doc, updateDoc } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
+import { Firestore } from '@angular/fire/firestore';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +23,7 @@ export class ImmobilienService {
   private baseUrl = '/api/immobilien';
 
   constructor(
+    private firestore: Firestore,
     private firebaseService: FirebaseService,
     private http: HttpClient
   ) {}
@@ -186,19 +195,19 @@ export class ImmobilienService {
     }
   }
 
-    // Exposé-Formular ruft Immobilie mit WohnungDetails per ID aus Firebase ab
-    async getWohnungById(id: string): Promise<WohnungDetails> {
-      try {
-        const result = await this.getProperty(id); // ✅ nutzt interne Firebase-Methode
-        if (!result || result.success === false) {
-          throw new Error(`Immobilie mit ID ${id} nicht gefunden.`);
-        }
-        return result as WohnungDetails;
-      } catch (error) {
-        console.error('Fehler beim Laden der Immobilie mit ID:', id, error);
-        throw error;
+  // Exposé-Formular ruft Immobilie mit WohnungDetails per ID aus Firebase ab
+  async getWohnungById(id: string): Promise<WohnungDetails> {
+    try {
+      const result = await this.getProperty(id); // ✅ nutzt interne Firebase-Methode
+      if (!result || result.success === false) {
+        throw new Error(`Immobilie mit ID ${id} nicht gefunden.`);
       }
+      return result as WohnungDetails;
+    } catch (error) {
+      console.error('Fehler beim Laden der Immobilie mit ID:', id, error);
+      throw error;
     }
+  }
 
   // Neue öffentliche Methode, um Medien zu laden
   async getMediaForImmobilie(id: string): Promise<MediaAttachment[]> {
@@ -314,13 +323,15 @@ export class ImmobilienService {
   }
 
   /**
- * Prüft, ob ein Objektnachweis im Storage für die angegebene Immobilie existiert.
- */
-  async checkObjektnachweisExists(externalId: string): Promise<{ exists: boolean; url?: string }> {
+   * Prüft, ob ein Objektnachweis im Storage für die angegebene Immobilie existiert.
+   */
+  async checkObjektnachweisExists(
+    externalId: string
+  ): Promise<{ exists: boolean; url?: string }> {
     try {
       const filePath = `forms/objektnachweis/${externalId}/objektnachweis-${externalId}.pdf`;
       const fileRef = ref(this.firebaseService.storage, filePath);
-  
+
       const url = await getDownloadURL(fileRef);
       return { exists: true, url };
     } catch (error) {
@@ -328,48 +339,67 @@ export class ImmobilienService {
     }
   }
 
-  async updateProperty(externalId: string, updates: Partial<Immobilie>): Promise<{ success: boolean; error?: string }> {
+  async updateProperty(
+    externalId: string,
+    updates: Partial<Immobilie>
+  ): Promise<{ success: boolean; error?: string }> {
     try {
       // Referenz zum Dokument
-      const propertyRef = doc(this.firebaseService.db, 'properties', externalId);
-  
+      const propertyRef = doc(
+        this.firebaseService.db,
+        'properties',
+        externalId
+      );
+
       // lastModificationDate automatisch setzen
       updates.lastModificationDate = new Date().toISOString();
-  
+
       // Firestore aktualisieren
       await updateDoc(propertyRef, updates);
-  
+
       return { success: true };
     } catch (error) {
       console.error('Fehler beim Aktualisieren der Immobilie:', error);
       return { success: false, error: 'Aktualisierung fehlgeschlagen' };
     }
-  }  
-  
-
-/**
- * Lädt eine PDF-Datei als Objektnachweis hoch und gibt den Download-Link zurück.
- */
-async uploadObjektnachweis(file: File, externalId: string): Promise<{ success: boolean; url?: string; error?: string }> {
-  if (!file || !externalId) {
-    return { success: false, error: 'Datei oder External ID fehlt' };
   }
 
-  try {
-    const storagePath = `forms/objektnachweis/${externalId}/objektnachweis-${externalId}.pdf`;
+  /**
+   * Lädt eine PDF-Datei als Objektnachweis hoch und gibt den Download-Link zurück.
+   */
+  async uploadObjektnachweis(
+    file: File,
+    externalId: string
+  ): Promise<{ success: boolean; url?: string; error?: string }> {
+    if (!file || !externalId) {
+      return { success: false, error: 'Datei oder External ID fehlt' };
+    }
 
-    const storageRef = ref(this.firebaseService.storage, storagePath);
-    const snapshot = await uploadBytes(storageRef, file);
-    const downloadUrl = await getDownloadURL(snapshot.ref);
+    try {
+      const storagePath = `forms/objektnachweis/${externalId}/objektnachweis-${externalId}.pdf`;
 
-    return { success: true, url: downloadUrl };
-  } catch (error: any) {
-    console.error('Fehler beim Hochladen des Objektnachweises:', error);
-    return { success: false, error: error.message || 'Unbekannter Fehler' };
+      const storageRef = ref(this.firebaseService.storage, storagePath);
+      const snapshot = await uploadBytes(storageRef, file);
+      const downloadUrl = await getDownloadURL(snapshot.ref);
+
+      return { success: true, url: downloadUrl };
+    } catch (error: any) {
+      console.error('Fehler beim Hochladen des Objektnachweises:', error);
+      return { success: false, error: error.message || 'Unbekannter Fehler' };
+    }
   }
-}
 
   deleteStorageFolder(path: string): Promise<void> {
     return this.firebaseService.deleteStorageFolder(path);
+  }
+
+  /** externalIds aller Properties mit Status 'Angebot' */
+  async listExternalIdsWithStatusAngebot(): Promise<string[]> {
+    const col = collection(this.firestore, 'properties');
+    const qy = query(col, where('propertyStatus', '==', 'Angebot'));
+    const snap = await getDocs(qy);
+    return snap.docs
+      .map((d) => d.id || (d.data() as Immobilie).externalId)
+      .filter((id): id is string => !!id);
   }
 }

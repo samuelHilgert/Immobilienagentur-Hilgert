@@ -1,7 +1,76 @@
+<!-- dashboard-start.component.html -->
 <section>
   <h2>Willkommen auf dem Dashboard</h2>
   <p>
     Hier kannst du auf Kunden- und Objektdaten zugreifen und diese verwalten.
   </p>
   <p>Denke immer daran: Gott ist dein Boss, du stehst in seinem Dienst!</p>
+
+  <h2>Übersicht</h2>
+
+  <!-- Block 1: Unbestätigte Terminbestätigungen anzeigen -->
+  <ng-container *ngIf="pendingVCs$ | async as items; else loading">
+    <mat-card *ngIf="items.length > 0">
+      <mat-card-title>Terminbestätigung ausstehend</mat-card-title>
+      <mat-card-content>
+        <div *ngFor="let vc of items; trackBy: trackByVcId" class="vc-row">
+          <div class="vc-main">
+            <div class="vc-line">
+              <strong>{{ vc.lastName }} {{ vc.firstName }}</strong>
+              <span class="dot">•</span>
+              <span>{{ vc.viewingType || "Besichtigung" }}</span>
+            </div>
+            <div class="vc-line">
+              Termin:
+              <span *ngIf="toDateSafe(vc.viewingDate) as dt; else noDate">
+                {{ dt | date : "short" }}
+              </span>
+              <ng-template #noDate>–</ng-template>
+            </div>
+            <div class="vc-line">
+              {{ vc.title }} — {{ vc.street }} {{ vc.houseNumber }},
+              {{ vc.postcode }} {{ vc.city }}
+            </div>
+          </div>
+
+          <div class="vc-actions">
+            <button
+              mat-stroked-button
+              color="primary"
+              (click)="openProcess(vc)"
+            >
+              Prozess öffnen
+            </button>
+          </div>
+
+          <mat-divider></mat-divider>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    <!-- Wenn items.length === 0: gar nichts anzeigen -->
+  </ng-container>
+
+  <ng-template #loading>
+    <mat-card>
+      <mat-card-title>Terminbestätigung ausstehend</mat-card-title>
+      <mat-card-content>
+        <p>Lade offene Bestätigungen…</p>
+      </mat-card-content>
+    </mat-card>
+  </ng-template>
+
+  <!-- Block 2: Unbeantowrtete Anfragen von Angeboten anzeigen -->
+  <mat-card *ngIf="anfragen.length > 0">
+    <mat-card-title>Anfragen zu Objekten im Status „Angebot“</mat-card-title>
+    <mat-card-content>
+      <div *ngFor="let proc of anfragen">
+        <strong>{{ proc.customerId }}</strong>
+        zu Objekt <code>{{ proc.propertyExternalId }}</code>
+        <button mat-button (click)="openProcessForInquiry(proc)">
+          Prozess öffnen
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
 </section>

@@ -123,15 +123,91 @@
         <input matInput formControlName="company" />
       </mat-form-field>
 
+      <!-- ===================== Angaben zum Einkommen (optional) ===================== -->
+<h3>Angaben zum Einkommen (optional)</h3>
+
+<div formGroupName="buyerData" class="buyer-profile">
+
+  <div class="form-row">
+    <mat-form-field appearance="outline">
+      <mat-label>Gesamt-Nettoeinkommen im Monat</mat-label>
+      <input matInput formControlName="netIncome" type="number" min="0" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Eigenkapital</mat-label>
+      <input matInput formControlName="equity" type="number" min="0" />
+    </mat-form-field>
+  </div>
+
+  <div class="form-row">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Vorhandene Immobilien</mat-label>
+      <input matInput formControlName="existingProperties"
+             placeholder="BeispieL: Zwei Eigentumswohnungen, Ein Einfamilienhaus, keine" />
+    </mat-form-field>
+  </div>
+
+  <div class="form-row">
+    <!-- <mat-form-field appearance="outline">
+      <mat-label>Aktienvermögen (€)</mat-label>
+      <input matInput formControlName="stockAssets" type="number" min="0" />
+    </mat-form-field> -->
+
+    <div class="bankconfirm-group">
+      <mat-checkbox formControlName="bankConfirmationAvailable">
+        Bankbestätigung vorhanden
+      </mat-checkbox>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Höhe Bankbestätigung (€)</mat-label>
+        <input matInput formControlName="bankConfirmationAmount" type="number" min="0" />
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <mat-form-field appearance="outline">
+      <mat-label>Anzahl Kaufende Personen</mat-label>
+      <input matInput formControlName="numberOfBuyers" type="number" min="1" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Anzahl Einziehende Personen</mat-label>
+      <input matInput formControlName="numberOfOccupants" type="number" min="1" />
+    </mat-form-field>
+  </div>
+
+  <!-- <div class="form-row">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Gesuchte Orte (kommagetrennt)</mat-label>
+      <input matInput formControlName="preferredLocationsText"
+             placeholder="z. B. Köln, Hürth, Frechen" />
+    </mat-form-field>
+  </div> -->
+
+  <!-- <div class="form-row">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Finanzierer/Bank (optional)</mat-label>
+      <input matInput formControlName="financiers"
+             placeholder="z. B. Sparkasse Köln, Interhyp, eigener Berater" />
+    </mat-form-field>
+  </div> -->
+
+  <!-- <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Sonstige Beschreibung</mat-label>
+    <textarea matInput formControlName="otherDescription" rows="4"></textarea>
+  </mat-form-field> -->
+
+</div>
+<!-- =================== /Angaben zum Einkommen ====================== -->
+
+
       <mat-form-field appearance="outline" class="full-width">
         <mat-label
-          >Beschreiben Sie hier wer Sie sind, warum Sie kaufen wollen, wie viele
-          Personen kaufen wollen und schildern Sie Ihre Kaufkraft</mat-label
+          >Beschreiben Sie hier gerne wer Sie sind und warum Sie kaufen möchten</mat-label
         >
         <textarea matInput formControlName="message" rows="6"></textarea>
-        <mat-error *ngIf="messageControl?.errors?.['required']">
-          Nachricht ist erforderlich
-        </mat-error>
       </mat-form-field>
 
       <div class="checkbox-group">

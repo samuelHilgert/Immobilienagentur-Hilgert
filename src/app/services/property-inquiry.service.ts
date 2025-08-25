@@ -34,5 +34,37 @@ export class PropertyInquiryService {
     await updateDoc(ref, data);
   }
 
-  
+        /**
+   * Alle Prozesse mit inquiryProcessStatus == 'Anfrage' für eine Menge an propertyExternalIds.
+   * Achtung: 'in' erlaubt max. 10 Werte -> wir chunken und mergen die Ergebnisse.
+   */
+        async findProcessesForPropertyIdsWithStatusAnfrage(
+          propertyIds: string[]
+        ): Promise<PropertyInquiryProcess[]> {
+          if (!propertyIds.length) return [];
+        
+          const col = collection(this.firestore, 'property-inquiry-processes');
+          const chunks = this.chunk(propertyIds, 10);
+        
+          const results: PropertyInquiryProcess[] = [];
+          for (const ids of chunks) {
+            const qy = query(
+              col,
+              where('inquiryProcessStatus', '==', 'Anfrage'),
+              where('propertyExternalId', 'in', ids)
+            );
+            const snap = await getDocs(qy);
+            results.push(...snap.docs.map(d => d.data() as PropertyInquiryProcess));
+          }
+        
+          // Doppelte rausfiltern
+          const byId = new Map(results.map(p => [p.inquiryProcessId, p]));
+          return Array.from(byId.values());
+        }
+        
+        private chunk<T>(arr: T[], size = 10): T[][] {
+          const out: T[][] = [];
+          for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+          return out;
+        }
 }

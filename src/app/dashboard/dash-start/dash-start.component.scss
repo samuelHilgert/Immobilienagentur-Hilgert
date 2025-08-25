@@ -7,10 +7,37 @@ section {
   gap: 18px;
   width: 100%;
   box-sizing: border-box;
-  padding:12px;
-  color:black;
-  font-weight:400;
+  padding: 12px;
+  color: black;
+  font-weight: 400;
+
   h2 {
-    font-weight:400;
+    font-weight: 400;
   }
+}
+
+
+.vc-row {
+  padding: 8px 0;
+}
+
+.vc-main {
+  margin-bottom: 6px;
+}
+
+.vc-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vc-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 8px 0;
+}
+
+.dot {
+  opacity: 0.5;
 }

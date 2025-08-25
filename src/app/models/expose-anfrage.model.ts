@@ -1,3 +1,5 @@
+import { prospectiveBuyer } from "./prospectiveBuyer.model";
+
 export interface ExposeAnfrageDto {
     requestCustomerId: string;
     
@@ -21,6 +23,8 @@ export interface ExposeAnfrageDto {
     acceptedPrivacy: boolean;
 
     requestPropertyId: string;
+
+    buyerData?: prospectiveBuyer;
     
     creationDate?: string;
   }
