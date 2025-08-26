@@ -30,6 +30,7 @@ import { EnergieklasseDiagrammComponent } from '../energieklasse-diagramm/energi
 import { MediaService } from '../../services/media.service';
 import { ImageDialogComponent } from '../image-dialog/image-dialog.component';
 import { PropertyInquiryService } from '../../services/property-inquiry.service';
+import { CaDocsComponent } from '../../customer-area/ca-docs/ca-docs.component';
 
 declare var html2pdf: any;
 
@@ -77,34 +78,41 @@ export class EpxosePreviewComponent implements OnInit {
     private router: Router,
     private mediaService: MediaService,
     private dialog: MatDialog,
-    private inquiryService: PropertyInquiryService,
+    private inquiryService: PropertyInquiryService
   ) {}
 
   async ngOnInit() {
-    const inquiryProcessId = this.route.snapshot.paramMap.get('inquiryProcessId');
+    const inquiryProcessId =
+      this.route.snapshot.paramMap.get('inquiryProcessId');
     if (!inquiryProcessId || !inquiryProcessId.includes('_')) {
-      this.router.navigate(['/expose-access-denied']); return;
+      this.router.navigate(['/expose-access-denied']);
+      return;
     }
     const [customerId, propertyExternalId] = inquiryProcessId.split('_');
-  
+
     // 1) Preview prüfen
-    const preview = await this.exposePreviewService.getExposePreview(inquiryProcessId);
-    if (!preview?.exposeAccessLevel ||
-        preview.customerId !== customerId ||
-        preview.propertyExternalId !== propertyExternalId) {
-      this.router.navigate(['/expose-access-denied']); return;
+    const preview = await this.exposePreviewService.getExposePreview(
+      inquiryProcessId
+    );
+    if (
+      !preview?.exposeAccessLevel ||
+      preview.customerId !== customerId ||
+      preview.propertyExternalId !== propertyExternalId
+    ) {
+      this.router.navigate(['/expose-access-denied']);
+      return;
     }
-    
+
     // 👇 HIER das neue Flag auswerten:
     if (preview.blocked) {
-      this.router.navigate(['/expose-access-denied']); return;
+      this.router.navigate(['/expose-access-denied']);
+      return;
     }
-    
+
     this.exposeLevel = preview.exposeAccessLevel;
     this.customerSalutation = preview.salutation || '';
-    this.customerFirstName  = preview.firstName  || '';
-    this.customerLastName   = preview.lastName   || '';
-
+    this.customerFirstName = preview.firstName || '';
+    this.customerLastName = preview.lastName || '';
 
     // 2) Prozess-Status prüfen
 
@@ -119,33 +127,38 @@ export class EpxosePreviewComponent implements OnInit {
     //   this.router.navigate(['/expose-access-denied']);
     //   return;
     // }
-    
-  
+
     // 3) Immobilie laden + Status prüfen
-    const immobilie = await this.immobilienService.getProperty(propertyExternalId) as Immobilie | null;
-    if (!immobilie) { this.router.navigate(['/expose-access-denied']); return; }
-  
+    const immobilie = (await this.immobilienService.getProperty(
+      propertyExternalId
+    )) as Immobilie | null;
+    if (!immobilie) {
+      this.router.navigate(['/expose-access-denied']);
+      return;
+    }
+
     // exakt auf "Referenz" prüfen
     if (immobilie.propertyStatus === 'Referenz') {
-      this.router.navigate(['/expose-access-denied']); return;
+      this.router.navigate(['/expose-access-denied']);
+      return;
     }
-  
+
     this.immobilie = immobilie;
-  
+
     // 4) Medien + Videos parallel (Immobilie haben wir ja schon)
     const [mediaList, videoList] = await Promise.all([
       this.mediaService.getMediaForProperty(propertyExternalId),
       this.mediaService.getVideosForProperty(propertyExternalId),
     ]);
-  
+
     this.videoMedia = videoList;
     this.media = mediaList
-      .filter(m => m.category !== 'FLOOR_PLAN' && m.type === 'image')
+      .filter((m) => m.category !== 'FLOOR_PLAN' && m.type === 'image')
       .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
     this.mediaFloorPlans = mediaList
-      .filter(m => m.category === 'FLOOR_PLAN')
+      .filter((m) => m.category === 'FLOOR_PLAN')
       .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
-  
+
     this.loadDetails();
   }
 
@@ -377,5 +390,19 @@ export class EpxosePreviewComponent implements OnInit {
   // searching for video
   getVideoMedia(): MediaAttachment | undefined {
     return this.videoMedia[0];
+  }
+
+  openDocs() {
+    if (!this.immobilie?.externalId) return;
+    this.dialog.open(CaDocsComponent, {
+      data: { externalId: this.immobilie.externalId },
+      width: '900px',     
+      maxWidth: '95vw',
+      height: '95vh',         
+      maxHeight: '95vh',
+      autoFocus: false,
+      restoreFocus: false,
+      panelClass: 'docs-dialog' 
+    });
   }
 }

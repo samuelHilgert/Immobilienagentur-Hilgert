@@ -1,0 +1,59 @@
+<section>
+  <h3 mat-dialog-title>Unterlagen zur Immobilie</h3>
+
+  <mat-dialog-content class="docs-content">
+    <div class="loading" *ngIf="loading">
+      <mat-progress-spinner
+        mode="indeterminate"
+        diameter="28"
+      ></mat-progress-spinner>
+      <span>Dokumente werden geladen…</span>
+    </div>
+
+    <p *ngIf="!loading && !docs.length && !error">
+      Aktuell sind keine Unterlagen hinterlegt.
+    </p>
+    <p *ngIf="error" class="error">{{ error }}</p>
+
+    <mat-list *ngIf="!loading && docs.length" class="content">
+      <mat-list-item *ngFor="let d of docs">
+        <div matListItemTitle class="title-line">
+          <mat-icon aria-hidden="true">description</mat-icon>
+          <span class="name">{{ d.displayName || d.fileName }}</span>
+        </div>
+
+        <div matListItemLine class="meta">
+          <span>{{ d.uploadDate | date : "dd.MM.yyyy, HH:mm" }}</span>
+          <span class="dot">•</span>
+          <span>{{ d.contentType || "Datei" }}</span>
+          <span class="dot" *ngIf="d.size">•</span>
+          <span *ngIf="d.size">{{ d.size / 1024 | number : "1.0-0" }} KB</span>
+        </div>
+
+        <div class="actions">
+          <a mat-stroked-button target="_blank" [href]="d.url" rel="noopener">
+            Ansehen
+          </a>
+
+          <!-- statt <a download> -->
+          <button mat-raised-button color="primary" (click)="downloadDoc(d)">
+            Herunterladen
+          </button>
+
+          <button
+            mat-icon-button
+            (click)="refreshUrl(d)"
+            aria-label="Link aktualisieren"
+            title="Link aktualisieren"
+          >
+            <mat-icon>refresh</mat-icon>
+          </button>
+        </div>
+      </mat-list-item>
+    </mat-list>
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close>Schließen</button>
+  </mat-dialog-actions>
+</section>

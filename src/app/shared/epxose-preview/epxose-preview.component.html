@@ -7,6 +7,15 @@
 
 <section>
   <div class="option-btns-div no-print">
+    <button
+      *ngIf="accessIsExtended"
+      mat-raised-button
+      class="expose-option-btn"
+      (click)="openDocs()"
+    >
+      Weitere Unterlagen
+    </button>
+
     <button mat-raised-button class="expose-option-btn" (click)="printPage()">
       Drucken
     </button>
@@ -165,8 +174,10 @@
               </p>
             </div>
             <div class="detail-row">
-              <p><strong>Provision:</strong><br />
-              {{ immobilie.courtage }}</p>
+              <p>
+                <strong>Provision:</strong><br />
+                {{ immobilie.courtage }}
+              </p>
             </div>
             <div class="detail-row">
               <p>
