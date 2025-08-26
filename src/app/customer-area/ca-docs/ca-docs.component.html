@@ -31,27 +31,14 @@
         </div>
 
         <div class="actions">
-          <a
-            mat-stroked-button
-            target="_blank"
-            rel="noopener"
-          >
+          <a mat-stroked-button target="_blank" rel="noopener" (click)="previewDoc(d)">
             Ansehen
           </a>
-
-          <!-- statt <a download> -->
+          
           <button mat-raised-button color="primary" (click)="downloadDoc(d)">
             Herunterladen
           </button>
 
-          <button
-            mat-icon-button
-            (click)="refreshUrl(d)"
-            aria-label="Link aktualisieren"
-            title="Link aktualisieren"
-          >
-            <mat-icon>refresh</mat-icon>
-          </button>
         </div>
       </mat-list-item>
     </mat-list>

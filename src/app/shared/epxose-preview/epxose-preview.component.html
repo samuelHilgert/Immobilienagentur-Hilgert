@@ -16,6 +16,15 @@
       Weitere Unterlagen
     </button>
 
+    <button
+    *ngIf="!accessIsShort"
+    mat-raised-button
+    class="expose-option-btn"
+    (click)="openAppointments()"
+  >
+    Termine
+  </button>
+
     <button mat-raised-button class="expose-option-btn" (click)="printPage()">
       Drucken
     </button>
@@ -858,7 +867,7 @@
             </div>
 
             <!-- ad feedback -->
-            <div class="adBox-feedback" *ngIf="!accessIsShort">
+            <div class="adBox-feedback" *ngIf="!accessIsExtended">
               <h3>Wir freuen uns über Ihr Feedback!</h3>
               <p>
                 Mit Ihrer Bewertung helfen Sie anderen, einen Eindruck von
@@ -876,11 +885,13 @@
             <div class="adBox-feedback" *ngIf="accessIsExtended">
               <h3>Ein Danke für Ihre Zeit!</h3>
               <p>
-                Wir freuen uns über Ihr Feedback! Mit Ihrer Bewertung helfen Sie
-                anderen, einen Eindruck von unserer Arbeit zu gewinnen –
-                besonders denen, die uns noch nicht kennen. Als kleines
-                Dankeschön für Ihre Zeit erhalten Sie einen 10 €
-                Shopping-Gutschein.
+                Sie haben uns und unsere Arbeit bereits kennengelernt. Wir
+                hoffen, dass Sie mit unserem Service zufrieden sind und würden
+                uns sehr über Ihr Feedback freuen! Mit Ihrer Bewertung
+                unterstützen Sie nicht nur uns, sondern auch andere
+                Interessenten, die sich ein Bild von unserer Arbeit machen
+                möchten. Als kleines Dankeschön für Ihre Zeit erhalten Sie einen
+                10 € Shopping-Gutschein.
               </p>
               <p>
                 Bewerten Sie uns hierzu einfach auf Google:

@@ -31,6 +31,7 @@ import { MediaService } from '../../services/media.service';
 import { ImageDialogComponent } from '../image-dialog/image-dialog.component';
 import { PropertyInquiryService } from '../../services/property-inquiry.service';
 import { CaDocsComponent } from '../../customer-area/ca-docs/ca-docs.component';
+import { CaAppointmentsComponent } from '../../customer-area/ca-appointments/ca-appointments.component';
 
 declare var html2pdf: any;
 
@@ -403,6 +404,23 @@ export class EpxosePreviewComponent implements OnInit {
       autoFocus: false,
       restoreFocus: false,
       panelClass: 'docs-dialog' 
+    });
+  }
+
+  openAppointments() {
+    if (!this.immobilie?.externalId) return;
+  
+    // inquiryProcessId ist schon in der URL: <customerId>_<propertyExternalId>
+    const inquiryProcessId = this.route.snapshot.paramMap.get('inquiryProcessId') || '';
+    const [customerId, propertyExternalId] = inquiryProcessId.split('_');
+  
+    this.dialog.open(CaAppointmentsComponent, {
+      data: { customerId, propertyExternalId },
+      width: '700px',
+      maxWidth: '95vw',
+      height: '85vh',
+      autoFocus: false,
+      restoreFocus: false
     });
   }
 }

@@ -16,8 +16,10 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatListModule } from '@angular/material/list';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 export const MATERIAL_MODULES = [
   MatCardModule,
@@ -39,6 +41,8 @@ export const MATERIAL_MODULES = [
   MatSlideToggleModule,
   MatDatepickerModule,
   MatNativeDateModule,
-  MatProgressSpinner,
-  MatListModule
+  MatProgressSpinnerModule,
+  MatListModule,
+  MatChipsModule,
+  MatExpansionModule
 ];

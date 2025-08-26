@@ -1,0 +1,62 @@
+<section>
+  <h3 mat-dialog-title>Ihre Termine</h3>
+
+  <mat-dialog-content>
+    <div class="loading" *ngIf="loading">
+      <mat-progress-spinner
+        mode="indeterminate"
+        diameter="28"
+      ></mat-progress-spinner>
+      <span>Termine werden geladen…</span>
+    </div>
+
+    <p *ngIf="!loading && error" class="error">{{ error }}</p>
+
+    <!-- Bevorstehend -->
+
+    <h4 *ngIf="upcoming.length">Bevorstehende Termine</h4>
+    <mat-list *ngIf="upcoming.length">
+      <mat-list-item *ngFor="let a of upcoming">
+        <div matListItemTitle class="appointment-row">
+          <mat-icon aria-hidden="true">event</mat-icon>
+          <span class="title">{{ a.viewingType }}</span>
+          <span class="date">{{ fmtDate(a.viewingDateObj) }}</span>
+
+          <!-- kleiner Statuschip nur für zukünftige Termine -->
+          <mat-chip-set>
+            <mat-chip *ngIf="a.confirmedByCustomer" color="primary" selected
+              >Termin bestätigt</mat-chip
+            >
+            <mat-chip *ngIf="!a.confirmedByCustomer" color="warn" selected
+              >Bestätigung ausstehend</mat-chip
+            >
+          </mat-chip-set>
+        </div>
+
+        <!-- Hinweis + Button, wenn noch NICHT bestätigt -->
+        <div matListItemLine class="notes" *ngIf="!a.confirmedByCustomer">
+          <p class="warn-text">
+            Bitte bestätigen Sie noch den Termin, da ansonsten keine
+            Besichtigung stattfinden kann.
+          </p>
+          <button
+            mat-stroked-button
+            color="primary"
+            (click)="openConfirmation(a)"
+            [disabled]="!a.confirmationId"
+            aria-label="Termin bestätigen"
+          >
+            Termin bestätigen
+          </button>
+        </div>
+
+        <!-- optionale Notizen -->
+        <div matListItemLine class="notes" *ngIf="a.notes">{{ a.notes }}</div>
+      </mat-list-item>
+    </mat-list>
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button mat-button mat-dialog-close>Schließen</button>
+  </mat-dialog-actions>
+</section>

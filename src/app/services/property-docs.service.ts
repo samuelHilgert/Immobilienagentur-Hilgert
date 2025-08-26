@@ -47,16 +47,24 @@ export class PropertyDocsService {
 
   async listForProperty(externalId: string): Promise<PropertyDoc[]> {
     const col = collection(this.db, 'property-docs');
-    const qy = query(
-      col,
-      where('externalId', '==', externalId),
-      orderBy('uploadDate', 'desc')
-    );
+    const qy  = query(col, where('externalId','==',externalId), orderBy('uploadDate','desc'));
     const snap = await getDocs(qy);
-    return snap.docs.map((d) => ({
+  
+    const docs = snap.docs.map(d => ({
       id: d.id,
-      ...(d.data() as Omit<PropertyDoc, 'id'>),
+      ...(d.data() as Omit<PropertyDoc,'id'>),
     }));
+  
+    // Alle URLs frisch holen
+    await Promise.all(docs.map(async (doc) => {
+      try {
+        doc.url = await getDownloadURL(ref(this.storage, doc.storagePath));
+      } catch (e) {
+        console.warn('getDownloadURL failed for', doc.storagePath, e);
+      }
+    }));
+  
+    return docs;
   }
 
   async listFromStorageOnly(externalId: string): Promise<PropertyDoc[]> {
@@ -346,5 +354,5 @@ export class PropertyDocsService {
     a.click();
     a.remove();
   }
-  
+
 }
