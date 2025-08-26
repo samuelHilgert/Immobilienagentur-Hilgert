@@ -20,7 +20,7 @@ export class CaDocsComponent implements OnInit {
   error: string | null = null;
   docs: PropertyDoc[] = [];
 
-  constructor(private docsSvc: PropertyDocsService, @Inject(MAT_DIALOG_DATA) public data: any) {}
+  constructor(public docsSvc: PropertyDocsService, @Inject(MAT_DIALOG_DATA) public data: any) {}
 
   async ngOnInit() {
     // Fallback: wenn kein @Input gesetzt ist, nimm die Dialog-Daten

@@ -29,25 +29,26 @@
       Keine Dokumente vorhanden.
     </div>
 
-    <ul class="docs-list" *ngIf="docs.length > 0">
-      <li *ngFor="let d of docs" class="doc-item">
-        <div class="meta">
-          <div class="name" title="{{ d.fileName }}">
-            {{ d.displayName || d.fileName }}
-          </div>
-          <div class="sub">
-            {{ d.uploadDate | date:'short' }}
-            • {{ d.contentType || 'Datei' }}
-            • {{ d.fileName }}
-          </div>
-        </div>
+<!-- src/app/.../property-docs-sets/property-docs-sets.component.html -->
+<ul class="docs-list" *ngIf="docs.length > 0">
+  <li *ngFor="let d of docs" class="doc-item">
+    <div class="meta">
+      <div class="name" title="{{ d.fileName }}">
+        {{ d.displayName || d.fileName }}
+      </div>
+      <div class="sub">
+        {{ d.uploadDate | date:'short' }} • {{ d.contentType || 'Datei' }} • {{ d.fileName }}
+      </div>
+    </div>
 
-        <div class="actions" *ngIf="isAdmin">
-          <button type="button" (click)="view(d)">Ansehen</button>
-          <button type="button" (click)="rename(d)">Umbenennen</button>
-          <button type="button" class="danger" (click)="remove(d)">Löschen</button>
-        </div>
-      </li>
-    </ul>
+    <div class="actions" *ngIf="isAdmin">
+      <button type="button" (click)="preview(d)">Vorschau</button>
+      <button type="button" (click)="download(d)">Herunterladen</button>
+      <button type="button" (click)="rename(d)">Umbenennen</button>
+      <button type="button" (click)="remove(d)">Löschen</button>
+    </div>
+  </li>
+</ul>
+
   </ng-container>
 </section>

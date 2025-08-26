@@ -38,8 +38,14 @@ section {
 }
 
 /* src/app/.../property-docs-sets/property-docs-sets.component.scss */
-.section-bg-v1 { padding: 16px; }
-.upload-row { margin: 12px 0 20px; }
+.section-bg-v1 {
+  padding: 16px;
+}
+
+.upload-row {
+  margin: 12px 0 20px;
+}
+
 .upload-btn {
   display: inline-block;
   padding: 8px 12px;
@@ -47,15 +53,42 @@ section {
   border-radius: 8px;
   cursor: pointer;
 }
-.upload-btn input { display: none; }
 
-.docs-list { list-style: none; padding: 0; margin: 0; }
-.doc-item {
-  display: flex; justify-content: space-between; gap: 12px;
-  padding: 10px 0; border-bottom: 1px solid #eee;
+.upload-btn input {
+  display: none;
 }
-.meta .name { font-weight: 600; }
-.meta .sub { font-size: 12px; opacity: .7; }
-.actions button { margin-left: 8px; }
-.actions .danger { color: #b00020; }
-.empty { opacity: .7; }
+
+.docs-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.doc-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.meta .name {
+  font-weight: 600;
+}
+
+.meta .sub {
+  font-size: 12px;
+  opacity: .7;
+}
+
+.actions button {
+  margin-left: 8px;
+}
+
+.actions .danger {
+  color: #b00020;
+}
+
+.empty {
+  opacity: .7;
+}

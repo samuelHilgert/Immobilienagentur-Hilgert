@@ -23,18 +23,20 @@ import {
   deleteObject,
   listAll,
   getBlob,
+  updateMetadata,
+  getMetadata,
 } from 'firebase/storage';
 
 export interface PropertyDoc {
-  id: string; // Firestore-Dokument-ID
-  externalId: string; // Bezug zur Immobilie
-  fileName: string; // tatsächlicher Dateiname im Storage
-  displayName: string; // frei änderbarer Anzeigename
-  storagePath: string; // z.B. property-docs/12345/1699999999_kaufvertrag.pdf
-  url: string; // Download-URL
+  id: string;
+  externalId: string;
+  fileName: string;
+  displayName: string;
+  storagePath: string;
+  url: string;
   contentType?: string;
   size?: number;
-  uploadDate: string; // ISO
+  uploadDate: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -43,7 +45,6 @@ export class PropertyDocsService {
   private db = getFirestore(this.app);
   private storage = getStorage(this.app);
 
-  /** Alle Dokumente zu einer Immobilie auflisten (neueste zuerst). */
   async listForProperty(externalId: string): Promise<PropertyDoc[]> {
     const col = collection(this.db, 'property-docs');
     const qy = query(
@@ -58,7 +59,6 @@ export class PropertyDocsService {
     }));
   }
 
-  /** Optional: robust direkt aus dem Storage lesen (falls Metadaten fehlen). */
   async listFromStorageOnly(externalId: string): Promise<PropertyDoc[]> {
     const folderRef = ref(this.storage, `property-docs/${externalId}`);
     const res = await listAll(folderRef);
@@ -67,9 +67,8 @@ export class PropertyDocsService {
         const url = await getDownloadURL(itemRef);
         const fileName = itemRef.name;
         const path = itemRef.fullPath;
-        // Minimal-Objekt; ohne Firestore-Metadaten
         return <PropertyDoc>{
-          id: path, // Platzhalter
+          id: path,
           externalId,
           fileName,
           displayName: fileName,
@@ -79,11 +78,9 @@ export class PropertyDocsService {
         };
       })
     );
-    // Neueste (heuristisch: Name enthält timestamp Prefix) nach Namen sortieren:
     return items.sort((a, b) => b.fileName.localeCompare(a.fileName));
   }
 
-  /** Hochladen eines neuen Dokuments. */
   async uploadDoc(
     file: File,
     externalId: string,
@@ -96,14 +93,16 @@ export class PropertyDocsService {
       const storagePath = `property-docs/${externalId}/${fileName}`;
       const storageRef = ref(this.storage, storagePath);
 
-      // ✅ NEU: erzwinge Download + Dateiname
+      // ↓ immer sinnvoller MIME-Type bestimmen
+      const contentType = this.guessContentType(file.name, file.type);
+
+      // ✅ WICHTIG: attachment statt inline
       const downloadName = this.makeSafeName(displayName || file.name);
       const metadata = {
-        contentType: file.type || 'application/octet-stream',
+        contentType,
         contentDisposition: `attachment; filename="${downloadName}"`,
       };
 
-      // ⬇️ metadata als 3. Parameter übergeben
       const snap = await uploadBytes(storageRef, file, metadata);
       const url = await getDownloadURL(snap.ref);
 
@@ -115,7 +114,7 @@ export class PropertyDocsService {
         displayName: displayName || file.name,
         storagePath,
         url,
-        contentType: file.type,
+        contentType,
         size: file.size,
         uploadDate: new Date().toISOString(),
       };
@@ -128,10 +127,7 @@ export class PropertyDocsService {
     }
   }
 
-  /** Umbenennen (Displayname ODER tatsächlicher Dateiname).
-   *  - displayOnly=true: nur Anzeigename in Firestore ändern
-   *  - displayOnly=false: echte Umbenennung im Storage (Copy + Delete + URL aktualisieren)
-   */
+  /** Umbenennen */
   async renameDoc(
     docId: string,
     newName: string,
@@ -144,15 +140,22 @@ export class PropertyDocsService {
 
     if (displayOnly) {
       await updateDoc(refFS, { displayName: newName });
+      try {
+        const objRef = ref(this.storage, meta.storagePath);
+        await updateMetadata(objRef, {
+          contentDisposition: `attachment; filename="${this.makeSafeName(newName)}"`, // ← attachment!
+        });
+      } catch {}
       return;
     }
 
-    // ECHTE Umbenennung im Storage:
-    // 1) ursprüngliche Datei laden
+    // Echte Umbenennung: Copy mit METADATEN erhalten!
     const oldRef = ref(this.storage, meta.storagePath);
-    const blob = await getBlob(oldRef);
+    const [blob, oldMd] = await Promise.all([
+      getBlob(oldRef),
+      getMetadata(oldRef),
+    ]);
 
-    // 2) neuen Pfad/Name bestimmen
     const folder = `property-docs/${meta.externalId}`;
     const safeNew = this.makeSafeName(newName);
     const newFileName = safeNew.includes('.')
@@ -160,31 +163,30 @@ export class PropertyDocsService {
       : this.applyOriginalExt(safeNew, meta.fileName);
     const newPath = `${folder}/${newFileName}`;
     const newRef = ref(this.storage, newPath);
+    // echte Umbenennung: Metadaten beibehalten, aber auf attachment setzen
+    const newMd = {
+      contentType: oldMd.contentType || this.guessContentType(newFileName, ''),
+      contentDisposition: `attachment; filename="${this.makeSafeName(newName)}"`, // ← attachment!
+    };
+    
 
-    // 3) hochladen
-    await uploadBytes(newRef, blob);
+    await uploadBytes(newRef, blob, newMd);
     const newUrl = await getDownloadURL(newRef);
-
-    // 4) alte Datei löschen
     await deleteObject(oldRef);
 
-    // 5) Firestore-Metadaten aktualisieren
     await updateDoc(refFS, {
       fileName: newFileName,
       storagePath: newPath,
       url: newUrl,
       displayName: newName,
+      contentType: newMd.contentType,
     });
   }
 
-  /** Löschen (Storage + Firestore). */
   async deleteDoc(docId: string): Promise<void> {
     const refFS = doc(this.db, 'property-docs', docId);
     const snap = await getDoc(refFS);
-    if (!snap.exists()) {
-      // Firestore schon weg? dann sind wir fertig.
-      return;
-    }
+    if (!snap.exists()) return;
     const meta = snap.data() as PropertyDoc;
     try {
       await deleteObject(ref(this.storage, meta.storagePath));
@@ -193,7 +195,6 @@ export class PropertyDocsService {
     }
   }
 
-  /** Download-URL frisch holen (falls abgelaufen). */
   async refreshUrl(docId: string): Promise<string> {
     const refFS = doc(this.db, 'property-docs', docId);
     const snap = await getDoc(refFS);
@@ -201,7 +202,6 @@ export class PropertyDocsService {
 
     const meta = snap.data() as PropertyDoc;
     const newUrl = await getDownloadURL(ref(this.storage, meta.storagePath));
-
     await updateDoc(refFS, {
       url: newUrl,
       uploadDate: meta.uploadDate || new Date().toISOString(),
@@ -209,10 +209,38 @@ export class PropertyDocsService {
     return newUrl;
   }
 
-  // ---------------- helpers ----------------
+  /** Vorschau-URL (inline) – falls Header falsch, im Component Fallback über Blob */
+  async getPreviewUrl(storagePath: string): Promise<string> {
+    const u = await getDownloadURL(ref(this.storage, storagePath));
+    // Für GCS/Firebase kannst du zusätzlich (meist) response Header setzen:
+    const sep = u.includes('?') ? '&' : '?';
+    return `${u}${sep}response-content-disposition=inline`;
+  }
+
+  /** Download-URL (erzwungen "attachment") */
+  async getDownloadUrl(
+    storagePath: string,
+    fileName: string,
+    forceOctet = false
+  ): Promise<string> {
+    const u = await getDownloadURL(ref(this.storage, storagePath));
+    const url = new URL(u);
+    url.searchParams.set(
+      'response-content-disposition',
+      `attachment; filename="${this.makeSafeName(fileName)}"`
+    );
+    url.searchParams.set(
+      'response-content-type',
+      forceOctet
+        ? 'application/octet-stream'
+        : this.guessContentType(fileName, '')
+    );
+    return url.toString();
+  }
+
+  // ---------- helpers ----------
 
   private makeSafeName(name: string): string {
-    // einfache Safe-Filename-Strategie
     return name
       .trim()
       .replace(/[\/\\:#?"<>|]+/g, '_')
@@ -225,5 +253,98 @@ export class PropertyDocsService {
     return `${base}${ext}`;
   }
 
+  private guessContentType(fileName: string, fallback?: string) {
+    const ext = (fileName.split('.').pop() || '').toLowerCase();
+    const map: Record<string, string> = {
+      pdf: 'application/pdf',
+      png: 'image/png',
+      jpg: 'image/jpeg',
+      jpeg: 'image/jpeg',
+      webp: 'image/webp',
+      gif: 'image/gif',
+      svg: 'image/svg+xml',
+      txt: 'text/plain',
+      csv: 'text/csv',
+      json: 'application/json',
+      doc: 'application/msword',
+      docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      xls: 'application/vnd.ms-excel',
+      xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      ppt: 'application/vnd.ms-powerpoint',
+      pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+      mp4: 'video/mp4',
+      mov: 'video/quicktime',
+      avi: 'video/x-msvideo',
+    };
+    return map[ext] || fallback || 'application/octet-stream';
+  }
+
+  // Damit browser nicht dokument herunterlädt, wenn es dieses zur vorschau öffnen soll
+  async fixOneByPath(storagePath: string, displayName?: string) {
+    const objRef = ref(this.storage, storagePath);
+    const md = await getMetadata(objRef).catch(() => ({} as any));
+    const safeName = this.makeSafeName(
+      displayName || storagePath.split('/').pop() || 'datei.pdf'
+    );
+
+    await updateMetadata(objRef, {
+      contentType: md.contentType || 'application/pdf',
+      contentDisposition: `inline; filename="${safeName}"`,
+    });
+
+    // Optional: neue URL ziehen (falls du sie im Firestore ablegen willst)
+    await getDownloadURL(objRef);
+  }
+
+  /** Direkt den Blob aus dem Storage holen (ohne Cross-Origin Probleme). */
+  async getBlobForPath(storagePath: string): Promise<Blob> {
+    const objRef = ref(this.storage, storagePath);
+    return await getBlob(objRef);
+  }
+
+  /** externe Vorschau-URL bauen */
+  private buildPreviewUrl(
+    rawDownloadUrl: string,
+    contentType?: string
+  ): string {
+    const ct = (contentType || '').toLowerCase();
+
+    // Für PDFs & Office: Google Docs Viewer nutzen (rendert zuverlässig, ignoriert attachment)
+    const isDocLike =
+      ct === 'application/pdf' ||
+      ct.includes('officedocument') ||
+      ct.includes('msword') ||
+      ct.includes('excel') ||
+      ct.includes('powerpoint') ||
+      ct.includes('openxmlformats');
+
+    if (isDocLike || rawDownloadUrl.toLowerCase().endsWith('.pdf')) {
+      const u = new URL('https://docs.google.com/gview');
+      u.searchParams.set('embedded', '1');
+      u.searchParams.set('url', rawDownloadUrl); // signierte Firebase-URL
+      return u.toString();
+    }
+
+    // Bilder/Videos meist direkt anzeigen okay (attachment wird in Subressourcen i.d.R. ignoriert)
+    return rawDownloadUrl;
+  }
+
+  async viewDoc(doc: PropertyDoc): Promise<void> {
+    const freshUrl = await this.refreshUrl(doc.id);
+    const previewUrl = this.buildPreviewUrl(freshUrl, doc.contentType);
+    window.open(previewUrl, '_blank', 'noopener');
+  }
+
+  async downloadDoc(doc: PropertyDoc): Promise<void> {
+    const freshUrl = await this.refreshUrl(doc.id);
+    // im selben Tab oder neuem Tab ist egal – der Server zwingt „Download“
+    const a = document.createElement('a');
+    a.href = freshUrl;
+    a.download = doc.displayName || doc.fileName; // wird evtl. ignoriert, Header gewinnt – ok
+    a.rel = 'noopener';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
   
 }
