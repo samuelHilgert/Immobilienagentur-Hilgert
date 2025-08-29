@@ -1,4 +1,5 @@
-// src/app/services/property-docs.service.ts
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 import { Injectable } from '@angular/core';
 import { initializeApp } from 'firebase/app';
 import { environment } from '../../environments/environments';
@@ -45,25 +46,32 @@ export class PropertyDocsService {
   private db = getFirestore(this.app);
   private storage = getStorage(this.app);
 
+
   async listForProperty(externalId: string): Promise<PropertyDoc[]> {
     const col = collection(this.db, 'property-docs');
-    const qy  = query(col, where('externalId','==',externalId), orderBy('uploadDate','desc'));
+    const qy = query(
+      col,
+      where('externalId', '==', externalId),
+      orderBy('uploadDate', 'desc')
+    );
     const snap = await getDocs(qy);
-  
-    const docs = snap.docs.map(d => ({
+
+    const docs = snap.docs.map((d) => ({
       id: d.id,
-      ...(d.data() as Omit<PropertyDoc,'id'>),
+      ...(d.data() as Omit<PropertyDoc, 'id'>),
     }));
-  
+
     // Alle URLs frisch holen
-    await Promise.all(docs.map(async (doc) => {
-      try {
-        doc.url = await getDownloadURL(ref(this.storage, doc.storagePath));
-      } catch (e) {
-        console.warn('getDownloadURL failed for', doc.storagePath, e);
-      }
-    }));
-  
+    await Promise.all(
+      docs.map(async (doc) => {
+        try {
+          doc.url = await getDownloadURL(ref(this.storage, doc.storagePath));
+        } catch (e) {
+          console.warn('getDownloadURL failed for', doc.storagePath, e);
+        }
+      })
+    );
+
     return docs;
   }
 
@@ -151,7 +159,9 @@ export class PropertyDocsService {
       try {
         const objRef = ref(this.storage, meta.storagePath);
         await updateMetadata(objRef, {
-          contentDisposition: `attachment; filename="${this.makeSafeName(newName)}"`, // ← attachment!
+          contentDisposition: `attachment; filename="${this.makeSafeName(
+            newName
+          )}"`, // ← attachment!
         });
       } catch {}
       return;
@@ -174,9 +184,10 @@ export class PropertyDocsService {
     // echte Umbenennung: Metadaten beibehalten, aber auf attachment setzen
     const newMd = {
       contentType: oldMd.contentType || this.guessContentType(newFileName, ''),
-      contentDisposition: `attachment; filename="${this.makeSafeName(newName)}"`, // ← attachment!
+      contentDisposition: `attachment; filename="${this.makeSafeName(
+        newName
+      )}"`, // ← attachment!
     };
-    
 
     await uploadBytes(newRef, blob, newMd);
     const newUrl = await getDownloadURL(newRef);
@@ -355,4 +366,57 @@ export class PropertyDocsService {
     a.remove();
   }
 
+  async downloadAllAsZip(
+    docs: PropertyDoc[],
+    zipName = 'unterlagen.zip',
+    onProgress?: (p: { done: number; total: number; current?: string }) => void
+  ): Promise<void> {
+    if (!docs?.length) throw new Error('Keine Dokumente vorhanden.');
+  
+    const zip = new JSZip();
+    const used = new Map<string, number>();
+    const makeUnique = (name: string) => {
+      const base = this.makeSafeName(name || 'datei');
+      const times = (used.get(base) || 0) + 1;
+      used.set(base, times);
+      if (times === 1) return base;
+      const dot = base.lastIndexOf('.');
+      return dot > 0 ? `${base.slice(0, dot)}_${times}${base.slice(dot)}` : `${base}_${times}`;
+    };
+  
+    let done = 0;
+    const total = docs.length;
+    const errors: string[] = [];
+  
+    for (const d of docs) {
+      try {
+        // (Optional) URL im Firestore aktualisieren – schadet nicht
+        await this.refreshUrl(d.id).catch(() => {});
+  
+        // **WICHTIG:** Blob direkt aus Storage via SDK (kein fetch auf URL)
+        const blob = await this.getBlobForPath(d.storagePath);
+  
+        const fname = makeUnique(
+          (d.displayName || d.fileName || d.storagePath.split('/').pop() || 'datei')
+        );
+        zip.file(fname, blob, { date: new Date(d.uploadDate || Date.now()) });
+      } catch (e: any) {
+        errors.push(`Fehler bei ${d.displayName || d.fileName || d.storagePath}: ${String(e?.message || e)}`);
+      } finally {
+        done++;
+        onProgress?.({ done, total, current: d.displayName || d.fileName });
+      }
+    }
+  
+    // Nur wenn wirklich Fehler auftraten, eine einzige Fehlerliste beilegen
+    if (errors.length) {
+      zip.file('FEHLER_Liste.txt', errors.join('\n'));
+    }
+  
+    const blobZip = await zip.generateAsync(
+      { type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } }
+    );
+  
+    saveAs(blobZip, this.makeSafeName(zipName));
+  }
 }

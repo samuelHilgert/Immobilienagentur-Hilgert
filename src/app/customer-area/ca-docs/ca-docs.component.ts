@@ -1,7 +1,10 @@
 // ca-docs.component.ts
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PropertyDocsService, PropertyDoc } from '../../services/property-docs.service';
+import {
+  PropertyDocsService,
+  PropertyDoc,
+} from '../../services/property-docs.service';
 import { MATERIAL_MODULES } from '../../shared/material-imports';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
@@ -10,7 +13,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
   standalone: true,
   imports: [CommonModule, MATERIAL_MODULES],
   templateUrl: './ca-docs.component.html',
-  styleUrl: './ca-docs.component.scss'
+  styleUrl: './ca-docs.component.scss',
 })
 export class CaDocsComponent implements OnInit {
   @Input() externalId!: string;
@@ -18,6 +21,8 @@ export class CaDocsComponent implements OnInit {
   loading = true;
   error: string | null = null;
   docs: PropertyDoc[] = [];
+  downloadingAll = false;
+  bulkProgress = { done: 0, total: 0, current: '' };
 
   constructor(
     public docsSvc: PropertyDocsService,
@@ -63,7 +68,10 @@ export class CaDocsComponent implements OnInit {
       const freshUrl = await this.docsSvc.refreshUrl(doc.id);
       const a = document.createElement('a');
       a.href = freshUrl;
-      a.download = (doc.displayName || doc.fileName || 'datei').replace(/[\/\\:#?"<>|]+/g, '_');
+      a.download = (doc.displayName || doc.fileName || 'datei').replace(
+        /[\/\\:#?"<>|]+/g,
+        '_'
+      );
       a.rel = 'noopener';
       document.body.appendChild(a);
       a.click();
@@ -80,5 +88,49 @@ export class CaDocsComponent implements OnInit {
     try {
       doc.url = await this.docsSvc.refreshUrl(doc.id);
     } catch {}
+  }
+  
+  async downloadAll() {
+    if (!this.docs?.length) return;
+  
+    this.downloadingAll = true;
+    this.bulkProgress = { done: 0, total: this.docs.length, current: '' };
+  
+    try {
+      // Wichtig: NACHEINANDER, damit Pop-Up Blocker/Browser-Rate-Limits nicht greifen
+      for (const d of this.docs) {
+        this.bulkProgress.current = d.displayName || d.fileName || 'Datei';
+  
+        // 1) Frische, "attachment"-URL bauen (wie bei Einzel-Download)
+        //    Falls du strikt per storagePath gehen willst:
+        //    const freshUrl = await this.docsSvc.getDownloadUrl(d.storagePath, d.displayName || d.fileName, true);
+        const freshUrl = await this.docsSvc.refreshUrl(d.id).catch(() => d.url);
+  
+        // 2) Download per <a> Navigation (kein XHR ⇒ kein CORS)
+        const a = document.createElement('a');
+        a.href = freshUrl;
+        a.rel = 'noopener';
+        // Dateiname (Browser darf ignorieren, Header gewinnt – passt)
+        a.download = (d.displayName || d.fileName || 'datei').replace(/[\/\\:#?"<>|]+/g, '_');
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+  
+        // 3) Kleiner Delay, damit Browser nicht blockt (Safari/Chrome mögen das)
+        await this.sleep(400);
+  
+        this.bulkProgress.done++;
+      }
+    } catch (e) {
+      console.error('Bulk-Download fehlgeschlagen:', e);
+      this.error = 'Mindestens ein Download konnte nicht gestartet werden.';
+    } finally {
+      this.downloadingAll = false;
+      this.bulkProgress.current = '';
+    }
+  }
+
+  private sleep(ms: number) {
+    return new Promise(res => setTimeout(res, ms));
   }
 }

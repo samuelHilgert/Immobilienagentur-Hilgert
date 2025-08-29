@@ -4,64 +4,90 @@
 @use "./../../../assets/elements.scss" as e;
 
 section {
-    @include s.f_c_fs_c;
-    gap: 12px;
-    height: 100%;
-    width: 100%;
-    margin: 0 auto;
+  @include s.f_c_fs_c;
+  gap: 12px;
+  height: auto;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+  margin: 0px;
+  padding: 80px 5%;
+
+  @media print {
+    margin-top: -20px;
+    padding: 0;
+    background-color: unset;
+    min-height: 100%;
     box-sizing: border-box;
-    margin: 0px;
-    padding: 80px 5%;
-  
-    @media print {
-      margin-top: -20px;
-      padding: 0;
-      background-color: unset;
-      min-height: 100%;
-      box-sizing: border-box;
-    }
+  }
+}
+
+.docs-content,
+.content {
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+mat-list {
+  @include s.f_c_fs_fs;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+mat-list-item {
+  @include s.f_r_fs_fs;
+  gap: 4px;
+  min-height: 150px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 4px;
+}
+
+.title-line {
+  height: auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.meta {
+  height: auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.actions {
+  @include s.f_r_fs_fs;
+  gap: 12px;
+  height: auto;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 2px;
+}
+
+.zip-progress {
+  margin-left: 12px;
+  opacity: 0.8;
+  font-size: 0.9rem;
+}
+
+.all-download-wrapper {
+  @include s.f_c_fs_c;
+  gap: 12px;
+  height: auto;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: -48px;
+  padding-bottom: 48px;
+
+
+  mat-dialog-actions {
+    padding: 0;
+    margin:0;
+    margin-top: 48px;
   }
 
-  .docs-content, .content {
-    height: 100%;
-    width: 100%;
-    box-sizing: border-box;
-    padding:0;
-  }
+}
 
-  mat-list {
-    @include s.f_c_fs_fs;
-    height:100%;
-    width:100%;
-    box-sizing: border-box;
-  }
-
-  mat-list-item {
-    @include s.f_r_fs_fs;
-    gap:4px;
-    min-height:150px;
-    width:100%;
-    box-sizing: border-box;
-    padding:4px;
-  }
-
-  .title-line {
-    height:auto;
-    width:100%;
-    box-sizing: border-box;
-  }
-
-  .meta {
-    height:auto;
-    width:100%;
-    box-sizing: border-box;
-  }
-
-  .actions {
-    @include s.f_r_fs_fs;
-    gap:12px;
-    height:auto;
-    width:100%;
-    box-sizing: border-box;
-    padding:2px;
-  }

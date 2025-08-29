@@ -1,6 +1,22 @@
 <section>
   <h3 mat-dialog-title>Unterlagen zur Immobilie</h3>
 
+  <div class="all-download-wrapper">
+    <mat-dialog-actions>
+      <button mat-stroked-button (click)="downloadAll()" [disabled]="downloadingAll || !docs.length">
+        Alle herunterladen
+      </button>
+      <span *ngIf="downloadingAll" class="zip-progress">
+        {{ bulkProgress.done }}/{{ bulkProgress.total }} … {{ bulkProgress.current || '' }}
+      </span>
+    </mat-dialog-actions>
+
+    <mat-progress-bar
+      *ngIf="downloadingAll"
+      mode="indeterminate"
+    ></mat-progress-bar>
+  </div>
+
   <mat-dialog-content class="docs-content">
     <div class="loading" *ngIf="loading">
       <mat-progress-spinner
@@ -31,17 +47,22 @@
         </div>
 
         <div class="actions">
-          <a mat-stroked-button target="_blank" rel="noopener" (click)="previewDoc(d)">
+          <a
+            mat-stroked-button
+            target="_blank"
+            rel="noopener"
+            (click)="previewDoc(d)"
+          >
             Ansehen
           </a>
-          
+
           <button mat-raised-button color="primary" (click)="downloadDoc(d)">
             Herunterladen
           </button>
-
         </div>
       </mat-list-item>
     </mat-list>
+
   </mat-dialog-content>
 
   <mat-dialog-actions>
