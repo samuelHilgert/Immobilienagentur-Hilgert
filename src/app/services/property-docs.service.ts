@@ -218,15 +218,24 @@ export class PropertyDocsService {
     const refFS = doc(this.db, 'property-docs', docId);
     const snap = await getDoc(refFS);
     if (!snap.exists()) throw new Error('Dokument nicht gefunden');
-
+  
     const meta = snap.data() as PropertyDoc;
     const newUrl = await getDownloadURL(ref(this.storage, meta.storagePath));
-    await updateDoc(refFS, {
-      url: newUrl,
-      uploadDate: meta.uploadDate || new Date().toISOString(),
-    });
+  
+    // ⚠️ Update ist nice-to-have – bei fehlenden Rechten ignorieren
+    try {
+      await updateDoc(refFS, {
+        url: newUrl,
+        uploadDate: meta.uploadDate || new Date().toISOString(),
+      });
+    } catch (e) {
+      // Permission? Egal – wir haben die frische URL, das reicht für Kunden.
+      // Optional: console.warn('updateDoc ignored:', e);
+    }
+  
     return newUrl;
   }
+  
 
   /** Vorschau-URL (inline) – falls Header falsch, im Component Fallback über Blob */
   async getPreviewUrl(storagePath: string): Promise<string> {
