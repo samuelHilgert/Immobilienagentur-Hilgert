@@ -44,5 +44,6 @@ export const MATERIAL_MODULES = [
   MatProgressSpinnerModule,
   MatListModule,
   MatChipsModule,
-  MatExpansionModule
+  MatExpansionModule,
+  FormsModule
 ];

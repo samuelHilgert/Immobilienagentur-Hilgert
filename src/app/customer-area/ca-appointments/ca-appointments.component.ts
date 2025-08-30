@@ -188,4 +188,6 @@ export class CaAppointmentsComponent implements OnInit {
       'noopener'
     );
   }
+
+  
 }

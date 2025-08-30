@@ -38,6 +38,7 @@ export interface PropertyDoc {
   contentType?: string;
   size?: number;
   uploadDate: string;
+  folder?: string | null;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -45,7 +46,6 @@ export class PropertyDocsService {
   private app = initializeApp(environment.firebase);
   private db = getFirestore(this.app);
   private storage = getStorage(this.app);
-
 
   async listForProperty(externalId: string): Promise<PropertyDoc[]> {
     const col = collection(this.db, 'property-docs');
@@ -99,42 +99,50 @@ export class PropertyDocsService {
 
   async uploadDoc(
     file: File,
-    externalId: string,
-    displayName?: string
+    opts: { externalId: string; folder?: string | null; displayName?: string }
   ): Promise<{ success: boolean; doc?: PropertyDoc; error?: any }> {
     try {
+      const { externalId } = opts;
       const ts = Date.now();
+  
       const safeName = this.makeSafeName(file.name);
+      const folderCleanRaw = (opts.folder ?? '').trim();
+      const folderClean = folderCleanRaw ? this.makeSafePath(folderCleanRaw) : null;
+  
       const fileName = `${externalId}_${ts}_${safeName}`;
-      const storagePath = `property-docs/${externalId}/${fileName}`;
+      const storagePath = folderClean
+        ? `property-docs/${externalId}/${folderClean}/${fileName}`
+        : `property-docs/${externalId}/${fileName}`;
+  
       const storageRef = ref(this.storage, storagePath);
-
-      // ↓ immer sinnvoller MIME-Type bestimmen
       const contentType = this.guessContentType(file.name, file.type);
-
-      // ✅ WICHTIG: attachment statt inline
-      const downloadName = this.makeSafeName(displayName || file.name);
+      const downloadName = this.makeSafeName(opts.displayName || file.name);
       const metadata = {
         contentType,
         contentDisposition: `attachment; filename="${downloadName}"`,
       };
-
+  
       const snap = await uploadBytes(storageRef, file, metadata);
       const url = await getDownloadURL(snap.ref);
-
+  
       const docId = `${externalId}_${ts}`;
-      const meta: PropertyDoc = {
+  
+      // kein undefined in Firestore
+      const base = {
         id: docId,
         externalId,
         fileName,
-        displayName: displayName || file.name,
+        displayName: opts.displayName || file.name, // ← bleibt Dateiname, wird NICHT zur Kategorie
         storagePath,
         url,
         contentType,
         size: file.size,
         uploadDate: new Date().toISOString(),
       };
-
+  
+      const meta: PropertyDoc =
+        folderClean === null ? { ...base, folder: null } : { ...base, folder: folderClean };
+  
       await setDoc(doc(this.db, 'property-docs', docId), meta);
       return { success: true, doc: meta };
     } catch (error) {
@@ -142,6 +150,8 @@ export class PropertyDocsService {
       return { success: false, error };
     }
   }
+  
+  
 
   /** Umbenennen */
   async renameDoc(
@@ -218,10 +228,10 @@ export class PropertyDocsService {
     const refFS = doc(this.db, 'property-docs', docId);
     const snap = await getDoc(refFS);
     if (!snap.exists()) throw new Error('Dokument nicht gefunden');
-  
+
     const meta = snap.data() as PropertyDoc;
     const newUrl = await getDownloadURL(ref(this.storage, meta.storagePath));
-  
+
     // ⚠️ Update ist nice-to-have – bei fehlenden Rechten ignorieren
     try {
       await updateDoc(refFS, {
@@ -232,10 +242,9 @@ export class PropertyDocsService {
       // Permission? Egal – wir haben die frische URL, das reicht für Kunden.
       // Optional: console.warn('updateDoc ignored:', e);
     }
-  
+
     return newUrl;
   }
-  
 
   /** Vorschau-URL (inline) – falls Header falsch, im Component Fallback über Blob */
   async getPreviewUrl(storagePath: string): Promise<string> {
@@ -381,7 +390,7 @@ export class PropertyDocsService {
     onProgress?: (p: { done: number; total: number; current?: string }) => void
   ): Promise<void> {
     if (!docs?.length) throw new Error('Keine Dokumente vorhanden.');
-  
+
     const zip = new JSZip();
     const used = new Map<string, number>();
     const makeUnique = (name: string) => {
@@ -390,42 +399,170 @@ export class PropertyDocsService {
       used.set(base, times);
       if (times === 1) return base;
       const dot = base.lastIndexOf('.');
-      return dot > 0 ? `${base.slice(0, dot)}_${times}${base.slice(dot)}` : `${base}_${times}`;
+      return dot > 0
+        ? `${base.slice(0, dot)}_${times}${base.slice(dot)}`
+        : `${base}_${times}`;
     };
-  
+
     let done = 0;
     const total = docs.length;
     const errors: string[] = [];
-  
+
     for (const d of docs) {
       try {
         // (Optional) URL im Firestore aktualisieren – schadet nicht
         await this.refreshUrl(d.id).catch(() => {});
-  
+
         // **WICHTIG:** Blob direkt aus Storage via SDK (kein fetch auf URL)
         const blob = await this.getBlobForPath(d.storagePath);
-  
+
         const fname = makeUnique(
-          (d.displayName || d.fileName || d.storagePath.split('/').pop() || 'datei')
+          d.displayName ||
+            d.fileName ||
+            d.storagePath.split('/').pop() ||
+            'datei'
         );
         zip.file(fname, blob, { date: new Date(d.uploadDate || Date.now()) });
       } catch (e: any) {
-        errors.push(`Fehler bei ${d.displayName || d.fileName || d.storagePath}: ${String(e?.message || e)}`);
+        errors.push(
+          `Fehler bei ${d.displayName || d.fileName || d.storagePath}: ${String(
+            e?.message || e
+          )}`
+        );
       } finally {
         done++;
         onProgress?.({ done, total, current: d.displayName || d.fileName });
       }
     }
-  
+
     // Nur wenn wirklich Fehler auftraten, eine einzige Fehlerliste beilegen
     if (errors.length) {
       zip.file('FEHLER_Liste.txt', errors.join('\n'));
     }
-  
-    const blobZip = await zip.generateAsync(
-      { type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } }
-    );
-  
+
+    const blobZip = await zip.generateAsync({
+      type: 'blob',
+      compression: 'DEFLATE',
+      compressionOptions: { level: 6 },
+    });
+
     saveAs(blobZip, this.makeSafeName(zipName));
   }
+
+  // alle Dokumente mit einem Klick löschen
+  async deleteAllForProperty(
+    externalId: string,
+    onProgress?: (p: { done: number; total: number; current?: string }) => void
+  ): Promise<{ deleted: number; errors: string[] }> {
+    // bevorzugt Firestore-Liste, sonst Fallback auf Storage
+    let docs: PropertyDoc[] = [];
+    try {
+      docs = await this.listForProperty(externalId);
+    } catch {
+      docs = await this.listFromStorageOnly(externalId);
+    }
+
+    const total = docs.length;
+    let done = 0;
+    const errors: string[] = [];
+
+    for (const d of docs) {
+      try {
+        // Standardweg: über Firestore-Dokument (kennt storagePath)
+        if (d.id && d.storagePath) {
+          await this.deleteDoc(d.id);
+        } else if (d.storagePath) {
+          // Fallback: nur Storage löschen, falls kein Firestore-Eintrag
+          await deleteObject(ref(this.storage, d.storagePath));
+        }
+      } catch (e: any) {
+        errors.push(
+          `❌ ${d.displayName || d.fileName || d.storagePath}: ${String(
+            e?.message || e
+          )}`
+        );
+      } finally {
+        done++;
+        onProgress?.({ done, total, current: d.displayName || d.fileName });
+      }
+    }
+
+    return { deleted: total - errors.length, errors };
+  }
+
+  private safeFolder(folder?: string): string {
+    if (!folder) return '';
+    return folder
+      .trim()
+      .replace(/^\/+|\/+$/g, '')         // leading/trailing slashes
+      .replace(/[\\]+/g, '/')            // backslash -> slash
+      .split('/')
+      .map(seg => this.makeSafeName(seg)) // gleiche Sanitizer-Logik wie Dateiname
+      .filter(Boolean)
+      .join('/');
+  }
+
+  private makeSafePath(path: string): string {
+    // erlaubt Unterordner via "/", säubert Segmente
+    return path
+      .split('/')
+      .map(s => this.makeSafeName(s)) // deine bestehende makeSafeName nutzt
+      .filter(Boolean)
+      .join('/');
+  }
+
+  async moveDocToFolder(
+    docId: string,
+    newFolderRaw: string | null
+  ): Promise<void> {
+    const refFS = doc(this.db, 'property-docs', docId);
+    const snap = await getDoc(refFS);
+    if (!snap.exists()) throw new Error('Dokument nicht gefunden');
+    const meta = snap.data() as PropertyDoc;
+  
+    const oldRef = ref(this.storage, meta.storagePath);
+    const [blob, oldMd] = await Promise.all([getBlob(oldRef), getMetadata(oldRef)]);
+  
+    // Zielpfad bauen (Ordner säubern, gleiche Datei beibehalten)
+    const clean = (newFolderRaw ?? '').trim();
+    const folder = clean ? this.makeSafePath(clean) : null;
+  
+    const baseFolder = `property-docs/${meta.externalId}`;
+    const newPath = folder ? `${baseFolder}/${folder}/${meta.fileName}`
+                           : `${baseFolder}/${meta.fileName}`;
+    const newRef = ref(this.storage, newPath);
+  
+    // Metadaten weiterreichen (falls nicht gesetzt, sinnvolle Defaults)
+    const newMd = {
+      contentType: oldMd.contentType || this.guessContentType(meta.fileName, ''),
+      contentDisposition: oldMd.contentDisposition
+        || `attachment; filename="${this.makeSafeName(meta.displayName || meta.fileName)}"`,
+    };
+  
+    // Kopieren -> neue URL -> alt löschen
+    await uploadBytes(newRef, blob, newMd);
+    const newUrl = await getDownloadURL(newRef);
+    await deleteObject(oldRef).catch(() => { /* tolerieren */ });
+  
+    // Firestore aktualisieren (folder NIE undefined speichern)
+    await updateDoc(refFS, {
+      folder: folder ?? null,
+      storagePath: newPath,
+      url: newUrl,
+      contentType: newMd.contentType,
+    });
+  }
+
+   /** Nur die Kategorie/den Ordner als Metadatum ändern (kein Storage-Move) */
+   async changeFolder(docId: string, newFolder: string | null): Promise<void> {
+    const refFS = doc(this.db, 'property-docs', docId);
+    const snap = await getDoc(refFS);
+    if (!snap.exists()) throw new Error('Dokument nicht gefunden');
+
+    const clean = (newFolder ?? '').trim();
+    const folderClean = clean ? this.makeSafePath(clean) : null;
+
+    await updateDoc(refFS, { folder: folderClean });
+  }
+  
 }

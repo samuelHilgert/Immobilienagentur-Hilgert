@@ -2,6 +2,7 @@
 @use "./../../../../../../assets/fonts.scss" as f;
 @use "./../../../../../../assets/colors.scss" as c;
 
+/* ===== Container ===== */
 section {
   @include s.f_c_fs_fs;
   gap: 24px;
@@ -18,7 +19,11 @@ section {
   font-family: Arial, sans-serif;
 }
 
+.section-bg-v1 {
+  padding: 16px;
+}
 
+/* ===== Back button ===== */
 .go-back-btn-div {
   margin: 24px 0px;
 }
@@ -37,13 +42,33 @@ section {
   }
 }
 
-/* src/app/.../property-docs-sets/property-docs-sets.component.scss */
-.section-bg-v1 {
-  padding: 16px;
+/* ===== Upload row ===== */
+.upload-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 12px 0 20px;
 }
 
-.upload-row {
-  margin: 12px 0 20px;
+.folder-input {
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+  font-size: 14px;
+  background: #fff;
+  min-width: 240px;
+
+  &:focus {
+    border-color: #bbb;
+    box-shadow: 0 0 0 3px rgba(0,0,0,0.04);
+  }
+
+  &:disabled {
+    background: #f2f2f2;
+    color: #888;
+  }
 }
 
 .upload-btn {
@@ -52,43 +77,164 @@ section {
   border: 1px solid #ddd;
   border-radius: 8px;
   cursor: pointer;
+  background: #fff;
+  font-weight: 600;
+  transition: transform .02s ease, box-shadow .2s ease, border-color .2s ease;
+
+  &:hover {
+    border-color: #ccc;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+
+  input {
+    display: none;
+  }
 }
 
-.upload-btn input {
-  display: none;
+.progress-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+
+  progress {
+    height: 10px;
+    vertical-align: middle;
+  }
 }
 
+/* ===== Delete errors ===== */
+.errors {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  color: #b00020;
+
+  li {
+    margin: 2px 0;
+    font-size: 13px;
+  }
+}
+
+/* ===== Groups (folders/categories) ===== */
+.folder-group {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 12px 14px 6px;
+  margin: 16px 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+
+.folder-title {
+  margin: 4px 4px 10px;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #333;
+  padding-left: 10px;
+  border-left: 4px solid #e5e5e5;
+
+  span {
+    font-size: 14px;
+  }
+}
+
+/* Indentation for items inside a folder */
 .docs-list {
   list-style: none;
   padding: 0;
   margin: 0;
+
+  &.indented {
+    margin-left: 10px;
+    padding-left: 14px;
+    border-left: 2px dashed #e9e9e9;
+  }
 }
 
+/* ===== Document item ===== */
 .doc-item {
   display: flex;
   justify-content: space-between;
   gap: 12px;
   padding: 10px 0;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #f1f1f1;
+
+  &:last-child {
+    border-bottom: 0;
+  }
 }
 
-.meta .name {
-  font-weight: 600;
+.meta {
+  min-width: 0; /* allow text truncation */
+
+  .name {
+    font-weight: 600;
+    color: #222;
+    max-width: 56vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sub {
+    font-size: 12px;
+    opacity: .7;
+    margin-top: 2px;
+    word-break: break-word;
+  }
 }
 
-.meta .sub {
-  font-size: 12px;
-  opacity: .7;
+/* ===== Actions ===== */
+.actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  button {
+    padding: 6px 10px;
+    border: 1px solid #e2e2e2;
+    background: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background .15s ease, border-color .15s ease;
+
+    &:hover {
+      background: #f7f7f7;
+      border-color: #d8d8d8;
+    }
+  }
+
+  .danger {
+    color: #b00020;
+    border-color: #efc4c9;
+    &:hover {
+      background: #ffeeef;
+      border-color: #e5a8b0;
+    }
+  }
 }
 
-.actions button {
-  margin-left: 8px;
-}
-
-.actions .danger {
-  color: #b00020;
-}
-
+/* ===== Empty state ===== */
 .empty {
   opacity: .7;
+  font-style: italic;
+  padding: 8px 0 16px;
+}
+
+/* ===== Small screens ===== */
+@media (max-width: 720px) {
+  .meta .name {
+    max-width: 48vw;
+  }
+
+  .folder-group {
+    padding: 10px 10px 4px;
+  }
 }

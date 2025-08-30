@@ -18,37 +18,106 @@
   <div *ngIf="isLoading">Lade …</div>
 
   <ng-container *ngIf="!isLoading">
+    <!-- Upload + Ordnerangabe -->
     <div class="upload-row" *ngIf="isAdmin">
+      <!-- Freies Textfeld für Kategorie/Unterordner -->
+      <input
+        type="text"
+        name="folderInput"
+        [(ngModel)]="folderInput"
+        [disabled]="uploading"
+        placeholder="Kategorie/Ordner (optional, z. B. Rechnungen/2025)"
+        class="folder-input"
+        style="margin-right:8px;max-width:330px"
+      />
+
       <label class="upload-btn">
-        <input type="file" (change)="onFileSelected($event)" [disabled]="uploading" />
-        {{ uploading ? 'Lade hoch…' : '📄 Neues Dokument hochladen' }}
+        <input
+          type="file"
+          (change)="onFileSelected($event)"
+          [disabled]="uploading"
+          multiple
+        />
+        {{ uploading ? 'Lade hoch…' : '📄 Dokumente hochladen' }}
       </label>
+
+      <!-- Upload-Fortschritt -->
+      <div *ngIf="uploading" class="progress-info" style="margin-top: 8px">
+        <progress
+          [value]="uploadProgress.done"
+          [max]="uploadProgress.total"
+          style="width:220px"
+        ></progress>
+        <span style="margin-left:8px">
+          {{ uploadProgress.done }}/{{ uploadProgress.total }} …
+          {{ uploadProgress.current }}
+        </span>
+      </div>
     </div>
 
+    <!-- Leerzustand -->
     <div *ngIf="docs.length === 0" class="empty">
       Keine Dokumente vorhanden.
     </div>
 
-<!-- src/app/.../property-docs-sets/property-docs-sets.component.html -->
-<ul class="docs-list" *ngIf="docs.length > 0">
-  <li *ngFor="let d of docs" class="doc-item">
-    <div class="meta">
-      <div class="name" title="{{ d.fileName }}">
-        {{ d.displayName || d.fileName }}
+    <!-- Alle Dokumente gleichzeitig löschen -->
+    <div class="upload-row" *ngIf="isAdmin && docs.length > 0">
+      <button
+        type="button"
+        class="danger"
+        (click)="removeAll()"
+        [disabled]="uploading || deletingAll || !docs.length"
+      >
+        🗑️ Alle löschen
+      </button>
+
+      <div *ngIf="deletingAll" class="progress-info" style="margin-top: 8px">
+        <progress
+          [value]="deleteProgress.done"
+          [max]="deleteProgress.total"
+          style="width: 220px"
+        ></progress>
+        <span style="margin-left: 8px">
+          {{ deleteProgress.done }}/{{ deleteProgress.total }} …
+          {{ deleteProgress.current }}
+        </span>
       </div>
-      <div class="sub">
-        {{ d.uploadDate | date:'short' }} • {{ d.contentType || 'Datei' }} • {{ d.fileName }}
-      </div>
+
+      <ul *ngIf="deleteErrors.length" class="errors">
+        <li *ngFor="let e of deleteErrors">{{ e }}</li>
+      </ul>
     </div>
 
-    <div class="actions" *ngIf="isAdmin">
-      <button type="button" (click)="preview(d)">Vorschau</button>
-      <button type="button" (click)="download(d)">Herunterladen</button>
-      <button type="button" (click)="rename(d)">Umbenennen</button>
-      <button type="button" (click)="remove(d)">Löschen</button>
-    </div>
-  </li>
-</ul>
+    <!-- Gruppenansicht nach Kategorie/Ordner -->
+    <div *ngIf="grouped.length > 0">
+      <div *ngFor="let g of grouped" class="folder-group">
+        <h2 class="folder-title">
+          {{ g.label }} <span style="opacity:.6;font-weight:400">({{ g.items.length }})</span>
+        </h2>
 
+        <ul class="docs-list indented">
+          <li *ngFor="let d of g.items; trackBy: trackByDocId" class="doc-item">
+            <div class="meta">
+              <div class="name" [title]="d.fileName">
+                {{ d.displayName || d.fileName }}
+              </div>
+              <div class="sub">
+                {{ d.uploadDate | date: 'short' }} •
+                {{ d.contentType || 'Datei' }} •
+                {{ d.fileName }}
+              </div>
+            </div>
+
+            <div class="actions" *ngIf="isAdmin">
+              <button type="button" (click)="preview(d)">Vorschau</button>
+              <button type="button" (click)="download(d)">Herunterladen</button>
+              <button type="button" (click)="rename(d)">Umbenennen</button>
+              <button type="button" (click)="changeCategory(d)">Kategorie ändern</button>
+              <button type="button" (click)="remove(d)">Löschen</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
   </ng-container>
 </section>

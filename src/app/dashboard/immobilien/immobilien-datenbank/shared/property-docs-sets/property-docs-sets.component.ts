@@ -9,11 +9,13 @@ import {
   PropertyDocsService,
   PropertyDoc,
 } from '../../../../../services/property-docs.service';
+import { MATERIAL_MODULES } from '../../../../../shared/material-imports';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 
 @Component({
   selector: 'app-property-docs-sets',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, MATERIAL_MODULES],
   templateUrl: './property-docs-sets.component.html',
   styleUrl: './property-docs-sets.component.scss',
 })
@@ -22,9 +24,25 @@ export class PropertyDocsSetsComponent implements OnInit {
   immobilie?: Immobilie;
   isAdmin = false;
   isLoading = true;
+  grouped: Array<{ key: string; label: string; items: PropertyDoc[] }> = [];
 
   docs: PropertyDoc[] = [];
   uploading = false;
+  uploadProgress: { done: number; total: number; current: string } = {
+    done: 0,
+    total: 0,
+    current: '',
+  };
+  folderInput = '';
+
+  // fürs Löschen
+  deletingAll = false;
+  deleteProgress: { done: number; total: number; current: string } = {
+    done: 0,
+    total: 0,
+    current: '',
+  };
+  deleteErrors: string[] = [];
 
   constructor(
     private immobilienService: ImmobilienService,
@@ -70,6 +88,8 @@ export class PropertyDocsSetsComponent implements OnInit {
     } catch (e) {
       console.warn('Falle auf Storage-Liste zurück:', e);
       this.docs = await this.docsSvc.listFromStorageOnly(this.immobilienId);
+    } finally {
+      this.buildGroups(); // <— WICHTIG
     }
   }
 
@@ -82,15 +102,36 @@ export class PropertyDocsSetsComponent implements OnInit {
     await this.loadDocs();
   }
 
+  private sleep(ms: number) {
+    return new Promise((res) => setTimeout(res, ms));
+  }
+
   async onFileSelected(ev: Event) {
     const input = ev.target as HTMLInputElement;
     if (!input.files || input.files.length === 0) return;
 
-    const file = input.files[0];
     this.uploading = true;
+    this.uploadProgress = { done: 0, total: input.files.length, current: '' };
+
     try {
-      const res = await this.docsSvc.uploadDoc(file, this.immobilienId);
-      if (!res.success) throw res.error;
+      for (let i = 0; i < input.files.length; i++) {
+        const file = input.files[i];
+        this.uploadProgress.current = file.name;
+
+        const res = await this.docsSvc.uploadDoc(file, {
+          externalId: this.immobilienId,
+          folder: this.folderInput || null, // ← Kategorie getrennt übergeben
+          // displayName: optional – wenn du willst
+        });
+
+        if (!res.success) {
+          console.error('❌ Upload fehlgeschlagen für', file.name, res.error);
+        }
+
+        this.uploadProgress.done++;
+        await this.sleep(50);
+      }
+
       await this.loadDocs();
       input.value = '';
     } catch (e) {
@@ -98,6 +139,7 @@ export class PropertyDocsSetsComponent implements OnInit {
       alert('Upload fehlgeschlagen.');
     } finally {
       this.uploading = false;
+      this.uploadProgress.current = '';
     }
   }
 
@@ -169,4 +211,92 @@ export class PropertyDocsSetsComponent implements OnInit {
   //   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   //   return await res.blob();
   // }
+
+  // fürs Löschen aller Dokumente gleichzeitig
+  async removeAll() {
+    if (!this.docs.length) return;
+
+    // doppelte Absicherung
+    const ok = confirm(
+      `Wirklich ALLE ${this.docs.length} Dokumente löschen? Dies kann nicht rückgängig gemacht werden.`
+    );
+    if (!ok) return;
+
+    this.deletingAll = true;
+    this.deleteErrors = [];
+    this.deleteProgress = { done: 0, total: this.docs.length, current: '' };
+
+    try {
+      const { errors } = await this.docsSvc.deleteAllForProperty(
+        this.immobilienId,
+        (p) => (this.deleteProgress = { ...p, current: p.current || '' })
+      );
+      this.deleteErrors = errors;
+      await this.loadDocs();
+    } catch (e) {
+      alert('Massenlöschung fehlgeschlagen.');
+      console.error(e);
+    } finally {
+      this.deletingAll = false;
+      this.deleteProgress.current = '';
+    }
+  }
+
+  private buildGroups() {
+    const map = new Map<string, PropertyDoc[]>();
+
+    for (const d of this.docs) {
+      const key = d.folder && d.folder.trim() ? d.folder.trim() : '__none__';
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(d);
+    }
+
+    // innerhalb jeder Gruppe sortieren (z.B. nach Datum absteigend)
+    for (const arr of map.values()) {
+      arr.sort((a, b) =>
+        (b.uploadDate || '').localeCompare(a.uploadDate || '')
+      );
+    }
+
+    const labelFor = (k: string) =>
+      k === '__none__' ? 'Ohne Kategorie' : k.replace(/\//g, ' / ');
+
+    this.grouped = Array.from(map.entries())
+      .sort((a, b) => {
+        if (a[0] === '__none__' && b[0] !== '__none__') return -1; // „Ohne Kategorie“ zuerst
+        if (b[0] === '__none__' && a[0] !== '__none__') return 1;
+        return a[0].localeCompare(b[0], undefined, { sensitivity: 'base' });
+      })
+      .map(([key, items]) => ({ key, label: labelFor(key), items }));
+  }
+
+  trackByDocId = (_: number, d: PropertyDoc) => d.id || d.storagePath;
+
+  // async changeFolder(
+  //   docId: string,
+  //   newFolder: string | null
+  // ): Promise<void> {
+  //   const refFS = doc(this.db, 'property-docs', docId);
+  //   const snap = await getDoc(refFS);
+  //   if (!snap.exists()) throw new Error('Dokument nicht gefunden');
+  
+  //   const clean = (newFolder ?? '').trim();
+  //   const folderClean = clean ? this.makeSafePath(clean) : null;
+  
+  //   await updateDoc(refFS, { folder: folderClean });
+  // }
+
+  async changeCategory(d: PropertyDoc) {
+    const val = prompt(
+      'Neue Kategorie (z. B. Rechnungen/2025), leer für keine:',
+      d.folder || ''
+    );
+    if (val === null) return;
+
+    // ✅ nur Metadatum „folder“ ändern (kein physisches Verschieben)
+    await this.docsSvc.changeFolder(d.id, val.trim() || null);
+
+    await this.loadDocs();
+  }
+  
 }

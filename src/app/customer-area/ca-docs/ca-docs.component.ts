@@ -1,12 +1,10 @@
-// ca-docs.component.ts
 import { Component, Inject, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  PropertyDocsService,
-  PropertyDoc,
-} from '../../services/property-docs.service';
+import { PropertyDocsService, PropertyDoc } from '../../services/property-docs.service';
 import { MATERIAL_MODULES } from '../../shared/material-imports';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+
+type UiGroup = { key: string; label: string; items: PropertyDoc[]; isImageGroup: boolean };
 
 @Component({
   selector: 'app-ca-docs',
@@ -21,6 +19,10 @@ export class CaDocsComponent implements OnInit {
   loading = true;
   error: string | null = null;
   docs: PropertyDoc[] = [];
+
+  // Gruppierte Sicht inkl. Flag, ob reine Bild-Kategorie
+  grouped: UiGroup[] = [];
+
   downloadingAll = false;
   bulkProgress = { done: 0, total: 0, current: '' };
 
@@ -38,99 +40,103 @@ export class CaDocsComponent implements OnInit {
     }
 
     try {
-      // Holt bereits frische URLs (du hast das im Service so implementiert)
       this.docs = await this.docsSvc.listForProperty(this.externalId);
     } catch (e) {
       console.error(e);
       this.error = 'Dokumente konnten nicht geladen werden.';
     } finally {
+      this.buildGroups(); // wichtig
       this.loading = false;
     }
   }
 
-  /** Vorschau in neuem Tab (nutzt Service-Logik inkl. Google Viewer bei PDFs/Office) */
+  trackByDocId = (_: number, d: PropertyDoc) => d.id || d.storagePath;
+
   async previewDoc(doc: PropertyDoc) {
-    try {
-      await this.docsSvc.viewDoc(doc);
-    } catch (e) {
-      console.error('Vorschau fehlgeschlagen:', e);
-      // Fallback: frische URL öffnen
-      try {
-        const fresh = await this.docsSvc.refreshUrl(doc.id);
-        window.open(fresh, '_blank', 'noopener');
-      } catch {}
+    try { await this.docsSvc.viewDoc(doc); }
+    catch {
+      try { window.open(await this.docsSvc.refreshUrl(doc.id), '_blank', 'noopener'); } catch {}
     }
   }
 
-  /** Download (Server sendet attachment; Dateiname per a.download gesetzt) */
   async downloadDoc(doc: PropertyDoc) {
     try {
       const freshUrl = await this.docsSvc.refreshUrl(doc.id);
       const a = document.createElement('a');
       a.href = freshUrl;
-      a.download = (doc.displayName || doc.fileName || 'datei').replace(
-        /[\/\\:#?"<>|]+/g,
-        '_'
-      );
+      a.download = (doc.displayName || doc.fileName || 'datei').replace(/[\/\\:#?"<>|]+/g, '_');
       a.rel = 'noopener';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    } catch (e) {
-      console.error('Download fehlgeschlagen:', e);
-      // Letzter Fallback: öffnen
+      document.body.appendChild(a); a.click(); a.remove();
+    } catch {
       window.open(doc.url, '_blank', 'noopener');
     }
   }
 
-  /** Optional: einzelne URL manuell erneuern (Button „Link aktualisieren“) */
-  async refreshUrl(doc: PropertyDoc) {
-    try {
-      doc.url = await this.docsSvc.refreshUrl(doc.id);
-    } catch {}
-  }
-  
   async downloadAll() {
     if (!this.docs?.length) return;
-  
     this.downloadingAll = true;
     this.bulkProgress = { done: 0, total: this.docs.length, current: '' };
-  
     try {
-      // Wichtig: NACHEINANDER, damit Pop-Up Blocker/Browser-Rate-Limits nicht greifen
       for (const d of this.docs) {
         this.bulkProgress.current = d.displayName || d.fileName || 'Datei';
-  
-        // 1) Frische, "attachment"-URL bauen (wie bei Einzel-Download)
-        //    Falls du strikt per storagePath gehen willst:
-        //    const freshUrl = await this.docsSvc.getDownloadUrl(d.storagePath, d.displayName || d.fileName, true);
         const freshUrl = await this.docsSvc.refreshUrl(d.id).catch(() => d.url);
-  
-        // 2) Download per <a> Navigation (kein XHR ⇒ kein CORS)
         const a = document.createElement('a');
-        a.href = freshUrl;
-        a.rel = 'noopener';
-        // Dateiname (Browser darf ignorieren, Header gewinnt – passt)
+        a.href = freshUrl; a.rel = 'noopener';
         a.download = (d.displayName || d.fileName || 'datei').replace(/[\/\\:#?"<>|]+/g, '_');
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-  
-        // 3) Kleiner Delay, damit Browser nicht blockt (Safari/Chrome mögen das)
+        document.body.appendChild(a); a.click(); a.remove();
         await this.sleep(400);
-  
         this.bulkProgress.done++;
       }
-    } catch (e) {
-      console.error('Bulk-Download fehlgeschlagen:', e);
-      this.error = 'Mindestens ein Download konnte nicht gestartet werden.';
     } finally {
       this.downloadingAll = false;
       this.bulkProgress.current = '';
     }
   }
 
-  private sleep(ms: number) {
-    return new Promise(res => setTimeout(res, ms));
+  private sleep(ms: number) { return new Promise(res => setTimeout(res, ms)); }
+
+  /** Gruppierung: "Ohne Kategorie" zuerst, gemischte Kategorien normal sortiert,
+   * reine Bild-Kategorien (nur image/*) am Ende + Flag für CSS */
+  private buildGroups() {
+    const map = new Map<string, PropertyDoc[]>();
+
+    for (const d of this.docs) {
+      const key = d.folder && d.folder.trim() ? d.folder.trim() : '__none__';
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(d);
+    }
+
+    // Helper in Scope (kein this nötig)
+    const isImageDoc = (doc: PropertyDoc) => (doc?.contentType || '').startsWith('image/');
+
+    // innerhalb jeder Gruppe: zuerst Datum (desc), optional Bilder ans Ende
+    for (const arr of map.values()) {
+      arr.sort((a, b) => (b.uploadDate || '').localeCompare(a.uploadDate || ''));
+      // optional: Bilder innerhalb der Gruppe unten einsortieren
+      arr.sort((a, b) => (isImageDoc(a) ? 1 : 0) - (isImageDoc(b) ? 1 : 0));
+    }
+
+    const labelFor = (k: string) => (k === '__none__' ? 'Ohne Kategorie' : k.replace(/\//g, ' / '));
+
+    const groups: UiGroup[] = Array.from(map.entries()).map(([key, items]) => ({
+      key,
+      label: labelFor(key),
+      items,
+      isImageGroup: items.every(isImageDoc),
+    }));
+
+    const normal = groups
+      .filter(g => !g.isImageGroup)
+      .sort((a, b) => {
+        if (a.key === '__none__' && b.key !== '__none__') return -1;
+        if (b.key === '__none__' && a.key !== '__none__') return 1;
+        return a.key.localeCompare(b.key, undefined, { sensitivity: 'base' });
+      });
+
+    const images = groups
+      .filter(g => g.isImageGroup)
+      .sort((a, b) => a.key.localeCompare(b.key, undefined, { sensitivity: 'base' }));
+
+    this.grouped = [...normal, ...images];
   }
 }

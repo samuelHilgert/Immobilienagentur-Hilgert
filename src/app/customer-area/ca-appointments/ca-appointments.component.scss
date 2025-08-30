@@ -27,6 +27,26 @@
     color: #c62828;
 }
 
+.headline-wrapper {
+    @include s.f_r_sb_c;
+    width:100%;
+    box-sizing: border-box;
+  
+    .headline-div {
+      @include s.f_c_c_c;
+      width:100%;
+      box-sizing: border-box;
+    }
+  
+    .close-btn {
+      position:absolute;
+      right:10px;
+      top:20px;
+      font-size:20px;
+    }
+  
+  }
+
 mat-icon {
     width:50px;
 }
