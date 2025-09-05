@@ -1,0 +1,207 @@
+@use "./../../../styles.scss" as s;
+@use "./../../../assets/fonts.scss" as f;
+@use "./../../../assets/colors.scss" as c;
+
+// Farben & Variablen
+$primary-color: #2c3e50;
+$secondary-color: #34495e;
+$text-color: #ecf0f1;
+$hover-color: #1abc9c;
+
+.section-dashboard-page {
+  @include s.f_c_fs_fs;
+  gap: 24px;
+  width: 75vw;
+  box-sizing: border-box;
+  margin: 0;
+
+  .dash-page-title {
+    margin: 0 12px;
+  }
+
+  a {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 14px;
+    background-color: $primary-color;
+    color: $text-color;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $hover-color;
+    }
+  }
+}
+
+.dash-top-menu-div {
+  @include s.f_r_fs_c;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.years-wrapper {
+  @include s.f_c_fs_fs;
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.year-block {
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .1);
+  overflow: hidden;
+  background: #fff;
+}
+
+.year-header {
+  @include s.f_r_fs_c;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 16px;
+  background: #f6f8f9;
+  cursor: pointer;
+  user-select: none;
+
+  .chevron mat-icon {
+    font-size: 24px;
+    line-height: 24px;
+  }
+
+  h3 {
+    margin: 0;
+    flex: 1;
+  }
+
+  .year-actions {
+    @include s.f_r_fe_c;
+    gap: 8px;
+  }
+
+  button {
+    pointer-events: auto;
+  }
+}
+
+.year-body {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 16px 20px;
+}
+
+.toolbar {
+  margin-bottom: 10px;
+}
+
+.table-wrapper {
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+.rides-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #eee;
+    position: relative;
+    vertical-align: middle;
+  }
+
+  thead th {
+    background: #fbfbfc;
+    font-weight: 600;
+    text-align: left;
+  }
+
+  .km {
+    width: 80px;
+    text-align: right;
+  }
+
+  td.km {
+    text-align: right;
+  }
+
+  tr.ride-row:hover {
+    background: #fafafa;
+  }
+}
+
+/* Inline-Edit Icons bei Hover in Zelle */
+.cell-edit {
+  .icon-pencil {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: opacity .15s ease-in;
+  }
+
+  &:hover .icon-pencil {
+    opacity: .9;
+  }
+
+  .cell-input {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    outline: none;
+    font: inherit;
+
+    &:focus {
+      border-color: $hover-color;
+    }
+  }
+}
+
+/* Minus-Icon am Zeilenende nur bei Hover */
+.row-actions {
+  width: 44px;
+  text-align: center;
+
+  .icon-minus {
+    opacity: 0.05;
+    transition: opacity .15s ease-in;
+  }
+
+  tr.ride-row:hover & .icon-minus,
+  .icon-minus:hover {
+    opacity: .9;
+  }
+}
+
+/* Drag handle column */
+.drag-col {
+  width: 40px;
+}
+
+.drag-cell {
+  width: 40px;
+  position: relative;
+}
+
+.drag-handle {
+  opacity: 0.05;
+  transition: opacity .15s ease-in;
+}
+
+tr.ride-row:hover .drag-handle,
+.drag-handle:focus {
+  opacity: .9;
+}

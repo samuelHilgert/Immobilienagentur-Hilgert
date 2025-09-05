@@ -1,0 +1,293 @@
+<section class="section-dashboard-page">
+  <h2 class="dash-page-title">Fahrtenbuch</h2>
+
+  <div class="dash-top-menu-div">
+    <a (click)="onAddYear()">+ Jahr hinzufügen</a>
+  </div>
+
+  <div class="years-wrapper">
+    <div class="year-block" *ngFor="let y of years; let i = index">
+      <div class="year-header" (click)="toggleYear(y)">
+        <span class="chevron">
+          <mat-icon>{{
+            y.expanded ? "keyboard_arrow_down" : "keyboard_arrow_up"
+          }}</mat-icon>
+        </span>
+        <h3>Jahr {{ y.year }}</h3>
+
+        <div class="year-actions" (click)="$event.stopPropagation()">
+          <button mat-stroked-button (click)="exportPdf(y)">
+            PDF erzeugen
+          </button>
+        </div>
+      </div>
+
+      <div class="year-body" *ngIf="y.expanded">
+        <div class="toolbar">
+          <button mat-flat-button color="primary" (click)="addRide(y)">
+            + Fahrt hinzufügen
+          </button>
+        </div>
+
+        <div class="table-wrapper" [attr.id]="'year-table-' + y.year">
+          <table class="rides-table">
+            <thead>
+              <tr>
+                <th class="drag-col"></th>
+                <th>Datum</th>
+                <th>Start</th>
+                <th>Ziel</th>
+                <th>Anlass</th>
+                <th class="km">km</th>
+                <th class="wb">km inkl. Rückweg?</th>
+                <th class="actions"></th>
+              </tr>
+            </thead>
+
+            <tbody
+              cdkDropList
+              cdkDropListOrientation="vertical"
+              [cdkDropListData]="y.rides"
+              (cdkDropListDropped)="dropRow($event, i)"
+            >
+              <tr
+                *ngFor="let ride of y.rides; trackBy: trackRide"
+                class="ride-row"
+                cdkDrag
+                [cdkDragDisabled]="
+                  isEditing(ride, 'date') ||
+                  isEditing(ride, 'start') ||
+                  isEditing(ride, 'ziel') ||
+                  isEditing(ride, 'anlass') ||
+                  isEditing(ride, 'km')
+                "
+              >
+                <!-- Drag handle -->
+                <td class="drag-cell">
+                  <button
+                    mat-icon-button
+                    class="drag-handle"
+                    cdkDragHandle
+                    type="button"
+                    (click)="$event.stopPropagation()"
+                  >
+                    <mat-icon>drag_indicator</mat-icon>
+                  </button>
+                </td>
+
+                <!-- Datum -->
+                <td
+                  class="cell-edit"
+                  (click)="
+                    !isEditing(ride, 'date') &&
+                      startEdit(y.year, ride.id!, 'date', ride.date)
+                  "
+                >
+                  <ng-container *ngIf="!isEditing(ride, 'date'); else editDate">
+                    <span class="cell-value">{{ ride.date || "—" }}</span>
+                    <button
+                      class="icon-pencil"
+                      mat-icon-button
+                      tabindex="-1"
+                      type="button"
+                      (click)="$event.stopPropagation()"
+                    >
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                  </ng-container>
+                  <ng-template #editDate>
+                    <input
+                      class="cell-input"
+                      [value]="editing.value"
+                      (input)="editing.value = $any($event.target).value"
+                      (keydown)="
+                        onCellKeydown($event, y.year, ride.id!, 'date')
+                      "
+                      (blur.capture)="
+                        onCellBlur(y.year, ride.id!, 'date', editing.value)
+                      "
+                      autofocus
+                    />
+                  </ng-template>
+                </td>
+
+                <!-- Start -->
+                <td
+                  class="cell-edit"
+                  (click)="
+                    !isEditing(ride, 'start') &&
+                      startEdit(y.year, ride.id!, 'start', ride.start)
+                  "
+                >
+                  <ng-container
+                    *ngIf="!isEditing(ride, 'start'); else editStart"
+                  >
+                    <span class="cell-value">{{ ride.start || "—" }}</span>
+                    <button
+                      class="icon-pencil"
+                      mat-icon-button
+                      tabindex="-1"
+                      type="button"
+                      (click)="$event.stopPropagation()"
+                    >
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                  </ng-container>
+                  <ng-template #editStart>
+                    <input
+                      class="cell-input"
+                      [value]="editing.value"
+                      (input)="editing.value = $any($event.target).value"
+                      (keydown)="
+                        onCellKeydown($event, y.year, ride.id!, 'start')
+                      "
+                      (blur.capture)="
+                        onCellBlur(y.year, ride.id!, 'start', editing.value)
+                      "
+                      autofocus
+                    />
+                  </ng-template>
+                </td>
+
+                <!-- Ziel -->
+                <td
+                  class="cell-edit"
+                  (click)="
+                    !isEditing(ride, 'ziel') &&
+                      startEdit(y.year, ride.id!, 'ziel', ride.ziel)
+                  "
+                >
+                  <ng-container *ngIf="!isEditing(ride, 'ziel'); else editZiel">
+                    <span class="cell-value">{{ ride.ziel || "—" }}</span>
+                    <button
+                      class="icon-pencil"
+                      mat-icon-button
+                      tabindex="-1"
+                      type="button"
+                      (click)="$event.stopPropagation()"
+                    >
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                  </ng-container>
+                  <ng-template #editZiel>
+                    <input
+                      class="cell-input"
+                      [value]="editing.value"
+                      (input)="editing.value = $any($event.target).value"
+                      (keydown)="
+                        onCellKeydown($event, y.year, ride.id!, 'ziel')
+                      "
+                      (blur.capture)="
+                        onCellBlur(y.year, ride.id!, 'ziel', editing.value)
+                      "
+                      autofocus
+                    />
+                  </ng-template>
+                </td>
+
+                <!-- Anlass -->
+                <td
+                  class="cell-edit"
+                  (click)="
+                    !isEditing(ride, 'anlass') &&
+                      startEdit(y.year, ride.id!, 'anlass', ride.anlass)
+                  "
+                >
+                  <ng-container
+                    *ngIf="!isEditing(ride, 'anlass'); else editAnlass"
+                  >
+                    <span class="cell-value">{{ ride.anlass || "—" }}</span>
+                    <button
+                      class="icon-pencil"
+                      mat-icon-button
+                      tabindex="-1"
+                      type="button"
+                      (click)="$event.stopPropagation()"
+                    >
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                  </ng-container>
+                  <ng-template #editAnlass>
+                    <input
+                      class="cell-input"
+                      [value]="editing.value"
+                      (input)="editing.value = $any($event.target).value"
+                      (keydown)="
+                        onCellKeydown($event, y.year, ride.id!, 'anlass')
+                      "
+                      (blur.capture)="
+                        onCellBlur(y.year, ride.id!, 'anlass', editing.value)
+                      "
+                      autofocus
+                    />
+                  </ng-template>
+                </td>
+
+                <!-- km -->
+                <td
+                  class="cell-edit km"
+                  (click)="
+                    !isEditing(ride, 'km') &&
+                      startEdit(y.year, ride.id!, 'km', ride.km)
+                  "
+                >
+                  <ng-container *ngIf="!isEditing(ride, 'km'); else editKm">
+                    <span class="cell-value">{{ ride.km }}</span>
+                    <button
+                      class="icon-pencil"
+                      mat-icon-button
+                      tabindex="-1"
+                      type="button"
+                      (click)="$event.stopPropagation()"
+                    >
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                  </ng-container>
+                  <ng-template #editKm>
+                    <input
+                      type="number"
+                      class="cell-input"
+                      [value]="editing.value"
+                      (input)="editing.value = $any($event.target).value"
+                      (keydown)="onCellKeydown($event, y.year, ride.id!, 'km')"
+                      (blur.capture)="
+                        onCellBlur(y.year, ride.id!, 'km', editing.value)
+                      "
+                      autofocus
+                    />
+                  </ng-template>
+                </td>
+
+                <!-- Rückweg -->
+                <!-- Rückweg (Checkbox, speichert onChange) -->
+                <td class="wayback-cell">
+                  <!-- stopPropagation verhindert, dass der Zellklick startEdit triggert -->
+                  <label class="wb-label" (click)="$event.stopPropagation()">
+                    <input
+                      type="checkbox"
+                      [checked]="ride.wayBack"
+                      (change)="toggleWayBack(y.year, ride, $event)"
+                    />
+                    <span> Ja</span>
+                  </label>
+                </td>
+
+                <!-- Row Actions -->
+                <td class="row-actions">
+                  <button
+                    class="icon-minus"
+                    mat-icon-button
+                    type="button"
+                    (click)="deleteRow(y, ride); $event.stopPropagation()"
+                  >
+                    <mat-icon>remove_circle_outline</mat-icon>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

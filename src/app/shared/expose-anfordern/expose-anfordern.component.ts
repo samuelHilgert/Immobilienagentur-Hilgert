@@ -65,9 +65,9 @@ export class ExposeAnfordernComponent implements OnInit {
 
       // ⬇️ Nur die Felder, die im Template aktiv sind
       buyerData: this.fb.group({
-        netIncome: [null],                 // number | null
-        equity: [null],                    // number | null
-        existingProperties: [''],          // string
+        netIncome: [null], // number | null
+        equity: [null], // number | null
+        existingProperties: [''], // string
         bankConfirmationAvailable: [false],
         bankConfirmationAmount: [{ value: null, disabled: true }],
         numberOfBuyers: [1],
@@ -77,16 +77,18 @@ export class ExposeAnfordernComponent implements OnInit {
 
     // Enable/Disable der Bankbestätigungssumme je nach Checkbox
     const bd = this.contactForm.get('buyerData') as FormGroup;
-    bd.get('bankConfirmationAvailable')!.valueChanges.subscribe((has: boolean) => {
-      const amountCtrl = bd.get('bankConfirmationAmount')!;
-      if (has) {
-        amountCtrl.enable();
-      } else {
-        amountCtrl.disable();
-        amountCtrl.setValue(null);
+    bd.get('bankConfirmationAvailable')!.valueChanges.subscribe(
+      (has: boolean) => {
+        const amountCtrl = bd.get('bankConfirmationAmount')!;
+        if (has) {
+          amountCtrl.enable();
+        } else {
+          amountCtrl.disable();
+          amountCtrl.setValue(null);
+        }
+        amountCtrl.updateValueAndValidity({ emitEvent: false });
       }
-      amountCtrl.updateValueAndValidity({ emitEvent: false });
-    });
+    );
 
     this.route.queryParams.subscribe((params) => {
       const id = params['id'];
@@ -131,18 +133,17 @@ export class ExposeAnfordernComponent implements OnInit {
     const raw = bd.getRawValue(); // inkl. disabled Felder
 
     const toNum = (v: any) =>
-      v === null || v === undefined || v === '' ? undefined : Number(v);
+      v === null || v === undefined || v === '' ? null : Number(v);
 
     const buyerData: prospectiveBuyer = {
       netIncome: toNum(raw.netIncome),
       equity: toNum(raw.equity),
-      existingProperties: raw.existingProperties?.trim() || undefined,
+      existingProperties: raw.existingProperties?.trim() || '' || null, // lieber null statt undefined
       bankConfirmation: raw.bankConfirmationAvailable
         ? { available: true, amount: toNum(raw.bankConfirmationAmount) }
         : { available: false },
       numberOfBuyers: toNum(raw.numberOfBuyers),
       numberOfOccupants: toNum(raw.numberOfOccupants),
-      // auskommentierte Felder im Template werden hier NICHT erwartet
     };
 
     return buyerData;
@@ -172,7 +173,9 @@ export class ExposeAnfordernComponent implements OnInit {
       }
 
       // Eindeutige ID
-      const sharedRef = doc(collection(this.exposeAnfrageService.firestore, 'customers'));
+      const sharedRef = doc(
+        collection(this.exposeAnfrageService.firestore, 'customers')
+      );
       const sharedId = sharedRef.id;
 
       // buyerData bauen (nur vorhandene Felder)

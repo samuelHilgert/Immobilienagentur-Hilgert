@@ -54,6 +54,7 @@ import { ExposeAccessDeniedComponent } from './shared/expose-access-denied/expos
 import { DashFeedbacksComponent } from './dashboard/dash-feedbacks/dash-feedbacks.component';
 import { DashAddFeedbackComponent } from './dashboard/dash-feedbacks/dash-add-feedback/dash-add-feedback.component';
 import { ViewingConfirmationComponent } from './shared/viewing-confirmation/viewing-confirmation.component';
+import { CarRidesComponent } from './dashboard/car-rides/car-rides.component';
 
 export const routes: Routes = [
   {
@@ -144,6 +145,10 @@ export const routes: Routes = [
       {
         path: 'umsatz',
         component: UmsatzComponent,
+      },
+      {
+        path: 'car-rides',
+        component: CarRidesComponent,
       },
       {
         path: 'support-tickets',
