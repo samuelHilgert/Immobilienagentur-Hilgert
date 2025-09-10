@@ -1,0 +1,45 @@
+@use "./../../../styles.scss" as s;
+@use "./../../../assets/fonts.scss" as f;
+@use "./../../../assets/colors.scss" as c;
+@use "./../../../assets/elements.scss" as e;
+
+
+section {
+  @include s.f_c_fs_c;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 24px 5%;
+
+  @media (min-width: 960px) {
+    padding: 40px 6%;
+  }
+
+  @media print {
+    padding: 0;
+    background: unset;
+    min-height: 100%;
+  }
+}
+
+
+.headline-wrapper {
+  @include s.f_r_sb_c;
+  width: 100%;
+  box-sizing: border-box;
+
+  .headline-div {
+    @include s.f_c_c_c;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .close-btn {
+    position: absolute;
+    right: 10px;
+    top: 20px;
+    font-size: 20px;
+  }
+
+}

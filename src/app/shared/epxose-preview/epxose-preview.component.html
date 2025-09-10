@@ -7,6 +7,14 @@
 
 <section>
   <div class="option-btns-div no-print">
+    <!-- <button
+      *ngIf="accessIsExtended"
+      mat-raised-button
+      class="expose-option-btn"
+      (click)="openData()"
+    >
+      Meine Angaben
+    </button> -->
     <button
       *ngIf="accessIsExtended"
       mat-raised-button
@@ -28,6 +36,7 @@
     <button mat-raised-button class="expose-option-btn" (click)="printPage()">
       Drucken
     </button>
+
     <!-- <button
       mat-raised-button
       class="expose-option-btn"

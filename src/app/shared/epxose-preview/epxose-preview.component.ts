@@ -32,6 +32,7 @@ import { ImageDialogComponent } from '../image-dialog/image-dialog.component';
 import { PropertyInquiryService } from '../../services/property-inquiry.service';
 import { CaDocsComponent } from '../../customer-area/ca-docs/ca-docs.component';
 import { CaAppointmentsComponent } from '../../customer-area/ca-appointments/ca-appointments.component';
+import { CaDataComponent } from '../../customer-area/ca-data/ca-data.component';
 
 declare var html2pdf: any; // PDF-Export
 
@@ -402,6 +403,19 @@ export class EpxosePreviewComponent implements OnInit {
     if (!this.immobilie?.externalId) return;
     this.dialog.open(CaDocsComponent, {
       data: { externalId: this.immobilie.externalId },
+      width: '900px',
+      maxWidth: '95vw',
+      height: '95vh',
+      maxHeight: '95vh',
+      autoFocus: false,
+      restoreFocus: false,
+      panelClass: 'docs-dialog',
+    });
+  }
+
+  openData() {
+    this.dialog.open(CaDataComponent, {
+      data: {  },
       width: '900px',
       maxWidth: '95vw',
       height: '95vh',

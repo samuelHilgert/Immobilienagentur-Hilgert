@@ -1,0 +1,44 @@
+<section>
+    <div class="headline-wrapper">
+        <div class="headline-div">
+             <h3 mat-dialog-title>Ihre Termine</h3>
+            <p>
+             Wenn Sie mit uns Termine vereinbart haben, werden diese hier angezeigt.
+            </p>
+        </div>
+         <button class="close-btn" mat-button mat-dialog-close>X</button>
+  </div>
+  
+
+    <h2>Kundendaten</h2>
+  
+    <form [formGroup]="customerForm" *ngIf="customerForm">
+      <label>
+        Kunden-ID:
+        <input type="text" formControlName="customerId" readonly />
+      </label>
+  
+      <label>
+        Vorname:
+        <input type="text" formControlName="firstName" />
+      </label>
+  
+      <label>
+        Nachname:
+        <input type="text" formControlName="lastName" />
+      </label>
+  
+      <label>
+        E-Mail:
+        <input type="email" formControlName="email" />
+      </label>
+  
+      <!-- weitere Felder wie oben... -->
+  
+      <button type="button" color="primary" (click)="sendChanges()">
+        Änderungen per E-Mail senden
+      </button>
+    </form>
+
+  </section>
+  
