@@ -90,6 +90,50 @@
   <input type="text" [(ngModel)]="immobilie.courtage" name="courtage" placeholder="Provisionshöhe" />
   <textarea [(ngModel)]="immobilie.courtageNote" name="courtageNote" placeholder="Provisionshinweis"></textarea>
 
+  <div class="input-row-both">
+    <p>ungenaue Koordinaten:</p>
+    <input
+      type="number"
+      step="any"
+      [(ngModel)]="immobilie.latitude"
+      name="latitude"
+      placeholder="Breitengrad (Latitude), erster Wert"
+      min="-90"
+      max="90"
+    />
+    <input
+      type="number"
+      step="any"
+      [(ngModel)]="immobilie.longitude"
+      name="longitude"
+      placeholder="Längengrad (Longitude), zweiter Wert"
+      min="-180"
+      max="180"
+    />
+  </div>
+
+  <div class="input-row-both">
+    <p>exakte Koordinaten (für erweitertes Exposé):</p>
+    <input
+      type="number"
+      step="any"
+      [(ngModel)]="immobilie.latitudeWithNo"
+      name="latitude"
+      placeholder="Breitengrad (Latitude), erster Wert"
+      min="-90"
+      max="90"
+    />
+    <input
+      type="number"
+      step="any"
+      [(ngModel)]="immobilie.longitudeWithNo"
+      name="longitude"
+      placeholder="Längengrad (Longitude), zweiter Wert"
+      min="-180"
+      max="180"
+    />
+  </div>
+
   <h3>Hausdetails</h3>
 
   <div class="col-block">

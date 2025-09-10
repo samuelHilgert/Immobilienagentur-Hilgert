@@ -27,6 +27,10 @@ export interface Immobilie {
   extendedExposeAvailable: boolean;
   representingPersonIds: string[];
   exposePdfUrl?: string | null;
+  latitude?: number;
+  longitude?: number;
+  latitudeWithNo?: number;
+  longitudeWithNo?: number;
   propertyType: 'Wohnung' | 'Haus' | 'Grundstück';
   propertyStatus: 'Angebot' | 'Referenz' | 'Reserviert' | 'Bearbeitung';
   uploadPublicTargets: {
@@ -147,8 +151,10 @@ export interface WohnungDetails {
   hasCourtage: 'YES' | 'NO' | 'NOT_APPLICABLE';
   courtage?: string;
   courtageNote?: string;
-  latitude?: null;
-  longitude?: null;
+  latitude?: number;
+  longitude?: number;
+  latitudeWithNo?: number;
+  longitudeWithNo?: number;
   creationDate?: string;
   lastModificationDate?: string;
   priceIntervalType: 'ONE_TIME_CHARGE';
@@ -234,8 +240,10 @@ export interface HausDetails {
   tenancy?: number;
   leaseholdInterest?: number;
   currency: 'EUR';
-  latitude?: null;
-  longitude?: null;
+  latitude?: number;
+  longitude?: number;
+  latitudeWithNo?: number;
+  longitudeWithNo?: number;
   priceIntervalType: 'ONE_TIME_CHARGE';
   energyPerformanceCertificate?: boolean;
 
@@ -301,8 +309,10 @@ export interface GrundstueckDetails {
   tenancy?: number;
   currency: 'EUR';
   freeFrom?: string;
-  latitude?: null;
-  longitude?: null;
+  latitude?: number;
+  longitude?: number;
+  latitudeWithNo?: number;
+  longitudeWithNo?: number;
   priceIntervalType: 'ONE_TIME_CHARGE';
 
   // zus. bei Grundstücke

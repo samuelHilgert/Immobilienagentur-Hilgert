@@ -25,7 +25,7 @@ export class PropertyDocsSetsComponent implements OnInit {
   isAdmin = false;
   isLoading = true;
   grouped: Array<{ key: string; label: string; items: PropertyDoc[] }> = [];
-
+  uploadExtendedAccess = false;
   docs: PropertyDoc[] = [];
   uploading = false;
   uploadProgress: { done: number; total: number; current: string } = {
@@ -120,8 +120,9 @@ export class PropertyDocsSetsComponent implements OnInit {
 
         const res = await this.docsSvc.uploadDoc(file, {
           externalId: this.immobilienId,
-          folder: this.folderInput || null, // ← Kategorie getrennt übergeben
-          // displayName: optional – wenn du willst
+          folder: this.folderInput || null,
+          displayName: file.name,
+          extendedAccess: this.uploadExtendedAccess, // ← NEU
         });
 
         if (!res.success) {
@@ -279,10 +280,10 @@ export class PropertyDocsSetsComponent implements OnInit {
   //   const refFS = doc(this.db, 'property-docs', docId);
   //   const snap = await getDoc(refFS);
   //   if (!snap.exists()) throw new Error('Dokument nicht gefunden');
-  
+
   //   const clean = (newFolder ?? '').trim();
   //   const folderClean = clean ? this.makeSafePath(clean) : null;
-  
+
   //   await updateDoc(refFS, { folder: folderClean });
   // }
 
@@ -298,5 +299,68 @@ export class PropertyDocsSetsComponent implements OnInit {
 
     await this.loadDocs();
   }
+
+  async toggleExtendedAccess(doc: PropertyDoc) {
+    try {
+      const newValue = !doc.extendedAccess; // invertieren
   
+      // Timestamp nur setzen, wenn wir extendedAccess auf false setzen
+      const timestamp = !newValue ? Date.now() : doc.extendedAccessChangedAt;
+  
+      await this.docsSvc.updateExtendedAccess(doc.id, newValue, timestamp);
+      doc.extendedAccess = newValue; // UI sofort aktualisieren
+      doc.extendedAccessChangedAt = timestamp; // lokal speichern
+    } catch (e) {
+      console.error('Fehler beim Ändern des Zugriffs:', e);
+      alert('Zugriff konnte nicht geändert werden.');
+    }
+  }
+  
+
+  /** Toggle für extendedAccess aller Dokumente in einer Kategorie */
+  async toggleFolderAccess(group: {
+    key: string;
+    label: string;
+    items: PropertyDoc[];
+  }) {
+    if (!group.items.length) return;
+
+    // Prüfen, ob alle bereits eingeschränkt sind
+    const allRestricted = group.items.every((doc) => doc.extendedAccess);
+    const action = allRestricted ? 'erlauben' : 'beschränken';
+
+    const ok = confirm(
+      `Wirklich den Zugriff für alle Dokumente in "${group.label}" ${action}?`
+    );
+    if (!ok) return;
+
+    try {
+      for (const doc of group.items) {
+        const newValue = !allRestricted;
+        if (doc.extendedAccess !== newValue) {
+          const timestamp = !newValue ? Date.now() : doc.extendedAccessChangedAt;
+          await this.docsSvc.updateExtendedAccess(doc.id, newValue, timestamp);
+          doc.extendedAccess = newValue;
+          doc.extendedAccessChangedAt = timestamp;
+        }
+      }
+      
+
+      alert(
+        `Zugriff für alle Dokumente in "${group.label}" erfolgreich ${action}.`
+      );
+    } catch (e) {
+      console.error('Fehler beim Ändern des erweiterten Zugriffs:', e);
+      alert('Fehler beim Ändern der Dokumente.');
+    }
+  }
+
+  /** Prüft, ob alle Dokumente in einer Gruppe extendedAccess = true haben */
+  allDocsRestricted(group: {
+    key: string;
+    label: string;
+    items: PropertyDoc[];
+  }): boolean {
+    return group.items.every((doc) => doc.extendedAccess);
+  }
 }

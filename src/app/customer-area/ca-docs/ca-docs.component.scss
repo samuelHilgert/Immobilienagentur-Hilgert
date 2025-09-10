@@ -144,15 +144,18 @@ section {
 mat-list {
   @include s.f_c_fs_fs;
   width: 100%;
+
 }
+
 
 mat-list-item {
   @include s.f_r_fs_fs;
   gap: 6px;
   width: 100%;
-  min-height: 140px;
+  min-height: 160px;
   padding: 6px 2px;
   border-bottom: 1px solid #f3f3f3;
+  margin-bottom:4px;
 
   &:last-child {
     border-bottom: 0;
@@ -162,10 +165,12 @@ mat-list-item {
 /* ===== Titelzeile & Name ===== */
 .title-line {
   width: 100%;
-  box-sizing: border-box;
+  height:auto;
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  gap:12px;
+  align-items: flex-start;
+  box-sizing: border-box;
 
   mat-icon {
     opacity: .8;
@@ -174,11 +179,24 @@ mat-list-item {
   .name {
     font-weight: 600;
     color: #222;
-    max-width: 100%;
+    width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    margin-bottom:8px;
+    box-sizing: border-box;
   }
+
+  .new-badge {
+    background-color: rgb(27, 236, 146);
+    color: #000;
+    font-weight: bold;
+    padding: 2px 6px;
+    margin-left: 8px;
+    border-radius: 3px;
+    font-size: 0.80rem;
+  }
+  
 }
 
 /* ===== Metazeile ===== */

@@ -126,6 +126,10 @@ export class ImmobilieAnlegenComponent implements OnInit {
     this.wohnung.houseNumber = this.immobilie.houseNumber;
     this.wohnung.postcode = this.immobilie.postcode;
     this.wohnung.city = this.immobilie.city;
+    this.wohnung.longitude = this.immobilie.longitude;
+    this.wohnung.latitude = this.immobilie.latitude;
+    this.wohnung.longitudeWithNo = this.immobilie.longitudeWithNo;
+    this.wohnung.latitudeWithNo = this.immobilie.latitudeWithNo;
     if (this.immobilie.descriptionNote)
       this.wohnung.descriptionNote = this.immobilie.descriptionNote;
     this.wohnung.value = this.immobilie.value;
@@ -148,6 +152,10 @@ export class ImmobilieAnlegenComponent implements OnInit {
     this.haus.houseNumber = this.immobilie.houseNumber;
     this.haus.postcode = this.immobilie.postcode;
     this.haus.city = this.immobilie.city;
+    this.haus.longitude = this.immobilie.longitude;
+    this.haus.latitude = this.immobilie.latitude;
+    this.haus.longitudeWithNo = this.immobilie.longitudeWithNo;
+    this.haus.latitudeWithNo = this.immobilie.latitudeWithNo;
     if (this.immobilie.descriptionNote)
       this.haus.descriptionNote = this.immobilie.descriptionNote;
     this.haus.value = this.immobilie.value;
@@ -170,6 +178,10 @@ export class ImmobilieAnlegenComponent implements OnInit {
     this.grundstueck.houseNumber = this.immobilie.houseNumber;
     this.grundstueck.postcode = this.immobilie.postcode;
     this.grundstueck.city = this.immobilie.city;
+    this.grundstueck.longitude = this.immobilie.longitude;
+    this.grundstueck.latitude = this.immobilie.latitude;
+    this.grundstueck.longitudeWithNo = this.immobilie.longitudeWithNo;
+    this.grundstueck.latitudeWithNo = this.immobilie.latitudeWithNo;
     if (this.immobilie.descriptionNote)
       this.grundstueck.descriptionNote = this.immobilie.descriptionNote;
     this.grundstueck.value = this.immobilie.value;
@@ -194,6 +206,10 @@ export class ImmobilieAnlegenComponent implements OnInit {
       city: '',
       descriptionNote: '',
       introNote: '',
+      latitude: 0,
+      longitude: 0,
+      latitudeWithNo: 0,
+      longitudeWithNo: 0,
       value: 0,
       hasCourtage: 'NOT_APPLICABLE',
       courtage: '',
@@ -296,8 +312,10 @@ export class ImmobilieAnlegenComponent implements OnInit {
       heatingType: '',
       numberOfFloors: 0,
       usableFloorSpace: 0,
-      latitude: null,
-      longitude: null,
+      latitude: 0,
+      longitude: 0,
+      latitudeWithNo: 0,
+      longitudeWithNo: 0,
       locationNote: '',
       otherNote: '',
     };
@@ -357,8 +375,10 @@ export class ImmobilieAnlegenComponent implements OnInit {
       heatingType: '',
       numberOfFloors: 0,
       usableFloorSpace: 0,
-      latitude: null,
-      longitude: null,
+      latitude: 0,
+      longitude: 0,
+      latitudeWithNo: 0,
+      longitudeWithNo: 0,
       locationNote: '',
       otherNote: '',
       lodgerFlat: 'NOT_APPLICABLE',
@@ -396,8 +416,10 @@ export class ImmobilieAnlegenComponent implements OnInit {
       otherNote: '',
       tenancy: 0,
       freeFrom: '',
-      latitude: null,
-      longitude: null,
+      latitude: 0,
+      longitude: 0,
+      latitudeWithNo: 0,
+      longitudeWithNo: 0,
       commercializationType: 'BUY',
       recommendedUseTypes: 'NO_INFORMATION',
       minDivisible: 0,

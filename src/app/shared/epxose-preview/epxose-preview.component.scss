@@ -432,37 +432,54 @@ section {
       }
     }
 
-    .property-video-section {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      justify-content: flex-start;
-      width: 100%;
-      box-sizing: border-box;
+    .property-video-maps-wrapper {
+      @include s.f_c_fs_fs;
+      gap:12px;
 
-      .video-box {
-        width: 100%;
-        max-width: 100%;
-
-        video {
-          width: 100%;
-          height: auto;
-          max-height: 500px;
-          border-radius: 6px;
-        }
-      }
-
-      @media screen and (max-width: 1024px) {
+      .property-video-section {
+        display: flex;
+        flex-direction: column;
         align-items: flex-end;
-        margin-top: 24px;
-
+        justify-content: flex-start;
+        width: 100%;
+        box-sizing: border-box;
+  
         .video-box {
+          width: 100%;
+          max-width: 100%;
+  
           video {
+            width: 100%;
+            height: auto;
             max-height: 500px;
+            border-radius: 6px;
+          }
+        }
+  
+        @media screen and (max-width: 1024px) {
+          align-items: flex-end;
+          margin-top: 24px;
+  
+          .video-box {
+            video {
+              max-height: 500px;
+            }
           }
         }
       }
+  
+      #map {
+        width: 100%;
+        box-sizing: border-box;
+        max-height:320px;
+        // border: 1px solid c.$primary-color;   // optional, um die Karte zu umrahmen
+        // border-radius: 8px;       // optional, abgerundete Ecken
+        // box-shadow: 0 4px 8px rgba(0,0,0,0.2); // optional, Schatten
+      }
+
     }
+
+
   }
 }
 

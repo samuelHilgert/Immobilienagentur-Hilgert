@@ -17,13 +17,13 @@
     </button>
 
     <button
-    *ngIf="!accessIsShort"
-    mat-raised-button
-    class="expose-option-btn"
-    (click)="openAppointments()"
-  >
-    Termine
-  </button>
+      *ngIf="!accessIsShort"
+      mat-raised-button
+      class="expose-option-btn"
+      (click)="openAppointments()"
+    >
+      Termine
+    </button>
 
     <button mat-raised-button class="expose-option-btn" (click)="printPage()">
       Drucken
@@ -174,7 +174,10 @@
             </div>
             <div *ngIf="!accessIsShort" class="detail-row">
               <p><strong>Straße/Hr.:</strong></p>
-              <p>{{ immobilie.street }} {{ immobilie.houseNumber }}</p>
+              <div style="display: flex; gap: 4px">
+                <p>{{ immobilie.street }}</p>
+                <p *ngIf="accessIsExtended">{{ immobilie.houseNumber }}</p>
+              </div>
             </div>
             <div *ngIf="!accessIsShort" class="detail-row">
               <p class="disclaimer-note-red">
@@ -291,6 +294,13 @@
                 <p><strong>Badezimmer:</strong></p>
                 <p>{{ wohnungDetails?.numberOfBathRooms }}</p>
               </div>
+              <div
+                class="detail-row"
+                *ngIf="wohnungDetails?.guestToilet as type"
+              >
+                <p><strong>Gäste-WC:</strong></p>
+                <p>{{ Yes_No_Labels[type] || "Keine Angabe" }}</p>
+              </div>
               <div class="detail-row" *ngIf="wohnungDetails?.cellar as type">
                 <p><strong>Keller:</strong></p>
                 <p>{{ Yes_No_Labels[type] || "Keine Angabe" }}</p>
@@ -352,9 +362,13 @@
 
               <div
                 class="detail-row"
-                *ngIf="!accessIsShort && wohnungDetails?.firingType as type"
+                *ngIf="
+                  !accessIsShort &&
+                  wohnungDetails!.firingType === 'Fernwärme' &&
+                  wohnungDetails?.firingType as type
+                "
               >
-                <p><strong>Wesentliche Energieträger:</strong></p>
+                <p><strong>Wesentlicher Energieträger:</strong></p>
                 <p>{{ firingTypeLabels[type] || "Keine Angabe" }}</p>
               </div>
 
@@ -414,13 +428,10 @@
 
               <div
                 class="detail-row"
-                *ngIf="
-                  wohnungDetails?.rented !== null &&
-                  wohnungDetails?.rented !== undefined
-                "
+                *ngIf="!accessIsShort && wohnungDetails?.rented as type"
               >
                 <p><strong>Vermietet:</strong></p>
-                <p>{{ wohnungDetails?.rented ? "Ja" : "Nein" }}</p>
+                <p>{{ Yes_No_Labels[type] || "Keine Angabe" }}</p>
               </div>
 
               <div
@@ -534,7 +545,7 @@
                 class="detail-row"
                 *ngIf="!accessIsShort && haus?.firingType as type"
               >
-                <p><strong>Wesentliche Energieträger:</strong></p>
+                <p><strong>Wesentlicher Energieträger:</strong></p>
                 <p>
                   {{
                     haus?.heatingType === "DISTRICT_HEATING"
@@ -558,25 +569,30 @@
             </div>
             <!-- ///////////// end of more infos for house -->
 
-            <!-- /////////// video of property  -->
-            <div class="property-video-section" *ngIf="!accessIsShort">
-              <div *ngIf="videoMedia.length > 0">
-                <div *ngFor="let video of videoMedia" class="video-box">
-                  <video
-                    [src]="video.url"
-                    [muted]="true"
-                    autoplay
-                    loop
-                    playsinline
-                    controls
-                    controlsList="nodownload"
-                    preload="metadata"
-                    (contextmenu)="disableContextMenu($event)"
-                  >
-                    > Dein Browser unterstützt kein HTML5-Video.
-                  </video>
+            <div class="property-video-maps-wrapper">
+              <!-- /////////// video of property  -->
+              <div class="property-video-section" *ngIf="!accessIsShort">
+                <div *ngIf="videoMedia.length > 0">
+                  <div *ngFor="let video of videoMedia" class="video-box">
+                    <video
+                      [src]="video.url"
+                      [muted]="true"
+                      autoplay
+                      loop
+                      playsinline
+                      controls
+                      controlsList="nodownload"
+                      preload="metadata"
+                      (contextmenu)="disableContextMenu($event)"
+                    >
+                      > Dein Browser unterstützt kein HTML5-Video.
+                    </video>
+                  </div>
                 </div>
               </div>
+
+              <!-- /////////// position on google map  -->
+              <div id="map" style="width: 100%; height: 400px"></div>
             </div>
           </div>
         </div>

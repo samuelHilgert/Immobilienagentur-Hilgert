@@ -33,7 +33,7 @@ import { PropertyInquiryService } from '../../services/property-inquiry.service'
 import { CaDocsComponent } from '../../customer-area/ca-docs/ca-docs.component';
 import { CaAppointmentsComponent } from '../../customer-area/ca-appointments/ca-appointments.component';
 
-declare var html2pdf: any;
+declare var html2pdf: any; // PDF-Export
 
 @Component({
   selector: 'app-expose-preview',
@@ -71,6 +71,7 @@ export class EpxosePreviewComponent implements OnInit {
   customerSalutation?: string;
   customerFirstName?: string;
   customerLastName?: string;
+  map!: google.maps.Map; // für Google Maps
 
   constructor(
     private route: ActivatedRoute,
@@ -161,6 +162,10 @@ export class EpxosePreviewComponent implements OnInit {
       .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
 
     this.loadDetails();
+
+    // Prüfen, ob google.maps verfügbar ist
+    await this.loadGoogleMaps();
+    this.initMap();
   }
 
   // get title and second title images
@@ -397,30 +402,117 @@ export class EpxosePreviewComponent implements OnInit {
     if (!this.immobilie?.externalId) return;
     this.dialog.open(CaDocsComponent, {
       data: { externalId: this.immobilie.externalId },
-      width: '900px',     
+      width: '900px',
       maxWidth: '95vw',
-      height: '95vh',         
+      height: '95vh',
       maxHeight: '95vh',
       autoFocus: false,
       restoreFocus: false,
-      panelClass: 'docs-dialog' 
+      panelClass: 'docs-dialog',
     });
   }
 
   openAppointments() {
     if (!this.immobilie?.externalId) return;
-  
+
     // inquiryProcessId ist schon in der URL: <customerId>_<propertyExternalId>
-    const inquiryProcessId = this.route.snapshot.paramMap.get('inquiryProcessId') || '';
+    const inquiryProcessId =
+      this.route.snapshot.paramMap.get('inquiryProcessId') || '';
     const [customerId, propertyExternalId] = inquiryProcessId.split('_');
-  
+
     this.dialog.open(CaAppointmentsComponent, {
       data: { customerId, propertyExternalId },
       width: '700px',
       maxWidth: '95vw',
       height: '85vh',
       autoFocus: false,
-      restoreFocus: false
+      restoreFocus: false,
     });
+  }
+
+  // für Google Maps
+  getKoordinaten(immobilie: Immobilie): { lat: number; lng: number } | null {
+    // Wenn erweiterter Zugriff, dann die "mit Hausnummer" Koordinaten nehmen
+    if (this.accessIsExtended) {
+      if (this.wohnung?.latitudeWithNo && this.wohnung?.longitudeWithNo) {
+        return {
+          lat: this.wohnung.latitudeWithNo,
+          lng: this.wohnung.longitudeWithNo,
+        };
+      }
+      if (this.haus?.latitudeWithNo && this.haus?.longitudeWithNo) {
+        return {
+          lat: this.haus.latitudeWithNo,
+          lng: this.haus.longitudeWithNo,
+        };
+      }
+      if (
+        this.grundstueck?.latitudeWithNo &&
+        this.grundstueck?.longitudeWithNo
+      ) {
+        return {
+          lat: this.grundstueck.latitudeWithNo,
+          lng: this.grundstueck.longitudeWithNo,
+        };
+      }
+    }
+
+    // Standard-Koordinaten
+    if (this.wohnung?.latitude && this.wohnung?.longitude) {
+      return { lat: this.wohnung.latitude, lng: this.wohnung.longitude };
+    }
+    if (this.haus?.latitude && this.haus?.longitude) {
+      return { lat: this.haus.latitude, lng: this.haus.longitude };
+    }
+    if (this.grundstueck?.latitude && this.grundstueck?.longitude) {
+      return {
+        lat: this.grundstueck.latitude,
+        lng: this.grundstueck.longitude,
+      };
+    }
+
+    return null;
+  }
+
+  // für Google Maps
+  async ngAfterViewInit() {
+    await this.loadGoogleMaps();
+    this.initMap();
+  }
+
+  // für Google Maps
+  loadGoogleMaps(): Promise<void> {
+    return new Promise((resolve) => {
+      const check = () => {
+        if (window['google'] && window['google'].maps) {
+          resolve();
+        } else {
+          setTimeout(check, 100);
+        }
+      };
+      check();
+    });
+  }
+
+  // für Google Maps
+  initMap() {
+    const mapContainer = document.getElementById('map');
+    if (!mapContainer || !this.immobilie) return;
+
+    // Koordinaten über Helper ermitteln
+    const coords = this.getKoordinaten(this.immobilie);
+
+    this.map = new google.maps.Map(mapContainer, {
+      center: coords || { lat: 49.483575, lng: 8.477004 }, // Fallback: Wasserturm, Mannheim
+      zoom: coords ? 15 : 12,
+    });
+
+    if (coords) {
+      new google.maps.Marker({
+        position: coords,
+        map: this.map,
+        title: this.immobilie.title || 'Immobilie',
+      });
+    }
   }
 }

@@ -14,7 +14,12 @@ import { ImmoEditHeaderComponent } from '../shared/immo-edit-header/immo-edit-he
 @Component({
   selector: 'app-wohnung-details-form',
   standalone: true,
-  imports: [MATERIAL_MODULES, CommonModule, RouterModule, ImmoEditHeaderComponent],
+  imports: [
+    MATERIAL_MODULES,
+    CommonModule,
+    RouterModule,
+    ImmoEditHeaderComponent,
+  ],
   templateUrl: './wohnung-details-form.component.html',
   styleUrl: './wohnung-details-form.component.scss',
 })
@@ -89,6 +94,10 @@ export class WohnungDetailsFormComponent {
     this.wohnung.creationDate = this.immobilie.creationDate;
     this.wohnung.lastModificationDate = this.immobilie.lastModificationDate;
     this.wohnung.descriptionNote = this.immobilie.descriptionNote;
+    this.wohnung.latitude = this.immobilie.latitude;
+    this.wohnung.longitude = this.immobilie.longitude;
+    this.wohnung.latitudeWithNo = this.immobilie.latitudeWithNo;
+    this.wohnung.longitudeWithNo = this.immobilie.longitudeWithNo;
   }
 
   getCheckboxValue(obj: any, key: string): boolean {
@@ -104,49 +113,46 @@ export class WohnungDetailsFormComponent {
       const fullData = await this.immobilienService.getProperty(externalId);
       this.immobilie = fullData;
       this.wohnung = fullData.apartmentDetails;
-  
+
       this.uploadedMedia = await new Promise<any[]>((resolve, reject) => {
         this.immobilienService.getMediaByExternalId(externalId).subscribe({
           next: (media) => resolve(media),
           error: (err) => reject(err),
         });
       });
-  
+
       const titleImage = this.uploadedMedia.find((m) => m.isTitleImage);
       this.titleImageId = titleImage?.id || null;
-  
+
       const url = this.immobilie.exposePdfUrl ?? null;
-  
+
       // 🧠 Nur wenn URL existiert und Datei auch wirklich da ist
-      if (url && await this.firebaseService.checkPdfExistsWithFirebase(url)) {
+      if (url && (await this.firebaseService.checkPdfExistsWithFirebase(url))) {
         this.exposePdfUrl = url;
       } else {
         this.exposePdfUrl = null; // 🔥 Setze sie explizit auf null
       }
-  
     } catch (error) {
       this.errorMessage = 'Fehler beim Laden der Daten';
       console.error(error);
     }
   }
-  
 
-  
   async saveWohnung(): Promise<void> {
     try {
       this.syncImmobilieToWohnung();
-  
+
       const response = await this.immobilienService.saveWohnung(
         this.immobilie,
         this.wohnung
       );
-  
+
       if (!response.success)
         throw new Error(response.error || 'Unbekannter Fehler');
-  
+
       this.successMessage = 'Wohnung erfolgreich aktualisiert';
       alert('✅ Änderungen wurden erfolgreich gespeichert.');
-  
+
       if (this.titleImageId) {
         await this.immobilienService.setTitleImage(
           this.titleImageId.toString(),
@@ -159,7 +165,6 @@ export class WohnungDetailsFormComponent {
       console.error(error);
     }
   }
-  
 
   async deleteWohnung(): Promise<void> {
     if (!this.immobilie?.externalId) return;
@@ -182,6 +187,4 @@ export class WohnungDetailsFormComponent {
       this.errorMessage = 'Fehler beim Löschen';
     }
   }
-
-
 }

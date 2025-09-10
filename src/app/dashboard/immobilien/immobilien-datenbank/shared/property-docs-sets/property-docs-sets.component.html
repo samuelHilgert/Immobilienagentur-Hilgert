@@ -20,7 +20,7 @@
   <ng-container *ngIf="!isLoading">
     <!-- Upload + Ordnerangabe -->
     <div class="upload-row" *ngIf="isAdmin">
-      <!-- Freies Textfeld für Kategorie/Unterordner -->
+      <!-- Kategorie / Unterordner -->
       <input
         type="text"
         name="folderInput"
@@ -28,9 +28,20 @@
         [disabled]="uploading"
         placeholder="Kategorie/Ordner (optional, z. B. Rechnungen/2025)"
         class="folder-input"
-        style="margin-right:8px;max-width:330px"
+        style="margin-right: 8px; max-width: 330px"
       />
 
+      <!-- Checkbox für extendedAccess -->
+      <label style="margin-right: 16px">
+        <input
+          type="checkbox"
+          [(ngModel)]="uploadExtendedAccess"
+          [disabled]="uploading"
+        />
+        Zugriff beschränken (für erweiterte Exposés)
+      </label>
+
+      <!-- Upload Button -->
       <label class="upload-btn">
         <input
           type="file"
@@ -38,7 +49,7 @@
           [disabled]="uploading"
           multiple
         />
-        {{ uploading ? 'Lade hoch…' : '📄 Dokumente hochladen' }}
+        {{ uploading ? "Lade hoch…" : "📄 Dokumente hochladen" }}
       </label>
 
       <!-- Upload-Fortschritt -->
@@ -46,9 +57,9 @@
         <progress
           [value]="uploadProgress.done"
           [max]="uploadProgress.total"
-          style="width:220px"
+          style="width: 220px"
         ></progress>
-        <span style="margin-left:8px">
+        <span style="margin-left: 8px">
           {{ uploadProgress.done }}/{{ uploadProgress.total }} …
           {{ uploadProgress.current }}
         </span>
@@ -92,7 +103,19 @@
     <div *ngIf="grouped.length > 0">
       <div *ngFor="let g of grouped" class="folder-group">
         <h2 class="folder-title">
-          {{ g.label }} <span style="opacity:.6;font-weight:400">({{ g.items.length }})</span>
+          {{ g.label }}
+          <span style="opacity: 0.6; font-weight: 400"
+            >({{ g.items.length }})</span
+          >
+          <button
+            *ngIf="isAdmin"
+            type="button"
+            (click)="toggleFolderAccess(g)"
+            style="margin-left: 16px; font-size: 0.85em"
+          >
+            Zugriff für ganzen Ordner
+            {{ allDocsRestricted(g) ? "erlauben" : "beschränken" }}
+          </button>
         </h2>
 
         <ul class="docs-list indented">
@@ -102,8 +125,8 @@
                 {{ d.displayName || d.fileName }}
               </div>
               <div class="sub">
-                {{ d.uploadDate | date: 'short' }} •
-                {{ d.contentType || 'Datei' }} •
+                {{ d.uploadDate | date : "short" }} •
+                {{ d.contentType || "Datei" }} •
                 {{ d.fileName }}
               </div>
             </div>
@@ -112,7 +135,16 @@
               <button type="button" (click)="preview(d)">Vorschau</button>
               <button type="button" (click)="download(d)">Herunterladen</button>
               <button type="button" (click)="rename(d)">Umbenennen</button>
-              <button type="button" (click)="changeCategory(d)">Kategorie ändern</button>
+              <button type="button" (click)="changeCategory(d)">
+                Kategorie ändern
+              </button>
+              <button type="button" (click)="toggleExtendedAccess(d)">
+                {{
+                  d.extendedAccess
+                    ? "Zugriff erlauben"
+                    : "Zugriff beschränken (für erweiterte Exposés)"
+                }}
+              </button>
               <button type="button" (click)="remove(d)">Löschen</button>
             </div>
           </li>

@@ -39,6 +39,8 @@ export interface PropertyDoc {
   size?: number;
   uploadDate: string;
   folder?: string | null;
+  extendedAccess: boolean;
+  extendedAccessChangedAt?: number; // Unix Timestamp in ms
 }
 
 @Injectable({ providedIn: 'root' })
@@ -99,10 +101,10 @@ export class PropertyDocsService {
 
   async uploadDoc(
     file: File,
-    opts: { externalId: string; folder?: string | null; displayName?: string }
+    opts: { externalId: string; folder?: string | null; displayName?: string; extendedAccess?: boolean }
   ): Promise<{ success: boolean; doc?: PropertyDoc; error?: any }> {
     try {
-      const { externalId } = opts;
+      const { externalId, extendedAccess = false } = opts;
       const ts = Date.now();
   
       const safeName = this.makeSafeName(file.name);
@@ -115,7 +117,7 @@ export class PropertyDocsService {
         : `property-docs/${externalId}/${fileName}`;
   
       const storageRef = ref(this.storage, storagePath);
-      const contentType = this.guessContentType(file.name, file.type);
+      const contentType = this.guessContentType(file.name, '');
       const downloadName = this.makeSafeName(opts.displayName || file.name);
       const metadata = {
         contentType,
@@ -127,30 +129,27 @@ export class PropertyDocsService {
   
       const docId = `${externalId}_${ts}`;
   
-      // kein undefined in Firestore
-      const base = {
+      const base: PropertyDoc = {
         id: docId,
         externalId,
         fileName,
-        displayName: opts.displayName || file.name, // ← bleibt Dateiname, wird NICHT zur Kategorie
+        displayName: opts.displayName || file.name,
         storagePath,
         url,
         contentType,
         size: file.size,
         uploadDate: new Date().toISOString(),
+        folder: folderClean ?? null,
+        extendedAccess,
       };
   
-      const meta: PropertyDoc =
-        folderClean === null ? { ...base, folder: null } : { ...base, folder: folderClean };
-  
-      await setDoc(doc(this.db, 'property-docs', docId), meta);
-      return { success: true, doc: meta };
+      await setDoc(doc(this.db, 'property-docs', docId), base);
+      return { success: true, doc: base };
     } catch (error) {
       console.error('Upload fehlgeschlagen:', error);
       return { success: false, error };
     }
   }
-  
   
 
   /** Umbenennen */
@@ -564,5 +563,14 @@ export class PropertyDocsService {
 
     await updateDoc(refFS, { folder: folderClean });
   }
+
+  async updateExtendedAccess(docId: string, value: boolean, timestamp?: number) {
+    const ref = doc(this.db, 'property-docs', docId);
+    const updateData: any = { extendedAccess: value };
+    if (timestamp) updateData.extendedAccessChangedAt = timestamp;
+  
+    await updateDoc(ref, updateData);
+  }
+  
   
 }

@@ -88,6 +88,10 @@ export class HausDetailsFormComponent {
     this.haus.creationDate = this.immobilie.creationDate;
     this.haus.lastModificationDate = this.immobilie.lastModificationDate;
     this.haus.descriptionNote = this.immobilie.descriptionNote;
+    this.haus.latitude = this.immobilie.latitude;
+    this.haus.longitude = this.immobilie.longitude;
+    this.haus.latitudeWithNo = this.immobilie.latitudeWithNo;
+    this.haus.longitudeWithNo = this.immobilie.longitudeWithNo;
   }
 
   getCheckboxValue(obj: any, key: string): boolean {

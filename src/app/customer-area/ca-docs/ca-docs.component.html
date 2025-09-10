@@ -41,9 +41,12 @@
           <mat-list-item *ngFor="let d of g.items; trackBy: trackByDocId">
             <div matListItemTitle class="title-line">
               <mat-icon aria-hidden="true">description</mat-icon>
-              <span class="name">{{ d.displayName || d.fileName }}</span>
+              <span class="name">
+                {{ d.displayName || d.fileName }}
+                <span *ngIf="isNewDoc(d)" class="new-badge">NEU HINZUGEFÜGT</span>
+              </span>
             </div>
-
+            
             <div matListItemLine class="meta">
               <span>{{ d.uploadDate | date: "dd.MM.yyyy, HH:mm" }}</span>
               <span class="dot">•</span>
