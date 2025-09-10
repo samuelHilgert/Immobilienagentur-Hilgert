@@ -1,0 +1,73 @@
+<section>
+  <div class="headline-wrapper">
+    <div class="headline-div">
+      <h3 mat-dialog-title>Ihr Ansprechpartner</h3>
+      <p></p>
+    </div>
+    <button class="close-btn" mat-button mat-dialog-close>X</button>
+  </div>
+
+  <!-- /////////// PROPERTY CONTACT PERSON SECTION -->
+  <div class="contact-person-section page-break no-break-inside">
+    <div class="contact-person-container">
+      <div class="contact-wrapper">
+        <div class="person-wrapper">
+          <div>
+            <img
+              src="/img/Samuel-Hilgert.jpg"
+              alt="Samuel Hilgert"
+              (contextmenu)="disableContextMenu($event)"
+            />
+          </div>
+
+          <div class="content-col">
+            <p><strong>Hilgert Immobilien</strong></p>
+            <p class="contact-slogan">
+              <strong
+                >Spezialisiert auf den Immobilienverkauf – seit 1993</strong
+              >
+            </p>
+            <div class="spacer-m"></div>
+
+            <p><strong>Samuel Hilgert</strong></p>
+            <p>Immobilienberater & Vermittler</p>
+            <div class="spacer-m"></div>
+
+            <a href="tel:+4962049803080">
+              <mat-icon>phone</mat-icon>
+              <span>+49 (0) 6204 980 30 80</span>
+            </a>
+            <a href="tel:+017644476237">
+              <mat-icon>phone_android</mat-icon>
+              <span>+49 (0) 176 444 76 237</span>
+            </a>
+            <a href="mailto:info@hilgert-immobilien.de">
+              <mat-icon>email</mat-icon>
+              <span>info&#64;hilgert-immobilien.de</span>
+            </a>
+            <a href="www.hilgert-immobilien.de" target="_blank">
+              <mat-icon>laptop</mat-icon>
+              <span>wwww.hilgert-immobilien.de</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="contact-person-container-bottom">
+          <div class="contactform-link">
+            <a class="standard-btn-reverse" href="/kontakt" target="_blank"
+              >Zum Kontaktformular</a
+            >
+          </div>
+
+          <div class="v-card-box">
+            <p>vCard:</p>
+            <img
+              src="/img/e-card.png"
+              alt="vCard-Immobilienmakler-Samuel-Hilgert"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

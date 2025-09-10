@@ -1,0 +1,187 @@
+@use "./../../../styles.scss" as s;
+@use "./../../../assets/fonts.scss" as f;
+@use "./../../../assets/colors.scss" as c;
+@use "./../../../assets/elements.scss" as e;
+
+
+section {
+  @include s.f_c_fs_c;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 24px 5%;
+
+  @media (min-width: 960px) {
+    padding: 40px 6%;
+  }
+
+  @media print {
+    padding: 0;
+    background: unset;
+    min-height: 100%;
+  }
+}
+
+
+.headline-wrapper {
+  @include s.f_r_sb_c;
+  width: 100%;
+  box-sizing: border-box;
+
+  .headline-div {
+    @include s.f_c_c_c;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .close-btn {
+    position: absolute;
+    right: 10px;
+    top: 20px;
+    font-size: 20px;
+  }
+
+}
+
+/// contact person section
+.contact-person-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 48px 24px;
+    width: 100%;
+    box-sizing: border-box;
+  
+  
+    @media print {
+      padding-bottom: 3000px;
+    }
+  
+  
+    @media screen and (max-width: 1024px) {
+      padding: 48px 10%;
+    }
+  
+    h3 {
+      margin: 0;
+    }
+  
+    .contact-person-container {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      width: 100%;
+      box-sizing: border-box;
+  
+      a {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        text-decoration: none;
+        color: c.$primary-text;
+        transition: color 0.3s ease;
+  
+        &:hover {
+          color: c.$primary-color;
+        }
+  
+        mat-icon {
+          color: c.$primary-color;
+          font-size: 24px;
+          width: 24px;
+          height: 24px;
+        }
+      }
+  
+      .contact-wrapper {
+        display: grid;
+        grid-template-columns: 3fr 1fr;
+        gap: 24px;
+        width: 100%;
+        box-sizing: border-box;
+        align-items: start;
+  
+        @media screen and (max-width: 1024px) {
+          grid-template-columns: 1fr;
+        }
+  
+        .person-wrapper {
+          display: flex;
+          flex-direction: row;
+          gap: 24px;
+          width: 100%;
+          box-sizing: border-box;
+  
+          @media screen and (max-width: 768px) {
+            flex-direction: column;
+          }
+  
+          img {
+            width: 200px;
+            height: auto;
+          }
+  
+          .contact-slogan {
+            font-size: 14px !important;
+            font-style: italic;
+          }
+  
+          .content-col {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+          }
+        }
+  
+        .contact-person-container-bottom {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: flex-end;
+          gap: 24px;
+          width: 100%;
+          box-sizing: border-box;
+          grid-column: span 2;
+          padding-left: 40%;
+  
+          @media screen and (max-width: 1024px) {
+            flex-direction: column;
+            align-items: center;
+            grid-column: span 1;
+            padding-left: 0;
+          }
+  
+          .contactform-link {
+  
+            @media screen and (max-width: 1024px) {
+              width: 100%;
+            }
+  
+            .standard-btn-reverse {
+              margin-top: 8px;
+              justify-content: center;
+            }
+          }
+  
+          .v-card-box {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-end;
+            justify-content: flex-end;
+            gap: 8px;
+  
+            @media screen and (max-width: 1024px) {
+              flex-direction: column-reverse;
+              align-items: center;
+            }
+  
+            img {
+              width: 150px;
+              height: 150px;
+            }
+          }
+        }
+      }
+    }
+  }

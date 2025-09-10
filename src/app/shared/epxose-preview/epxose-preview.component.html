@@ -1,9 +1,3 @@
-<!-- 
-  // Erweiterungen Ideen
-// Karte auf google maps 
-// parkmöglichkeiten
-
- -->
 
 <section>
   <div class="option-btns-div no-print">
@@ -32,6 +26,14 @@
     >
       Termine
     </button>
+
+       <button
+      mat-raised-button
+      class="expose-option-btn"
+      (click)="openContact()"
+    >
+      Ansprechpartner
+    </button> 
 
     <button mat-raised-button class="expose-option-btn" (click)="printPage()">
       Drucken
@@ -601,7 +603,7 @@
               </div>
 
               <!-- /////////// position on google map  -->
-              <div id="map" style="width: 100%; height: 400px"></div>
+              <div id="map" style="width: 100%; height: 400px" *ngIf="!accessIsShort"></div>
             </div>
           </div>
         </div>
@@ -1168,8 +1170,3 @@
     </ng-template>
   </div>
 </section>
-
-<!-- Beispiel für Erweitert -> AccesLevel Normal
-http://localhost:4200/expose-preview/B74nu1DvwRHJRYMtjJmZ_42865 
-
-http://localhost:4200/expose-preview/3yBjjisV8NonN5y2sdNt_23523 -->
