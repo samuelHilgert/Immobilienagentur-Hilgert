@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MATERIAL_MODULES } from '../../material-imports';
-import { DatenschutzComponent } from '../../../impressum/datenschutz/datenschutz.component';
+import { DatenschutzComponent } from '../../../imprint/datenschutz/datenschutz.component';
 
 @Component({
   selector: 'app-feedback-payment-conditions',

@@ -81,6 +81,7 @@ export const heatingTypeLabels: { [key: string]: string } = {
   SOLAR_HEATING: 'Solar-Heizung',
   HEAT_PUMP: 'Wärmepumpe',
 };
+
 export const firingTypeLabels: { [key: string]: string } = {
   NO_INFORMATION: 'Keine Angabe',
   GEOTHERMAL: 'Erdwärme',

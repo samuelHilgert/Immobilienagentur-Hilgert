@@ -350,6 +350,7 @@ export class ImmobilieAnlegenComponent implements OnInit {
       numberOfBedRooms: 0,
       numberOfBathRooms: 0,
       guestToilet: 'NOT_APPLICABLE',
+      builtInKitchen: false,
       cellar: 'NOT_APPLICABLE',
       handicappedAccessible: 'NOT_APPLICABLE',
       numberOfParkingSpaces: '',

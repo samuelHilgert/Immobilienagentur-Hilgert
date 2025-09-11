@@ -9,9 +9,9 @@ import {
   Validators,
 } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { WiderrufComponent } from '../../impressum/widerruf/widerruf.component';
-import { AgbComponent } from '../../impressum/agb/agb.component';
-import { DatenschutzComponent } from '../../impressum/datenschutz/datenschutz.component';
+import { WiderrufComponent } from '../../imprint/widerruf/widerruf.component';
+import { AgbComponent } from '../../imprint/agb/agb.component';
+import { DatenschutzComponent } from '../../imprint/datenschutz/datenschutz.component';
 import { ExposeAnfrageService } from '../../services/expose-anfrage.service';
 import { SuccessMsgDialogComponent } from '../success-msg-dialog/success-msg-dialog.component';
 import { ActivatedRoute } from '@angular/router';

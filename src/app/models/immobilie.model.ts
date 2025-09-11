@@ -246,7 +246,8 @@ export interface HausDetails {
   longitudeWithNo?: number;
   priceIntervalType: 'ONE_TIME_CHARGE';
   energyPerformanceCertificate?: boolean;
-
+  builtInKitchen?: boolean;
+  
   // weiter für Haus spezifische Felder
   lodgerFlat?: 'YES' | 'NOT_APPLICABLE'; // Mit Einliegerwohnung
   constructionPhase?:
@@ -272,7 +273,6 @@ export interface HausDetails {
   // apartmentType?: "ROOF_STOREY" | "LOFT" | "MAISONETTE" | "PENTHOUSE" | "TERRACED_FLAT" | "GROUND_FLOOR" | "APARTMENT" | "RAISED_GROUND_FLOOR" | "HALF_BASEMENT" | "OTHER" | "NO_INFORMATION";
   // floor?: number;
   // lift?: boolean;
-  //   builtInKitchen?: boolean;
   //   balcony?: boolean;
   //   garden?: boolean;
   // serviceCharge?: number;

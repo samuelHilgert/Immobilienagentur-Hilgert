@@ -1,0 +1,206 @@
+<section>
+    <!-- Ladebalken mit Fortschrittsanzeige -->
+  
+    <div *ngIf="isLoading" class="spinner-wrapper">
+      <mat-spinner diameter="50"></mat-spinner>
+    </div>
+  
+    <mat-error *ngIf="errorMessage">{{ errorMessage }}</mat-error>
+  
+    <div class="immobilien-grid" *ngIf="immobilien.length">
+      <ng-container *ngFor="let immobilie of paginatedImmobilien">
+        <mat-card (click)="toggleCard(immobilie)">
+          <!-- Banner bei Referenz -->
+          <div
+            *ngIf="immobilie.propertyStatus === 'Referenz'"
+            class="ribbon sold"
+          >
+            <span>verkauft</span>
+          </div>
+  
+          <!-- Banner bei Reserviert -->
+          <div
+            *ngIf="immobilie.propertyStatus === 'Reserviert'"
+            class="ribbon reserved"
+          >
+            <span>Reserviert</span>
+          </div>
+  
+          <mat-card-header>
+            <!-- Dieser Hinweistext erscheint über dem Bild, wenn die Immobilie angeklickt wird, aber diese bereits verkauft oder reserviert ist -->
+            <!-- Overlay bei Referenz -->
+            <div
+              *ngIf="
+                immobilie.propertyStatus === 'Referenz' &&
+                immobilie.externalId &&
+                expandedCards[immobilie.externalId]
+              "
+              class="verkaufs-status-overlay"
+            >
+              <p>Diese Immobilie wurde bereits verkauft</p>
+            </div>
+  
+            <!-- Overlay bei Reserviert -->
+            <div
+              *ngIf="
+                immobilie.propertyStatus === 'Reserviert' &&
+                immobilie.externalId &&
+                expandedCards[immobilie.externalId]
+              "
+              class="verkaufs-status-overlay"
+            >
+              <p>Diese Immobilie steht kurz vor dem Verkauf</p>
+            </div>
+  
+            <ng-container
+              *ngIf="
+                getMediaForImmobilie(immobilie.externalId).length;
+                else loadingImage
+              "
+            >
+              <img
+                [src]="getMediaForImmobilie(immobilie.externalId)[0].url"
+                [alt]="immobilie.title"
+              />
+            </ng-container>
+            <ng-template #loadingImage>
+              <div class="image-placeholder">
+                <mat-spinner diameter="30"></mat-spinner>
+              </div>
+            </ng-template>
+          </mat-card-header>
+  
+          <mat-card-content>
+            <p class="ort">{{ immobilie.postcode }} {{ immobilie.city }}</p>
+            <mat-card-title>{{ immobilie.title }}</mat-card-title>
+            <p class="objekt-id">Objekt-ID: {{ immobilie.externalId }}</p>
+          </mat-card-content>
+  
+          <mat-card-footer>
+            <div class="typ-icon">
+              <svg viewBox="0 0 100 100">
+                <!-- Haus Umriss -->
+                <path d="M20,85 L20,45 L50,20 L80,45 L80,85 Z" />
+  
+                <!-- Dach -->
+                <path d="M15,45 L50,15 L85,45" />
+  
+                <!-- Tür -->
+                <rect x="42" y="60" width="16" height="25" />
+              </svg>
+  
+              <p class="icon-text">{{ immobilie.propertyType }}</p>
+            </div>
+  
+            <div class="wfl-icon">
+              <svg viewBox="0 0 100 100">
+                <!-- Quadratischer Rahmen für die Wohnfläche -->
+                <rect x="15" y="10" width="70" height="70" />
+  
+                <!-- Schraffierung im Quadrat -->
+                <pattern
+                  id="diagonalHatch"
+                  patternUnits="userSpaceOnUse"
+                  width="8"
+                  height="8"
+                >
+                  <path
+                    d="M-2,2 l4,-4
+                                M0,8 l8,-8
+                                M6,10 l4,-4"
+                  />
+                </pattern>
+  
+                <rect
+                  x="15"
+                  y="10"
+                  width="70"
+                  height="70"
+                  fill="url(#diagonalHatch)"
+                />
+  
+                <!-- Quadratmeter-Symbol -->
+                <text x="40" y="100">m²</text>
+              </svg>
+              <p class="icon-text">{{ immobilie.livingSpace }} m²</p>
+            </div>
+  
+            <div class="zimmer-icon">
+              <svg viewBox="0 0 110 110">
+                <!-- Großer Raum/Wohnzimmer -->
+                <rect x="15" y="15" width="45" height="40" />
+  
+                <!-- Kleiner Raum/Schlafzimmer rechts -->
+                <rect x="65" y="15" width="20" height="40" />
+  
+                <!-- Kleiner Raum/Bad unten -->
+                <rect x="15" y="60" width="20" height="25" />
+  
+                <!-- Kleiner Raum/Küche unten rechts -->
+                <rect x="40" y="60" width="45" height="25" />
+  
+                <!-- Türöffnungen andeuten -->
+                <path d="M45,55 L45,60" />
+                <path d="M65,40 L70,40" />
+                <path d="M35,60 L35,55" />
+                <path d="M55,60 L55,55" />
+  
+                <!-- Text "Zimmer" unten -->
+                <text x="20" y="110">Zimmer</text>
+              </svg>
+              <p class="icon-text">{{ immobilie.numberOfRooms }}</p>
+            </div>
+  
+            <div class="preis-icon">
+              <svg viewBox="0 0 100 100">
+                <!-- Euro-Symbol -->
+                <path
+                  d="M65,35 C60,27 52,23 44,23 C30,23 20,33 20,50 C20,67 30,77 44,77 C52,77 60,73 65,65"
+                />
+  
+                <!-- Horizontale Striche -->
+                <path d="M20,45 L55,45" />
+                <path d="M20,55 L55,55" />
+              </svg>
+  
+              <p
+                class="icon-text"
+                *ngIf="immobilie.propertyStatus !== 'Referenz' && immobilie.propertyStatus !== 'Reserviert'"
+              >
+                {{ immobilie.value | number : "1.0-0" }}
+              </p>
+  
+              <p
+                class="icon-text"
+                *ngIf="immobilie.propertyStatus === 'Referenz' || immobilie.propertyStatus === 'Reserviert'"
+              >
+                Auf Anfrage
+              </p>
+            </div>
+          </mat-card-footer>
+        </mat-card>
+      </ng-container>
+    </div>
+  
+    <!-- Pagination, Durchblättrn der Immobilien (immer 8) -->
+    <div class="pagination-controls">
+      <button
+        mat-icon-button
+        (click)="goToPreviousPage()"
+        [disabled]="currentPage === 0"
+      >
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+  
+      <span class="page-range"> {{ getRangeStart() }}–{{ getRangeEnd() }} </span>
+  
+      <button
+        mat-icon-button
+        (click)="goToNextPage()"
+        [disabled]="currentPage >= totalPages - 1"
+      >
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+  </section>
+  

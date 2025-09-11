@@ -15,24 +15,11 @@ import { AblageComponent } from './dashboard/ablage/ablage.component';
 import { PartnerComponent } from './dashboard/partner/partner.component';
 import { KundeAnlegenComponent } from './dashboard/kundendatenbank/kunde-anlegen/kunde-anlegen.component';
 import { SuchauftragAnlegenComponent } from './dashboard/suchauftraege/suchauftrag-anlegen/suchauftrag-anlegen.component';
-import { BewertungAnlegenComponent } from './dashboard/dash-feedbacks/bewertung-anlegen/bewertung-anlegen.component';
-import { LeistungenComponent } from './leistungen/leistungen.component';
-import { ReferenzenComponent } from './referenzen/referenzen.component';
-import { ImmobilienbewertungComponent } from './immobilienbewertung/immobilienbewertung.component';
-import { BewertungAbgebenComponent } from './bewertung-abgeben/bewertung-abgeben.component';
-import { ImpressumComponent } from './impressum/impressum.component';
-import { SuchanfrageComponent } from './suchanfrage/suchanfrage.component';
-import { TippgeberComponent } from './tippgeber/tippgeber.component';
-import { ImmobilieVorstellenComponent } from './immobilie-vorstellen/immobilie-vorstellen.component';
-import { PartnerWerdenComponent } from './partner-werden/partner-werden.component';
-import { MagazinComponent } from './magazin/magazin.component';
-import { DatenschutzComponent } from './impressum/datenschutz/datenschutz.component';
-import { AgbComponent } from './impressum/agb/agb.component';
-import { KontaktComponent } from './kontakt/kontakt.component';
+import { DatenschutzComponent } from './imprint/datenschutz/datenschutz.component';
+import { AgbComponent } from './imprint/agb/agb.component';
 import { BewertenComponent } from './shared/feedback/feedback.component';
-import { AlleImmobilienComponent } from './alle-immobilien/alle-immobilien.component';
 import { ExposeAnfordernComponent } from './shared/expose-anfordern/expose-anfordern.component';
-import { WiderrufComponent } from './impressum/widerruf/widerruf.component';
+import { WiderrufComponent } from './imprint/widerruf/widerruf.component';
 import { FeedbackForCashComponent } from './shared/feedback/feedback-for-cash/feedback-for-cash.component';
 import { GrundstueckDetailsFormComponent } from './dashboard/immobilien/immobilien-datenbank/grundstueck-details-form/grundstueck-details-form.component';
 import { HausDetailsFormComponent } from './dashboard/immobilien/immobilien-datenbank/haus-details-form/haus-details-form.component';
@@ -55,6 +42,12 @@ import { DashFeedbacksComponent } from './dashboard/dash-feedbacks/dash-feedback
 import { DashAddFeedbackComponent } from './dashboard/dash-feedbacks/dash-add-feedback/dash-add-feedback.component';
 import { ViewingConfirmationComponent } from './shared/viewing-confirmation/viewing-confirmation.component';
 import { CarRidesComponent } from './dashboard/car-rides/car-rides.component';
+import { AllPropertiesComponent } from './all-properties/all-properties.component';
+import { ContactComponent } from './contact/contact.component';
+import { WorkPresentationComponent } from './work-presentation/work-presentation.component';
+import { PropertiesReferencesComponent } from './properties-references/properties-references.component';
+import { MarketValueCalcComponent } from './market-value-calc/market-value-calc.component';
+import { ImprintComponent } from './imprint/imprint.component';
 
 export const routes: Routes = [
   {
@@ -184,19 +177,19 @@ export const routes: Routes = [
   },
   {
     path: 'immobilien',
-    component: AlleImmobilienComponent,
+    component: AllPropertiesComponent,
   },
   {
     path: 'leistungen',
-    component: LeistungenComponent,
+    component: WorkPresentationComponent,
   },
   {
     path: 'referenzen',
-    component: ReferenzenComponent,
+    component: PropertiesReferencesComponent,
   },
   {
     path: 'immobilienbewertung',
-    component: ImmobilienbewertungComponent,
+    component: MarketValueCalcComponent,
   },
   {
     path: 'expose-anfordern',
@@ -216,31 +209,7 @@ export const routes: Routes = [
   },
   {
     path: 'kontakt',
-    component: KontaktComponent,
-  },
-  {
-    path: 'magazin',
-    component: MagazinComponent,
-  },
-  {
-    path: 'suchanfrage',
-    component: SuchanfrageComponent,
-  },
-  {
-    path: 'tippgeber',
-    component: TippgeberComponent,
-  },
-  {
-    path: 'bewertung-abgeben',
-    component: BewertungAbgebenComponent,
-  },
-  {
-    path: 'immobilie-vorstellen',
-    component: ImmobilieVorstellenComponent,
-  },
-  {
-    path: 'partner-werden',
-    component: PartnerWerdenComponent,
+    component: ContactComponent,
   },
   {
     path: 'bewerten',
@@ -252,7 +221,7 @@ export const routes: Routes = [
   },
   {
     path: 'impressum',
-    component: ImpressumComponent,
+    component: ImprintComponent,
   },
   {
     path: 'datenschutz',

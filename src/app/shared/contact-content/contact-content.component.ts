@@ -10,7 +10,7 @@ import { MatIconRegistry } from '@angular/material/icon';
 import AOS from 'aos';
 import { KontaktAnfrageService } from '../../services/kontakt-anfrage.service';
 import { KontaktAnfrage } from '../../models/kontakt-anfrage.model';
-import { DatenschutzComponent } from '../../impressum/datenschutz/datenschutz.component';
+import { DatenschutzComponent } from '../../imprint/datenschutz/datenschutz.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MATERIAL_MODULES } from '../material-imports';
 import { SuccessMsgDialogComponent } from '../success-msg-dialog/success-msg-dialog.component';

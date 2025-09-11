@@ -301,6 +301,18 @@
                 <p><strong>Schlafzimmer:</strong></p>
                 <p>{{ wohnungDetails?.numberOfBedRooms }}</p>
               </div>
+              <div class="detail-row">
+                <p><strong>Einbauküche:</strong></p>
+                <p>
+                  {{
+                    wohnungDetails?.builtInKitchen === true
+                      ? True_False_Labels["true"]
+                      : wohnungDetails?.builtInKitchen === false
+                      ? True_False_Labels["false"]
+                      : "Keine Angabe"
+                  }}
+                </p>
+              </div>
               <div class="detail-row" *ngIf="wohnungDetails?.numberOfBathRooms">
                 <p><strong>Badezimmer:</strong></p>
                 <p>{{ wohnungDetails?.numberOfBathRooms }}</p>
@@ -310,10 +322,6 @@
                 *ngIf="wohnungDetails?.guestToilet as type"
               >
                 <p><strong>Gäste-WC:</strong></p>
-                <p>{{ Yes_No_Labels[type] || "Keine Angabe" }}</p>
-              </div>
-              <div class="detail-row" *ngIf="wohnungDetails?.cellar as type">
-                <p><strong>Keller:</strong></p>
                 <p>{{ Yes_No_Labels[type] || "Keine Angabe" }}</p>
               </div>
               <div class="detail-row">
@@ -328,6 +336,10 @@
                   }}
                 </p>
               </div>
+              <div class="detail-row" *ngIf="wohnungDetails?.cellar as type">
+                <p><strong>Keller:</strong></p>
+                <p>{{ Yes_No_Labels[type] || "Keine Angabe" }}</p>
+              </div>
               <div class="detail-row">
                 <p><strong>Personenaufzug:</strong></p>
                 <p>
@@ -340,6 +352,19 @@
                   }}
                 </p>
               </div>
+
+              <div class="detail-row" *ngIf="wohnung?.numberOfParkingSpaces">
+                <p><strong>Anzahl Stellplätze:</strong></p>
+                <p>{{ wohnung.numberOfParkingSpaces }}</p>
+              </div>
+              <div class="detail-row" *ngIf="wohnung?.parkingSpaceType as type">
+                <p><strong>Art der Stellplätze:</strong></p>
+                <p>
+                  {{ parkingSpaceTypeLabels[type] || "Keine Angabe" }}
+                </p>
+              </div>
+   
+
               <div
                 class="detail-row"
                 *ngIf="wohnungDetails?.interiorQuality as type"
@@ -491,6 +516,18 @@
               <div class="detail-row" *ngIf="haus?.numberOfBedRooms">
                 <p><strong>Schlafzimmer:</strong></p>
                 <p>{{ haus.numberOfBedRooms }}</p>
+              </div>
+              <div class="detail-row">
+                <p><strong>Einbauküche:</strong></p>
+                <p>
+                  {{
+                    haus?.builtInKitchen === true
+                      ? True_False_Labels["true"]
+                      : haus?.builtInKitchen === false
+                      ? True_False_Labels["false"]
+                      : "Keine Angabe"
+                  }}
+                </p>
               </div>
               <div class="detail-row" *ngIf="haus?.numberOfBathRooms">
                 <p><strong>Badezimmer:</strong></p>
